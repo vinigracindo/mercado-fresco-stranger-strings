@@ -1,6 +1,6 @@
 package warehouse
 
-type Warehouse struct {
+type WarehouseModel struct {
 	Id                 int64   `json:"id"`
 	Address            string  `json:"address"`
 	Telephone          string  `json:"telephone"`
