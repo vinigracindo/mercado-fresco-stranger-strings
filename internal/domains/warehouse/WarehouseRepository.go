@@ -14,12 +14,12 @@ type Repository interface {
 	createID() int64
 }
 
-func newRepository() Repository {
+func NewRepository() Repository {
 	return &repository{}
 }
 
 func (w repository) createID() int64 {
-	id += id + 1
+	id += 1
 	return id
 }
 

@@ -7,7 +7,7 @@ type Service interface {
 	Create(wr *WarehouseModel) (WarehouseModel, error)
 }
 
-func newService(r Repository) Service {
+func NewService(r Repository) Service {
 	return &service{
 		repository: r,
 	}
