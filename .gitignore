@@ -13,9 +13,13 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+*.DS_Store
+.env
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+*.ide
+*.vscode
 
 # Go workspace file
 go.work
