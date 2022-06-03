@@ -17,6 +17,13 @@ func NewSection(s section.Service) *Controller {
 	}
 }
 
+// ListSections godoc
+// @Summary      List all sections
+// @Description  get sections
+// @Tags         sections
+// @Accept       json
+// @Produce      json
+// @Router /sections/ [get]
 func (c *Controller) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		section, err := c.service.GetAll()
@@ -27,6 +34,8 @@ func (c *Controller) GetAll() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, section)
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": section,
+		})
 	}
 }

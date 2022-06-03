@@ -1,7 +1,29 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is a sample server celler server.",
+        "title": "Swagger Mercado Fresco",
+        "contact": {},
+        "version": "1.0"
     },
-    "paths": {}
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/sections/": {
+            "get": {
+                "description": "get sections",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sections"
+                ],
+                "summary": "List all sections",
+                "responses": {}
+            }
+        }
+    }
 }

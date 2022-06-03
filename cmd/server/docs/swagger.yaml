@@ -1,4 +1,20 @@
+basePath: /api/v1
+host: localhost:8080
 info:
   contact: {}
-paths: {}
+  description: This is a sample server celler server.
+  title: Swagger Mercado Fresco
+  version: "1.0"
+paths:
+  /sections/:
+    get:
+      consumes:
+      - application/json
+      description: get sections
+      produces:
+      - application/json
+      responses: {}
+      summary: List all sections
+      tags:
+      - sections
 swagger: "2.0"
