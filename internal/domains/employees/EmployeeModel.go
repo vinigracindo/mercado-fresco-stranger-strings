@@ -1,9 +1,9 @@
 package employees
 
 type Employee struct {
-	ID           int64
-	CardNumberID string
+	Id           int64
+	CardNumberId string
 	FirstName    string
 	LastName     string
-	WarehouseID  int64
+	WarehouseId  int64
 }
