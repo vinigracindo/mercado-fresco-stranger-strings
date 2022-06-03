@@ -1,9 +1,9 @@
-package main
+package seller
 
 type Seller struct {
-	Id          float64
-	Cid         float64
-	CompanyName string
-	Address     string
-	Telephone   string
+	Id          float64 `json:"id"`
+	Cid         float64 `json:"cid"`
+	CompanyName string  `json:"company_name"`
+	Address     string  `json:"address"`
+	Telephone   string  `json:"telephone"`
 }
