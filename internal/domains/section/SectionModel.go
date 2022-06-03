@@ -3,8 +3,8 @@ package section
 type Section struct {
 	id                  int
 	section_number      int
-	current_temperature float64
-	minimum_temperature float64
+	current_temperature int
+	minimum_temperature int
 	current_capacity    int
 	minimum_capacity    int
 	maximum_capacity    int
