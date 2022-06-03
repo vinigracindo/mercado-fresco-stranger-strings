@@ -18,6 +18,8 @@ func (s service) GetAll() ([]Employee, error) {
 	return employees, nil
 }
 
-func NewService() Service {
-	return &service{}
+func NewService(r Repository) Service {
+	return &service{
+		repo: r,
+	}
 }
