@@ -17,6 +17,7 @@ func main() {
 	apiv1 := router.Group("/api/v1")
 	employeeRouter := apiv1.Group("/employees")
 	employeeRouter.GET("/", employeeController.GetAll())
+	employeeRouter.GET("/:id", employeeController.Get())
 
 	router.Run()
 }
