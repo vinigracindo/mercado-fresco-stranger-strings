@@ -20,6 +20,7 @@
 # vendor/
 *.ide
 *.vscode
+*docs
 
 # Go workspace file
 go.work
