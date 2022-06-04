@@ -15,78 +15,17 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {
-        "/sections/": {
-            "get": {
-                "description": "get sections",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "sections"
-                ],
-                "summary": "List all sections",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/section.Section"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "definitions": {
-        "section.Section": {
-            "type": "object",
-            "properties": {
-                "current_capacity": {
-                    "type": "integer"
-                },
-                "current_temperature": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "maximum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_temperature": {
-                    "type": "integer"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "section_number": {
-                    "type": "integer"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
-            }
-        }
-    }
+    "paths": {}
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "localhost:8080",
-	BasePath:         "/api/v1",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Swagger Mercado Fresco",
-	Description:      "This is a sample server celler server.",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

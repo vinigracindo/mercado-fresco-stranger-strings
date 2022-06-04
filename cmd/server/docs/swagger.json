@@ -1,73 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample server celler server.",
-        "title": "Swagger Mercado Fresco",
-        "contact": {},
-        "version": "1.0"
+        "contact": {}
     },
-    "host": "localhost:8080",
-    "basePath": "/api/v1",
-    "paths": {
-        "/sections/": {
-            "get": {
-                "description": "get sections",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "sections"
-                ],
-                "summary": "List all sections",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/section.Section"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "definitions": {
-        "section.Section": {
-            "type": "object",
-            "properties": {
-                "current_capacity": {
-                    "type": "integer"
-                },
-                "current_temperature": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "maximum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_temperature": {
-                    "type": "integer"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "section_number": {
-                    "type": "integer"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
-            }
-        }
-    }
+    "paths": {}
 }

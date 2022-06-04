@@ -9,13 +9,6 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 )
 
-// @title           Swagger Mercado Fresco
-// @version         1.0
-// @description     This is a sample server celler server.
-
-// @host      localhost:8080
-// @BasePath  /api/v1
-
 func main() {
 
 	router := gin.Default()
