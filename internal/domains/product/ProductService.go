@@ -2,6 +2,7 @@ package product
 
 type Service interface {
 	GetAll() ([]Product, error)
+	GetById(id int64) (*Product, error)
 }
 
 type service struct {
@@ -9,7 +10,15 @@ type service struct {
 }
 
 func (s service) GetAll() ([]Product, error) {
-	product, err := s.repository.GetAll()
+	products, err := s.repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
+}
+
+func (s service) GetById(id int64) (*Product, error) {
+	product, err := s.repository.GetById(id)
 	if err != nil {
 		return nil, err
 	}

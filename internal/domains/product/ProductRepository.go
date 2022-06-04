@@ -1,15 +1,33 @@
 package product
 
+import (
+	"fmt"
+)
+
 var listProducts []Product
 
 type Repository interface {
 	GetAll() ([]Product, error)
+	GetById(id int64) (*Product, error)
 }
 
 type repository struct {
 }
 
 func (r repository) GetAll() ([]Product, error) {
+	return listProducts, nil
+}
+
+func (r repository) GetById(id int64) (*Product, error) {
+	for _, product := range listProducts {
+		if product.Id == id {
+			return &product, nil
+		}
+	}
+	return nil, fmt.Errorf("O produto com o id %d não foi encontrado", id)
+}
+
+func NewRepository() Repository {
 	listProducts = []Product{}
 
 	// TODO: para testes. remover depois
@@ -19,11 +37,5 @@ func (r repository) GetAll() ([]Product, error) {
 		RecommendedFreezingTemperature: 32.5, FreezingRate: 5, ProductTypeId: 2, SellerId: 5}
 
 	listProducts = append(listProducts, prod1, prod2)
-	return listProducts, nil
-}
-
-func NewRepository() Repository {
-	repo := &repository{}
-
-	return repo
+	return &repository{}
 }

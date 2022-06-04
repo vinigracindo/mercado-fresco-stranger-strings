@@ -19,5 +19,6 @@ func main() {
 
 	groupProduct := groupV1.Group("products")
 	groupProduct.GET("/", productController.GetAll())
+	groupProduct.GET("/:id", productController.GetById())
 	router.Run()
 }
