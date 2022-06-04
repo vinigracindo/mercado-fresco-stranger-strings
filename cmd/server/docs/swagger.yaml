@@ -1,4 +1,26 @@
 basePath: /api/v1
+definitions:
+  section.Section:
+    properties:
+      current_capacity:
+        type: integer
+      current_temperature:
+        type: integer
+      id:
+        type: integer
+      maximum_capacity:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      product_type_id:
+        type: integer
+      section_number:
+        type: integer
+      warehouse_id:
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -13,7 +35,13 @@ paths:
       description: get sections
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/section.Section'
+            type: array
       summary: List all sections
       tags:
       - sections
