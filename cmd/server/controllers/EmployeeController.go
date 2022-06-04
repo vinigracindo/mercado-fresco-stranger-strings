@@ -25,7 +25,7 @@ func (ec EmployeeController) GetAll() gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{
-			"employees": employees,
+			"data": employees,
 		})
 	}
 }
