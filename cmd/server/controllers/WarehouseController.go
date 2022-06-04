@@ -37,3 +37,16 @@ func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 		ctx.JSON(http.StatusCreated, &newWh)
 	}
 }
+
+func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		shw, err := w.service.GetAll()
+
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		ctx.JSON(http.StatusOK, &shw)
+	}
+}

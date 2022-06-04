@@ -19,6 +19,7 @@ func main() {
 
 	routesWarehouse := router.Group("/api/v1/warehouses")
 	{
+		routesWarehouse.GET("/", warehouseController.GetAllWarehouse())
 		routesWarehouse.POST("/", warehouseController.CreateWarehouse())
 	}
 

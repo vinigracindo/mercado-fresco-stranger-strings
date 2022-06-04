@@ -4,13 +4,14 @@ import (
 	"fmt"
 )
 
-var wh = make([]WarehouseModel, 100)
+var wh = []WarehouseModel{}
 var id int64 = 0
 
 type repository struct{}
 
 type Repository interface {
 	Store(wr *WarehouseModel) (WarehouseModel, error)
+	GetAll() ([]WarehouseModel, error)
 	createID() int64
 }
 
@@ -33,4 +34,8 @@ func (w repository) Store(new *WarehouseModel) (WarehouseModel, error) {
 	wh = append(wh, *new)
 
 	return *new, nil
+}
+
+func (w repository) GetAll() ([]WarehouseModel, error) {
+	return wh, nil
 }
