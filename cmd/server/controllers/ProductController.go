@@ -11,22 +11,20 @@ type ProductController struct {
 	service product.Service
 }
 
-func NewProduct(p product.Service) *ProductController {
-	return &ProductController{
-		service: p,
-	}
+func CreateProductController(prodService product.Service) *ProductController {
+	return &(ProductController{service: prodService})
 }
 
 func (c ProductController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		product, err := c.service.GetAll()
+		products, err := c.service.GetAll()
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-		ctx.JSON(http.StatusOK, product)
+		ctx.JSON(http.StatusOK, products)
 	}
 }
 
@@ -49,4 +47,41 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 		}
 		ctx.JSON(http.StatusOK, *product)
 	}
+}
+
+func (c ProductController) Create() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var req request
+		if err := ctx.ShouldBindJSON(&req); err != nil {
+			ctx.JSON(http.StatusUnprocessableEntity,
+				gin.H{
+					"message": "Input inválido. Verifique os dados digitados",
+				})
+			return
+		}
+		newProduct, err := c.service.Create(req.ProductCode, req.Description, req.Width, req.Height, req.Length, req.NetWeight,
+			req.ExpirationRate, req.RecommendedFreezingTemperature, req.FreezingRate, req.ProductTypeId, req.SellerId)
+
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		ctx.JSON(http.StatusCreated, newProduct)
+	}
+}
+
+type request struct {
+	ProductCode                    string  `json:"productCode" binding:"required"`
+	Description                    string  `json:"description,required" binding:"required"`
+	Width                          float64 `json:"width,required" binding:"required"`
+	Height                         float64 `json:"height,required" binding:"required"`
+	Length                         float64 `json:"length,required" binding:"required"`
+	NetWeight                      float64 `json:"netWeight,required" binding:"required"`
+	ExpirationRate                 float64 `json:"expirationRate,required" binding:"required"`
+	RecommendedFreezingTemperature float64 `json:"recommendedFreezingTemperature,required" binding:"required"`
+	FreezingRate                   int     `json:"freezingRate,required" binding:"required"`
+	ProductTypeId                  int     `json:"productTypeId,required" binding:"required"`
+	SellerId                       int     `json:"sellerId,required" binding:"required"`
 }

@@ -5,10 +5,14 @@ import (
 )
 
 var listProducts []Product
+var lastId int64
 
 type Repository interface {
 	GetAll() ([]Product, error)
 	GetById(id int64) (*Product, error)
+	Create(id int64, productCode string, description string, width float64, height float64, length float64, netWeight float64,
+		expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error)
+	LastId() int64
 }
 
 type repository struct {
@@ -27,7 +31,21 @@ func (r repository) GetById(id int64) (*Product, error) {
 	return nil, fmt.Errorf("O produto com o id %d não foi encontrado", id)
 }
 
-func NewRepository() Repository {
+func (r repository) Create(id int64, productCode string, description string, width float64, height float64, length float64, netWeight float64,
+	expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error) {
+	newProduct := Product{id, productCode, description, width, height, length, netWeight,
+		expirationRate, recommendedFreezingTemperature, freezingRate, productTypeId, sellerId}
+	listProducts = append(listProducts, newProduct)
+	lastId = newProduct.Id
+	return newProduct, nil
+
+}
+
+func (r repository) LastId() int64 {
+	return lastId
+}
+
+func CreateRepository() Repository {
 	listProducts = []Product{}
 
 	// TODO: para testes. remover depois
@@ -36,6 +54,9 @@ func NewRepository() Repository {
 	prod2 := Product{Id: 2, ProductCode: "YY", Description: "Product 2", Width: 1.5, Height: 2.2, NetWeight: 4.52, ExpirationRate: 15.1,
 		RecommendedFreezingTemperature: 32.5, FreezingRate: 5, ProductTypeId: 2, SellerId: 5}
 
+	lastId = 2
+
 	listProducts = append(listProducts, prod1, prod2)
+
 	return &repository{}
 }

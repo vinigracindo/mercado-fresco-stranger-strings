@@ -7,18 +7,19 @@ import (
 )
 
 func main() {
+
 	router := gin.Default()
 
-	// define o base path
 	groupV1 := router.Group("/api/v1/")
 
 	// Product routes
-	productRepository := product.NewRepository()
-	productService := product.NewService(productRepository)
-	productController := controllers.NewProduct(productService)
+	productRepository := product.CreateRepository()
+	productService := product.CreateService(productRepository)
+	productController := controllers.CreateProductController(productService)
 
-	groupProduct := groupV1.Group("products")
-	groupProduct.GET("/", productController.GetAll())
-	groupProduct.GET("/:id", productController.GetById())
+	productGroup := groupV1.Group("products")
+	productGroup.GET("/", productController.GetAll())
+	productGroup.GET("/:id", productController.GetById())
+	productGroup.POST("/", productController.Create())
 	router.Run()
 }
