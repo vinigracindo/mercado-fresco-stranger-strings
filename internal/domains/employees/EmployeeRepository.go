@@ -8,6 +8,7 @@ type Repository interface {
 	GetAll() ([]Employee, error)
 	Get(id int64) (Employee, error)
 	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
+	Update(id int64, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
 }
 
 type repository struct{}
@@ -50,6 +51,19 @@ func (repo repository) Store(cardNumberId string, firstName string, lastName str
 
 	employees = append(employees, employee)
 	return employee, nil
+}
+
+func (repo repository) Update(id int64, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+	for i, employee := range employees {
+		if employee.Id == id {
+			employees[i].CardNumberId = cardNumberId
+			employees[i].FirstName = firstName
+			employees[i].LastName = lastName
+			employees[i].WarehouseId = warehouseId
+			return employees[i], nil
+		}
+	}
+	return Employee{}, fmt.Errorf("employee with id %d not found", id)
 }
 
 func NewRepository() Repository {
