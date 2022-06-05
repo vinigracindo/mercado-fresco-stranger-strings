@@ -53,7 +53,7 @@ func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 	}
 }
 
-func (w Warehouse) GetById() gin.HandlerFunc {
+func (w Warehouse) GetWarehouseByID() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if paramId, check := ctx.Params.Get("id"); check {
 			id, err := strconv.Atoi(paramId)
@@ -72,6 +72,30 @@ func (w Warehouse) GetById() gin.HandlerFunc {
 			}
 
 			ctx.JSON(http.StatusOK, wh)
+		}
+	}
+
+}
+
+func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		if paramId, check := ctx.Params.Get("id"); check {
+			id, err := strconv.Atoi(paramId)
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, "erro: internal error")
+				log.Println(err)
+				return
+			}
+
+			err = w.service.Delete(int64(id))
+
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, err.Error())
+				return
+			}
+
+			ctx.JSON(http.StatusNoContent, gin.H{})
 		}
 	}
 

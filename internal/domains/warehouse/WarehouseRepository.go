@@ -13,6 +13,7 @@ type Repository interface {
 	Store(wr *WarehouseModel) (WarehouseModel, error)
 	GetAll() ([]WarehouseModel, error)
 	GetById(id int64) (WarehouseModel, error)
+	Delete(id int64) error
 	createID() int64
 }
 
@@ -48,5 +49,16 @@ func (w repository) GetById(id int64) (WarehouseModel, error) {
 		}
 	}
 
-	return WarehouseModel{}, fmt.Errorf("erros: no warehouse was found with id: %d", id)
+	return WarehouseModel{}, fmt.Errorf("erros: no warehouse was found with id %d", id)
+}
+
+func (w repository) Delete(id int64) error {
+	for i := range wh {
+		if wh[i].Id == id {
+			wh = append(wh[:id], wh[id+1:]...)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("erros: no warehouse was found with id %d", id)
 }

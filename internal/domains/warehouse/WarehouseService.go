@@ -6,6 +6,7 @@ type service struct {
 type Service interface {
 	GetAll() ([]WarehouseModel, error)
 	GetById(id int64) (WarehouseModel, error)
+	Delete(id int64) error
 	Create(wr *WarehouseModel) (WarehouseModel, error)
 }
 
@@ -43,4 +44,14 @@ func (s service) GetById(id int64) (WarehouseModel, error) {
 	}
 
 	return hw, nil
+}
+
+func (s service) Delete(id int64) error {
+	err := s.repository.Delete(id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
