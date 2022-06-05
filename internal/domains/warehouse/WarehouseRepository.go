@@ -12,6 +12,7 @@ type repository struct{}
 type Repository interface {
 	Store(wr *WarehouseModel) (WarehouseModel, error)
 	GetAll() ([]WarehouseModel, error)
+	GetById(id int64) (WarehouseModel, error)
 	createID() int64
 }
 
@@ -38,4 +39,14 @@ func (w repository) Store(new *WarehouseModel) (WarehouseModel, error) {
 
 func (w repository) GetAll() ([]WarehouseModel, error) {
 	return wh, nil
+}
+
+func (w repository) GetById(id int64) (WarehouseModel, error) {
+	for i := range wh {
+		if wh[i].Id == id {
+			return wh[i], nil
+		}
+	}
+
+	return WarehouseModel{}, fmt.Errorf("erros: no warehouse was found with id: %d", id)
 }

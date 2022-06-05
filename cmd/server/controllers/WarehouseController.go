@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
@@ -49,4 +51,28 @@ func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 
 		ctx.JSON(http.StatusOK, &shw)
 	}
+}
+
+func (w Warehouse) GetById() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		if paramId, check := ctx.Params.Get("id"); check {
+			id, err := strconv.Atoi(paramId)
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, "erro: internal error")
+				log.Println(err)
+				return
+			}
+
+			wh, err := w.service.GetById(int64(id))
+
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, err.Error())
+				return
+			}
+
+			ctx.JSON(http.StatusOK, wh)
+		}
+	}
+
 }

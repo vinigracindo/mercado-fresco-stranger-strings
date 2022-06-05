@@ -20,6 +20,7 @@ func main() {
 	routesWarehouse := router.Group("/api/v1/warehouses")
 	{
 		routesWarehouse.GET("/", warehouseController.GetAllWarehouse())
+		routesWarehouse.GET("/:id", warehouseController.GetById())
 		routesWarehouse.POST("/", warehouseController.CreateWarehouse())
 	}
 

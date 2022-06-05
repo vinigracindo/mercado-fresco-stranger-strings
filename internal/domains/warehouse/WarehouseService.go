@@ -5,6 +5,7 @@ type service struct {
 }
 type Service interface {
 	GetAll() ([]WarehouseModel, error)
+	GetById(id int64) (WarehouseModel, error)
 	Create(wr *WarehouseModel) (WarehouseModel, error)
 }
 
@@ -32,4 +33,14 @@ func (s service) GetAll() ([]WarehouseModel, error) {
 	}
 
 	return swh, nil
+}
+
+func (s service) GetById(id int64) (WarehouseModel, error) {
+	hw, err := s.repository.GetById(id)
+
+	if err != nil {
+		return WarehouseModel{}, err
+	}
+
+	return hw, nil
 }
