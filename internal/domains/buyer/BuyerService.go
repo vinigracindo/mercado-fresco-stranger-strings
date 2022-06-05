@@ -5,6 +5,7 @@ type Service interface {
 	GetAll() ([]Buyer, error)
 	GetId(id int64) (*Buyer, error)
 	Update(id int64, cardNumberId int64, firstName string, lastName string) (*Buyer, error)
+	Delete(id int64) error
 }
 
 type service struct {
@@ -55,4 +56,15 @@ func (s service) Update(id int64, cardNumberId int64, firstName string, lastName
 	}
 
 	return buyer, nil
+}
+
+func (s service) Delete(id int64) error {
+
+	err := s.repository.Delete(id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
