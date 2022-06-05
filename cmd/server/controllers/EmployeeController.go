@@ -52,3 +52,35 @@ func (controller EmployeeController) Get() gin.HandlerFunc {
 		})
 	}
 }
+
+func (controller EmployeeController) Store() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req request
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error":   err.Error(),
+				"message": "Invalid request",
+			})
+			return
+		}
+
+		employee, err := controller.service.Store(req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"data": employee,
+		})
+	}
+}
+
+type request struct {
+	Id           int64  `json:"id,omitempty"`
+	CardNumberId string `json:"card_number_id" binding:"required"`
+	FirstName    string `json:"first_name" binding:"required"`
+	LastName     string `json:"last_name" binding:"required"`
+	WarehouseId  int64  `json:"warehouse_id" binding:"required"`
+}

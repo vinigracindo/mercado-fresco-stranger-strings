@@ -18,6 +18,7 @@ func main() {
 	employeeRouter := apiv1.Group("/employees")
 	employeeRouter.GET("/", employeeController.GetAll())
 	employeeRouter.GET("/:id", employeeController.Get())
+	employeeRouter.POST("/", employeeController.Store())
 
 	router.Run()
 }

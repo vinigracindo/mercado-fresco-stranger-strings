@@ -3,6 +3,7 @@ package employees
 type Service interface {
 	GetAll() ([]Employee, error)
 	Get(id int64) (Employee, error)
+	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
 }
 
 type service struct {
@@ -21,6 +22,16 @@ func (s service) GetAll() ([]Employee, error) {
 
 func (s service) Get(id int64) (Employee, error) {
 	employee, err := s.repo.Get(id)
+
+	if err != nil {
+		return Employee{}, err
+	}
+
+	return employee, nil
+}
+
+func (s service) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+	employee, err := s.repo.Store(cardNumberId, firstName, lastName, warehouseId)
 
 	if err != nil {
 		return Employee{}, err
