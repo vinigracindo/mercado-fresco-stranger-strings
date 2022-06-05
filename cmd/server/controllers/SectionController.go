@@ -22,7 +22,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(400, gin.H{
+			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
@@ -48,6 +48,6 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 			})
 			return
 		}
-		ctx.JSON(200, gin.H{"data": section})
+		ctx.JSON(http.StatusOK, gin.H{"data": section})
 	}
 }
