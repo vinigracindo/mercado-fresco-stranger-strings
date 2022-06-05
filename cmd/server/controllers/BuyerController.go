@@ -24,7 +24,6 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest,
 				gin.H{
-					"error":   "VALIDATEERR-1",
 					"message": "valor de entrada inválido. por favor revise os dados"})
 			return
 		}
@@ -82,5 +81,31 @@ func (c *BuyerController) GetId() gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, gin.H{
 			"data": buyer,
 		})
+	}
+}
+
+func (c *BuyerController) Update() gin.HandlerFunc {
+
+	return func(ctx *gin.Context) {
+
+		var req request
+		if err := ctx.ShouldBindJSON(&req); err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{
+					"message": "valor de entrada inválido. por favor revise os dados"})
+			return
+		}
+
+		buyer, err := c.service.Update(req.Id, req.CardNumberId, req.FirstName, req.LastName)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+
+		ctx.JSON(
+			http.StatusOK,
+			gin.H{
+				"data": buyer,
+			})
 	}
 }
