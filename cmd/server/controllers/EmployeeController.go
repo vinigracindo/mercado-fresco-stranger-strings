@@ -42,7 +42,7 @@ func (controller EmployeeController) Get() gin.HandlerFunc {
 		}
 		employee, err := controller.service.Get(id)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
 			return
@@ -67,6 +67,29 @@ func (controller EmployeeController) Store() gin.HandlerFunc {
 		employee, err := controller.service.Store(req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusCreated, gin.H{
+			"data": employee,
+		})
+	}
+}
+
+func (controller EmployeeController) Update() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req request
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error":   err.Error(),
+				"message": "Invalid request",
+			})
+			return
+		}
+		employee, err := controller.service.Update(req.Id, req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
 			return

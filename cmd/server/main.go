@@ -19,6 +19,7 @@ func main() {
 	employeeRouter.GET("/", employeeController.GetAll())
 	employeeRouter.GET("/:id", employeeController.Get())
 	employeeRouter.POST("/", employeeController.Store())
+	employeeRouter.PATCH("/:id", employeeController.Update())
 
 	router.Run()
 }
