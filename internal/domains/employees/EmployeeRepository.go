@@ -12,6 +12,15 @@ type Repository interface {
 
 type repository struct{}
 
+func (repository) cardNumberIsUnique(cardNumberId string) bool {
+	for _, employee := range employees {
+		if employee.CardNumberId == cardNumberId {
+			return false
+		}
+	}
+	return true
+}
+
 func (repository) GetAll() ([]Employee, error) {
 	return employees, nil
 }
@@ -26,7 +35,7 @@ func (repository) Get(id int64) (Employee, error) {
 	return Employee{}, fmt.Errorf("employee with id %d not found", id)
 }
 
-func (repository) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+func (repo repository) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
 	employee := Employee{
 		Id:           int64(len(employees) + 1),
 		CardNumberId: cardNumberId,
@@ -34,6 +43,11 @@ func (repository) Store(cardNumberId string, firstName string, lastName string, 
 		LastName:     lastName,
 		WarehouseId:  warehouseId,
 	}
+
+	if !repo.cardNumberIsUnique(cardNumberId) {
+		return Employee{}, fmt.Errorf("card number %s is already in use", cardNumberId)
+	}
+
 	employees = append(employees, employee)
 	return employee, nil
 }
