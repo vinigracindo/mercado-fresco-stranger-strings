@@ -7,6 +7,7 @@ var buyers []Buyer = []Buyer{}
 type Repository interface {
 	Store(id int64, cardNumberId int64, firstName string, lastName string) (Buyer, error)
 	GetAll() ([]Buyer, error)
+	GetId(id int64) (*Buyer, error)
 }
 
 type repository struct {
@@ -31,6 +32,15 @@ func (repository) Store(id int64, cardNumberId int64, firstName string, lastName
 
 func (w repository) GetAll() ([]Buyer, error) {
 	return buyers, nil
+}
+
+func (repository) GetId(id int64) (*Buyer, error) {
+	for _, buyer := range buyers {
+		if buyer.Id == id {
+			return &buyer, nil
+		}
+	}
+	return nil, fmt.Errorf("o comprador do id %d não foi encontrado", id)
 }
 
 func NewRepository() Repository {

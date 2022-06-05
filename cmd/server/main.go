@@ -20,7 +20,7 @@ func main() {
 
 	groupProduct := groupV1.Group("buyers")
 	groupProduct.GET("/", buyerController.GetAll())
-	//groupProduct.GET("/:id", productController.GetById())
+	groupProduct.GET("/:id", buyerController.GetId())
 	groupProduct.POST("/", buyerController.Store())
 
 	router.Run()
