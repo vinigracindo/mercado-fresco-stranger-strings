@@ -15,10 +15,6 @@ func NewRepository() Repository {
 }
 
 func (r *repository) Delete(id int64) error {
-	listSection = append(listSection, Section{1, 1, 1, 1, 1, 1, 1, 1, 1})
-	listSection = append(listSection, Section{2, 2, 1, 1, 1, 1, 1, 1, 1})
-	listSection = append(listSection, Section{4, 2, 1, 1, 1, 1, 1, 1, 1})
-
 	deleted := false
 	var index int
 
