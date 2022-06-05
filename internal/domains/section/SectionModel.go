@@ -1,7 +1,7 @@
 package section
 
 type Section struct {
-	Id                 int64 `json:"-"`
+	Id                 int64 `json:"id"`
 	SectionNumber      int64 `json:"section_number" binding:"required"`
 	CurrentTemperature int64 `json:"current_temperature" binding:"required"`
 	MinimumTemperature int64 `json:"minimum_temperature" binding:"required"`
