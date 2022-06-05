@@ -6,6 +6,7 @@ var buyers []Buyer = []Buyer{}
 
 type Repository interface {
 	Store(id int64, cardNumberId int64, firstName string, lastName string) (Buyer, error)
+	GetAll() ([]Buyer, error)
 }
 
 type repository struct {
@@ -26,6 +27,10 @@ func (repository) Store(id int64, cardNumberId int64, firstName string, lastName
 	buyers = append(buyers, newBuyer)
 
 	return newBuyer, nil
+}
+
+func (w repository) GetAll() ([]Buyer, error) {
+	return buyers, nil
 }
 
 func NewRepository() Repository {

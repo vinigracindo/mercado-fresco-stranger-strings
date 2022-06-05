@@ -2,6 +2,7 @@ package buyer
 
 type Service interface {
 	Store(id int64, cardNumberId int64, firstName string, lastName string) (Buyer, error)
+	GetAll() ([]Buyer, error)
 }
 
 type service struct {
@@ -23,4 +24,14 @@ func NewService(r Repository) Service {
 	return &service{
 		repository: r,
 	}
+}
+
+func (s service) GetAll() ([]Buyer, error) {
+	swh, err := s.repository.GetAll()
+
+	if err != nil {
+		return []Buyer{}, err
+	}
+
+	return swh, nil
 }

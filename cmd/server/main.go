@@ -19,7 +19,7 @@ func main() {
 	buyerController := controllers.NewBuyer(buyerService)
 
 	groupProduct := groupV1.Group("buyers")
-	//groupProduct.GET("/", buyerController.GetAll())
+	groupProduct.GET("/", buyerController.GetAll())
 	//groupProduct.GET("/:id", productController.GetById())
 	groupProduct.POST("/", buyerController.Store())
 

@@ -48,3 +48,16 @@ type request struct {
 	FirstName    string `json:"firstName"    binding:"required"`
 	LastName     string `json:"lastName"     binding:"required"`
 }
+
+func (c *BuyerController) GetAll() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		buyers, err := c.service.GetAll()
+
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		ctx.JSON(http.StatusOK, &buyers)
+	}
+}
