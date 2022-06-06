@@ -32,7 +32,7 @@ func (repository) Store(id int64, cardNumberId int64, firstName string, lastName
 	return newBuyer, nil
 }
 
-func (w repository) GetAll() ([]Buyer, error) {
+func (repository) GetAll() ([]Buyer, error) {
 	return buyers, nil
 }
 
