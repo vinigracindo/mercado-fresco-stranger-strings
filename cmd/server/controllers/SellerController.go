@@ -48,7 +48,7 @@ func (c SellerController) GetAll() gin.HandlerFunc {
 	}
 }
 
-func (c SellerController) Get() gin.HandlerFunc {
+func (c SellerController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
@@ -57,7 +57,7 @@ func (c SellerController) Get() gin.HandlerFunc {
 			})
 			return
 		}
-		seller, err := c.service.Get(id)
+		seller, err := c.service.GetById(id)
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),

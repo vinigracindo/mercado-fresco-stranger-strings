@@ -7,7 +7,7 @@ var id int64 = 0
 
 type Repository interface {
 	GetAll() ([]Seller, error)
-	Get(id int64) (Seller, error)
+	GetById(id int64) (Seller, error)
 	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
 	UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error)
 	creatID() int64
@@ -24,7 +24,7 @@ func (r *repository) GetAll() ([]Seller, error) {
 	return listSeller, nil
 }
 
-func (r *repository) Get(id int64) (Seller, error) {
+func (r *repository) GetById(id int64) (Seller, error) {
 	for _, seller := range listSeller {
 		if seller.Id == id {
 			return seller, nil
