@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+
 	router := gin.Default()
 
 	groupV1 := router.Group("api/v1/")
@@ -18,6 +19,10 @@ func main() {
 
 	groupSection := groupV1.Group("sections")
 	groupSection.DELETE("/:id", controllerSection.Delete())
+	groupSection.PATCH("/:id", controllerSection.UpdateCurrentCapacity())
+	groupSection.POST("/", controllerSection.CreateSection())
+	groupSection.GET("/:id", controllerSection.GetById())
+	groupSection.GET("/", controllerSection.GetAll())
 
 	router.Run()
 }
