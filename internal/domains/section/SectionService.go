@@ -1,6 +1,7 @@
 package section
 
 type Service interface {
+	Delete(id int64) error
 	UpdateCurrentCapacity(id int64, currentCapacity int64) (Section, error)
 	CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error)
 	GetById(id int64) (Section, error)
@@ -15,6 +16,10 @@ func NewService(r Repository) Service {
 	return &service{
 		repository: r,
 	}
+}
+
+func (s *service) Delete(id int64) error {
+	return s.repository.Delete(id)
 }
 
 func (s *service) UpdateCurrentCapacity(id int64, currentCapacity int64) (Section, error) {

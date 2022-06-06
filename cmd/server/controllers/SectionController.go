@@ -30,7 +30,7 @@ func NewSection(s section.Service) *ControllerSection {
 	}
 }
 
-func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
+func (c *ControllerSection) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
@@ -39,8 +39,52 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 			})
 			return
 		}
+
+		err = c.service.Delete(id)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusNoContent, gin.H{})
 	}
-}		
+}
+
+func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		if err != nil {
+			ctx.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		var req section.Section
+		if err := ctx.Bind(&req); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if req.CurrentCapacity == 0 {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "The field CurrentCapacity is required"})
+			return
+		}
+
+		section, err := c.service.UpdateCurrentCapacity(id, req.CurrentCapacity)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		ctx.JSON(200, gin.H{"data": section})
+	}
+}
 
 func (c ControllerSection) CreateSection() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -54,8 +98,6 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 			return
 		}
 
-		var req section.Section
-		if err := ctx.Bind(&req); err != nil {
 		response, err := c.service.CreateSection(
 			req.SectionNumber,
 			req.CurrentTemperature,
@@ -66,6 +108,7 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 			req.WarehouseId,
 			req.ProductTypeId,
 		)
+
 		if err != nil {
 			ctx.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
@@ -79,19 +122,23 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
+			ctx.JSON(400, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
 
-		if req.CurrentCapacity == 0 {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "The field CurrentCapacity is required"})
+		section, err := c.service.GetById(id)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
 			return
 		}
 
-		section, err := c.service.UpdateCurrentCapacity(id, req.CurrentCapacity)
-		section, err := c.service.GetById(id)
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": section,
+		})
 	}
 }
 
@@ -104,10 +151,7 @@ func (c *ControllerSection) GetAll() gin.HandlerFunc {
 			})
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{"data": section})
 
-		ctx.JSON(http.StatusOK, gin.H{
-			"data": section,
-		})
+		ctx.JSON(http.StatusOK, section)
 	}
 }

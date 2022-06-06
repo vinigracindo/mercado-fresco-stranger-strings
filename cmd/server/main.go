@@ -18,6 +18,7 @@ func main() {
 	controllerSection := controllers.NewSection(serviceSection)
 
 	groupSection := groupV1.Group("sections")
+	groupSection.DELETE("/:id", controllerSection.Delete())
 	groupSection.PATCH("/:id", controllerSection.UpdateCurrentCapacity())
 	groupSection.POST("/", controllerSection.CreateSection())
 	groupSection.GET("/:id", controllerSection.GetById())
