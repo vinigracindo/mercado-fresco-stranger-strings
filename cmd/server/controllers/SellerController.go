@@ -59,7 +59,7 @@ func (c SellerController) Get() gin.HandlerFunc {
 		}
 		seller, err := c.service.Get(id)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{
+			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
 			return
