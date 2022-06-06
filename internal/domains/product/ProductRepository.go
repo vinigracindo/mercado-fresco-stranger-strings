@@ -20,6 +20,22 @@ type Repository interface {
 type repository struct {
 }
 
+func CreateRepository() Repository {
+	listProducts = []Product{}
+
+	// TODO: para testes. remover depois
+	prod1 := Product{Id: 1, ProductCode: "XX", Description: "Product 1", Width: 1.5, Height: 2.2, NetWeight: 4.52, ExpirationRate: 15.1,
+		RecommendedFreezingTemperature: 32.5, FreezingRate: 5, ProductTypeId: 2, SellerId: 5}
+	prod2 := Product{Id: 2, ProductCode: "YY", Description: "Product 2", Width: 1.5, Height: 2.2, NetWeight: 4.52, ExpirationRate: 15.1,
+		RecommendedFreezingTemperature: 32.5, FreezingRate: 5, ProductTypeId: 2, SellerId: 5}
+
+	lastId = 2
+
+	listProducts = append(listProducts, prod1, prod2)
+
+	return &repository{}
+}
+
 func (r *repository) GetAll() ([]Product, error) {
 	return listProducts, nil
 }
@@ -30,7 +46,7 @@ func (r *repository) GetById(id int64) (*Product, error) {
 			return &product, nil
 		}
 	}
-	return nil, fmt.Errorf("O produto com o id %d não foi encontrado", id)
+	return nil, fmt.Errorf("the product with the id %d was not found", id)
 }
 
 func (r *repository) Create(id int64, productCode string, description string, width float64, height float64, length float64, netWeight float64,
@@ -40,7 +56,7 @@ func (r *repository) Create(id int64, productCode string, description string, wi
 
 	for _, product := range listProducts {
 		if product.ProductCode == productCode {
-			return product, fmt.Errorf("O produto com o código %s já foi cadastrado", productCode)
+			return product, fmt.Errorf("the product with code %s has already been registered", productCode)
 		}
 	}
 	listProducts = append(listProducts, newProduct)
@@ -67,7 +83,7 @@ func (r *repository) UpdateDescription(id int64, description string) (Product, e
 	}
 
 	if !update {
-		return Product{}, fmt.Errorf("O produto com o id %d não foi encontrado", id)
+		return Product{}, fmt.Errorf("the product with id %d was not found", id)
 	}
 	return product, nil
 }
@@ -83,25 +99,9 @@ func (r *repository) Delete(id int64) error {
 	}
 
 	if !deleted {
-		return fmt.Errorf("O produto com o id %d não foi encontrado", id)
+		return fmt.Errorf("the product with id %d was not found", id)
 	}
 	listProducts = append(listProducts[:index], listProducts[index+1:]...)
 
 	return nil
-}
-
-func CreateRepository() Repository {
-	listProducts = []Product{}
-
-	// TODO: para testes. remover depois
-	prod1 := Product{Id: 1, ProductCode: "XX", Description: "Product 1", Width: 1.5, Height: 2.2, NetWeight: 4.52, ExpirationRate: 15.1,
-		RecommendedFreezingTemperature: 32.5, FreezingRate: 5, ProductTypeId: 2, SellerId: 5}
-	prod2 := Product{Id: 2, ProductCode: "YY", Description: "Product 2", Width: 1.5, Height: 2.2, NetWeight: 4.52, ExpirationRate: 15.1,
-		RecommendedFreezingTemperature: 32.5, FreezingRate: 5, ProductTypeId: 2, SellerId: 5}
-
-	lastId = 2
-
-	listProducts = append(listProducts, prod1, prod2)
-
-	return &repository{}
 }

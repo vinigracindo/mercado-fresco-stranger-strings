@@ -13,6 +13,10 @@ type service struct {
 	repository Repository
 }
 
+func CreateService(r Repository) Service {
+	return &service{repository: r}
+}
+
 func (s *service) GetAll() ([]Product, error) {
 	products, err := s.repository.GetAll()
 	if err != nil {
@@ -51,8 +55,4 @@ func (s *service) UpdateDescription(id int64, description string) (Product, erro
 func (s *service) Delete(id int64) error {
 	return s.repository.Delete(id)
 
-}
-
-func CreateService(r Repository) Service {
-	return &service{repository: r}
 }
