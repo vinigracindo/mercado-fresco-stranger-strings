@@ -19,6 +19,7 @@ func main() {
 
 	sellerRouter.GET("/", sellerController.GetAll())
 	sellerRouter.GET("/:id", sellerController.Get())
+	sellerRouter.POST("/", sellerController.CreateSeller())
 
 	router.Run()
 }
