@@ -5,7 +5,7 @@ import (
 )
 
 var listProducts []Product
-var lastId int64
+var lastId int64 = 0
 
 type Repository interface {
 	GetAll() ([]Product, error)
@@ -23,15 +23,7 @@ type repository struct {
 func CreateRepository() Repository {
 	listProducts = []Product{}
 
-	// TODO: para testes. remover depois
-	prod1 := Product{Id: 1, ProductCode: "XX", Description: "Product 1", Width: 1.5, Height: 2.2, NetWeight: 4.52, ExpirationRate: 15.1,
-		RecommendedFreezingTemperature: 32.5, FreezingRate: 5, ProductTypeId: 2, SellerId: 5}
-	prod2 := Product{Id: 2, ProductCode: "YY", Description: "Product 2", Width: 1.5, Height: 2.2, NetWeight: 4.52, ExpirationRate: 15.1,
-		RecommendedFreezingTemperature: 32.5, FreezingRate: 5, ProductTypeId: 2, SellerId: 5}
-
-	lastId = 2
-
-	listProducts = append(listProducts, prod1, prod2)
+	listProducts = append(listProducts)
 
 	return &repository{}
 }
