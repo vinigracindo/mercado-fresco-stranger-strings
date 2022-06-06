@@ -4,7 +4,7 @@ type Service interface {
 	GetAll() ([]Employee, error)
 	GetById(id int64) (Employee, error)
 	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
-	Update(id int64, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
+	UpdateFullname(id int64, firstName string, lastName string) (Employee, error)
 	Delete(id int64) error
 }
 
@@ -32,8 +32,8 @@ func (s service) GetById(id int64) (Employee, error) {
 	return employee, nil
 }
 
-func (s service) Update(id int64, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
-	employee, err := s.repo.Update(id, cardNumberId, firstName, lastName, warehouseId)
+func (s service) UpdateFullname(id int64, firstName string, lastName string) (Employee, error) {
+	employee, err := s.repo.UpdateFullname(id, firstName, lastName)
 	if err != nil {
 		return Employee{}, err
 	}

@@ -8,7 +8,7 @@ type Repository interface {
 	GetAll() ([]Employee, error)
 	GetById(id int64) (Employee, error)
 	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
-	Update(id int64, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
+	UpdateFullname(id int64, firstName string, lastName string) (Employee, error)
 	Delete(id int64) error
 }
 
@@ -55,13 +55,11 @@ func (repo repository) Store(cardNumberId string, firstName string, lastName str
 	return employee, nil
 }
 
-func (repo repository) Update(id int64, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+func (repo repository) UpdateFullname(id int64, firstName string, lastName string) (Employee, error) {
 	for i, employee := range employees {
 		if employee.Id == id {
-			employees[i].CardNumberId = cardNumberId
 			employees[i].FirstName = firstName
 			employees[i].LastName = lastName
-			employees[i].WarehouseId = warehouseId
 			return employees[i], nil
 		}
 	}
