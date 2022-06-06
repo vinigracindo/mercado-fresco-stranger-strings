@@ -13,9 +13,7 @@ type service struct {
 }
 
 func (s service) Store(id int64, cardNumberId int64, firstName string, lastName string) (Buyer, error) {
-
 	buyer, err := s.repository.Store(id, cardNumberId, firstName, lastName)
-
 	if err != nil {
 		return Buyer{}, err
 	}
