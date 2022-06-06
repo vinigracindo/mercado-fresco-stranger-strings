@@ -57,7 +57,7 @@ func (controller EmployeeController) Store() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req request
 		if err := c.ShouldBindJSON(&req); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 				"error":   err.Error(),
 				"message": "Invalid request",
 			})
