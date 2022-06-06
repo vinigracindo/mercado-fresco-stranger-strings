@@ -5,6 +5,7 @@ import "fmt"
 var listSection []Section
 
 type Repository interface {
+	GetById(id int64) (Section, error)
 	GetAll() ([]Section, error)
 	CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error)
 }
@@ -35,6 +36,22 @@ func (r *repository) CreateSection(sectionNumber int64, currentTemperature int64
 	}
 
 	listSection = append(listSection, section)
+}
+
+func (r *repository) GetById(id int64) (Section, error) {
+	section := Section{}
+	found := false
+
+	for i := range listSection {
+		if listSection[i].Id == id {
+			section = listSection[i]
+			found = true
+		}
+	}
+
+	if !found {
+		return Section{}, fmt.Errorf("Sessão %d não encontrada", id)
+	}
 
 	return section, nil
 }
