@@ -5,7 +5,7 @@ import "fmt"
 var buyers []Buyer = []Buyer{}
 
 type Repository interface {
-	Store(id int64, cardNumberId int64, firstName string, lastName string) (Buyer, error)
+	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
 	GetAll() ([]Buyer, error)
 	GetId(id int64) (*Buyer, error)
 	Update(id int64, cardNumberId int64, firstName string, lastName string) (*Buyer, error)
@@ -18,7 +18,7 @@ func createId() int64 {
 	return int64(len(buyers) + 1)
 }
 
-func (repository) Store(id int64, cardNumberId int64, firstName string, lastName string) (Buyer, error) {
+func (repository) Store(cardNumberId int64, firstName string, lastName string) (Buyer, error) {
 
 	for _, buyer := range buyers {
 		if buyer.CardNumberId == cardNumberId {
@@ -68,7 +68,6 @@ func (repository) Delete(id int64) error {
 	if !deleted {
 		return fmt.Errorf("buyer with id %d not found", id)
 	}
-
 	buyers = append(buyers[:index], buyers[index+1:]...)
 	return nil
 }

@@ -26,9 +26,9 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 			return
 		}
 
-		buyer, err := c.service.Store(req.Id, req.CardNumberId, req.FirstName, req.LastName)
+		buyer, err := c.service.Store(req.CardNumberId, req.FirstName, req.LastName)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			ctx.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
 
@@ -55,7 +55,6 @@ func (c *BuyerController) GetAll() gin.HandlerFunc {
 			ctx.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
-
 		ctx.JSON(http.StatusOK, &buyers)
 	}
 }
