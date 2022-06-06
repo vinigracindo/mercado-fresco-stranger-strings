@@ -3,6 +3,7 @@ package employees
 import "fmt"
 
 var employees = []Employee{}
+var lastId int64 = 1
 
 type Repository interface {
 	GetAll() ([]Employee, error)
@@ -38,7 +39,7 @@ func (repository) GetById(id int64) (Employee, error) {
 }
 
 func (repo repository) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
-	nextId := employees[len(employees)-1].Id + 1
+	nextId := lastId
 	employee := Employee{
 		Id:           nextId,
 		CardNumberId: cardNumberId,
@@ -52,6 +53,7 @@ func (repo repository) Store(cardNumberId string, firstName string, lastName str
 	}
 
 	employees = append(employees, employee)
+	lastId += 1
 	return employee, nil
 }
 
