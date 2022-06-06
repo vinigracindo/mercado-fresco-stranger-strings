@@ -8,7 +8,7 @@ type Repository interface {
 	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
 	GetAll() ([]Buyer, error)
 	GetId(id int64) (*Buyer, error)
-	Update(id int64, cardNumberId int64, firstName string, lastName string) (*Buyer, error)
+	Update(id int64, cardNumberId int64, lastName string) (Buyer, error)
 	Delete(id int64) error
 }
 
@@ -44,16 +44,16 @@ func (repository) GetId(id int64) (*Buyer, error) {
 	return nil, fmt.Errorf("buyer with id %d not found", id)
 }
 
-func (repository) Update(id int64, cardNumberId int64, firstName string, lastName string) (*Buyer, error) {
-	buyerUpdate := Buyer{id, cardNumberId, firstName, lastName}
+func (repository) Update(id int64, cardNumberId int64, lastName string) (Buyer, error) {
 	for i, buyer := range buyers {
 		if buyer.Id == id {
-			buyers[i] = buyerUpdate
-			return &buyerUpdate, nil
+			buyers[i].CardNumberId = cardNumberId
+			buyers[i].LastName = lastName
+			return buyers[i], nil
 		}
 	}
 
-	return nil, fmt.Errorf("buyer with id %d not found", id)
+	return Buyer{}, fmt.Errorf("buyer with id not found")
 }
 
 func (repository) Delete(id int64) error {

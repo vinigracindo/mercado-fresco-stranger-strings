@@ -4,7 +4,7 @@ type Service interface {
 	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
 	GetAll() ([]Buyer, error)
 	GetId(id int64) (*Buyer, error)
-	Update(id int64, cardNumberId int64, firstName string, lastName string) (*Buyer, error)
+	Update(id int64, cardNumberId int64, lastName string) (Buyer, error)
 	Delete(id int64) error
 }
 
@@ -44,10 +44,10 @@ func (s service) GetId(id int64) (*Buyer, error) {
 	return buyer, nil
 }
 
-func (s service) Update(id int64, cardNumberId int64, firstName string, lastName string) (*Buyer, error) {
-	buyer, err := s.repository.Update(id, cardNumberId, firstName, lastName)
+func (s service) Update(id int64, cardNumberId int64, lastName string) (Buyer, error) {
+	buyer, err := s.repository.Update(id, cardNumberId, lastName)
 	if err != nil {
-		return &Buyer{}, err
+		return Buyer{}, err
 	}
 
 	return buyer, nil
@@ -58,6 +58,5 @@ func (s service) Delete(id int64) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

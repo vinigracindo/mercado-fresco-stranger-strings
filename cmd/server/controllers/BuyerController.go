@@ -47,6 +47,11 @@ type request struct {
 	LastName     string `json:"lastName"     binding:"required"`
 }
 
+type requestPatch struct {
+	CardNumberId int64  `json:"cardNumberId" binding:"required"`
+	LastName     string `json:"lastName"     binding:"required"`
+}
+
 func (c *BuyerController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		buyers, err := c.service.GetAll()
@@ -84,16 +89,21 @@ func (c *BuyerController) GetId() gin.HandlerFunc {
 func (c *BuyerController) Update() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
-
-		var req request
-		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest,
-				gin.H{
-					"message": "Invalid request"})
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		var req requestPatch
+		if err := ctx.Bind(&req); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "Invalid request"})
 			return
 		}
 
-		buyer, err := c.service.Update(req.Id, req.CardNumberId, req.FirstName, req.LastName)
+		buyer, err := c.service.Update(id, req.CardNumberId, req.LastName)
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
