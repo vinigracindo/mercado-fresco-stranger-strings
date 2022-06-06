@@ -85,7 +85,7 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 			return
 		}
 		if req.Description == "" {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "o campo descrição é obrigatório"})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "O campo descrição é obrigatório"})
 			return
 		}
 		product, err := c.service.UpdateDescription(int64(int(id)), req.Description)
@@ -94,6 +94,23 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 			return
 		}
 		ctx.JSON(http.StatusOK, product)
+	}
+}
+
+func (c *ProductController) Delete() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id inválido"})
+			return
+		}
+
+		err = c.service.Delete(int64(int(id)))
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusNoContent, gin.H{})
 	}
 }
 

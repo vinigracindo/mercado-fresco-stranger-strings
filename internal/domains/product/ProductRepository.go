@@ -14,6 +14,7 @@ type Repository interface {
 		expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error)
 	LastId() int64
 	UpdateDescription(id int64, description string) (Product, error)
+	Delete(id int64) error
 }
 
 type repository struct {
@@ -66,9 +67,27 @@ func (r *repository) UpdateDescription(id int64, description string) (Product, e
 	}
 
 	if !update {
-		return Product{}, fmt.Errorf("produto %d não foi encontrado", id)
+		return Product{}, fmt.Errorf("O produto com o id %d não foi encontrado", id)
 	}
 	return product, nil
+}
+
+func (r *repository) Delete(id int64) error {
+	deleted := false
+	var index int
+	for i := range listProducts {
+		if listProducts[i].Id == id {
+			index = i
+			deleted = true
+		}
+	}
+
+	if !deleted {
+		return fmt.Errorf("O produto com o id %d não foi encontrado", id)
+	}
+	listProducts = append(listProducts[:index], listProducts[index+1:]...)
+
+	return nil
 }
 
 func CreateRepository() Repository {

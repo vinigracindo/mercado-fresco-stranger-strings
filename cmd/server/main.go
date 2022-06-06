@@ -22,5 +22,6 @@ func main() {
 	productGroup.GET("/:id", productController.GetById())
 	productGroup.POST("/", productController.Create())
 	productGroup.PATCH("/:id", productController.UpdateDescription())
+	productGroup.DELETE("/:id", productController.Delete())
 	router.Run()
 }
