@@ -21,6 +21,7 @@ func main() {
 	sellerRouter.GET("/:id", sellerController.Get())
 	sellerRouter.POST("/", sellerController.CreateSeller())
 	sellerRouter.PATCH("/:id", sellerController.UpdateSeller())
+	sellerRouter.DELETE("/:id", sellerController.DeleteSeller())
 
 	router.Run()
 }
