@@ -3,6 +3,7 @@ package buyer
 import "fmt"
 
 var buyers []Buyer = []Buyer{}
+var id int64 = 0
 
 type Repository interface {
 	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
@@ -10,28 +11,34 @@ type Repository interface {
 	GetId(id int64) (*Buyer, error)
 	Update(id int64, cardNumberId int64, lastName string) (Buyer, error)
 	Delete(id int64) error
+	CreateId() int64
 }
 
 type repository struct{}
 
-func createId() int64 {
-	return int64(len(buyers) + 1)
+func (r *repository) CreateId() int64 {
+	id += 1
+	return id
 }
 
-func (repository) Store(cardNumberId int64, firstName string, lastName string) (Buyer, error) {
+func (r *repository) Store(cardNumberId int64, firstName string, lastName string) (Buyer, error) {
 
-	for _, buyer := range buyers {
-		if buyer.CardNumberId == cardNumberId {
-			return Buyer{}, fmt.Errorf("already exists a buyer with code: %d", cardNumberId)
+	for i := range buyers {
+		if buyers[i].CardNumberId == cardNumberId {
+			return Buyer{}, fmt.Errorf("buyer already registered: %d", cardNumberId)
 		}
 	}
-	newBuyer := Buyer{createId(), cardNumberId, firstName, lastName}
+	newBuyer := Buyer{
+		Id:           r.CreateId(),
+		CardNumberId: cardNumberId,
+		FirstName:    firstName,
+		LastName:     lastName,
+	}
 	buyers = append(buyers, newBuyer)
-
 	return newBuyer, nil
 }
 
-func (repository) GetAll() ([]Buyer, error) {
+func (r *repository) GetAll() ([]Buyer, error) {
 	return buyers, nil
 }
 
