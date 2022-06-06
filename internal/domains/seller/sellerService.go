@@ -4,7 +4,7 @@ type Service interface {
 	GetAll() ([]Seller, error)
 	Get(id int64) (Seller, error)
 	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
-	UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error)
+	UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error)
 	DeleteSeller(id int64) error
 }
 
@@ -43,8 +43,8 @@ func (s *service) CreateSeller(cid int64, companyName, address, telephone string
 	return seller, nil
 }
 
-func (s *service) UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error) {
-	seller, err := s.repository.UpdateSeller(id, cid, companyName, address, telephone)
+func (s *service) UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error) {
+	seller, err := s.repository.UpdateSellerAddresAndTel(id, address, telephone)
 	if err != nil {
 		return Seller{}, err
 	}

@@ -9,7 +9,7 @@ type Repository interface {
 	GetAll() ([]Seller, error)
 	Get(id int64) (Seller, error)
 	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
-	UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error)
+	UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error)
 	creatID() int64
 	DeleteSeller(id int64) error
 }
@@ -58,11 +58,9 @@ func (r *repository) CreateSeller(cid int64, companyName, address, telephone str
 
 }
 
-func (r *repository) UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error) {
+func (r *repository) UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error) {
 	for i, seller := range listSeller {
 		if seller.Id == id {
-			listSeller[i].Cid = cid
-			listSeller[i].CompanyName = companyName
 			listSeller[i].Address = address
 			listSeller[i].Telephone = telephone
 			return listSeller[i], nil

@@ -8,12 +8,18 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 )
 
-type request struct {
+type requestSellerPost struct {
 	Id          int64  `json:"id"`
 	Cid         int64  `json:"cid"`
 	CompanyName string `json:"company_name"`
 	Address     string `json:"address"`
 	Telephone   string `json:"telephone"`
+}
+
+type requestSellerPatch struct {
+	Id        int64  `json:"id"`
+	Address   string `json:"address"`
+	Telephone string `json:"telephone"`
 }
 
 type SellerController struct {
@@ -66,7 +72,7 @@ func (c SellerController) Get() gin.HandlerFunc {
 
 func (c SellerController) CreateSeller() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req request
+		var req requestSellerPost
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 				"error":   err.Error(),
@@ -87,9 +93,9 @@ func (c SellerController) CreateSeller() gin.HandlerFunc {
 	}
 }
 
-func (c SellerController) UpdateSeller() gin.HandlerFunc {
+func (c SellerController) UpdateSellerAddresAndTel() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req request
+		var req requestSellerPatch
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 				"error":   err.Error(),
@@ -97,7 +103,7 @@ func (c SellerController) UpdateSeller() gin.HandlerFunc {
 			})
 			return
 		}
-		seller, err := c.service.UpdateSeller(req.Id, req.Cid, req.CompanyName, req.Address, req.Telephone)
+		seller, err := c.service.UpdateSellerAddresAndTel(req.Id, req.Address, req.Telephone)
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
