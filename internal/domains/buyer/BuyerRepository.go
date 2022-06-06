@@ -12,8 +12,7 @@ type Repository interface {
 	Delete(id int64) error
 }
 
-type repository struct {
-}
+type repository struct{}
 
 func createId() int64 {
 	return int64(len(buyers) + 1)

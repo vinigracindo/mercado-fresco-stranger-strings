@@ -17,15 +17,12 @@ func NewBuyer(service buyer.Service) BuyerController {
 }
 
 func (c *BuyerController) Store() gin.HandlerFunc {
-
 	return func(ctx *gin.Context) {
-
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity,
-				gin.H{
-					"error":   err.Error(),
-					"message": "Campos obrigatórios não preenchidos"})
+			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+				"error":   err.Error(),
+				"message": "Campos obrigatórios não preenchidos"})
 			return
 		}
 
