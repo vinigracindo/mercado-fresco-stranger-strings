@@ -23,8 +23,8 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest,
 				gin.H{
-					"error":   "VALIDATEERR-1",
-					"message": "valor de entrada inválido. por favor revise os dados"})
+					"error":   err.Error(),
+					"message": "Campos obrigatórios não preenchidos"})
 			return
 		}
 

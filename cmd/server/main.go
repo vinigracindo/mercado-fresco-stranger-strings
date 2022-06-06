@@ -10,17 +10,14 @@ func main() {
 
 	router := gin.Default()
 
-	// define o base path
 	groupV1 := router.Group("/api/v1/")
 
-	// Buyer routes
 	buyerRepository := buyer.NewRepository()
 	buyerService := buyer.NewService(buyerRepository)
 	buyerController := controllers.NewBuyer(buyerService)
 
 	groupProduct := groupV1.Group("buyers")
 	groupProduct.GET("/", buyerController.GetAll())
-	//groupProduct.GET("/:id", productController.GetById())
 	groupProduct.POST("/", buyerController.Store())
 
 	router.Run()
