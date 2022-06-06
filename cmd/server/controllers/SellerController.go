@@ -82,7 +82,7 @@ func (c SellerController) CreateSeller() gin.HandlerFunc {
 		}
 		seller, err := c.service.CreateSeller(req.Cid, req.CompanyName, req.Address, req.Telephone)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{
+			ctx.JSON(http.StatusConflict, gin.H{
 				"error": err.Error(),
 			})
 			return
