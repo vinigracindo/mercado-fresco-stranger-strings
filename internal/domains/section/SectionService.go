@@ -2,6 +2,7 @@ package section
 
 type Service interface {
 	GetById(id int64) (Section, error)
+	GetAll() ([]Section, error)
 }
 
 type service struct {
@@ -20,4 +21,12 @@ func (s *service) GetById(id int64) (Section, error) {
 		return Section{}, err
 	}
 	return section, nil
+}
+
+func (s *service) GetAll() ([]Section, error) {
+	listSection, err := s.repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return listSection, nil
 }

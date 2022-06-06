@@ -29,6 +29,12 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 		}
 
 		section, err := c.service.GetById(id)
+	}
+}
+
+func (c *ControllerSection) GetAll() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		section, err := c.service.GetAll()
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),

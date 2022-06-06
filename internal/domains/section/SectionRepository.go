@@ -6,6 +6,7 @@ var listSection []Section
 
 type Repository interface {
 	GetById(id int64) (Section, error)
+	GetAll() ([]Section, error)
 }
 
 type repository struct{}
@@ -30,4 +31,9 @@ func (r *repository) GetById(id int64) (Section, error) {
 	}
 
 	return section, nil
+}
+
+func (r *repository) GetAll() ([]Section, error) {
+	listSection = []Section{}
+	return listSection, nil
 }

@@ -18,6 +18,7 @@ func main() {
 
 	groupSection := groupV1.Group("sections")
 	groupSection.GET("/:id", controllerSection.GetById())
+	groupSection.GET("/", controllerSection.GetAll())
 
 	router.Run()
 }
