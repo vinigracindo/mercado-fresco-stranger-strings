@@ -8,7 +8,7 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 )
 
-type request struct {
+type requestPost struct {
 	Id                 int64 `json:"id"`
 	SectionNumber      int64 `json:"section_number" binding:"required"`
 	CurrentTemperature int64 `json:"current_temperature" binding:"required"`
@@ -18,6 +18,11 @@ type request struct {
 	MaximumCapacity    int64 `json:"maximum_capacity" binding:"required"`
 	WarehouseId        int64 `json:"warehouse_id" binding:"required"`
 	ProductTypeId      int64 `json:"product_type_id" binding:"required"`
+}
+
+type requestPatch struct {
+	Id              int64 `json:"id"`
+	CurrentCapacity int64 `json:"current_capacity" binding:"required"`
 }
 
 type ControllerSection struct {
@@ -56,13 +61,13 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(400, gin.H{
+			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
 
-		var req section.Section
+		var req requestPatch
 		if err := ctx.Bind(&req); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
@@ -88,10 +93,10 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 
 func (c ControllerSection) CreateSection() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req request
+		var req requestPost
 
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 				"error":   err.Error(),
 				"message": "Invalid request",
 			})
@@ -122,7 +127,7 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(400, gin.H{
+			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
