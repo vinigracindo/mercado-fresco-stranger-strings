@@ -100,3 +100,37 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 	}
 
 }
+
+func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		if paramId, check := ctx.Params.Get("id"); check {
+			id, err := strconv.Atoi(paramId)
+
+			var body warehouse.WarehouseModel
+			var patchWh warehouse.WarehouseModel
+
+			if err := ctx.BindJSON(&body); err != nil {
+				ctx.JSON(http.StatusBadRequest, err.Error())
+				return
+			}
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, "erro: internal error")
+				log.Println(err)
+				return
+			}
+
+			patchWh, err = w.service.Update(int64(id), &body)
+
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, err.Error())
+				return
+			}
+
+			ctx.JSON(http.StatusOK, patchWh)
+			return
+		}
+
+		ctx.JSON(http.StatusUnprocessableEntity, "error: id is mandatory")
+	}
+}

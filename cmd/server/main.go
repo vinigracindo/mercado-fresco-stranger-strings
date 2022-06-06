@@ -23,6 +23,7 @@ func main() {
 		routesWarehouse.GET("/:id", warehouseController.GetWarehouseByID())
 		routesWarehouse.POST("/", warehouseController.CreateWarehouse())
 		routesWarehouse.DELETE("/:id", warehouseController.DeleteWarehouse())
+		routesWarehouse.PATCH("/:id", warehouseController.UpdateWarehouse())
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

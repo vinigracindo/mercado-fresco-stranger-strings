@@ -7,6 +7,7 @@ type Service interface {
 	GetAll() ([]WarehouseModel, error)
 	GetById(id int64) (WarehouseModel, error)
 	Delete(id int64) error
+	Update(id int64, wh *WarehouseModel) (WarehouseModel, error)
 	Create(wr *WarehouseModel) (WarehouseModel, error)
 }
 
@@ -54,4 +55,14 @@ func (s service) Delete(id int64) error {
 	}
 
 	return nil
+}
+
+func (s service) Update(id int64, wh *WarehouseModel) (WarehouseModel, error) {
+	parchWh, err := s.repository.Update(id, wh)
+
+	if err != nil {
+		return WarehouseModel{}, err
+	}
+
+	return parchWh, nil
 }
