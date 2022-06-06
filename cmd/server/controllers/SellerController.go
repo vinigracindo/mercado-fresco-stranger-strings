@@ -9,7 +9,7 @@ import (
 )
 
 type requestSellerPost struct {
-	Id          int64  `json:"id, omitempty"`
+	Id          int64  `json:"id"`
 	Cid         int64  `json:"cid" binding:"required"`
 	CompanyName string `json:"company_name" binding:"required"`
 	Address     string `json:"address" binding:"required"`
@@ -17,7 +17,6 @@ type requestSellerPost struct {
 }
 
 type requestSellerPatch struct {
-	Id        int64  `json:"id"`
 	Address   string `json:"address" binding:"required"`
 	Telephone string `json:"telephone" binding:"required"`
 }
@@ -95,6 +94,14 @@ func (c SellerController) CreateSeller() gin.HandlerFunc {
 
 func (c SellerController) UpdateSellerAddresAndTel() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
 		var req requestSellerPatch
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
@@ -103,7 +110,7 @@ func (c SellerController) UpdateSellerAddresAndTel() gin.HandlerFunc {
 			})
 			return
 		}
-		seller, err := c.service.UpdateSellerAddresAndTel(req.Id, req.Address, req.Telephone)
+		seller, err := c.service.UpdateSellerAddresAndTel(id, req.Address, req.Telephone)
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
