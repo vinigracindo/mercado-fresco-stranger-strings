@@ -42,6 +42,7 @@ func (r *repository) creatID() int64 {
 func (r *repository) CreateSeller(cid int64, companyName, address, telephone string) (Seller, error) {
 	seller := Seller{
 		Id:          r.creatID(),
+		Cid:         cid,
 		CompanyName: companyName,
 		Address:     address,
 		Telephone:   telephone,
