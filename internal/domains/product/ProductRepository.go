@@ -35,10 +35,16 @@ func (r repository) Create(id int64, productCode string, description string, wid
 	expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error) {
 	newProduct := Product{id, productCode, description, width, height, length, netWeight,
 		expirationRate, recommendedFreezingTemperature, freezingRate, productTypeId, sellerId}
+
+	for _, product := range listProducts {
+		if product.ProductCode == productCode {
+			return product, fmt.Errorf("O produto com o código %s já foi cadastrado", productCode)
+		}
+	}
 	listProducts = append(listProducts, newProduct)
 	lastId = newProduct.Id
-	return newProduct, nil
 
+	return newProduct, nil
 }
 
 func (r repository) LastId() int64 {
