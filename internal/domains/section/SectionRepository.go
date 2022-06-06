@@ -2,7 +2,8 @@ package section
 
 import "fmt"
 
-var listSection []Section
+var listSection = []Section{}
+var id int64 = 0
 
 type Repository interface {
 	Delete(id int64) error
@@ -10,12 +11,18 @@ type Repository interface {
 	GetById(id int64) (Section, error)
 	GetAll() ([]Section, error)
 	CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error)
+	CreateID() int64
 }
 
 type repository struct{}
 
 func NewRepository() Repository {
 	return &repository{}
+}
+
+func (r repository) CreateID() int64 {
+	id += 1
+	return id
 }
 
 func (r *repository) Delete(id int64) error {
@@ -57,7 +64,7 @@ func (r *repository) UpdateCurrentCapacity(id int64, currentCapacity int64) (Sec
 
 func (r *repository) CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
 	section := Section{
-		Id:                 int64(len(listSection) + 1),
+		Id:                 r.CreateID(),
 		SectionNumber:      sectionNumber,
 		CurrentTemperature: currentTemperature,
 		MinimumTemperature: minimumTemperature,
@@ -97,6 +104,5 @@ func (r *repository) GetById(id int64) (Section, error) {
 }
 
 func (r *repository) GetAll() ([]Section, error) {
-	listSection = []Section{}
 	return listSection, nil
 }
