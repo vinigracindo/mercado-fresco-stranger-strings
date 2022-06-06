@@ -5,6 +5,7 @@ import "fmt"
 var listSection []Section
 
 type Repository interface {
+	UpdateCurrentCapacity(id int64, currentCapacity int64) (Section, error)
 	GetById(id int64) (Section, error)
 	GetAll() ([]Section, error)
 	CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error)
@@ -14,6 +15,24 @@ type repository struct{}
 
 func NewRepository() Repository {
 	return &repository{}
+}
+
+func (r *repository) UpdateCurrentCapacity(id int64, currentCapacity int64) (Section, error) {
+	var section Section
+	updated := false
+
+	for i := range listSection {
+		if listSection[i].Id == id {
+			listSection[i].CurrentCapacity = currentCapacity
+			section = listSection[i]
+			updated = true
+		}
+	}
+
+	if !updated {
+		return Section{}, fmt.Errorf("Section %d not found", id)
+	}
+	return section, nil
 }
 
 func (r *repository) CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {

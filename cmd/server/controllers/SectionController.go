@@ -30,6 +30,18 @@ func NewSection(s section.Service) *ControllerSection {
 	}
 }
 
+func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+	}
+}		
+
 func (c ControllerSection) CreateSection() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req request
@@ -42,6 +54,8 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 			return
 		}
 
+		var req section.Section
+		if err := ctx.Bind(&req); err != nil {
 		response, err := c.service.CreateSection(
 			req.SectionNumber,
 			req.CurrentTemperature,
@@ -71,6 +85,12 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 			return
 		}
 
+		if req.CurrentCapacity == 0 {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "The field CurrentCapacity is required"})
+			return
+		}
+
+		section, err := c.service.UpdateCurrentCapacity(id, req.CurrentCapacity)
 		section, err := c.service.GetById(id)
 	}
 }
@@ -84,6 +104,7 @@ func (c *ControllerSection) GetAll() gin.HandlerFunc {
 			})
 			return
 		}
+		ctx.JSON(http.StatusOK, gin.H{"data": section})
 
 		ctx.JSON(http.StatusOK, gin.H{
 			"data": section,
