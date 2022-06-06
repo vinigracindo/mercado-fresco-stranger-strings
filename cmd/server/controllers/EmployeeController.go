@@ -55,7 +55,7 @@ func (controller EmployeeController) GetById() gin.HandlerFunc {
 
 func (controller EmployeeController) Store() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req requestPost
+		var req requestEmployeePost
 		if err := c.ShouldBindJSON(&req); err != nil {
 			c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 				"error":   err.Error(),
@@ -87,7 +87,7 @@ func (controller EmployeeController) UpdateFullname() gin.HandlerFunc {
 			return
 		}
 
-		var req requestPatch
+		var req requestEmployeePatch
 		if err := c.ShouldBindJSON(&req); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error":   err.Error(),
@@ -130,7 +130,7 @@ func (controller EmployeeController) Delete() gin.HandlerFunc {
 	}
 }
 
-type requestPost struct {
+type requestEmployeePost struct {
 	Id           int64  `json:"id,omitempty"`
 	CardNumberId string `json:"card_number_id" binding:"required"`
 	FirstName    string `json:"first_name" binding:"required"`
@@ -138,7 +138,7 @@ type requestPost struct {
 	WarehouseId  int64  `json:"warehouse_id" binding:"required"`
 }
 
-type requestPatch struct {
+type requestEmployeePatch struct {
 	FirstName string `json:"first_name" binding:"required"`
 	LastName  string `json:"last_name" binding:"required"`
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 )
 
-type requestPost struct {
+type requestSectionPost struct {
 	Id                 int64 `json:"id"`
 	SectionNumber      int64 `json:"section_number" binding:"required"`
 	CurrentTemperature int64 `json:"current_temperature" binding:"required"`
@@ -20,7 +20,7 @@ type requestPost struct {
 	ProductTypeId      int64 `json:"product_type_id" binding:"required"`
 }
 
-type requestPatch struct {
+type requestSectionPatch struct {
 	Id              int64 `json:"id"`
 	CurrentCapacity int64 `json:"current_capacity" binding:"required"`
 }
@@ -67,7 +67,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 			return
 		}
 
-		var req requestPatch
+		var req requestSectionPatch
 		if err := ctx.Bind(&req); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
@@ -93,7 +93,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 
 func (c ControllerSection) CreateSection() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req requestPost
+		var req requestSectionPost
 
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
