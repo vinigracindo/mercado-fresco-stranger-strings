@@ -13,16 +13,17 @@ type Repository interface {
 	Create(id int64, productCode string, description string, width float64, height float64, length float64, netWeight float64,
 		expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error)
 	LastId() int64
+	UpdateDescription(id int64, description string) (Product, error)
 }
 
 type repository struct {
 }
 
-func (r repository) GetAll() ([]Product, error) {
+func (r *repository) GetAll() ([]Product, error) {
 	return listProducts, nil
 }
 
-func (r repository) GetById(id int64) (*Product, error) {
+func (r *repository) GetById(id int64) (*Product, error) {
 	for _, product := range listProducts {
 		if product.Id == id {
 			return &product, nil
@@ -31,7 +32,7 @@ func (r repository) GetById(id int64) (*Product, error) {
 	return nil, fmt.Errorf("O produto com o id %d não foi encontrado", id)
 }
 
-func (r repository) Create(id int64, productCode string, description string, width float64, height float64, length float64, netWeight float64,
+func (r *repository) Create(id int64, productCode string, description string, width float64, height float64, length float64, netWeight float64,
 	expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error) {
 	newProduct := Product{id, productCode, description, width, height, length, netWeight,
 		expirationRate, recommendedFreezingTemperature, freezingRate, productTypeId, sellerId}
@@ -47,8 +48,27 @@ func (r repository) Create(id int64, productCode string, description string, wid
 	return newProduct, nil
 }
 
-func (r repository) LastId() int64 {
+func (r *repository) LastId() int64 {
 	return lastId
+}
+
+func (r *repository) UpdateDescription(id int64, description string) (Product, error) {
+	var product Product
+	update := false
+	for i := range listProducts {
+		currentProd := listProducts[i]
+		if currentProd.Id == id {
+			currentProd.Description = description
+			update = true
+			product = currentProd
+			break
+		}
+	}
+
+	if !update {
+		return Product{}, fmt.Errorf("produto %d não foi encontrado", id)
+	}
+	return product, nil
 }
 
 func CreateRepository() Repository {

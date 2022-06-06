@@ -15,7 +15,7 @@ func CreateProductController(prodService product.Service) *ProductController {
 	return &(ProductController{service: prodService})
 }
 
-func (c ProductController) GetAll() gin.HandlerFunc {
+func (c *ProductController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		products, err := c.service.GetAll()
 		if err != nil {
@@ -49,7 +49,7 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 	}
 }
 
-func (c ProductController) Create() gin.HandlerFunc {
+func (c *ProductController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -69,6 +69,31 @@ func (c ProductController) Create() gin.HandlerFunc {
 			return
 		}
 		ctx.JSON(http.StatusCreated, newProduct)
+	}
+}
+
+func (c *ProductController) UpdateDescription() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Id inválido"})
+			return
+		}
+		var req request
+		if err := ctx.ShouldBindJSON(&req); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		if req.Description == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "o campo descrição é obrigatório"})
+			return
+		}
+		product, err := c.service.UpdateDescription(int64(int(id)), req.Description)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusOK, product)
 	}
 }
 
