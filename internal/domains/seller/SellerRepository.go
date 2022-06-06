@@ -1,5 +1,7 @@
 package seller
 
+import "fmt"
+
 var listSeller []Seller
 
 type Repository interface {
@@ -15,4 +17,14 @@ func NewRepository() Repository {
 func (r *repository) GetAll() ([]Seller, error) {
 	listSeller = []Seller{}
 	return listSeller, nil
+}
+
+func (r *repository) Get(id float64) (Seller, error) {
+	for _, seller := range listSeller {
+		if seller.Id == id {
+			return seller, nil
+		}
+	}
+
+	return Seller{}, fmt.Errorf("seller id %f not found", id)
 }
