@@ -100,6 +100,28 @@ func (controller EmployeeController) Update() gin.HandlerFunc {
 	}
 }
 
+func (controller EmployeeController) Delete() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		err = controller.service.Delete(id)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusNoContent, gin.H{
+			"data": "Employee deleted",
+		})
+	}
+}
+
 type request struct {
 	Id           int64  `json:"id,omitempty"`
 	CardNumberId string `json:"card_number_id" binding:"required"`

@@ -20,6 +20,7 @@ func main() {
 	employeeRouter.GET("/:id", employeeController.Get())
 	employeeRouter.POST("/", employeeController.Store())
 	employeeRouter.PATCH("/:id", employeeController.Update())
+	employeeRouter.DELETE("/:id", employeeController.Delete())
 
 	router.Run()
 }

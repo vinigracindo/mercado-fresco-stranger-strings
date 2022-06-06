@@ -9,6 +9,7 @@ type Repository interface {
 	Get(id int64) (Employee, error)
 	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
 	Update(id int64, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
+	Delete(id int64) error
 }
 
 type repository struct{}
@@ -64,6 +65,16 @@ func (repo repository) Update(id int64, cardNumberId string, firstName string, l
 		}
 	}
 	return Employee{}, fmt.Errorf("employee with id %d not found", id)
+}
+
+func (repo repository) Delete(id int64) error {
+	for i, employee := range employees {
+		if employee.Id == id {
+			employees = append(employees[:i], employees[i+1:]...)
+			return nil
+		}
+	}
+	return fmt.Errorf("employee with id %d not found", id)
 }
 
 func NewRepository() Repository {

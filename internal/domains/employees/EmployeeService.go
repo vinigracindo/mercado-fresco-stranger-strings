@@ -5,6 +5,7 @@ type Service interface {
 	Get(id int64) (Employee, error)
 	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
 	Update(id int64, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
+	Delete(id int64) error
 }
 
 type service struct {
@@ -47,6 +48,16 @@ func (s service) Store(cardNumberId string, firstName string, lastName string, w
 	}
 
 	return employee, nil
+}
+
+func (s service) Delete(id int64) error {
+	err := s.repo.Delete(id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func NewService(r Repository) Service {
