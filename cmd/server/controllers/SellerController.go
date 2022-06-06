@@ -8,12 +8,17 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 )
 
-type request struct {
+type requestSellerPost struct {
 	Id          int64  `json:"id"`
-	Cid         int64  `json:"cid"`
-	CompanyName string `json:"company_name"`
-	Address     string `json:"address"`
-	Telephone   string `json:"telephone"`
+	Cid         int64  `json:"cid" binding:"required"`
+	CompanyName string `json:"company_name" binding:"required"`
+	Address     string `json:"address" binding:"required"`
+	Telephone   string `json:"telephone" binding:"required"`
+}
+
+type requestSellerPatch struct {
+	Address   string `json:"address" binding:"required"`
+	Telephone string `json:"telephone" binding:"required"`
 }
 
 type SellerController struct {
@@ -30,7 +35,7 @@ func (c SellerController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		seller, err := c.service.GetAll()
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
+			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
@@ -42,18 +47,18 @@ func (c SellerController) GetAll() gin.HandlerFunc {
 	}
 }
 
-func (c SellerController) Get() gin.HandlerFunc {
+func (c SellerController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
+			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-		seller, err := c.service.Get(id)
+		seller, err := c.service.GetById(id)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{
+			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
 			return
@@ -66,7 +71,7 @@ func (c SellerController) Get() gin.HandlerFunc {
 
 func (c SellerController) CreateSeller() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req request
+		var req requestSellerPost
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 				"error":   err.Error(),
@@ -76,7 +81,7 @@ func (c SellerController) CreateSeller() gin.HandlerFunc {
 		}
 		seller, err := c.service.CreateSeller(req.Cid, req.CompanyName, req.Address, req.Telephone)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{
+			ctx.JSON(http.StatusConflict, gin.H{
 				"error": err.Error(),
 			})
 			return
@@ -87,9 +92,17 @@ func (c SellerController) CreateSeller() gin.HandlerFunc {
 	}
 }
 
-func (c SellerController) UpdateSeller() gin.HandlerFunc {
+func (c SellerController) UpdateSellerAddresAndTel() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req request
+
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		var req requestSellerPatch
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 				"error":   err.Error(),
@@ -97,7 +110,7 @@ func (c SellerController) UpdateSeller() gin.HandlerFunc {
 			})
 			return
 		}
-		seller, err := c.service.UpdateSeller(req.Id, req.Cid, req.CompanyName, req.Address, req.Telephone)
+		seller, err := c.service.UpdateSellerAddresAndTel(id, req.Address, req.Telephone)
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
@@ -114,16 +127,14 @@ func (c SellerController) DeleteSeller() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
+			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
 		err = c.service.DeleteSeller(id)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusNotFound, gin.H{})
 		}
 		ctx.JSON(http.StatusNoContent, gin.H{
 			"data": "Seller deleted",

@@ -18,9 +18,9 @@ func main() {
 	sellerRouter := v1.Group("/seller")
 
 	sellerRouter.GET("/", sellerController.GetAll())
-	sellerRouter.GET("/:id", sellerController.Get())
+	sellerRouter.GET("/:id", sellerController.GetById())
 	sellerRouter.POST("/", sellerController.CreateSeller())
-	sellerRouter.PATCH("/:id", sellerController.UpdateSeller())
+	sellerRouter.PATCH("/:id", sellerController.UpdateSellerAddresAndTel())
 	sellerRouter.DELETE("/:id", sellerController.DeleteSeller())
 
 	router.Run()
