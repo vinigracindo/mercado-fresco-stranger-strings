@@ -4,6 +4,7 @@ type Service interface {
 	GetAll() ([]Seller, error)
 	Get(id int64) (Seller, error)
 	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
+	UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error)
 }
 
 type service struct {
@@ -35,6 +36,14 @@ func (s *service) Get(id int64) (Seller, error) {
 
 func (s *service) CreateSeller(cid int64, companyName, address, telephone string) (Seller, error) {
 	seller, err := s.repository.CreateSeller(cid, companyName, address, telephone)
+	if err != nil {
+		return Seller{}, err
+	}
+	return seller, nil
+}
+
+func (s *service) UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error) {
+	seller, err := s.repository.UpdateSeller(id, cid, companyName, address, telephone)
 	if err != nil {
 		return Seller{}, err
 	}

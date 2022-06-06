@@ -86,3 +86,27 @@ func (c SellerController) CreateSeller() gin.HandlerFunc {
 		})
 	}
 }
+
+func (c SellerController) UpdateSeller() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var req request
+		if err := ctx.ShouldBindJSON(&req); err != nil {
+			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+				"error":   err.Error(),
+				"message": "invalid request",
+			})
+			return
+		}
+		seller, err := c.service.UpdateSeller(req.Id, req.Cid, req.CompanyName, req.Address, req.Telephone)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": seller,
+		})
+	}
+
+}

@@ -9,6 +9,7 @@ type Repository interface {
 	GetAll() ([]Seller, error)
 	Get(id int64) (Seller, error)
 	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
+	UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error)
 	creatID() int64
 }
 
@@ -55,4 +56,17 @@ func (r *repository) CreateSeller(cid int64, companyName, address, telephone str
 	listSeller = append(listSeller, seller)
 	return seller, nil
 
+}
+
+func (r *repository) UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error) {
+	for i, seller := range listSeller {
+		if seller.Id == id {
+			listSeller[i].Cid = cid
+			listSeller[i].CompanyName = companyName
+			listSeller[i].Address = address
+			listSeller[i].Telephone = telephone
+			return listSeller[i], nil
+		}
+	}
+	return Seller{}, fmt.Errorf("seller with id %d not found", id)
 }
