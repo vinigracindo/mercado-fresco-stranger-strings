@@ -3,12 +3,15 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 )
 
 func main() {
+
 	router := gin.Default()
+
 
 	groupV1 := router.Group("api/v1")
 
@@ -35,6 +38,19 @@ func main() {
 	employeeGroup.POST("/", employeeController.Store())
 	employeeGroup.PATCH("/:id", employeeController.UpdateFullname())
 	employeeGroup.DELETE("/:id", employeeController.Delete())
+  
+  // Product routes
+	productRepository := product.CreateRepository()
+	productService := product.CreateService(productRepository)
+	productController := controllers.CreateProductController(productService)
+
+	productGroup := groupV1.Group("/products")
+	productGroup.GET("/", productController.GetAll())
+	productGroup.GET("/:id", productController.GetById())
+	productGroup.POST("/", productController.Create())
+	productGroup.PATCH("/:id", productController.UpdateDescription())
+	productGroup.DELETE("/:id", productController.Delete())
+
 
 	router.Run()
 }
