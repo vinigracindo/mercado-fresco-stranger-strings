@@ -2,8 +2,6 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
@@ -11,11 +9,11 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
 )
 
 func main() {
-
 	router := gin.Default()
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
