@@ -11,6 +11,7 @@ type Repository interface {
 	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
 	UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error)
 	creatID() int64
+	DeleteSeller(id int64) error
 }
 
 type repository struct{}
@@ -69,4 +70,14 @@ func (r *repository) UpdateSeller(id int64, cid int64, companyName, address, tel
 		}
 	}
 	return Seller{}, fmt.Errorf("seller with id %d not found", id)
+}
+
+func (r *repository) DeleteSeller(id int64) error {
+	for i, seller := range listSeller {
+		if seller.Id == id {
+			listSeller = append(listSeller[:i], listSeller[i+1:]...)
+			return nil
+		}
+	}
+	return fmt.Errorf("seller with id %d", id)
 }

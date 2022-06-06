@@ -5,6 +5,7 @@ type Service interface {
 	Get(id int64) (Seller, error)
 	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
 	UpdateSeller(id int64, cid int64, companyName, address, telephone string) (Seller, error)
+	DeleteSeller(id int64) error
 }
 
 type service struct {
@@ -48,4 +49,13 @@ func (s *service) UpdateSeller(id int64, cid int64, companyName, address, teleph
 		return Seller{}, err
 	}
 	return seller, nil
+}
+
+func (s *service) DeleteSeller(id int64) error {
+	err := s.repository.DeleteSeller(id)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -108,5 +108,25 @@ func (c SellerController) UpdateSeller() gin.HandlerFunc {
 			"data": seller,
 		})
 	}
+}
 
+func (c SellerController) DeleteSeller() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		err = c.service.DeleteSeller(id)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+		}
+		ctx.JSON(http.StatusNoContent, gin.H{
+			"data": "Seller deleted",
+		})
+	}
 }
