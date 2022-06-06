@@ -8,8 +8,7 @@ type Repository interface {
 	Store(id int64, cardNumberId int64, firstName string, lastName string) (Buyer, error)
 }
 
-type repository struct {
-}
+type repository struct{}
 
 func createId() int64 {
 	return int64(len(buyers) + 1)

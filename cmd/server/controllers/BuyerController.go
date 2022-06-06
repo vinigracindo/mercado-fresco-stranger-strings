@@ -16,15 +16,12 @@ func NewBuyer(service buyer.Service) BuyerController {
 }
 
 func (c *BuyerController) Store() gin.HandlerFunc {
-
 	return func(ctx *gin.Context) {
-
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest,
-				gin.H{
-					"error":   "VALIDATEERR-1",
-					"message": "valor de entrada inválido. por favor revise os dados"})
+			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+				"error":   err.Error(),
+				"message": "Campos obrigatórios não preenchidos"})
 			return
 		}
 
@@ -35,7 +32,7 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 		}
 
 		ctx.JSON(
-			http.StatusOK,
+			http.StatusCreated,
 			gin.H{
 				"data": buyer,
 			})
