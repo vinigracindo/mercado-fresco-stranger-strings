@@ -34,7 +34,7 @@ func (s *service) Get(id int64) (Seller, error) {
 }
 
 func (s *service) CreateSeller(cid int64, companyName, address, telephone string) (Seller, error) {
-	seller, err := s.repository.CreateSeller(cid, companyName, address, telephone)(Seller, error)
+	seller, err := s.repository.CreateSeller(cid, companyName, address, telephone)
 	if err != nil {
 		return Seller{}, err
 	}

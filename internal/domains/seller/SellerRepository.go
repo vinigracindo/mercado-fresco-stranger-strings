@@ -3,11 +3,13 @@ package seller
 import "fmt"
 
 var listSeller []Seller
+var id int64 = 0
 
 type Repository interface {
 	GetAll() ([]Seller, error)
 	Get(id int64) (Seller, error)
 	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
+	creatID() int64
 }
 
 type repository struct{}
@@ -31,17 +33,23 @@ func (r *repository) Get(id int64) (Seller, error) {
 	return Seller{}, fmt.Errorf("seller id %d not found", id)
 }
 
+func (r *repository) creatID() int64 {
+	id += 1
+	return id
+}
+
 func (r *repository) CreateSeller(cid int64, companyName, address, telephone string) (Seller, error) {
-	nextId := seller[len(seller)-1].Id + 1
 	seller := Seller{
-		Id:          nextId,
+		Id:          r.creatID(),
 		CompanyName: companyName,
 		Address:     address,
 		Telephone:   telephone,
 	}
 
-	if !r.CidIsUnique(Cid) {
-		return Seller{}, fmt.Errorf("cid %s is alredy in use", cid)
+	for i := range listSeller {
+		if listSeller[i].Cid == seller.Cid {
+			return Seller{}, fmt.Errorf("Alredy a company with id %d", seller.Cid)
+		}
 	}
 
 	listSeller = append(listSeller, seller)
