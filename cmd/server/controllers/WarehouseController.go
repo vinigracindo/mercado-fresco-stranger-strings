@@ -25,7 +25,7 @@ func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 		var wh warehouse.WarehouseModel
 
 		if err := ctx.BindJSON(&wh); err != nil {
-			ctx.JSON(http.StatusBadRequest, err.Error())
+			ctx.JSON(http.StatusUnprocessableEntity, err.Error())
 			return
 		}
 
@@ -95,7 +95,7 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 				return
 			}
 
-			ctx.JSON(http.StatusNoContent, gin.H{})
+			ctx.JSON(http.StatusNotFound, gin.H{})
 		}
 	}
 
