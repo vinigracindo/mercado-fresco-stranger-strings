@@ -127,9 +127,7 @@ func (c SellerController) DeleteSeller() gin.HandlerFunc {
 		}
 		err = c.service.DeleteSeller(id)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(http.StatusNotFound, gin.H{})
 		}
 		ctx.JSON(http.StatusNoContent, gin.H{
 			"data": "Seller deleted",
