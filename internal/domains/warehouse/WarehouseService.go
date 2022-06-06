@@ -7,8 +7,8 @@ type Service interface {
 	GetAll() ([]WarehouseModel, error)
 	GetById(id int64) (WarehouseModel, error)
 	Delete(id int64) error
-	Update(id int64, wh *WarehouseModel) (WarehouseModel, error)
-	Create(wr *WarehouseModel) (WarehouseModel, error)
+	Update(id int64, adress, tel, code string, mintemp float64, mincap int64) (WarehouseModel, error)
+	Create(adress, tel, code string, mintemp float64, mincap int64) (WarehouseModel, error)
 }
 
 func NewService(r Repository) Service {
@@ -17,8 +17,16 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s service) Create(new *WarehouseModel) (WarehouseModel, error) {
-	wh, err := s.repository.Store(new)
+func (s service) Create(adress, tel, code string, mintemp float64, mincap int64) (WarehouseModel, error) {
+	new := WarehouseModel{
+		Address:            adress,
+		Telephone:          tel,
+		WarehouseCode:      code,
+		MinimunCapacity:    mincap,
+		MinimunTemperature: mintemp,
+	}
+
+	wh, err := s.repository.Store(&new)
 
 	if err != nil {
 		return WarehouseModel{}, err
@@ -57,8 +65,16 @@ func (s service) Delete(id int64) error {
 	return nil
 }
 
-func (s service) Update(id int64, wh *WarehouseModel) (WarehouseModel, error) {
-	parchWh, err := s.repository.Update(id, wh)
+func (s service) Update(id int64, adress, tel, code string, mintemp float64, mincap int64) (WarehouseModel, error) {
+	wh := WarehouseModel{
+		Address:            adress,
+		Telephone:          tel,
+		WarehouseCode:      code,
+		MinimunCapacity:    mincap,
+		MinimunTemperature: mintemp,
+	}
+
+	parchWh, err := s.repository.Update(id, &wh)
 
 	if err != nil {
 		return WarehouseModel{}, err

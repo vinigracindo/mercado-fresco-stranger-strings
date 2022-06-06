@@ -9,6 +9,14 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
 )
 
+type RequestWarehouse struct {
+	Address            string  `json:"address"`
+	Telephone          string  `json:"telephone"`
+	WarehouseCode      string  `json:"warehouse_code,require"`
+	MinimunCapacity    int64   `json:"minimun_capacity"`
+	MinimunTemperature float64 `json:"minimun_temperature"`
+}
+
 type Warehouse struct {
 	service warehouse.Service
 }
@@ -22,14 +30,14 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		var wh warehouse.WarehouseModel
+		var wh RequestWarehouse
 
 		if err := ctx.BindJSON(&wh); err != nil {
 			ctx.JSON(http.StatusUnprocessableEntity, err.Error())
 			return
 		}
 
-		newWh, err := w.service.Create(&wh)
+		newWh, err := w.service.Create(wh.Address, wh.Telephone, wh.WarehouseCode, wh.MinimunTemperature, wh.MinimunCapacity)
 
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, err.Error())
@@ -106,7 +114,7 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 		if paramId, check := ctx.Params.Get("id"); check {
 			id, err := strconv.Atoi(paramId)
 
-			var body warehouse.WarehouseModel
+			var body RequestWarehouse
 			var patchWh warehouse.WarehouseModel
 
 			if err := ctx.BindJSON(&body); err != nil {
@@ -120,7 +128,7 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 				return
 			}
 
-			patchWh, err = w.service.Update(int64(id), &body)
+			patchWh, err = w.service.Update(int64(id), body.Address, body.Telephone, body.WarehouseCode, body.MinimunTemperature, body.MinimunCapacity)
 
 			if err != nil {
 				ctx.JSON(http.StatusBadRequest, err.Error())
