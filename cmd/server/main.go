@@ -2,12 +2,11 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
 	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/docs"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
@@ -16,7 +15,6 @@ import (
 )
 
 func main() {
-
 	router := gin.Default()
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
@@ -84,7 +82,7 @@ func main() {
 	sellerRouter.PATCH("/:id", sellerController.UpdateSellerAddresAndTel())
 	sellerRouter.DELETE("/:id", sellerController.DeleteSeller())
 
-  //Buyer routes
+	//Buyer routes
 	buyerRepository := buyer.NewRepository()
 	buyerService := buyer.NewService(buyerRepository)
 	buyerController := controllers.NewBuyer(buyerService)
