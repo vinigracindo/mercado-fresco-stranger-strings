@@ -76,7 +76,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 		}
 
 		if req.CurrentCapacity == 0 {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "The field CurrentCapacity is required"})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "The field CurrentCapacity is required "})
 			return
 		}
 
