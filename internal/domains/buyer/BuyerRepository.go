@@ -22,7 +22,7 @@ func (repository) Store(id int64, cardNumberId int64, firstName string, lastName
 
 	for _, buyer := range buyers {
 		if buyer.CardNumberId == cardNumberId {
-			return Buyer{}, fmt.Errorf("comprador já está cadastrado")
+			return Buyer{}, fmt.Errorf("already exists a buyer with code: %d", cardNumberId)
 		}
 	}
 	newBuyer := Buyer{createId(), cardNumberId, firstName, lastName}
@@ -41,7 +41,7 @@ func (repository) GetId(id int64) (*Buyer, error) {
 			return &buyer, nil
 		}
 	}
-	return nil, fmt.Errorf("o comprador do id %d não foi encontrado", id)
+	return nil, fmt.Errorf("buyer with id %d not found", id)
 }
 
 func (repository) Update(id int64, cardNumberId int64, firstName string, lastName string) (*Buyer, error) {
@@ -53,7 +53,7 @@ func (repository) Update(id int64, cardNumberId int64, firstName string, lastNam
 		}
 	}
 
-	return nil, fmt.Errorf("não foi possível alterar, id %d não encontrado", id)
+	return nil, fmt.Errorf("buyer with id %d not found", id)
 }
 
 func (repository) Delete(id int64) error {
@@ -66,7 +66,7 @@ func (repository) Delete(id int64) error {
 		}
 	}
 	if !deleted {
-		return fmt.Errorf("comprador %d nao encontrado", id)
+		return fmt.Errorf("buyer with id %d not found", id)
 	}
 
 	buyers = append(buyers[:index], buyers[index+1:]...)

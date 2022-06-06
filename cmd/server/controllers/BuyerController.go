@@ -22,7 +22,7 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 				"error":   err.Error(),
-				"message": "Campos obrigatórios não preenchidos"})
+				"message": "Invalid request"})
 			return
 		}
 
@@ -90,7 +90,7 @@ func (c *BuyerController) Update() gin.HandlerFunc {
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest,
 				gin.H{
-					"message": "valor de entrada inválido. por favor revise os dados"})
+					"message": "Invalid request"})
 			return
 		}
 
