@@ -9,11 +9,11 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
 )
 
 func main() {
-
 	router := gin.Default()
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
@@ -68,6 +68,18 @@ func main() {
 	warehouseGroup.PATCH("/:id", warehouseController.UpdateWarehouse())
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
+	//Seller
+	sellerRepository := seller.NewRepository()
+	sellerService := seller.NewService(sellerRepository)
+	sellerController := controllers.NewSeller(sellerService)
+	sellerRouter := groupV1.Group("/seller")
+
+	sellerRouter.GET("/", sellerController.GetAll())
+	sellerRouter.GET("/:id", sellerController.GetById())
+	sellerRouter.POST("/", sellerController.CreateSeller())
+	sellerRouter.PATCH("/:id", sellerController.UpdateSellerAddresAndTel())
+	sellerRouter.DELETE("/:id", sellerController.DeleteSeller())
 
 	router.Run()
 }
