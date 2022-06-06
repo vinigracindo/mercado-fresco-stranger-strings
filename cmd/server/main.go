@@ -19,7 +19,7 @@ func main() {
 	employeeRouter.GET("/", employeeController.GetAll())
 	employeeRouter.GET("/:id", employeeController.GetById())
 	employeeRouter.POST("/", employeeController.Store())
-	employeeRouter.PATCH("/:id", employeeController.Update())
+	employeeRouter.PATCH("/:id", employeeController.UpdateFullname())
 	employeeRouter.DELETE("/:id", employeeController.Delete())
 
 	router.Run()

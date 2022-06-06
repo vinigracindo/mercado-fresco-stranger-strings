@@ -77,7 +77,7 @@ func (controller EmployeeController) Store() gin.HandlerFunc {
 	}
 }
 
-func (controller EmployeeController) Update() gin.HandlerFunc {
+func (controller EmployeeController) UpdateFullname() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 		if err != nil {
