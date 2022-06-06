@@ -6,7 +6,7 @@ var employees = []Employee{}
 
 type Repository interface {
 	GetAll() ([]Employee, error)
-	Get(id int64) (Employee, error)
+	GetById(id int64) (Employee, error)
 	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
 	Update(id int64, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
 	Delete(id int64) error
@@ -27,7 +27,7 @@ func (repository) GetAll() ([]Employee, error) {
 	return employees, nil
 }
 
-func (repository) Get(id int64) (Employee, error) {
+func (repository) GetById(id int64) (Employee, error) {
 	for _, employee := range employees {
 		if employee.Id == id {
 			return employee, nil

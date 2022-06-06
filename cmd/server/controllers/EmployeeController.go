@@ -31,7 +31,7 @@ func (controller EmployeeController) GetAll() gin.HandlerFunc {
 	}
 }
 
-func (controller EmployeeController) Get() gin.HandlerFunc {
+func (controller EmployeeController) GetById() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 		if err != nil {
@@ -40,7 +40,7 @@ func (controller EmployeeController) Get() gin.HandlerFunc {
 			})
 			return
 		}
-		employee, err := controller.service.Get(id)
+		employee, err := controller.service.GetById(id)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
