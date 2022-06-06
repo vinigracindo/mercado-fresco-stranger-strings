@@ -9,17 +9,17 @@ import (
 )
 
 type requestSellerPost struct {
-	Id          int64  `json:"id"`
-	Cid         int64  `json:"cid"`
-	CompanyName string `json:"company_name"`
-	Address     string `json:"address"`
-	Telephone   string `json:"telephone"`
+	Id          int64  `json:"id, omitempty"`
+	Cid         int64  `json:"cid" binding:"required"`
+	CompanyName string `json:"company_name" binding:"required"`
+	Address     string `json:"address" binding:"required"`
+	Telephone   string `json:"telephone" binding:"required"`
 }
 
 type requestSellerPatch struct {
 	Id        int64  `json:"id"`
-	Address   string `json:"address"`
-	Telephone string `json:"telephone"`
+	Address   string `json:"address" binding:"required"`
+	Telephone string `json:"telephone" binding:"required"`
 }
 
 type SellerController struct {
