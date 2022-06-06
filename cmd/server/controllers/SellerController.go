@@ -36,7 +36,7 @@ func (c SellerController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		seller, err := c.service.GetAll()
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
+			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
