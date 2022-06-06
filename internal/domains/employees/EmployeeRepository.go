@@ -36,8 +36,9 @@ func (repository) Get(id int64) (Employee, error) {
 }
 
 func (repo repository) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+	nextId := employees[len(employees)-1].Id + 1
 	employee := Employee{
-		Id:           int64(len(employees) + 1),
+		Id:           nextId,
 		CardNumberId: cardNumberId,
 		FirstName:    firstName,
 		LastName:     lastName,
