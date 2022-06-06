@@ -128,7 +128,7 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 				return
 			}
 
-			patchWh, err = w.service.Update(int64(id), body.Address, body.Telephone, body.WarehouseCode, body.MinimunTemperature, body.MinimunCapacity)
+			patchWh, err = w.service.UpdateTempAndCap(int64(id), body.Address, body.Telephone, body.WarehouseCode, body.MinimunTemperature, body.MinimunCapacity)
 
 			if err != nil {
 				ctx.JSON(http.StatusBadRequest, err.Error())

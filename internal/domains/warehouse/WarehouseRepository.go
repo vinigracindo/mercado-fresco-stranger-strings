@@ -71,18 +71,6 @@ func (w repository) Update(id int64, patchwh *WarehouseModel) (WarehouseModel, e
 		}
 
 		if wh[i].Id == id {
-			if patchwh.Address != "" {
-				wh[i].Address = patchwh.Address
-			}
-
-			if patchwh.Telephone != "" {
-				wh[i].Telephone = patchwh.Telephone
-			}
-
-			if patchwh.WarehouseCode != "" {
-				wh[i].WarehouseCode = patchwh.WarehouseCode
-			}
-
 			if patchwh.MinimunCapacity != 0 {
 				wh[i].MinimunCapacity = patchwh.MinimunCapacity
 			}
