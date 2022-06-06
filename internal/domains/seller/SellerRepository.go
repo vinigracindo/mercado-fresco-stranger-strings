@@ -2,7 +2,7 @@ package seller
 
 import "fmt"
 
-var listSeller []Seller
+var listSeller = []Seller{}
 var id int64 = 0
 
 type Repository interface {
@@ -21,7 +21,6 @@ func NewRepository() Repository {
 }
 
 func (r *repository) GetAll() ([]Seller, error) {
-	listSeller = []Seller{}
 	return listSeller, nil
 }
 
