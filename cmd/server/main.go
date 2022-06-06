@@ -18,6 +18,7 @@ func main() {
 	sellerRouter := v1.Group("/seller")
 
 	sellerRouter.GET("/", sellerController.GetAll())
+	sellerRouter.GET("/:id", sellerController.GET())
 
 	router.Run()
 }
