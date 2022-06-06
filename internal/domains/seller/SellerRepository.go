@@ -77,5 +77,5 @@ func (r *repository) DeleteSeller(id int64) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("seller with id %d", id)
+	return fmt.Errorf("seller with id %d not found", id)
 }
