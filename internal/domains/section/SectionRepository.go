@@ -36,6 +36,7 @@ func (r *repository) CreateSection(sectionNumber int64, currentTemperature int64
 	}
 
 	listSection = append(listSection, section)
+	return section, nil
 }
 
 func (r *repository) GetById(id int64) (Section, error) {
