@@ -8,6 +8,8 @@ type Repository interface {
 	Store(id int64, cardNumberId int64, firstName string, lastName string) (Buyer, error)
 	GetAll() ([]Buyer, error)
 	GetId(id int64) (*Buyer, error)
+	Update(id int64, cardNumberId int64, firstName string, lastName string) (*Buyer, error)
+	Delete(id int64) error
 }
 
 type repository struct {
@@ -41,6 +43,35 @@ func (repository) GetId(id int64) (*Buyer, error) {
 		}
 	}
 	return nil, fmt.Errorf("o comprador do id %d não foi encontrado", id)
+}
+
+func (repository) Update(id int64, cardNumberId int64, firstName string, lastName string) (*Buyer, error) {
+	buyerUpdate := Buyer{id, cardNumberId, firstName, lastName}
+	for i, buyer := range buyers {
+		if buyer.Id == id {
+			buyers[i] = buyerUpdate
+			return &buyerUpdate, nil
+		}
+	}
+
+	return nil, fmt.Errorf("não foi possível alterar, id %d não encontrado", id)
+}
+
+func (repository) Delete(id int64) error {
+	deleted := false
+	var index int
+	for i := range buyers {
+		if buyers[i].Id == id {
+			index = i
+			deleted = true
+		}
+	}
+	if !deleted {
+		return fmt.Errorf("comprador %d nao encontrado", id)
+	}
+
+	buyers = append(buyers[:index], buyers[index+1:]...)
+	return nil
 }
 
 func NewRepository() Repository {

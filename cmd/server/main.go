@@ -22,6 +22,8 @@ func main() {
 	groupProduct.GET("/", buyerController.GetAll())
 	groupProduct.GET("/:id", buyerController.GetId())
 	groupProduct.POST("/", buyerController.Store())
+	groupProduct.PATCH("/", buyerController.Update())
+	groupProduct.DELETE("/:id", buyerController.Delete())
 
 	router.Run()
 }
