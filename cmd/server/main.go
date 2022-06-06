@@ -9,6 +9,7 @@ import (
 func main() {
 
 	router := gin.Default()
+
 	groupV1 := router.Group("api/v1/")
 
 	// Section routes
@@ -17,6 +18,7 @@ func main() {
 	controllerSection := controllers.NewSection(serviceSection)
 
 	groupSection := groupV1.Group("sections")
+	groupSection.POST("/", controllerSection.CreateSection())
 	groupSection.GET("/:id", controllerSection.GetById())
 	groupSection.GET("/", controllerSection.GetAll())
 
