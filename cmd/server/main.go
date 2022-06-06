@@ -19,6 +19,7 @@ func main() {
 
 	groupSection := groupV1.Group("sections")
 	groupSection.POST("/", controllerSection.CreateSection())
+	groupSection.GET("/", controllerSection.GetAll())
 
 	router.Run()
 }

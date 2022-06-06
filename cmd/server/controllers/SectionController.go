@@ -59,3 +59,19 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 		ctx.JSON(http.StatusCreated, &response)
 	}
 }
+
+func (c *ControllerSection) GetAll() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		section, err := c.service.GetAll()
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": section,
+		})
+	}
+}

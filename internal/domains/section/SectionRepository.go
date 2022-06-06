@@ -5,6 +5,7 @@ import "fmt"
 var listSection []Section
 
 type Repository interface {
+	GetAll() ([]Section, error)
 	CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error)
 }
 
@@ -36,4 +37,9 @@ func (r *repository) CreateSection(sectionNumber int64, currentTemperature int64
 	listSection = append(listSection, section)
 
 	return section, nil
+}
+
+func (r *repository) GetAll() ([]Section, error) {
+	listSection = []Section{}
+	return listSection, nil
 }
