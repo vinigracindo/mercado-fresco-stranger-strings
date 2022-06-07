@@ -6,6 +6,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
 	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/docs"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
@@ -69,7 +70,7 @@ func main() {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	//Seller
+	//Seller routes
 	sellerRepository := seller.NewRepository()
 	sellerService := seller.NewService(sellerRepository)
 	sellerController := controllers.NewSeller(sellerService)
@@ -80,6 +81,18 @@ func main() {
 	sellerRouter.POST("/", sellerController.CreateSeller())
 	sellerRouter.PATCH("/:id", sellerController.UpdateSellerAddresAndTel())
 	sellerRouter.DELETE("/:id", sellerController.DeleteSeller())
+
+	//Buyer routes
+	buyerRepository := buyer.NewRepository()
+	buyerService := buyer.NewService(buyerRepository)
+	buyerController := controllers.NewBuyer(buyerService)
+
+	groupProduct := groupV1.Group("buyers")
+	groupProduct.GET("/", buyerController.GetAll())
+	groupProduct.GET("/:id", buyerController.GetId())
+	groupProduct.POST("/", buyerController.Store())
+	groupProduct.PATCH("/", buyerController.Update())
+	groupProduct.DELETE("/:id", buyerController.Delete())
 
 	router.Run()
 }
