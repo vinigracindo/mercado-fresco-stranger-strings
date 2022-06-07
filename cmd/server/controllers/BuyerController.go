@@ -18,7 +18,7 @@ func NewBuyer(service buyer.Service) BuyerController {
 
 func (c *BuyerController) Store() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req request
+		var req requestBuyerPost
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 				"error":   err.Error(),
@@ -40,14 +40,13 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 	}
 }
 
-type request struct {
-	Id           int64  `json:"id"`
+type requestBuyerPost struct {
 	CardNumberId int64  `json:"cardNumberId" binding:"required"`
 	FirstName    string `json:"firstName"    binding:"required"`
 	LastName     string `json:"lastName"     binding:"required"`
 }
 
-type requestPatch struct {
+type requestBuyerPatch struct {
 	CardNumberId int64  `json:"cardNumberId" binding:"required"`
 	LastName     string `json:"lastName"     binding:"required"`
 }
@@ -96,7 +95,7 @@ func (c *BuyerController) Update() gin.HandlerFunc {
 			})
 			return
 		}
-		var req requestPatch
+		var req requestBuyerPatch
 		if err := ctx.Bind(&req); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"message": "Invalid request"})
