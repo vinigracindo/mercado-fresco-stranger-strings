@@ -2,16 +2,20 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
+	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/docs"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
 )
 
 func main() {
-
 	router := gin.Default()
-
+	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	groupV1 := router.Group("api/v1")
 
@@ -38,8 +42,8 @@ func main() {
 	employeeGroup.POST("/", employeeController.Store())
 	employeeGroup.PATCH("/:id", employeeController.UpdateFullname())
 	employeeGroup.DELETE("/:id", employeeController.Delete())
-  
-  // Product routes
+
+	// Product routes
 	productRepository := product.CreateRepository()
 	productService := product.CreateService(productRepository)
 	productController := controllers.CreateProductController(productService)
@@ -51,6 +55,31 @@ func main() {
 	productGroup.PATCH("/:id", productController.UpdateDescription())
 	productGroup.DELETE("/:id", productController.Delete())
 
+	//Warehouse routes
+	warehouseRepository := warehouse.NewRepository()
+	warehouseService := warehouse.NewService(warehouseRepository)
+	warehouseController := controllers.NewWarehouse(warehouseService)
+
+	warehouseGroup := groupV1.Group("/warehouses")
+	warehouseGroup.GET("/", warehouseController.GetAllWarehouse())
+	warehouseGroup.GET("/:id", warehouseController.GetWarehouseByID())
+	warehouseGroup.POST("/", warehouseController.CreateWarehouse())
+	warehouseGroup.DELETE("/:id", warehouseController.DeleteWarehouse())
+	warehouseGroup.PATCH("/:id", warehouseController.UpdateWarehouse())
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
+	//Seller
+	sellerRepository := seller.NewRepository()
+	sellerService := seller.NewService(sellerRepository)
+	sellerController := controllers.NewSeller(sellerService)
+	sellerRouter := groupV1.Group("/seller")
+
+	sellerRouter.GET("/", sellerController.GetAll())
+	sellerRouter.GET("/:id", sellerController.GetById())
+	sellerRouter.POST("/", sellerController.CreateSeller())
+	sellerRouter.PATCH("/:id", sellerController.UpdateSellerAddresAndTel())
+	sellerRouter.DELETE("/:id", sellerController.DeleteSeller())
 
 	router.Run()
 }
