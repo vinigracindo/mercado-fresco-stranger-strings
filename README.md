@@ -20,5 +20,5 @@ go run main.go
 | Name                                                                  | Version   | Type       |
 | --------------------------------------------------------------------- | --------- | ---------- |
 | [go](https://go.dev/)                                                 | `v1.18`   | core       |
-| [gofiber/fiber/v2](github.com/gin-gonic/gin)                          | `v1.8.0`  | core       |
+| [gin-gonic/gin](https://github.com/gin-gonic/gin)                     | `v1.8.0`  | core       |
 | [joho/godotenv](https://github.com/joho/godotenv)                     | `v1.4.0`  | config     |
