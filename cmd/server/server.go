@@ -1,6 +1,8 @@
-package main
+package server
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -14,9 +16,18 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
 )
 
-func main() {
+type APIServer struct{}
+
+func NewAPIServer() APIServer {
+	return APIServer{}
+}
+
+func (api *APIServer) Run(port int) {
 	router := gin.Default()
+
+	// Swagger
 	docs.SwaggerInfo.BasePath = "/api/v1"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	groupV1 := router.Group("api/v1")
 
@@ -68,8 +79,6 @@ func main() {
 	warehouseGroup.DELETE("/:id", warehouseController.DeleteWarehouse())
 	warehouseGroup.PATCH("/:id", warehouseController.UpdateWarehouse())
 
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-
 	//Seller routes
 	sellerRepository := seller.NewRepository()
 	sellerService := seller.NewService(sellerRepository)
@@ -94,5 +103,5 @@ func main() {
 	groupProduct.PATCH("/", buyerController.Update())
 	groupProduct.DELETE("/:id", buyerController.Delete())
 
-	router.Run()
+	router.Run(fmt.Sprintf(":%d", port))
 }

@@ -12,7 +12,7 @@ go mod download
 ## ⚡️ Quick start
 
 ```shell
-go run cmd/server/main.go
+go run main.go
 ```
 
 ## 📦 Requirements
