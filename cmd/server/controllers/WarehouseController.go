@@ -12,7 +12,7 @@ import (
 type RequestWarehouse struct {
 	Address            string  `json:"address"`
 	Telephone          string  `json:"telephone"`
-	WarehouseCode      string  `json:"warehouse_code,require"`
+	WarehouseCode      string  `json:"warehouse_code"`
 	MinimunCapacity    int64   `json:"minimun_capacity"`
 	MinimunTemperature float64 `json:"minimun_temperature"`
 }

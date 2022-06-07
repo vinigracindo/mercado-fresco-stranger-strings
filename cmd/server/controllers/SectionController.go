@@ -9,7 +9,6 @@ import (
 )
 
 type requestSectionPost struct {
-	Id                 int64 `json:"id"`
 	SectionNumber      int64 `json:"section_number" binding:"required"`
 	CurrentTemperature int64 `json:"current_temperature" binding:"required"`
 	MinimumTemperature int64 `json:"minimum_temperature" binding:"required"`
@@ -21,7 +20,6 @@ type requestSectionPost struct {
 }
 
 type requestSectionPatch struct {
-	Id              int64 `json:"id"`
 	CurrentCapacity int64 `json:"current_capacity" binding:"required"`
 }
 

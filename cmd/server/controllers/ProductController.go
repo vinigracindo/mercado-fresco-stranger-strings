@@ -1,27 +1,28 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 )
 
-type requestPost struct {
+type requestProductPost struct {
 	ProductCode                    string  `json:"product_code" binding:"required"`
-	Description                    string  `json:"description,required" binding:"required"`
-	Width                          float64 `json:"width,required" binding:"required"`
-	Height                         float64 `json:"height,required" binding:"required"`
-	Length                         float64 `json:"length,required" binding:"required"`
-	NetWeight                      float64 `json:"net_weight,required" binding:"required"`
-	ExpirationRate                 float64 `json:"expiration_rate,required" binding:"required"`
-	RecommendedFreezingTemperature float64 `json:"recommended_freezing_temperature,required" binding:"required"`
-	FreezingRate                   int     `json:"freezing_rate,required" binding:"required"`
-	ProductTypeId                  int     `json:"product_type_id,required" binding:"required"`
-	SellerId                       int     `json:"seller_id,required" binding:"required"`
+	Description                    string  `json:"description" binding:"required"`
+	Width                          float64 `json:"width" binding:"required"`
+	Height                         float64 `json:"height" binding:"required"`
+	Length                         float64 `json:"length" binding:"required"`
+	NetWeight                      float64 `json:"net_weight" binding:"required"`
+	ExpirationRate                 float64 `json:"expiration_rate" binding:"required"`
+	RecommendedFreezingTemperature float64 `json:"recommended_freezing_temperature" binding:"required"`
+	FreezingRate                   int     `json:"freezing_rate" binding:"required"`
+	ProductTypeId                  int     `json:"product_type_id" binding:"required"`
+	SellerId                       int     `json:"seller_id" binding:"required"`
 }
-type requestPatch struct {
-	Description string `json:"description,required" binding:"required"`
+type requestProductPatch struct {
+	Description string `json:"description" binding:"required"`
 }
 
 type ProductController struct {
@@ -68,7 +69,7 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 
 func (c *ProductController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req requestPost
+		var req requestProductPost
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.JSON(http.StatusUnprocessableEntity,
 				gin.H{
@@ -96,7 +97,7 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
 			return
 		}
-		var req requestPatch
+		var req requestProductPatch
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
