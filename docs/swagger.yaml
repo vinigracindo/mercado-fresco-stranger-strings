@@ -1,0 +1,52 @@
+definitions:
+  employees.Employee:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      warehouse_id:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /employees:
+    get:
+      description: List employees
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/employees.Employee'
+            type: array
+      summary: List employees
+      tags:
+      - Employees
+  /employees/{id}:
+    get:
+      description: Get employee by ID
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/employees.Employee'
+      summary: Get employee by ID
+      tags:
+      - Employees
+swagger: "2.0"
