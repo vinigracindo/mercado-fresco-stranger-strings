@@ -7,7 +7,8 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/docs"
+	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
+
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
@@ -27,7 +28,7 @@ func (api *APIServer) Run(port int) {
 
 	// Swagger
 	docs.SwaggerInfo.BasePath = "/api/v1"
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	groupV1 := router.Group("api/v1")
 
