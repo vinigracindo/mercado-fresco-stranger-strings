@@ -28,7 +28,7 @@ func (api *APIServer) Run(port int) {
 
 	// Swagger
 	docs.SwaggerInfo.BasePath = "/api/v1"
-	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	groupV1 := router.Group("api/v1")
 
