@@ -111,10 +111,8 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 // @Produce      json
 // @Param Section body requestSectionPost true "Create section"
 // @Success      201  {object} section.Section
-// @Failure      400  {object}  httputil.HTTPError
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
-// @Failure      500  {object}  httputil.HTTPError
 // @Router /sections [post]
 func (c ControllerSection) CreateSection() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -155,7 +153,6 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 // @Success      200  {object} section.Section
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
-// @Failure      500  {object}  httputil.HTTPError
 // @Router /sections/{id} [get]
 func (c *ControllerSection) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -184,9 +181,7 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Success      200  {object} []section.Section
-// @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
-// @Failure      500  {object}  httputil.HTTPError
 // @Router /sections [get]
 func (c *ControllerSection) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
