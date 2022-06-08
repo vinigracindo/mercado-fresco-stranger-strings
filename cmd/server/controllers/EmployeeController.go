@@ -16,6 +16,13 @@ func NewEmployee(service employees.Service) EmployeeController {
 	return EmployeeController{service: service}
 }
 
+// GetAll godoc
+// @Summary List employees
+// @Tags Employees
+// @Description List employees
+// @Produce json
+// @Success 200 {array} employees.Employee
+// @Router /employees [get]
 func (controller EmployeeController) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		employees, err := controller.service.GetAll()
@@ -31,6 +38,14 @@ func (controller EmployeeController) GetAll() gin.HandlerFunc {
 	}
 }
 
+// GetById godoc
+// @Summary Get employee by ID
+// @Tags Employees
+// @Description Get employee by ID
+// @Produce json
+// @Param id path int true "Employee ID"
+// @Success 200 {object} employees.Employee
+// @Router /employees/{id} [get]
 func (controller EmployeeController) GetById() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
