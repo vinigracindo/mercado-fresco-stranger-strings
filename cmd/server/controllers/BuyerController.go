@@ -8,6 +8,17 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 )
 
+type requestBuyerPost struct {
+	CardNumberId int64  `json:"cardNumberId" binding:"required"`
+	FirstName    string `json:"firstName"    binding:"required"`
+	LastName     string `json:"lastName"     binding:"required"`
+}
+
+type requestBuyerPatch struct {
+	CardNumberId int64  `json:"cardNumberId" binding:"required"`
+	LastName     string `json:"lastName"     binding:"required"`
+}
+
 type BuyerController struct {
 	service buyer.Service
 }
@@ -38,17 +49,6 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 				"data": buyer,
 			})
 	}
-}
-
-type requestBuyerPost struct {
-	CardNumberId int64  `json:"cardNumberId" binding:"required"`
-	FirstName    string `json:"firstName"    binding:"required"`
-	LastName     string `json:"lastName"     binding:"required"`
-}
-
-type requestBuyerPatch struct {
-	CardNumberId int64  `json:"cardNumberId" binding:"required"`
-	LastName     string `json:"lastName"     binding:"required"`
 }
 
 func (c *BuyerController) GetAll() gin.HandlerFunc {
