@@ -101,6 +101,17 @@ func (w Warehouse) GetWarehouseByID() gin.HandlerFunc {
 
 }
 
+// Warehouse godoc
+// @Summary      Delete Warehouse
+// @Description  Delete Warehouse by id
+// @Tags         Warehouse
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Warehouse ID"
+// @Success      204
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /warehouses/{id} [delete]
 func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if paramId, check := ctx.Params.Get("id"); check {
@@ -119,7 +130,7 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 				return
 			}
 
-			ctx.JSON(http.StatusNotFound, gin.H{})
+			ctx.JSON(http.StatusNoContent, gin.H{})
 		}
 	}
 
