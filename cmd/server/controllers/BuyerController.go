@@ -9,14 +9,14 @@ import (
 )
 
 type requestBuyerPost struct {
-	CardNumberId int64  `json:"cardNumberId" binding:"required"`
-	FirstName    string `json:"firstName"    binding:"required"`
-	LastName     string `json:"lastName"     binding:"required"`
+	CardNumberId int64  `json:"card_number_id" binding:"required"`
+	FirstName    string `json:"first_name"    binding:"required"`
+	LastName     string `json:"last_name"     binding:"required"`
 }
 
 type requestBuyerPatch struct {
-	CardNumberId int64  `json:"cardNumberId" binding:"required"`
-	LastName     string `json:"lastName"     binding:"required"`
+	CardNumberId int64  `json:"card_number_id" binding:"required"`
+	LastName     string `json:"last_name"     binding:"required"`
 }
 
 type BuyerController struct {
