@@ -2,7 +2,7 @@ package buyer
 
 import "fmt"
 
-var buyers []Buyer = []Buyer{}
+var buyers = []Buyer{}
 var id int64 = 0
 
 type Repository interface {
@@ -42,7 +42,7 @@ func (r *repository) GetAll() ([]Buyer, error) {
 	return buyers, nil
 }
 
-func (repository) GetId(id int64) (*Buyer, error) {
+func (r *repository) GetId(id int64) (*Buyer, error) {
 	for _, buyer := range buyers {
 		if buyer.Id == id {
 			return &buyer, nil
@@ -51,7 +51,7 @@ func (repository) GetId(id int64) (*Buyer, error) {
 	return nil, fmt.Errorf("buyer with id %d not found", id)
 }
 
-func (repository) Update(id int64, cardNumberId int64, lastName string) (Buyer, error) {
+func (r *repository) Update(id int64, cardNumberId int64, lastName string) (Buyer, error) {
 	for i, buyer := range buyers {
 		if buyer.Id == id {
 			buyers[i].CardNumberId = cardNumberId
@@ -59,11 +59,10 @@ func (repository) Update(id int64, cardNumberId int64, lastName string) (Buyer, 
 			return buyers[i], nil
 		}
 	}
-
-	return Buyer{}, fmt.Errorf("buyer with id not found")
+	return Buyer{}, fmt.Errorf("buyer with id %d not found", id)
 }
 
-func (repository) Delete(id int64) error {
+func (r *repository) Delete(id int64) error {
 	deleted := false
 	var index int
 	for i := range buyers {

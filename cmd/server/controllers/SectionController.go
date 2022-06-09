@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
-	httputil "github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/web"
+	httputil "github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
 type requestSectionPost struct {

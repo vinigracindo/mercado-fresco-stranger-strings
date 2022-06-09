@@ -84,25 +84,25 @@ func (api *APIServer) Run(port int) {
 	sellerRepository := seller.NewRepository()
 	sellerService := seller.NewService(sellerRepository)
 	sellerController := controllers.NewSeller(sellerService)
-	sellerRouter := groupV1.Group("/seller")
 
-	sellerRouter.GET("/", sellerController.GetAll())
-	sellerRouter.GET("/:id", sellerController.GetById())
-	sellerRouter.POST("/", sellerController.CreateSeller())
-	sellerRouter.PATCH("/:id", sellerController.UpdateSellerAddresAndTel())
-	sellerRouter.DELETE("/:id", sellerController.DeleteSeller())
+	sellerGroup := groupV1.Group("/seller")
+	sellerGroup.GET("/", sellerController.GetAll())
+	sellerGroup.GET("/:id", sellerController.GetById())
+	sellerGroup.POST("/", sellerController.CreateSeller())
+	sellerGroup.PATCH("/:id", sellerController.UpdateSellerAddresAndTel())
+	sellerGroup.DELETE("/:id", sellerController.DeleteSeller())
 
 	//Buyer routes
 	buyerRepository := buyer.NewRepository()
 	buyerService := buyer.NewService(buyerRepository)
 	buyerController := controllers.NewBuyer(buyerService)
 
-	groupProduct := groupV1.Group("buyers")
-	groupProduct.GET("/", buyerController.GetAll())
-	groupProduct.GET("/:id", buyerController.GetId())
-	groupProduct.POST("/", buyerController.Store())
-	groupProduct.PATCH("/", buyerController.Update())
-	groupProduct.DELETE("/:id", buyerController.Delete())
+	buyerGroup := groupV1.Group("buyers")
+	buyerGroup.GET("/", buyerController.GetAll())
+	buyerGroup.GET("/:id", buyerController.GetId())
+	buyerGroup.POST("/", buyerController.Store())
+	buyerGroup.PATCH("/:id", buyerController.Update())
+	buyerGroup.DELETE("/:id", buyerController.Delete())
 
 	router.Run(fmt.Sprintf(":%d", port))
 }

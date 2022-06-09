@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"errors"
+	httputil "github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 	"net/http"
 	"strconv"
 
@@ -37,12 +39,10 @@ func (c *ProductController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		products, err := c.service.GetAll()
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{"data": products})
+		httputil.NewResponse(ctx, http.StatusOK, products)
 	}
 }
 
@@ -50,20 +50,17 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
 		product, err := c.service.GetById(id)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{"data": *product})
+
+		httputil.NewResponse(ctx, http.StatusOK, product)
 	}
 }
 
@@ -81,12 +78,10 @@ func (c *ProductController) Create() gin.HandlerFunc {
 			req.ExpirationRate, req.RecommendedFreezingTemperature, req.FreezingRate, req.ProductTypeId, req.SellerId)
 
 		if err != nil {
-			ctx.JSON(http.StatusConflict, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
-		ctx.JSON(http.StatusCreated, newProduct)
+		httputil.NewResponse(ctx, http.StatusCreated, newProduct)
 	}
 }
 
@@ -94,24 +89,25 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("invalid id"))
 			return
 		}
 		var req requestProductPatch
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 		if req.Description == "" {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Description field is required"})
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("description field is required"))
 			return
 		}
 		product, err := c.service.UpdateDescription(id, req.Description)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		ctx.JSON(http.StatusOK, product)
+		httputil.NewResponse(ctx, http.StatusOK, product)
+
 	}
 }
 
@@ -125,9 +121,9 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 
 		err = c.service.Delete(id)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		ctx.JSON(http.StatusNoContent, gin.H{})
+		httputil.NewResponse(ctx, http.StatusNoContent, err)
 	}
 }
