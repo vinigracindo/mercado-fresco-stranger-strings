@@ -56,10 +56,12 @@ func (c *BuyerController) GetAll() gin.HandlerFunc {
 		buyers, err := c.service.GetAll()
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, err.Error())
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
 			return
 		}
-		ctx.JSON(http.StatusOK, &buyers)
+		ctx.JSON(http.StatusOK, gin.H{"data": buyers})
 	}
 }
 
