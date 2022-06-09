@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
+	httputil "github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/web"
 )
 
 type requestSectionPost struct {
@@ -33,21 +34,28 @@ func NewSection(s section.Service) *ControllerSection {
 	}
 }
 
+// Sections godoc
+// @Summary      Delete section
+// @Description  Delete section by id
+// @Tags         Sections
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Section ID"
+// @Success      204
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /sections/{id} [delete]
 func (c *ControllerSection) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
 		err = c.service.Delete(id)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
 
@@ -55,49 +63,63 @@ func (c *ControllerSection) Delete() gin.HandlerFunc {
 	}
 }
 
+// Sections godoc
+// @Summary      Update currentCapacity
+// @Description  Update currentCapacity field by id
+// @Tags         Sections
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Section ID"
+// @Param Section body requestSectionPatch true "Update field"
+// @Success      200  {object} section.Section
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /sections/{id} [patch]
 func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
 		var req requestSectionPatch
 		if err := ctx.Bind(&req); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
 		if req.CurrentCapacity == 0 {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "The field CurrentCapacity is required "})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "The field CurrentCapacity is required"})
 			return
 		}
 
 		section, err := c.service.UpdateCurrentCapacity(id, req.CurrentCapacity)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
 		ctx.JSON(200, gin.H{"data": section})
 	}
 }
 
+// Sections godoc
+// @Summary      Create section
+// @Description  create section
+// @Tags         Sections
+// @Accept       json
+// @Produce      json
+// @Param Section body requestSectionPost true "Create section"
+// @Success      201  {object} section.Section
+// @Failure      409  {object}  httputil.HTTPError
+// @Failure      422  {object}  httputil.HTTPError
+// @Router /sections [post]
 func (c ControllerSection) CreateSection() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestSectionPost
 
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
-				"error":   err.Error(),
-				"message": "Invalid request",
-			})
+			httputil.NewError(ctx, http.StatusUnprocessableEntity, err)
 			return
 		}
 
@@ -113,7 +135,7 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 		)
 
 		if err != nil {
-			ctx.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
 
@@ -121,21 +143,28 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 	}
 }
 
+// Sections godoc
+// @Summary      List section by id
+// @Description  get section by id
+// @Tags         Sections
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Section ID"
+// @Success      200  {object} section.Section
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /sections/{id} [get]
 func (c *ControllerSection) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
 		section, err := c.service.GetById(id)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
 
@@ -145,16 +174,23 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 	}
 }
 
+// Sections godoc
+// @Summary      List all sections
+// @Description  get sections
+// @Tags         Sections
+// @Accept       json
+// @Produce      json
+// @Success      200  {object} []section.Section
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /sections [get]
 func (c *ControllerSection) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		section, err := c.service.GetAll()
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
 
-		ctx.JSON(http.StatusOK, section)
+		ctx.JSON(http.StatusOK, gin.H{"data": section})
 	}
 }
