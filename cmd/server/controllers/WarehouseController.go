@@ -9,10 +9,15 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
 )
 
-type RequestWarehouse struct {
+type requestWarehousePost struct {
 	Address            string  `json:"address"`
 	Telephone          string  `json:"telephone"`
 	WarehouseCode      string  `json:"warehouse_code"`
+	MinimunCapacity    int64   `json:"minimun_capacity"`
+	MinimunTemperature float64 `json:"minimun_temperature"`
+}
+
+type requestWarehousePatch struct {
 	MinimunCapacity    int64   `json:"minimun_capacity"`
 	MinimunTemperature float64 `json:"minimun_temperature"`
 }
@@ -27,10 +32,21 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 	}
 }
 
+// Warehouse godoc
+// @Summary      Create warehouse
+// @Description  create warehouse
+// @Tags         Warehouse
+// @Accept       json
+// @Produce      json
+// @Param Warehouse body requestWarehousePost true "Create warehouse"
+// @Success      201  {object} warehouse.WarehouseModel
+// @Failure      409  {object}  httputil.HTTPError
+// @Failure      422  {object}  httputil.HTTPError
+// @Router /warehouse [post]
 func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		var wh RequestWarehouse
+		var wh requestWarehousePost
 
 		if err := ctx.BindJSON(&wh); err != nil {
 			ctx.JSON(http.StatusUnprocessableEntity, err.Error())
@@ -114,7 +130,7 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 		if paramId, check := ctx.Params.Get("id"); check {
 			id, err := strconv.Atoi(paramId)
 
-			var body RequestWarehouse
+			var body requestWarehousePatch
 			var patchWh warehouse.WarehouseModel
 
 			if err := ctx.BindJSON(&body); err != nil {
@@ -128,7 +144,7 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 				return
 			}
 
-			patchWh, err = w.service.UpdateTempAndCap(int64(id), body.Address, body.Telephone, body.WarehouseCode, body.MinimunTemperature, body.MinimunCapacity)
+			patchWh, err = w.service.UpdateTempAndCap(int64(id), body.MinimunTemperature, body.MinimunCapacity)
 
 			if err != nil {
 				ctx.JSON(http.StatusBadRequest, err.Error())

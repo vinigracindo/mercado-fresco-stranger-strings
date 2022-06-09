@@ -7,7 +7,7 @@ type Service interface {
 	GetAll() ([]WarehouseModel, error)
 	GetById(id int64) (WarehouseModel, error)
 	Delete(id int64) error
-	UpdateTempAndCap(id int64, adress, tel, code string, mintemp float64, mincap int64) (WarehouseModel, error)
+	UpdateTempAndCap(id int64, mintemp float64, mincap int64) (WarehouseModel, error)
 	Create(adress, tel, code string, mintemp float64, mincap int64) (WarehouseModel, error)
 }
 
@@ -65,11 +65,8 @@ func (s service) Delete(id int64) error {
 	return nil
 }
 
-func (s service) UpdateTempAndCap(id int64, adress, tel, code string, mintemp float64, mincap int64) (WarehouseModel, error) {
+func (s service) UpdateTempAndCap(id int64, mintemp float64, mincap int64) (WarehouseModel, error) {
 	wh := WarehouseModel{
-		Address:            adress,
-		Telephone:          tel,
-		WarehouseCode:      code,
 		MinimunCapacity:    mincap,
 		MinimunTemperature: mintemp,
 	}
