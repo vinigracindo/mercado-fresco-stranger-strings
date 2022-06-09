@@ -64,6 +64,15 @@ func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 	}
 }
 
+// Warehouse godoc
+// @Summary      List all warehouse
+// @Description  get Warehouse
+// @Tags         Warehouse
+// @Accept       json
+// @Produce      json
+// @Success      200  {object} []warehouse.WarehouseModel
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /warehouses [get]
 func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		shw, err := w.service.GetAll()
@@ -77,6 +86,17 @@ func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 	}
 }
 
+// Warehouse godoc
+// @Summary      List Warehouse by id
+// @Description  get Warehouse by id
+// @Tags         Warehouse
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Warehouse ID"
+// @Success      200  {object} warehouse.WarehouseModel
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /warehouses/{id} [get]
 func (w Warehouse) GetWarehouseByID() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if paramId, check := ctx.Params.Get("id"); check {
