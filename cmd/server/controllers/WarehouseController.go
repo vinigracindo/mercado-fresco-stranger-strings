@@ -39,10 +39,10 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 // @Accept       json
 // @Produce      json
 // @Param Warehouse body requestWarehousePost true "Create warehouse"
-// @Success      201  {object} warehouse.WarehouseModel
+// @Success      201  {object}  warehouse.WarehouseModel
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
-// @Router /warehouse [post]
+// @Router /warehouses [post]
 func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
@@ -125,6 +125,18 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 
 }
 
+// Warehouse godoc
+// @Summary      Update warehouse
+// @Description  Update warehouse
+// @Tags         Warehouse
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Warehouse ID"
+// @Param Warehouse body requestWarehousePatch true "Update warehouse"
+// @Success      201  {object} warehouse.WarehouseModel
+// @Failure      409  {object}  httputil.HTTPError
+// @Failure      422  {object}  httputil.HTTPError
+// @Router /warehouses/{id} [patch]
 func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if paramId, check := ctx.Params.Get("id"); check {
