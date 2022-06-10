@@ -35,6 +35,15 @@ func CreateProductController(prodService product.Service) *ProductController {
 	return &(ProductController{service: prodService})
 }
 
+// GetAll godoc
+// @Summary      List all products
+// @Description  get all products
+// @Tags         Products
+// @Accept       json
+// @Produce      json
+// @Success      200  {array} product.Product
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /products [get]
 func (c *ProductController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		products, err := c.service.GetAll()
@@ -46,6 +55,16 @@ func (c *ProductController) GetAll() gin.HandlerFunc {
 	}
 }
 
+// GetById godoc
+// @Summary Get product by ID
+// @Tags Products
+// @Description Get product by ID
+// @Produce json
+// @Param id path int true "Product ID"
+// @Success 200 {object} product.Product
+// @Failure 400  {object}  httputil.HTTPError
+// @Failure 404  {object}  httputil.HTTPError
+// @Router /products/{id} [get]
 func (c *ProductController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
@@ -64,6 +83,17 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 	}
 }
 
+// Create godoc
+// @Summary      Create product
+// @Description  create product
+// @Tags         Products
+// @Accept       json
+// @Produce      json
+// @Param Product body requestProductPost true "Create product"
+// @Success      201  {object} product.Product
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      422  {object}  httputil.HTTPError
+// @Router /products [post]
 func (c *ProductController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestProductPost
@@ -85,6 +115,18 @@ func (c *ProductController) Create() gin.HandlerFunc {
 	}
 }
 
+// UpdateDescription godoc
+// @Summary      Update product fullname
+// @Description  Update product description
+// @Tags         Products
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Product ID"
+// @Param Product body requestProductPatch true "Update field"
+// @Success      200  {object} product.Product
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /products/{id} [patch]
 func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
@@ -111,6 +153,17 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 	}
 }
 
+// Delete godoc
+// @Summary      Delete product
+// @Description  Delete product by id
+// @Tags         Products
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Product ID"
+// @Success      204
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /products/{id} [delete]
 func (c *ProductController) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)

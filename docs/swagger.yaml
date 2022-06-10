@@ -60,6 +60,50 @@ definitions:
     - last_name
     - warehouse_id
     type: object
+  controllers.requestProductPatch:
+    properties:
+      description:
+        type: string
+    required:
+    - description
+    type: object
+  controllers.requestProductPost:
+    properties:
+      description:
+        type: string
+      expiration_rate:
+        type: number
+      freezing_rate:
+        type: integer
+      height:
+        type: number
+      length:
+        type: number
+      net_weight:
+        type: number
+      product_code:
+        type: string
+      product_type_id:
+        type: integer
+      recommended_freezing_temperature:
+        type: number
+      seller_id:
+        type: integer
+      width:
+        type: number
+    required:
+    - description
+    - expiration_rate
+    - freezing_rate
+    - height
+    - length
+    - net_weight
+    - product_code
+    - product_type_id
+    - recommended_freezing_temperature
+    - seller_id
+    - width
+    type: object
   controllers.requestSectionPatch:
     properties:
       current_capacity:
@@ -134,6 +178,33 @@ definitions:
         type: integer
       message:
         type: string
+    type: object
+  product.Product:
+    properties:
+      description:
+        type: string
+      expiration_rate:
+        type: number
+      freezing_rate:
+        type: integer
+      height:
+        type: number
+      id:
+        type: integer
+      length:
+        type: number
+      net_weight:
+        type: number
+      product_code:
+        type: string
+      product_type_id:
+        type: integer
+      recommended_freezing_temperature:
+        type: number
+      seller_id:
+        type: integer
+      width:
+        type: number
     type: object
   section.Section:
     properties:
@@ -460,6 +531,143 @@ paths:
       summary: Update employee fullname
       tags:
       - Employees
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: get all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/product.Product'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List all products
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: create product
+      parameters:
+      - description: Create product
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestProductPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/product.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create product
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product by id
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete product
+      tags:
+      - Products
+    get:
+      description: Get product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/product.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get product by ID
+      tags:
+      - Products
+    patch:
+      consumes:
+      - application/json
+      description: Update product description
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update field
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestProductPatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/product.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update product fullname
+      tags:
+      - Products
   /sections:
     get:
       consumes:
