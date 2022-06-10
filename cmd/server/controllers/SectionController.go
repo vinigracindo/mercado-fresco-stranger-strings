@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -58,8 +59,7 @@ func (c *ControllerSection) Delete() gin.HandlerFunc {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-
-		ctx.JSON(http.StatusNoContent, gin.H{})
+		httputil.NewResponse(ctx, http.StatusNoContent, "")
 	}
 }
 
@@ -90,7 +90,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 		}
 
 		if req.CurrentCapacity == 0 {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "The field CurrentCapacity is required"})
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("The field CurrentCapacity is required"))
 			return
 		}
 
@@ -99,7 +99,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		ctx.JSON(200, gin.H{"data": section})
+		httputil.NewResponse(ctx, http.StatusOK, section)
 	}
 }
 
@@ -138,8 +138,7 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
-
-		ctx.JSON(http.StatusCreated, &response)
+		httputil.NewResponse(ctx, http.StatusCreated, &response)
 	}
 }
 
@@ -168,9 +167,7 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, gin.H{
-			"data": section,
-		})
+		httputil.NewResponse(ctx, http.StatusOK, section)
 	}
 }
 
@@ -190,7 +187,6 @@ func (c *ControllerSection) GetAll() gin.HandlerFunc {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-
-		ctx.JSON(http.StatusOK, gin.H{"data": section})
+		httputil.NewResponse(ctx, http.StatusOK, section)
 	}
 }
