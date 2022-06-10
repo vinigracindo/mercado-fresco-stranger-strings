@@ -65,11 +65,10 @@ func (r *repository) UpdateDescription(id int64, description string) (Product, e
 	var product Product
 	update := false
 	for i := range listProducts {
-		currentProd := listProducts[i]
-		if currentProd.Id == id {
-			currentProd.Description = description
+		if listProducts[i].Id == id {
+			listProducts[i].Description = description
 			update = true
-			product = currentProd
+			product = listProducts[i]
 			break
 		}
 	}
