@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -61,7 +62,7 @@ func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusCreated, &newWh)
+		httputil.NewResponse(ctx, http.StatusCreated, newWh)
 	}
 }
 
@@ -83,7 +84,8 @@ func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, &shw)
+		httputil.NewResponse(ctx, http.StatusOK, shw)
+
 	}
 }
 
@@ -115,7 +117,8 @@ func (w Warehouse) GetWarehouseByID() gin.HandlerFunc {
 				return
 			}
 
-			ctx.JSON(http.StatusOK, wh)
+			httputil.NewResponse(ctx, http.StatusOK, wh)
+
 		}
 	}
 
@@ -149,7 +152,8 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 				return
 			}
 
-			ctx.JSON(http.StatusNoContent, gin.H{})
+			httputil.NewResponse(ctx, http.StatusNoContent, gin.H{})
+
 		}
 	}
 
@@ -193,10 +197,10 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 				return
 			}
 
-			ctx.JSON(http.StatusOK, patchWh)
+			httputil.NewResponse(ctx, http.StatusOK, patchWh)
+
 			return
 		}
-
-		ctx.JSON(http.StatusUnprocessableEntity, "error: id is mandatory")
+		httputil.NewError(ctx, http.StatusUnprocessableEntity, errors.New("error: id is mandatory"))
 	}
 }
