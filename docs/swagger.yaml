@@ -1,0 +1,741 @@
+basePath: /api/v1
+definitions:
+  buyer.Buyer:
+    properties:
+      card_number_id:
+        type: integer
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+    type: object
+  controllers.requestBuyerPatch:
+    properties:
+      card_number_id:
+        type: integer
+      last_name:
+        type: string
+    required:
+    - card_number_id
+    - last_name
+    type: object
+  controllers.requestBuyerPost:
+    properties:
+      card_number_id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+    required:
+    - card_number_id
+    - first_name
+    - last_name
+    type: object
+  controllers.requestEmployeePatch:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+    required:
+    - first_name
+    - last_name
+    type: object
+  controllers.requestEmployeePost:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      warehouse_id:
+        type: integer
+    required:
+    - card_number_id
+    - first_name
+    - last_name
+    - warehouse_id
+    type: object
+  controllers.requestSectionPatch:
+    properties:
+      current_capacity:
+        type: integer
+    required:
+    - current_capacity
+    type: object
+  controllers.requestSectionPost:
+    properties:
+      current_capacity:
+        type: integer
+      current_temperature:
+        type: integer
+      maximum_capacity:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      product_type_id:
+        type: integer
+      section_number:
+        type: integer
+      warehouse_id:
+        type: integer
+    required:
+    - current_capacity
+    - current_temperature
+    - maximum_capacity
+    - minimum_capacity
+    - minimum_temperature
+    - product_type_id
+    - section_number
+    - warehouse_id
+    type: object
+  controllers.requestWarehousePatch:
+    properties:
+      minimun_capacity:
+        type: integer
+      minimun_temperature:
+        type: number
+    type: object
+  controllers.requestWarehousePost:
+    properties:
+      address:
+        type: string
+      minimun_capacity:
+        type: integer
+      minimun_temperature:
+        type: number
+      telephone:
+        type: string
+      warehouse_code:
+        type: string
+    type: object
+  employees.Employee:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      warehouse_id:
+        type: integer
+    type: object
+  httputil.HTTPError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  section.Section:
+    properties:
+      current_capacity:
+        type: integer
+      current_temperature:
+        type: integer
+      id:
+        type: integer
+      maximum_capacity:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      product_type_id:
+        type: integer
+      section_number:
+        type: integer
+      warehouse_id:
+        type: integer
+    type: object
+  warehouse.WarehouseModel:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      minimun_capacity:
+        type: integer
+      minimun_temperature:
+        type: number
+      telephone:
+        type: string
+      warehouse_code:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+    url: http://developers.mercadolibre.com.ar/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://developers.mercadolibre.com.ar/es_ar/terminos_y_condiciones
+  title: Swagger Mercado Fresco
+  version: "1.0"
+paths:
+  /buyers:
+    get:
+      consumes:
+      - application/json
+      description: get buyers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/buyer.Buyer'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List all buyers
+      tags:
+      - Buyers
+    post:
+      consumes:
+      - application/json
+      description: create buyer
+      parameters:
+      - description: Create buyer
+        in: body
+        name: Buyer
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestBuyerPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/buyer.Buyer'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create buyer
+      tags:
+      - Buyers
+  /buyers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteBuyer buyer by id
+      parameters:
+      - description: Buyer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: DeleteBuyer buyer
+      tags:
+      - Buyers
+    get:
+      consumes:
+      - application/json
+      description: get buyer by id
+      parameters:
+      - description: Buyer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/buyer.Buyer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List buyer by id
+      tags:
+      - Buyers
+    patch:
+      consumes:
+      - application/json
+      description: Update UpdateCardNumberLastName field by id
+      parameters:
+      - description: Buyers ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update field
+        in: body
+        name: Buyer
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestBuyerPatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/buyer.Buyer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update UpdateCardNumberLastName
+      tags:
+      - Buyers
+  /employees:
+    get:
+      consumes:
+      - application/json
+      description: get all employees
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/employees.Employee'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List all employees
+      tags:
+      - Employees
+    post:
+      consumes:
+      - application/json
+      description: create employee
+      parameters:
+      - description: Create employee
+        in: body
+        name: Employee
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestEmployeePost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/employees.Employee'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create employee
+      tags:
+      - Employees
+  /employees/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete employee by id
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete employee
+      tags:
+      - Employees
+    get:
+      description: Get employee by ID
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/employees.Employee'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get employee by ID
+      tags:
+      - Employees
+    patch:
+      consumes:
+      - application/json
+      description: Update employee first and last name field by id
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update field
+        in: body
+        name: Employee
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestEmployeePatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/employees.Employee'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update employee fullname
+      tags:
+      - Employees
+  /sections:
+    get:
+      consumes:
+      - application/json
+      description: get sections
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/section.Section'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List all sections
+      tags:
+      - Sections
+    post:
+      consumes:
+      - application/json
+      description: create section
+      parameters:
+      - description: Create section
+        in: body
+        name: Section
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestSectionPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/section.Section'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create section
+      tags:
+      - Sections
+  /sections/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete section by id
+      parameters:
+      - description: Section ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete section
+      tags:
+      - Sections
+    get:
+      consumes:
+      - application/json
+      description: get section by id
+      parameters:
+      - description: Section ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/section.Section'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List section by id
+      tags:
+      - Sections
+    patch:
+      consumes:
+      - application/json
+      description: Update currentCapacity field by id
+      parameters:
+      - description: Section ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update field
+        in: body
+        name: Section
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestSectionPatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/section.Section'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update currentCapacity
+      tags:
+      - Sections
+  /warehouses:
+    get:
+      consumes:
+      - application/json
+      description: get Warehouse
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/warehouse.WarehouseModel'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List all warehouse
+      tags:
+      - Warehouse
+    post:
+      consumes:
+      - application/json
+      description: create warehouse
+      parameters:
+      - description: Create warehouse
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestWarehousePost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/warehouse.WarehouseModel'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create warehouse
+      tags:
+      - Warehouse
+  /warehouses/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Warehouse by id
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete Warehouse
+      tags:
+      - Warehouse
+    get:
+      consumes:
+      - application/json
+      description: get Warehouse by id
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/warehouse.WarehouseModel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List Warehouse by id
+      tags:
+      - Warehouse
+    patch:
+      consumes:
+      - application/json
+      description: Update warehouse
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update warehouse
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestWarehousePatch'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/warehouse.WarehouseModel'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update warehouse
+      tags:
+      - Warehouse
+swagger: "2.0"

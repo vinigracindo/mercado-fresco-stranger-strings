@@ -101,8 +101,8 @@ func (api *APIServer) Run(port int) {
 	buyerGroup.GET("/", buyerController.GetAll())
 	buyerGroup.GET("/:id", buyerController.GetId())
 	buyerGroup.POST("/", buyerController.Store())
-	buyerGroup.PATCH("/:id", buyerController.CardNumberLastName())
-	buyerGroup.DELETE("/:id", buyerController.Delete())
+	buyerGroup.PATCH("/:id", buyerController.UpdateCardNumberLastName())
+	buyerGroup.DELETE("/:id", buyerController.DeleteBuyer())
 
 	router.Run(fmt.Sprintf(":%d", port))
 }
