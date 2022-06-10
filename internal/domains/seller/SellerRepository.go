@@ -40,18 +40,18 @@ func (r *repository) creatID() int64 {
 }
 
 func (r *repository) CreateSeller(cid int64, companyName, address, telephone string) (Seller, error) {
+	for i := range listSeller {
+		if listSeller[i].Cid == cid {
+			return Seller{}, fmt.Errorf("Alredy a company with id %d", cid)
+		}
+	}
+
 	seller := Seller{
 		Id:          r.creatID(),
 		Cid:         cid,
 		CompanyName: companyName,
 		Address:     address,
 		Telephone:   telephone,
-	}
-
-	for i := range listSeller {
-		if listSeller[i].Cid == seller.Cid {
-			return Seller{}, fmt.Errorf("Alredy a company with id %d", seller.Cid)
-		}
 	}
 
 	listSeller = append(listSeller, seller)
