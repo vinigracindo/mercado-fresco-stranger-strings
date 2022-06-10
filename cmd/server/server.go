@@ -85,7 +85,7 @@ func (api *APIServer) Run(port int) {
 	sellerService := seller.NewService(sellerRepository)
 	sellerController := controllers.NewSeller(sellerService)
 
-	sellerGroup := groupV1.Group("/seller")
+	sellerGroup := groupV1.Group("/sellers")
 	sellerGroup.GET("/", sellerController.GetAll())
 	sellerGroup.GET("/:id", sellerController.GetById())
 	sellerGroup.POST("/", sellerController.CreateSeller())

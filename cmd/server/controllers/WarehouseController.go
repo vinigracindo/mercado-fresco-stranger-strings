@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
 type requestWarehousePost struct {
@@ -82,7 +83,7 @@ func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, &shw)
+		httputil.NewResponse(ctx, http.StatusOK, shw)
 	}
 }
 
