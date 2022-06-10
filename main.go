@@ -3,8 +3,6 @@ package main
 import "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server"
 
 // @title   Swagger Mercado Fresco
-// @version 1.0
-// @description     uma descricao legal aqui
 // @termsOfService https://developers.mercadolibre.com.ar/es_ar/terminos_y_condiciones
 
 // @contact.name API Support
