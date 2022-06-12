@@ -52,7 +52,7 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
-		httputil.NewResponse(ctx, http.StatusCreated, &buyer)
+		httputil.NewResponse(ctx, http.StatusCreated, buyer)
 	}
 }
 
@@ -70,12 +70,10 @@ func (c *BuyerController) GetAll() gin.HandlerFunc {
 		buyers, err := c.service.GetAll()
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{"data": buyers})
+		httputil.NewResponse(ctx, http.StatusOK, buyers)
 	}
 }
 
