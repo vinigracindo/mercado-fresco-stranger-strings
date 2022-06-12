@@ -92,21 +92,15 @@ func (c *BuyerController) GetId() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 		buyer, err := c.service.GetId(id)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"data": buyer,
-		})
+		httputil.NewResponse(ctx, http.StatusOK, buyer)
 	}
 }
 
