@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
 type requestBuyerPost struct {
@@ -42,23 +43,16 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestBuyerPost
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
-				"error":   err.Error(),
-				"message": "Invalid request"})
+			httputil.NewError(ctx, http.StatusUnprocessableEntity, err)
 			return
 		}
 
 		buyer, err := c.service.Store(req.CardNumberId, req.FirstName, req.LastName)
 		if err != nil {
-			ctx.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
-
-		ctx.JSON(
-			http.StatusCreated,
-			gin.H{
-				"data": buyer,
-			})
+		httputil.NewResponse(ctx, http.StatusCreated, &buyer)
 	}
 }
 
