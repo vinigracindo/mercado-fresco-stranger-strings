@@ -154,16 +154,15 @@ func (c *BuyerController) DeleteBuyer() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID"})
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
 		err = c.service.Delete(int64(id))
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-
-		ctx.JSON(http.StatusNoContent, gin.H{})
+		httputil.NewResponse(ctx, http.StatusNoContent, err)
 	}
 }
