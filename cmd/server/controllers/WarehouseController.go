@@ -85,7 +85,6 @@ func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 		}
 
 		httputil.NewResponse(ctx, http.StatusOK, shw)
-
 	}
 }
 

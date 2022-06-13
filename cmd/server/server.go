@@ -85,7 +85,7 @@ func (api *APIServer) Run(port int) {
 	sellerService := seller.NewService(sellerRepository)
 	sellerController := controllers.NewSeller(sellerService)
 
-	sellerGroup := groupV1.Group("/seller")
+	sellerGroup := groupV1.Group("/sellers")
 	sellerGroup.GET("/", sellerController.GetAll())
 	sellerGroup.GET("/:id", sellerController.GetById())
 	sellerGroup.POST("/", sellerController.CreateSeller())
@@ -101,8 +101,8 @@ func (api *APIServer) Run(port int) {
 	buyerGroup.GET("/", buyerController.GetAll())
 	buyerGroup.GET("/:id", buyerController.GetId())
 	buyerGroup.POST("/", buyerController.Store())
-	buyerGroup.PATCH("/:id", buyerController.Update())
-	buyerGroup.DELETE("/:id", buyerController.Delete())
+	buyerGroup.PATCH("/:id", buyerController.UpdateCardNumberLastName())
+	buyerGroup.DELETE("/:id", buyerController.DeleteBuyer())
 
 	router.Run(fmt.Sprintf(":%d", port))
 }

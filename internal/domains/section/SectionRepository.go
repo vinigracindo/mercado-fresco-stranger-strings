@@ -63,6 +63,12 @@ func (r *repository) UpdateCurrentCapacity(id int64, currentCapacity int64) (Sec
 }
 
 func (r *repository) CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
+	for i := range listSection {
+		if listSection[i].SectionNumber == sectionNumber {
+			return Section{}, fmt.Errorf("Already a secton with the code: %d", sectionNumber)
+		}
+	}
+
 	section := Section{
 		Id:                 r.CreateID(),
 		SectionNumber:      sectionNumber,
@@ -73,12 +79,6 @@ func (r *repository) CreateSection(sectionNumber int64, currentTemperature int64
 		MaximumCapacity:    maximumCapacity,
 		WarehouseId:        warehouseId,
 		ProductTypeId:      productTypeId,
-	}
-
-	for i := range listSection {
-		if listSection[i].SectionNumber == section.SectionNumber {
-			return Section{}, fmt.Errorf("Already a secton with the code: %d", section.SectionNumber)
-		}
 	}
 
 	listSection = append(listSection, section)
@@ -97,7 +97,7 @@ func (r *repository) GetById(id int64) (Section, error) {
 	}
 
 	if !found {
-		return Section{}, fmt.Errorf("Sessão %d não encontrada", id)
+		return Section{}, fmt.Errorf("Section %d not found", id)
 	}
 
 	return section, nil
