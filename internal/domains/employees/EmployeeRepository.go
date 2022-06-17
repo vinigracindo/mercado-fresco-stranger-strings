@@ -5,14 +5,6 @@ import "fmt"
 var employees = []Employee{}
 var lastId int64 = 1
 
-type Repository interface {
-	GetAll() ([]Employee, error)
-	GetById(id int64) (Employee, error)
-	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
-	UpdateFullname(id int64, firstName string, lastName string) (Employee, error)
-	Delete(id int64) error
-}
-
 type repository struct{}
 
 func (repository) cardNumberIsUnique(cardNumberId string) bool {
