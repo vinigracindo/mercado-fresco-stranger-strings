@@ -201,3 +201,15 @@ func TestProductService_UpdateDescription(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 }
+
+func TestProductService_Delete(t *testing.T) {
+	t.Run("delete_non_existent: Quando o produto não existe, null será retornado.", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("Delete", int64(1)).Return(fmt.Errorf("product was not found"))
+		service := product.CreateService(repo)
+
+		err := service.Delete(int64(1))
+
+		assert.NotNil(t, err)
+	})
+}
