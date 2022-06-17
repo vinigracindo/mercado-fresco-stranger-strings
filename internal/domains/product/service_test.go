@@ -159,6 +159,33 @@ func TestProductService_GetById(t *testing.T) {
 
 		assert.Nil(t, prod)
 		assert.NotNil(t, err)
+	})
+}
 
+func TestProductService_UpdateDescription(t *testing.T) {
+	t.Run("update_existent: Quando a atualização dos dados for bem sucedida, o produto será devolvido com as informações atualizadas", func(t *testing.T) {
+		expectedProduct := product.Product{
+			Id:                             1,
+			ProductCode:                    "PROD02",
+			Description:                    "Strawberry yogurt",
+			Width:                          1.2,
+			Height:                         6.4,
+			Length:                         4.5,
+			NetWeight:                      3.4,
+			ExpirationRate:                 1.5,
+			RecommendedFreezingTemperature: 1.3,
+			FreezingRate:                   2,
+			ProductTypeId:                  2,
+			SellerId:                       2,
+		}
+
+		repo := mocks.NewRepository(t)
+		repo.On("UpdateDescription", int64(1), "Strawberry yogurt").Return(expectedProduct, nil)
+		service := product.CreateService(repo)
+
+		prod, err := service.UpdateDescription(int64(1), "Strawberry yogurt")
+
+		assert.Nil(t, err)
+		assert.Equal(t, prod, expectedProduct)
 	})
 }
