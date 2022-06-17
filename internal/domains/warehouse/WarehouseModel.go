@@ -15,7 +15,7 @@ type Repository interface {
 	GetById(id int64) (WarehouseModel, error)
 	Delete(id int64) error
 	Update(id int64, wh *WarehouseModel) (WarehouseModel, error)
-	createID() int64
+	CreateID() int64
 }
 
 type Service interface {

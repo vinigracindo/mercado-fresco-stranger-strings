@@ -13,7 +13,7 @@ func NewRepository() Repository {
 	return &repository{}
 }
 
-func (w repository) createID() int64 {
+func (w repository) CreateID() int64 {
 	id += 1
 	return id
 }
@@ -24,7 +24,7 @@ func (w repository) Create(new *WarehouseModel) (WarehouseModel, error) {
 			return WarehouseModel{}, fmt.Errorf("error: already a warehouse with the code: %s", new.WarehouseCode)
 		}
 	}
-	new.Id = w.createID()
+	new.Id = w.CreateID()
 	wh = append(wh, *new)
 
 	return *new, nil

@@ -33,6 +33,20 @@ func (_m *Repository) Create(wr *warehouse.WarehouseModel) (warehouse.WarehouseM
 	return r0, r1
 }
 
+// CreateID provides a mock function with given fields:
+func (_m *Repository) CreateID() int64 {
+	ret := _m.Called()
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func() int64); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	return r0
+}
+
 // Delete provides a mock function with given fields: id
 func (_m *Repository) Delete(id int64) error {
 	ret := _m.Called(id)
@@ -110,20 +124,6 @@ func (_m *Repository) Update(id int64, wh *warehouse.WarehouseModel) (warehouse.
 	}
 
 	return r0, r1
-}
-
-// createID provides a mock function with given fields:
-func (_m *Repository) createID() int64 {
-	ret := _m.Called()
-
-	var r0 int64
-	if rf, ok := ret.Get(0).(func() int64); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-
-	return r0
 }
 
 type mockConstructorTestingTNewRepository interface {
