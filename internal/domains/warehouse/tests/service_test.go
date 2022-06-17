@@ -49,3 +49,36 @@ func Test_Service_Create(t *testing.T) {
 	})
 
 }
+
+func Test_Service_GetAll(t *testing.T) {
+	expectedWarehouseList := []warehouse.WarehouseModel{
+		{
+			Id:                 0,
+			Address:            "Avenida Teste",
+			Telephone:          "31 999999999",
+			WarehouseCode:      "hg312",
+			MinimunCapacity:    1111111,
+			MinimunTemperature: 9999999,
+		},
+		{
+			Id:                 1,
+			Address:            "Avenida Teste Segunda",
+			Telephone:          "31 77777777",
+			WarehouseCode:      "od78",
+			MinimunCapacity:    5555555,
+			MinimunTemperature: 444444,
+		},
+	}
+
+	t.Run("find_all: retonar uma list com varios warehouses", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+
+		repo.On("GetAll").Return(expectedWarehouseList, nil)
+
+		service := warehouse.NewService(repo)
+
+		resultList, _ := service.GetAll()
+
+		assert.Equal(t, expectedWarehouseList, resultList)
+	})
+}
