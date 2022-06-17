@@ -132,16 +132,59 @@ func Test_Service_GetByID(t *testing.T) {
 
 	t.Run("find_by_id_non_existent: procura um warehouse por um ID invalida e retonar um erro", func(t *testing.T) {
 
-		var fakeID int64 = 9999
-		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", fakeID)
+		var Id int64 = 9999
+		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", Id)
 
 		repo := mocks.NewRepository(t)
 
-		repo.On("GetById", int64(fakeID)).Return(warehouse.WarehouseModel{}, errMsg)
+		repo.On("GetById", int64(Id)).Return(warehouse.WarehouseModel{}, errMsg)
 
 		service := warehouse.NewService(repo)
 
-		_, err := service.GetById(int64(fakeID))
+		_, err := service.GetById(int64(Id))
+
+		assert.Error(t, err)
+	})
+}
+
+func Test_Service_UpdateTempAndCap(t *testing.T) {
+	expectedWarehouse := warehouse.WarehouseModel{
+		Id:                 1,
+		Address:            "Avenida Teste Segunda",
+		Telephone:          "31 77777777",
+		WarehouseCode:      "od78",
+		MinimunCapacity:    999.0,
+		MinimunTemperature: 999.0,
+	}
+
+	updateWarehouse := warehouse.WarehouseModel{
+		MinimunCapacity:    999.0,
+		MinimunTemperature: 777.0,
+	}
+
+	t.Run("update_existent: Se os campos forem atualizados com sucesso retornará a informação do elemento atualizado", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+
+		repo.On("Update", expectedWarehouse.Id, &updateWarehouse).Return(expectedWarehouse, nil)
+
+		service := warehouse.NewService(repo)
+
+		result, _ := service.UpdateTempAndCap(expectedWarehouse.Id, updateWarehouse.MinimunTemperature, updateWarehouse.MinimunCapacity)
+
+		assert.Equal(t, expectedWarehouse, result)
+	})
+
+	t.Run("update_non_existent: Se não for encontrado um warehouse com o ID retornar um error informando", func(t *testing.T) {
+
+		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", expectedWarehouse.Id)
+
+		repo := mocks.NewRepository(t)
+
+		repo.On("Update", expectedWarehouse.Id, &updateWarehouse).Return(warehouse.WarehouseModel{}, errMsg)
+
+		service := warehouse.NewService(repo)
+
+		_, err := service.UpdateTempAndCap(expectedWarehouse.Id, updateWarehouse.MinimunTemperature, updateWarehouse.MinimunCapacity)
 
 		assert.Error(t, err)
 	})
