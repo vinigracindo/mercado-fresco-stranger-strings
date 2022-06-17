@@ -82,7 +82,7 @@ func (controller EmployeeController) Store() gin.HandlerFunc {
 			return
 		}
 
-		employee, err := controller.service.Store(req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
+		employee, err := controller.service.Create(req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
 		if err != nil {
 			httputil.NewError(c, http.StatusBadRequest, err)
 			return
