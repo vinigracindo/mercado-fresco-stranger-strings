@@ -31,6 +31,15 @@ func NewSeller(s seller.Service) SellerController {
 	}
 }
 
+// Seller godoc
+// @Summary      List all seller
+// @Description  get Seller
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Success      200  {object} []seller.SellerModel
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /sellers [get]
 func (c SellerController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		seller, err := c.service.GetAll()
@@ -47,6 +56,17 @@ func (c SellerController) GetAll() gin.HandlerFunc {
 	}
 }
 
+// Seller godoc
+// @Summary      List Seller by id
+// @Description  get Seller by id
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Seller ID"
+// @Success      200  {object} seller.SellerModel
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /sellers/{id} [get]
 func (c SellerController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
@@ -69,6 +89,17 @@ func (c SellerController) GetById() gin.HandlerFunc {
 	}
 }
 
+// Seller godoc
+// @Summary      Create seller
+// @Description  create seller
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Param Seller body requestSellerPost true "Create seller"
+// @Success      201  {object}  seller.SellerModel
+// @Failure      409  {object}  httputil.HTTPError
+// @Failure      422  {object}  httputil.HTTPError
+// @Router /sellers [post]
 func (c SellerController) CreateSeller() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestSellerPost
@@ -92,6 +123,18 @@ func (c SellerController) CreateSeller() gin.HandlerFunc {
 	}
 }
 
+// Seller godoc
+// @Summary      Update seller
+// @Description  Update seller
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Seller ID"
+// @Param Warehouse body requestWarehousePatch true "Update seller"
+// @Success      201  {object} seller.SellerModel
+// @Failure      409  {object}  httputil.HTTPError
+// @Failure      422  {object}  httputil.HTTPError
+// @Router /sellers/{id} [patch]
 func (c SellerController) UpdateSellerAddresAndTel() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
@@ -123,6 +166,17 @@ func (c SellerController) UpdateSellerAddresAndTel() gin.HandlerFunc {
 	}
 }
 
+// Seller godoc
+// @Summary      Delete Seller
+// @Description  Delete Seller by id
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Seller ID"
+// @Success      204
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /sellers/{id} [delete]
 func (c SellerController) DeleteSeller() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)

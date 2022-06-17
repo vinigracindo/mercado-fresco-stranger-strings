@@ -1,13 +1,5 @@
 package seller
 
-type Service interface {
-	GetAll() ([]Seller, error)
-	GetById(id int64) (Seller, error)
-	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
-	UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error)
-	DeleteSeller(id int64) error
-}
-
 type service struct {
 	repository Repository
 }
