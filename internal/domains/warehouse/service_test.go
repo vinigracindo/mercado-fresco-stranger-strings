@@ -189,3 +189,35 @@ func Test_Service_UpdateTempAndCap(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func Test_Service_Delete(t *testing.T) {
+
+	t.Run("delete_non_existent: Se o elemento a ser removido não existir, ele retornará erro.", func(t *testing.T) {
+		var id int64 = 1
+		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
+
+		repo := mocks.NewRepository(t)
+
+		repo.On("Delete", id).Return(errMsg)
+
+		service := warehouse.NewService(repo)
+
+		err := service.Delete(id)
+
+		assert.NotNil(t, err)
+	})
+
+	t.Run("delete_ok: Se a exclusão for bem-sucedida, retorna um erro vazio.", func(t *testing.T) {
+		var id int64 = 1
+
+		repo := mocks.NewRepository(t)
+
+		repo.On("Delete", id).Return(nil)
+
+		service := warehouse.NewService(repo)
+
+		err := service.Delete(id)
+
+		assert.Nil(t, err)
+	})
+}
