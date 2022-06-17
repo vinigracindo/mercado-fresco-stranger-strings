@@ -72,34 +72,30 @@ func TestSectionService_Create(t *testing.T) {
 }
 
 func TestSectionService_GetAll(t *testing.T) {
-	var listSection = []section.Section{}
-
-	section01 := section.Section{
-		Id:                 int64(1),
-		SectionNumber:      int64(1),
-		CurrentTemperature: int64(1),
-		MinimumTemperature: int64(1),
-		CurrentCapacity:    int64(1),
-		MinimumCapacity:    int64(1),
-		MaximumCapacity:    int64(1),
-		WarehouseId:        int64(1),
-		ProductTypeId:      int64(1),
+	var listSection = []section.Section{
+		{
+			Id:                 int64(1),
+			SectionNumber:      int64(1),
+			CurrentTemperature: int64(1),
+			MinimumTemperature: int64(1),
+			CurrentCapacity:    int64(1),
+			MinimumCapacity:    int64(1),
+			MaximumCapacity:    int64(1),
+			WarehouseId:        int64(1),
+			ProductTypeId:      int64(1),
+		},
+		{
+			Id:                 int64(2),
+			SectionNumber:      int64(2),
+			CurrentTemperature: int64(2),
+			MinimumTemperature: int64(2),
+			CurrentCapacity:    int64(2),
+			MinimumCapacity:    int64(2),
+			MaximumCapacity:    int64(2),
+			WarehouseId:        int64(2),
+			ProductTypeId:      int64(2),
+		},
 	}
-
-	section02 := section.Section{
-		Id:                 int64(2),
-		SectionNumber:      int64(2),
-		CurrentTemperature: int64(2),
-		MinimumTemperature: int64(2),
-		CurrentCapacity:    int64(2),
-		MinimumCapacity:    int64(2),
-		MaximumCapacity:    int64(2),
-		WarehouseId:        int64(2),
-		ProductTypeId:      int64(2),
-	}
-
-	listSection = append(listSection, section01)
-	listSection = append(listSection, section02)
 
 	t.Run("get_all: If the list has elements, it will return an amount of the total elements", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
@@ -114,9 +110,7 @@ func TestSectionService_GetAll(t *testing.T) {
 }
 
 func TestSectionService_GetById(t *testing.T) {
-	var listSection = []section.Section{}
-
-	section01 := section.Section{
+	expectedSection := section.Section{
 		Id:                 int64(1),
 		SectionNumber:      int64(1),
 		CurrentTemperature: int64(1),
@@ -128,30 +122,15 @@ func TestSectionService_GetById(t *testing.T) {
 		ProductTypeId:      int64(1),
 	}
 
-	section02 := section.Section{
-		Id:                 int64(2),
-		SectionNumber:      int64(2),
-		CurrentTemperature: int64(2),
-		MinimumTemperature: int64(2),
-		CurrentCapacity:    int64(2),
-		MinimumCapacity:    int64(2),
-		MaximumCapacity:    int64(2),
-		WarehouseId:        int64(2),
-		ProductTypeId:      int64(2),
-	}
-
-	listSection = append(listSection, section01)
-	listSection = append(listSection, section02)
-
 	t.Run("find_by_id_existent: If the element searched for by id exists, it will be return", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
-		repo.On("GetById", int64(1)).Return(section01, nil)
+		repo.On("GetById", int64(1)).Return(expectedSection, nil)
 
 		service := section.NewService(repo)
 		result, err := service.GetById(1)
 
 		assert.Nil(t, err)
-		assert.Equal(t, section01, result)
+		assert.Equal(t, expectedSection, result)
 
 	})
 
@@ -194,7 +173,7 @@ func TestSectionService_Delete(t *testing.T) {
 }
 
 func TestSectionService_Update(t *testing.T) {
-	sectionUpdated := section.Section{
+	expectedSection := section.Section{
 		Id:                 int64(1),
 		SectionNumber:      int64(1),
 		CurrentTemperature: int64(1),
@@ -208,13 +187,13 @@ func TestSectionService_Update(t *testing.T) {
 
 	t.Run("update_existent: When the data update is successful, the section with the updated information will be returned", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
-		repo.On("UpdateCurrentCapacity", int64(1), int64(5)).Return(sectionUpdated, nil)
+		repo.On("UpdateCurrentCapacity", int64(1), int64(5)).Return(expectedSection, nil)
 
 		service := section.NewService(repo)
 		result, err := service.UpdateCurrentCapacity(int64(1), int64(5))
 
 		assert.Nil(t, err)
-		assert.Equal(t, sectionUpdated.CurrentCapacity, result.CurrentCapacity)
+		assert.Equal(t, expectedSection.CurrentCapacity, result.CurrentCapacity)
 	})
 
 	t.Run("update_non_existent: If the section to be updated does not exist, null will be returned.", func(t *testing.T) {
