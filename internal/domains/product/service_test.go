@@ -1,6 +1,7 @@
 package product_test
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product/mocks"
@@ -13,7 +14,7 @@ func TestProductServiceCreate(t *testing.T) {
 
 		repo := mocks.NewRepository(t)
 
-		repo.On("Create", "PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.0, 1.3, 2, 2, 2).Return(
+		repo.On("Create", "PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2).Return(
 			&product.Product{
 				ProductCode:                    "PROD02",
 				Description:                    "Yogurt",
@@ -21,7 +22,7 @@ func TestProductServiceCreate(t *testing.T) {
 				Height:                         6.4,
 				Length:                         4.5,
 				NetWeight:                      3.4,
-				ExpirationRate:                 1.0,
+				ExpirationRate:                 1.5,
 				RecommendedFreezingTemperature: 1.3,
 				FreezingRate:                   2,
 				ProductTypeId:                  2,
@@ -30,7 +31,7 @@ func TestProductServiceCreate(t *testing.T) {
 		service := product.CreateService(repo)
 
 		expectedProduct, err := service.Create("PROD02", "Yogurt", 1.2, 6.4,
-			4.5, 3.4, 1, 1.3, 2, 2, 2)
+			4.5, 3.4, 1.5, 1.3, 2, 2, 2)
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedProduct.ProductCode, "PROD02")
@@ -39,11 +40,26 @@ func TestProductServiceCreate(t *testing.T) {
 		assert.Equal(t, expectedProduct.Height, 6.4)
 		assert.Equal(t, expectedProduct.Length, 4.5)
 		assert.Equal(t, expectedProduct.NetWeight, 3.4)
-		assert.Equal(t, expectedProduct.ExpirationRate, 1.0)
+		assert.Equal(t, expectedProduct.ExpirationRate, 1.5)
 		assert.Equal(t, expectedProduct.RecommendedFreezingTemperature, 1.3)
 		assert.Equal(t, expectedProduct.FreezingRate, 2)
 		assert.Equal(t, expectedProduct.ProductTypeId, 2)
 		assert.Equal(t, expectedProduct.SellerId, 2)
 
+		t.Run("create_conflict: Se o product_code já existir, ele não pode ser criado", func(t *testing.T) {
+			repo := mocks.NewRepository(t)
+			repo.On("Create", "PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2).Return(
+				nil, fmt.Errorf("the product with code PROD02 has already been registered"))
+
+			service := product.CreateService(repo)
+
+			expectedProduct, err := service.Create(
+				"PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5,
+				1.3, 2, 2, 2)
+
+			assert.NotNil(t, err)
+			assert.Nil(t, expectedProduct)
+			assert.Equal(t, err.Error(), "the product with code PROD02 has already been registered")
+		})
 	})
 }
