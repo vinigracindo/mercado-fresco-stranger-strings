@@ -1,14 +1,5 @@
 package product
 
-type Service interface {
-	GetAll() ([]Product, error)
-	GetById(id int64) (*Product, error)
-	Create(productCode string, description string, width float64, height float64, length float64, netWeight float64,
-		expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error)
-	UpdateDescription(id int64, description string) (Product, error)
-	Delete(id int64) error
-}
-
 type service struct {
 	repository Repository
 }

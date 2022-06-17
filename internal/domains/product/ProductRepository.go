@@ -7,16 +7,6 @@ import (
 var listProducts []Product
 var lastId int64 = 0
 
-type Repository interface {
-	GetAll() ([]Product, error)
-	GetById(id int64) (*Product, error)
-	Create(id int64, productCode string, description string, width float64, height float64, length float64, netWeight float64,
-		expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error)
-	LastId() int64
-	UpdateDescription(id int64, description string) (Product, error)
-	Delete(id int64) error
-}
-
 type repository struct {
 }
 
