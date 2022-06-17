@@ -81,6 +81,21 @@ func Test_Service_GetAll(t *testing.T) {
 
 		assert.Equal(t, expectedWarehouseList, resultList)
 	})
+
+	t.Run("find_all_err: retonar um erro ao tentar buscar pro todas as warehouses", func(t *testing.T) {
+
+		errMsg := fmt.Errorf("error: database não found")
+
+		repo := mocks.NewRepository(t)
+
+		repo.On("GetAll").Return([]warehouse.WarehouseModel{}, errMsg)
+
+		service := warehouse.NewService(repo)
+
+		_, err := service.GetAll()
+
+		assert.Error(t, err)
+	})
 }
 
 func Test_Service_GetByID(t *testing.T) {
