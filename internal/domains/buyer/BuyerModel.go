@@ -6,3 +6,20 @@ type Buyer struct {
 	FirstName    string `json:"first_name"`
 	LastName     string `json:"last_name"`
 }
+
+type Repository interface {
+	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
+	GetAll() ([]Buyer, error)
+	GetId(id int64) (*Buyer, error)
+	Update(id int64, cardNumberId int64, lastName string) (Buyer, error)
+	Delete(id int64) error
+	CreateId() int64
+}
+
+type Service interface {
+	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
+	GetAll() ([]Buyer, error)
+	GetId(id int64) (*Buyer, error)
+	Update(id int64, cardNumberId int64, lastName string) (Buyer, error)
+	Delete(id int64) error
+}

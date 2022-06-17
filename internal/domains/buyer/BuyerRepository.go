@@ -5,15 +5,6 @@ import "fmt"
 var buyers = []Buyer{}
 var id int64 = 0
 
-type Repository interface {
-	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
-	GetAll() ([]Buyer, error)
-	GetId(id int64) (*Buyer, error)
-	Update(id int64, cardNumberId int64, lastName string) (Buyer, error)
-	Delete(id int64) error
-	CreateId() int64
-}
-
 type repository struct{}
 
 func (r *repository) CreateId() int64 {
