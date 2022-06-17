@@ -88,9 +88,9 @@ func (api *APIServer) Run(port int) {
 	sellerGroup := groupV1.Group("/sellers")
 	sellerGroup.GET("/", sellerController.GetAll())
 	sellerGroup.GET("/:id", sellerController.GetById())
-	sellerGroup.POST("/", sellerController.CreateSeller())
-	sellerGroup.PATCH("/:id", sellerController.UpdateSellerAddresAndTel())
-	sellerGroup.DELETE("/:id", sellerController.DeleteSeller())
+	sellerGroup.POST("/", sellerController.Create())
+	sellerGroup.PATCH("/:id", sellerController.Update())
+	sellerGroup.DELETE("/:id", sellerController.Delete())
 
 	//Buyer routes
 	buyerRepository := buyer.NewRepository()

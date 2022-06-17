@@ -21,6 +21,6 @@ type Repository interface {
 	GetById(id int64) (Seller, error)
 	Create(cid int64, companyName, address, telephone string) (Seller, error)
 	Update(id int64, address, telephone string) (Seller, error)
-	creatID() int64
+	CreatID() int64
 	Delete(id int64) error
 }

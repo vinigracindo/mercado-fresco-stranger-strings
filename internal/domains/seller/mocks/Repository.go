@@ -12,8 +12,22 @@ type Repository struct {
 	mock.Mock
 }
 
-// CreateSeller provides a mock function with given fields: cid, companyName, address, telephone
-func (_m *Repository) CreateSeller(cid int64, companyName string, address string, telephone string) (seller.Seller, error) {
+// CreatID provides a mock function with given fields:
+func (_m *Repository) CreatID() int64 {
+	ret := _m.Called()
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func() int64); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	return r0
+}
+
+// Create provides a mock function with given fields: cid, companyName, address, telephone
+func (_m *Repository) Create(cid int64, companyName string, address string, telephone string) (seller.Seller, error) {
 	ret := _m.Called(cid, companyName, address, telephone)
 
 	var r0 seller.Seller
@@ -33,8 +47,8 @@ func (_m *Repository) CreateSeller(cid int64, companyName string, address string
 	return r0, r1
 }
 
-// DeleteSeller provides a mock function with given fields: id
-func (_m *Repository) DeleteSeller(id int64) error {
+// Delete provides a mock function with given fields: id
+func (_m *Repository) Delete(id int64) error {
 	ret := _m.Called(id)
 
 	var r0 error
@@ -91,8 +105,8 @@ func (_m *Repository) GetById(id int64) (seller.Seller, error) {
 	return r0, r1
 }
 
-// UpdateSellerAddresAndTel provides a mock function with given fields: id, address, telephone
-func (_m *Repository) UpdateSellerAddresAndTel(id int64, address string, telephone string) (seller.Seller, error) {
+// Update provides a mock function with given fields: id, address, telephone
+func (_m *Repository) Update(id int64, address string, telephone string) (seller.Seller, error) {
 	ret := _m.Called(id, address, telephone)
 
 	var r0 seller.Seller
@@ -110,20 +124,6 @@ func (_m *Repository) UpdateSellerAddresAndTel(id int64, address string, telepho
 	}
 
 	return r0, r1
-}
-
-// creatID provides a mock function with given fields:
-func (_m *Repository) creatID() int64 {
-	ret := _m.Called()
-
-	var r0 int64
-	if rf, ok := ret.Get(0).(func() int64); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-
-	return r0
 }
 
 type mockConstructorTestingTNewRepository interface {

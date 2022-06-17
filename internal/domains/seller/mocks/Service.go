@@ -12,8 +12,8 @@ type Service struct {
 	mock.Mock
 }
 
-// CreateSeller provides a mock function with given fields: cid, companyName, address, telephone
-func (_m *Service) CreateSeller(cid int64, companyName string, address string, telephone string) (seller.Seller, error) {
+// Create provides a mock function with given fields: cid, companyName, address, telephone
+func (_m *Service) Create(cid int64, companyName string, address string, telephone string) (seller.Seller, error) {
 	ret := _m.Called(cid, companyName, address, telephone)
 
 	var r0 seller.Seller
@@ -33,8 +33,8 @@ func (_m *Service) CreateSeller(cid int64, companyName string, address string, t
 	return r0, r1
 }
 
-// DeleteSeller provides a mock function with given fields: id
-func (_m *Service) DeleteSeller(id int64) error {
+// Delete provides a mock function with given fields: id
+func (_m *Service) Delete(id int64) error {
 	ret := _m.Called(id)
 
 	var r0 error
@@ -91,8 +91,8 @@ func (_m *Service) GetById(id int64) (seller.Seller, error) {
 	return r0, r1
 }
 
-// UpdateSellerAddresAndTel provides a mock function with given fields: id, address, telephone
-func (_m *Service) UpdateSellerAddresAndTel(id int64, address string, telephone string) (seller.Seller, error) {
+// Update provides a mock function with given fields: id, address, telephone
+func (_m *Service) Update(id int64, address string, telephone string) (seller.Seller, error) {
 	ret := _m.Called(id, address, telephone)
 
 	var r0 seller.Seller

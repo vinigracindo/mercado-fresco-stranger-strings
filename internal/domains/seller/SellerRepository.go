@@ -25,7 +25,7 @@ func (r *repository) GetById(id int64) (Seller, error) {
 	return Seller{}, fmt.Errorf("seller id %d not found", id)
 }
 
-func (r *repository) creatID() int64 {
+func (r *repository) CreatID() int64 {
 	id += 1
 	return id
 }
@@ -38,7 +38,7 @@ func (r *repository) Create(cid int64, companyName, address, telephone string) (
 	}
 
 	seller := Seller{
-		Id:          r.creatID(),
+		Id:          r.CreatID(),
 		Cid:         cid,
 		CompanyName: companyName,
 		Address:     address,
