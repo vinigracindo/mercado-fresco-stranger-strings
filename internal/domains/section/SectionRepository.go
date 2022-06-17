@@ -53,7 +53,7 @@ func (r *repository) UpdateCurrentCapacity(id int64, currentCapacity int64) (Sec
 	return section, nil
 }
 
-func (r *repository) CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
+func (r *repository) Create(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
 	for i := range listSection {
 		if listSection[i].SectionNumber == sectionNumber {
 			return Section{}, fmt.Errorf("Already a secton with the code: %d", sectionNumber)

@@ -18,8 +18,8 @@ func (s *service) UpdateCurrentCapacity(id int64, currentCapacity int64) (Sectio
 	return s.repository.UpdateCurrentCapacity(id, currentCapacity)
 }
 
-func (s *service) CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
-	section, err := s.repository.CreateSection(
+func (s *service) Create(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
+	section, err := s.repository.Create(
 		sectionNumber,
 		currentTemperature,
 		minimumTemperature,

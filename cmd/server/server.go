@@ -40,7 +40,7 @@ func (api *APIServer) Run(port int) {
 	sectionGroup := groupV1.Group("/sections")
 	sectionGroup.DELETE("/:id", sectionController.Delete())
 	sectionGroup.PATCH("/:id", sectionController.UpdateCurrentCapacity())
-	sectionGroup.POST("/", sectionController.CreateSection())
+	sectionGroup.POST("/", sectionController.Create())
 	sectionGroup.GET("/:id", sectionController.GetById())
 	sectionGroup.GET("/", sectionController.GetAll())
 

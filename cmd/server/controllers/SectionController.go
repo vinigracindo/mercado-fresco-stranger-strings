@@ -114,7 +114,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /sections [post]
-func (c ControllerSection) CreateSection() gin.HandlerFunc {
+func (c ControllerSection) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestSectionPost
 
@@ -123,7 +123,7 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 			return
 		}
 
-		response, err := c.service.CreateSection(
+		response, err := c.service.Create(
 			req.SectionNumber,
 			req.CurrentTemperature,
 			req.MinimumTemperature,
