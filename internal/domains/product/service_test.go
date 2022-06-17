@@ -63,3 +63,66 @@ func TestProductServiceCreate(t *testing.T) {
 		})
 	})
 }
+
+func TestProductServiceGetAll(t *testing.T) {
+
+	expectedProduct := []product.Product{
+		{
+			Id:                             1,
+			ProductCode:                    "PROD02",
+			Description:                    "Yogurt",
+			Width:                          1.2,
+			Height:                         6.4,
+			Length:                         4.5,
+			NetWeight:                      3.4,
+			ExpirationRate:                 1.5,
+			RecommendedFreezingTemperature: 1.3,
+			FreezingRate:                   2,
+			ProductTypeId:                  2,
+			SellerId:                       2,
+		},
+
+		{
+			Id:                             2,
+			ProductCode:                    "PROD03",
+			Description:                    "Yogurt light",
+			Width:                          1.5,
+			Height:                         5.4,
+			Length:                         3.5,
+			NetWeight:                      4.4,
+			ExpirationRate:                 1.8,
+			RecommendedFreezingTemperature: 1.2,
+			FreezingRate:                   2,
+			ProductTypeId:                  3,
+			SellerId:                       3,
+		},
+	}
+
+	t.Run("find_all: Se a lista tiver 'n' elementos, retornará uma quantidade do total de elementos", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+
+		repo.On("GetAll").Return(expectedProduct, nil)
+
+		service := product.CreateService(repo)
+
+		productList, err := service.GetAll()
+
+		assert.Nil(t, err)
+		assert.Equal(t, expectedProduct, productList)
+
+	})
+
+	t.Run("find_all_err: quando não encontrar todos os produtos, retornará um erro", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+
+		mgsError := fmt.Errorf("error: produtos não encontrados")
+
+		repo.On("GetAll").Return([]product.Product{}, mgsError)
+
+		serice := product.CreateService(repo)
+
+		_, err := serice.GetAll()
+
+		assert.Error(t, err)
+	})
+}
