@@ -15,6 +15,7 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/service"
 )
 
 type APIServer struct{}
@@ -70,7 +71,7 @@ func (api *APIServer) Run(port int) {
 
 	//Warehouse routes
 	warehouseRepository := warehouse.NewRepository()
-	warehouseService := warehouse.NewService(warehouseRepository)
+	warehouseService := service.NewService(warehouseRepository)
 	warehouseController := controllers.NewWarehouse(warehouseService)
 
 	warehouseGroup := groupV1.Group("/warehouses")
