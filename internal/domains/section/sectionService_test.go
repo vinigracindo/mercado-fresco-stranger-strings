@@ -21,7 +21,7 @@ func TestSectionService_Create(t *testing.T) {
 		ProductTypeId:      int64(1),
 	}
 
-	t.Run("Create ok: If it contains the required fields, it will be created", func(t *testing.T) {
+	t.Run("create_ok: If it contains the required fields, it will be created", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
 		repo.On("Create",
 			expectedSection.SectionNumber,
@@ -48,7 +48,7 @@ func TestSectionService_Create(t *testing.T) {
 		assert.Equal(t, expectedSection.ProductTypeId, result.ProductTypeId)
 	})
 
-	t.Run("Create conflict: If section_number already exists it cannot be created", func(t *testing.T) {
+	t.Run("create_conflict: If section_number already exists it cannot be created", func(t *testing.T) {
 		errorConflict := fmt.Errorf("Already a section with the code: %d", expectedSection.SectionNumber)
 
 		repo := mocks.NewRepository(t)
@@ -71,7 +71,7 @@ func TestSectionService_Create(t *testing.T) {
 	})
 }
 
-func TestSectionService_Get(t *testing.T) {
+func TestSectionService_GetAll(t *testing.T) {
 	var listSection = []section.Section{}
 
 	section01 := section.Section{
@@ -101,7 +101,7 @@ func TestSectionService_Get(t *testing.T) {
 	listSection = append(listSection, section01)
 	listSection = append(listSection, section02)
 
-	t.Run("Get All: If the list has elements, it will return an amount of the total elements", func(t *testing.T) {
+	t.Run("get_all: If the list has elements, it will return an amount of the total elements", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
 		repo.On("GetAll").Return(listSection, nil)
 
@@ -111,8 +111,39 @@ func TestSectionService_Get(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, listSection, result)
 	})
+}
 
-	t.Run("Find by id existent: If the element searched for by id exists, it will be return", func(t *testing.T) {
+func TestSectionService_GetById(t *testing.T) {
+	var listSection = []section.Section{}
+
+	section01 := section.Section{
+		Id:                 int64(1),
+		SectionNumber:      int64(1),
+		CurrentTemperature: int64(1),
+		MinimumTemperature: int64(1),
+		CurrentCapacity:    int64(1),
+		MinimumCapacity:    int64(1),
+		MaximumCapacity:    int64(1),
+		WarehouseId:        int64(1),
+		ProductTypeId:      int64(1),
+	}
+
+	section02 := section.Section{
+		Id:                 int64(2),
+		SectionNumber:      int64(2),
+		CurrentTemperature: int64(2),
+		MinimumTemperature: int64(2),
+		CurrentCapacity:    int64(2),
+		MinimumCapacity:    int64(2),
+		MaximumCapacity:    int64(2),
+		WarehouseId:        int64(2),
+		ProductTypeId:      int64(2),
+	}
+
+	listSection = append(listSection, section01)
+	listSection = append(listSection, section02)
+
+	t.Run("find_by_id_existent: If the element searched for by id exists, it will be return", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
 		repo.On("GetById", int64(1)).Return(section01, nil)
 
@@ -124,7 +155,7 @@ func TestSectionService_Get(t *testing.T) {
 
 	})
 
-	t.Run("Find by id non existent: If the element searched for by id does not exist, return null", func(t *testing.T) {
+	t.Run("find_by_id_non_existent: If the element searched for by id does not exist, return null", func(t *testing.T) {
 		id := int64(3)
 		errorNotFound := fmt.Errorf("Section %d not found", id)
 		repo := mocks.NewRepository(t)
@@ -136,4 +167,67 @@ func TestSectionService_Get(t *testing.T) {
 		assert.Equal(t, section.Section{}, result)
 		assert.Equal(t, errorNotFound, err)
 	})
+}
+
+func TestSectionService_Delete(t *testing.T) {
+	t.Run("delete_ok: If the deletion is successful, the item will not appear in the list", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("Delete", int64(1)).Return(nil)
+
+		service := section.NewService(repo)
+		err := service.Delete(1)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("delete_non_existent: When the section does not exist, null will be returned", func(t *testing.T) {
+		id := int64(3)
+		errorNotFound := fmt.Errorf("Section %d not found", id)
+		repo := mocks.NewRepository(t)
+		repo.On("Delete", id).Return(errorNotFound)
+
+		service := section.NewService(repo)
+		err := service.Delete(id)
+
+		assert.Equal(t, errorNotFound, err)
+	})
+}
+
+func TestSectionService_Update(t *testing.T) {
+	sectionUpdated := section.Section{
+		Id:                 int64(1),
+		SectionNumber:      int64(1),
+		CurrentTemperature: int64(1),
+		MinimumTemperature: int64(1),
+		CurrentCapacity:    int64(5),
+		MinimumCapacity:    int64(1),
+		MaximumCapacity:    int64(1),
+		WarehouseId:        int64(1),
+		ProductTypeId:      int64(1),
+	}
+
+	t.Run("update_existent: When the data update is successful, the section with the updated information will be returned", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("UpdateCurrentCapacity", int64(1), int64(5)).Return(sectionUpdated, nil)
+
+		service := section.NewService(repo)
+		result, err := service.UpdateCurrentCapacity(int64(1), int64(5))
+
+		assert.Nil(t, err)
+		assert.Equal(t, sectionUpdated.CurrentCapacity, result.CurrentCapacity)
+	})
+
+	t.Run("update_non_existent: If the section to be updated does not exist, null will be returned.", func(t *testing.T) {
+		id := int64(3)
+		errorNotFound := fmt.Errorf("Section %d not found", id)
+		repo := mocks.NewRepository(t)
+		repo.On("UpdateCurrentCapacity", id, int64(5)).Return(section.Section{}, errorNotFound)
+
+		service := section.NewService(repo)
+		result, err := service.UpdateCurrentCapacity(id, int64(5))
+
+		assert.Equal(t, errorNotFound, err)
+		assert.Equal(t, section.Section{}, result)
+	})
+
 }
