@@ -212,4 +212,14 @@ func TestProductService_Delete(t *testing.T) {
 
 		assert.NotNil(t, err)
 	})
+
+	t.Run("delete_ok: Se a exclusão for bem-sucedida, o item não aparecerá na lista.", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("Delete", int64(1)).Return(nil)
+		service := product.CreateService(repo)
+
+		err := service.Delete(int64(1))
+
+		assert.Nil(t, err)
+	})
 }
