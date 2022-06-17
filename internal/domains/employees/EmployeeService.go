@@ -14,11 +14,11 @@ func (s service) GetAll() ([]Employee, error) {
 	return employees, nil
 }
 
-func (s service) GetById(id int64) (Employee, error) {
+func (s service) GetById(id int64) (*Employee, error) {
 	employee, err := s.repo.GetById(id)
 
 	if err != nil {
-		return Employee{}, err
+		return nil, err
 	}
 
 	return employee, nil

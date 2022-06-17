@@ -20,14 +20,14 @@ func (repository) GetAll() ([]Employee, error) {
 	return employees, nil
 }
 
-func (repository) GetById(id int64) (Employee, error) {
+func (repository) GetById(id int64) (*Employee, error) {
 	for _, employee := range employees {
 		if employee.Id == id {
-			return employee, nil
+			return &employee, nil
 		}
 	}
 
-	return Employee{}, fmt.Errorf("employee with id %d not found", id)
+	return nil, fmt.Errorf("employee with id %d not found", id)
 }
 
 func (repo repository) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {

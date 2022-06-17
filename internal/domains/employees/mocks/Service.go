@@ -50,14 +50,16 @@ func (_m *Service) GetAll() ([]employees.Employee, error) {
 }
 
 // GetById provides a mock function with given fields: id
-func (_m *Service) GetById(id int64) (employees.Employee, error) {
+func (_m *Service) GetById(id int64) (*employees.Employee, error) {
 	ret := _m.Called(id)
 
-	var r0 employees.Employee
-	if rf, ok := ret.Get(0).(func(int64) employees.Employee); ok {
+	var r0 *employees.Employee
+	if rf, ok := ret.Get(0).(func(int64) *employees.Employee); ok {
 		r0 = rf(id)
 	} else {
-		r0 = ret.Get(0).(employees.Employee)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*employees.Employee)
+		}
 	}
 
 	var r1 error
