@@ -30,7 +30,7 @@ func (repository) GetById(id int64) (*Employee, error) {
 	return nil, fmt.Errorf("employee with id %d not found", id)
 }
 
-func (repo repository) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+func (repo repository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
 	nextId := lastId
 	employee := Employee{
 		Id:           nextId,
@@ -49,15 +49,15 @@ func (repo repository) Store(cardNumberId string, firstName string, lastName str
 	return employee, nil
 }
 
-func (repo repository) UpdateFullname(id int64, firstName string, lastName string) (Employee, error) {
+func (repo repository) UpdateFullname(id int64, firstName string, lastName string) (*Employee, error) {
 	for i, employee := range employees {
 		if employee.Id == id {
 			employees[i].FirstName = firstName
 			employees[i].LastName = lastName
-			return employees[i], nil
+			return &employees[i], nil
 		}
 	}
-	return Employee{}, fmt.Errorf("employee with id %d not found", id)
+	return nil, fmt.Errorf("employee with id %d not found", id)
 }
 
 func (repo repository) Delete(id int64) error {

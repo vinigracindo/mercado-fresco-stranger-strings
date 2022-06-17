@@ -24,16 +24,16 @@ func (s service) GetById(id int64) (*Employee, error) {
 	return employee, nil
 }
 
-func (s service) UpdateFullname(id int64, firstName string, lastName string) (Employee, error) {
+func (s service) UpdateFullname(id int64, firstName string, lastName string) (*Employee, error) {
 	employee, err := s.repo.UpdateFullname(id, firstName, lastName)
 	if err != nil {
-		return Employee{}, err
+		return nil, err
 	}
 	return employee, nil
 }
 
-func (s service) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
-	employee, err := s.repo.Store(cardNumberId, firstName, lastName, warehouseId)
+func (s service) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+	employee, err := s.repo.Create(cardNumberId, firstName, lastName, warehouseId)
 
 	if err != nil {
 		return Employee{}, err

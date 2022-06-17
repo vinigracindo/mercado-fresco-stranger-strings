@@ -12,6 +12,27 @@ type Repository struct {
 	mock.Mock
 }
 
+// Create provides a mock function with given fields: cardNumberId, firstName, lastName, warehouseId
+func (_m *Repository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (employees.Employee, error) {
+	ret := _m.Called(cardNumberId, firstName, lastName, warehouseId)
+
+	var r0 employees.Employee
+	if rf, ok := ret.Get(0).(func(string, string, string, int64) employees.Employee); ok {
+		r0 = rf(cardNumberId, firstName, lastName, warehouseId)
+	} else {
+		r0 = ret.Get(0).(employees.Employee)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string, string, int64) error); ok {
+		r1 = rf(cardNumberId, firstName, lastName, warehouseId)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Delete provides a mock function with given fields: id
 func (_m *Repository) Delete(id int64) error {
 	ret := _m.Called(id)
@@ -72,36 +93,17 @@ func (_m *Repository) GetById(id int64) (*employees.Employee, error) {
 	return r0, r1
 }
 
-// Store provides a mock function with given fields: cardNumberId, firstName, lastName, warehouseId
-func (_m *Repository) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (employees.Employee, error) {
-	ret := _m.Called(cardNumberId, firstName, lastName, warehouseId)
-
-	var r0 employees.Employee
-	if rf, ok := ret.Get(0).(func(string, string, string, int64) employees.Employee); ok {
-		r0 = rf(cardNumberId, firstName, lastName, warehouseId)
-	} else {
-		r0 = ret.Get(0).(employees.Employee)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(string, string, string, int64) error); ok {
-		r1 = rf(cardNumberId, firstName, lastName, warehouseId)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // UpdateFullname provides a mock function with given fields: id, firstName, lastName
-func (_m *Repository) UpdateFullname(id int64, firstName string, lastName string) (employees.Employee, error) {
+func (_m *Repository) UpdateFullname(id int64, firstName string, lastName string) (*employees.Employee, error) {
 	ret := _m.Called(id, firstName, lastName)
 
-	var r0 employees.Employee
-	if rf, ok := ret.Get(0).(func(int64, string, string) employees.Employee); ok {
+	var r0 *employees.Employee
+	if rf, ok := ret.Get(0).(func(int64, string, string) *employees.Employee); ok {
 		r0 = rf(id, firstName, lastName)
 	} else {
-		r0 = ret.Get(0).(employees.Employee)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*employees.Employee)
+		}
 	}
 
 	var r1 error
