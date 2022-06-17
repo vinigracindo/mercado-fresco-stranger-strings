@@ -64,7 +64,7 @@ func (r *repository) LastId() int64 {
 	return lastId
 }
 
-func (r *repository) UpdateDescription(id int64, description string) (Product, error) {
+func (r *repository) UpdateDescription(id int64, description string) (*Product, error) {
 	var product Product
 	update := false
 	for i := range listProducts {
@@ -77,9 +77,9 @@ func (r *repository) UpdateDescription(id int64, description string) (Product, e
 	}
 
 	if !update {
-		return Product{}, fmt.Errorf("the product with id %d was not found", id)
+		return nil, fmt.Errorf("the product with id %d was not found", id)
 	}
-	return product, nil
+	return &product, nil
 }
 
 func (r *repository) Delete(id int64) error {

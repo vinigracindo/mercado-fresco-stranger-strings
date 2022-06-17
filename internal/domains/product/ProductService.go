@@ -36,7 +36,7 @@ func (s *service) Create(productCode string, description string, width float64, 
 	return newProduct, nil
 }
 
-func (s *service) UpdateDescription(id int64, description string) (Product, error) {
+func (s *service) UpdateDescription(id int64, description string) (*Product, error) {
 	return s.repository.UpdateDescription(id, description)
 }
 

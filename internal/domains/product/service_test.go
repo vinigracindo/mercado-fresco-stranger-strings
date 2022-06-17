@@ -163,6 +163,7 @@ func TestProductService_GetById(t *testing.T) {
 }
 
 func TestProductService_UpdateDescription(t *testing.T) {
+
 	t.Run("update_existent: Quando a atualização dos dados for bem sucedida, o produto será devolvido com as informações atualizadas", func(t *testing.T) {
 		expectedProduct := product.Product{
 			Id:                             1,
@@ -187,5 +188,16 @@ func TestProductService_UpdateDescription(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, prod, expectedProduct)
+	})
+
+	t.Run("update_non_existent: Se o produto a ser atualizado não existir, será retornado null.", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("UpdateDescription", int64(1), "Strawberry yogurt").Return(nil, fmt.Errorf("product was not found"))
+		service := product.CreateService(repo)
+
+		prod, err := service.UpdateDescription(int64(1), "Strawberry yogurt")
+
+		assert.Nil(t, prod)
+		assert.NotNil(t, err)
 	})
 }

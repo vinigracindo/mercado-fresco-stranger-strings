@@ -96,14 +96,16 @@ func (_m *Repository) GetById(id int64) (*product.Product, error) {
 }
 
 // UpdateDescription provides a mock function with given fields: id, description
-func (_m *Repository) UpdateDescription(id int64, description string) (product.Product, error) {
+func (_m *Repository) UpdateDescription(id int64, description string) (*product.Product, error) {
 	ret := _m.Called(id, description)
 
-	var r0 product.Product
-	if rf, ok := ret.Get(0).(func(int64, string) product.Product); ok {
+	var r0 *product.Product
+	if rf, ok := ret.Get(0).(func(int64, string) *product.Product); ok {
 		r0 = rf(id, description)
 	} else {
-		r0 = ret.Get(0).(product.Product)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*product.Product)
+		}
 	}
 
 	var r1 error
