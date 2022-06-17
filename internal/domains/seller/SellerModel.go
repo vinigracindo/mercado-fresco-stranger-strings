@@ -11,16 +11,16 @@ type Seller struct {
 type Service interface {
 	GetAll() ([]Seller, error)
 	GetById(id int64) (Seller, error)
-	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
-	UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error)
-	DeleteSeller(id int64) error
+	Create(cid int64, companyName, address, telephone string) (Seller, error)
+	Update(id int64, address, telephone string) (Seller, error)
+	Delete(id int64) error
 }
 
 type Repository interface {
 	GetAll() ([]Seller, error)
 	GetById(id int64) (Seller, error)
-	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
-	UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error)
+	Create(cid int64, companyName, address, telephone string) (Seller, error)
+	Update(id int64, address, telephone string) (Seller, error)
 	creatID() int64
-	DeleteSeller(id int64) error
+	Delete(id int64) error
 }
