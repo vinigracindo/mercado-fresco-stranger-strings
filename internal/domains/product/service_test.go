@@ -50,7 +50,6 @@ func TestProductServiceCreate(t *testing.T) {
 			repo := mocks.NewRepository(t)
 			repo.On("Create", "PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2).Return(
 				nil, fmt.Errorf("the product with code PROD02 has already been registered"))
-
 			service := product.CreateService(repo)
 
 			expectedProduct, err := service.Create(
@@ -114,15 +113,71 @@ func TestProductServiceGetAll(t *testing.T) {
 
 	t.Run("find_all_err: quando não encontrar todos os produtos, retornará um erro", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
+		repo.On("GetAll").Return([]product.Product{}, fmt.Errorf("error: produtos não encontrados"))
+		service := product.CreateService(repo)
 
-		mgsError := fmt.Errorf("error: produtos não encontrados")
-
-		repo.On("GetAll").Return([]product.Product{}, mgsError)
-
-		serice := product.CreateService(repo)
-
-		_, err := serice.GetAll()
+		_, err := service.GetAll()
 
 		assert.Error(t, err)
 	})
+}
+
+func TestProductServiceGetById(t *testing.T) {
+
+	expectedProduct := []*product.Product{
+		{
+			Id:                             1,
+			ProductCode:                    "PROD02",
+			Description:                    "Yogurt",
+			Width:                          1.2,
+			Height:                         6.4,
+			Length:                         4.5,
+			NetWeight:                      3.4,
+			ExpirationRate:                 1.5,
+			RecommendedFreezingTemperature: 1.3,
+			FreezingRate:                   2,
+			ProductTypeId:                  2,
+			SellerId:                       2,
+		},
+
+		{
+			Id:                             2,
+			ProductCode:                    "PROD03",
+			Description:                    "Yogurt light",
+			Width:                          1.5,
+			Height:                         5.4,
+			Length:                         3.5,
+			NetWeight:                      4.4,
+			ExpirationRate:                 1.8,
+			RecommendedFreezingTemperature: 1.2,
+			FreezingRate:                   2,
+			ProductTypeId:                  3,
+			SellerId:                       3,
+		},
+	}
+
+	t.Run("find_by_id_non_existent: Se o elemento procurado por id não existir, retorna null", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("GetById", int64(1)).Return(nil, fmt.Errorf("the product with the id was not found"))
+		service := product.CreateService(repo)
+
+		prod, err := service.GetById(int64(1))
+
+		assert.Nil(t, prod)
+		assert.NotNil(t, err)
+
+	})
+
+	t.Run("find_by_id_existent: Se o elemento procurado por id existir, ele retornará as informações do elemento solicitado", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("GetById", int64(1)).Return(expectedProduct[1], nil)
+		service := product.CreateService(repo)
+
+		resultProduct, err := service.GetById(int64(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, expectedProduct[1], resultProduct)
+
+	})
+
 }
