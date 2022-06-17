@@ -100,7 +100,7 @@ func (api *APIServer) Run(port int) {
 	buyerGroup := groupV1.Group("buyers")
 	buyerGroup.GET("/", buyerController.GetAll())
 	buyerGroup.GET("/:id", buyerController.GetId())
-	buyerGroup.POST("/", buyerController.Store())
+	buyerGroup.POST("/", buyerController.Create())
 	buyerGroup.PATCH("/:id", buyerController.UpdateCardNumberLastName())
 	buyerGroup.DELETE("/:id", buyerController.DeleteBuyer())
 

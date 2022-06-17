@@ -4,8 +4,8 @@ type service struct {
 	repository Repository
 }
 
-func (s service) Store(cardNumberId int64, firstName string, lastName string) (Buyer, error) {
-	buyer, err := s.repository.Store(cardNumberId, firstName, lastName)
+func (s service) Create(cardNumberId int64, firstName string, lastName string) (Buyer, error) {
+	buyer, err := s.repository.Create(cardNumberId, firstName, lastName)
 	if err != nil {
 		return Buyer{}, err
 	}

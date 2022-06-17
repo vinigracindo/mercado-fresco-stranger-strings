@@ -8,7 +8,7 @@ type Buyer struct {
 }
 
 type Repository interface {
-	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
+	Create(cardNumberId int64, firstName string, lastName string) (Buyer, error)
 	GetAll() ([]Buyer, error)
 	GetId(id int64) (*Buyer, error)
 	Update(id int64, cardNumberId int64, lastName string) (Buyer, error)
@@ -17,7 +17,7 @@ type Repository interface {
 }
 
 type Service interface {
-	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
+	Create(cardNumberId int64, firstName string, lastName string) (Buyer, error)
 	GetAll() ([]Buyer, error)
 	GetId(id int64) (*Buyer, error)
 	Update(id int64, cardNumberId int64, lastName string) (Buyer, error)

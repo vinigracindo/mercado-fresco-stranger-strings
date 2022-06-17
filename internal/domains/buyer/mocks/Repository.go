@@ -12,6 +12,27 @@ type Repository struct {
 	mock.Mock
 }
 
+// Create provides a mock function with given fields: cardNumberId, firstName, lastName
+func (_m *Repository) Create(cardNumberId int64, firstName string, lastName string) (buyer.Buyer, error) {
+	ret := _m.Called(cardNumberId, firstName, lastName)
+
+	var r0 buyer.Buyer
+	if rf, ok := ret.Get(0).(func(int64, string, string) buyer.Buyer); ok {
+		r0 = rf(cardNumberId, firstName, lastName)
+	} else {
+		r0 = ret.Get(0).(buyer.Buyer)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int64, string, string) error); ok {
+		r1 = rf(cardNumberId, firstName, lastName)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CreateId provides a mock function with given fields:
 func (_m *Repository) CreateId() int64 {
 	ret := _m.Called()
@@ -79,27 +100,6 @@ func (_m *Repository) GetId(id int64) (*buyer.Buyer, error) {
 	var r1 error
 	if rf, ok := ret.Get(1).(func(int64) error); ok {
 		r1 = rf(id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// Store provides a mock function with given fields: cardNumberId, firstName, lastName
-func (_m *Repository) Store(cardNumberId int64, firstName string, lastName string) (buyer.Buyer, error) {
-	ret := _m.Called(cardNumberId, firstName, lastName)
-
-	var r0 buyer.Buyer
-	if rf, ok := ret.Get(0).(func(int64, string, string) buyer.Buyer); ok {
-		r0 = rf(cardNumberId, firstName, lastName)
-	} else {
-		r0 = ret.Get(0).(buyer.Buyer)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, string, string) error); ok {
-		r1 = rf(cardNumberId, firstName, lastName)
 	} else {
 		r1 = ret.Error(1)
 	}

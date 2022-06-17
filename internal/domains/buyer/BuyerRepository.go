@@ -12,7 +12,7 @@ func (r *repository) CreateId() int64 {
 	return id
 }
 
-func (r *repository) Store(cardNumberId int64, firstName string, lastName string) (Buyer, error) {
+func (r *repository) Create(cardNumberId int64, firstName string, lastName string) (Buyer, error) {
 
 	for i := range buyers {
 		if buyers[i].CardNumberId == cardNumberId {
