@@ -70,3 +70,39 @@ func TestService_GetAll(t *testing.T) {
 		assert.Equal(t, expectBuyerList, buyerList)
 	})
 }
+
+func TestService_GetId(t *testing.T) {
+	t.Run("find_by_id_non_existent: Se o elemento procurado por id não existir, retorna null", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+
+		repo.On("GetId", int64(4)).Return(nil, fmt.Errorf("Buyer not found."))
+
+		service := buyer.NewService(repo)
+
+		buyer, err := service.GetId(int64(4))
+
+		assert.Nil(t, buyer)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("find_by_id_existent: Se o elemento procurado por id existir, ele retornará as informações do elemento solicitado", func(t *testing.T) {
+		expectBuyer := buyer.Buyer{
+
+			CardNumberId: 402323,
+			FirstName:    "FirstNameTest",
+			LastName:     "LastNameTest",
+		}
+
+		repo := mocks.NewRepository(t)
+
+		repo.On("GetId", int64(1)).Return(&expectBuyer, nil)
+		service := buyer.NewService(repo)
+
+		buyer, err := service.GetId(int64(1))
+
+		assert.Nil(t, err)
+		assert.Equal(t, buyer, &expectBuyer)
+
+	})
+
+}
