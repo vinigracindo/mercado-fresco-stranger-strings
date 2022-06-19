@@ -46,7 +46,9 @@ func CreateProductController(prodService product.ProductService) *ProductControl
 // @Router /products [get]
 func (c *ProductController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		products, err := c.service.GetAll()
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
@@ -67,7 +69,9 @@ func (c *ProductController) GetAll() gin.HandlerFunc {
 // @Router /products/{id} [get]
 func (c *ProductController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
@@ -100,7 +104,7 @@ func (c *ProductController) Create() gin.HandlerFunc {
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.JSON(http.StatusUnprocessableEntity,
 				gin.H{
-					"message": "Invalid input. Check the data entered",
+					"message": "invalid input. Check the data entered",
 				})
 			return
 		}

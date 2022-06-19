@@ -66,7 +66,7 @@ func TestProductController_Create(t *testing.T) {
 
 	t.Run("create_ok: quando a entrada de dados for bem-sucedida, um código 201 será retornado junto com o objeto inserido", func(t *testing.T) {
 
-		// PREPARACAO
+		// PREPARAÇÃO
 		mockService.
 			On("Create", expectedProduct.ProductCode, expectedProduct.Description, expectedProduct.Width, expectedProduct.Height,
 				expectedProduct.Length, expectedProduct.NetWeight, expectedProduct.ExpirationRate, expectedProduct.RecommendedFreezingTemperature,
@@ -81,10 +81,10 @@ func TestProductController_Create(t *testing.T) {
 		router := SetUpRouter()
 		router.POST("/api/v1/products", controller.Create())
 
-		//  EXECUCAO
+		// EXECUÇÃO
 		response := ExecuteTestRequest(router, "POST", "/api/v1/products", requestBody)
 
-		// VALIDACAO
+		// VALIDAÇÃO
 		assert.Equal(t, http.StatusCreated, response.Code)
 	})
 
@@ -94,18 +94,17 @@ func TestProductController_Create(t *testing.T) {
 		router := SetUpRouter()
 		router.POST("/api/v1/products", controller.Create())
 
-		//  EXECUCAO
+		// EXECUÇÃO
 		response := ExecuteTestRequest(router, "POST", "/api/v1/products", []byte{})
 
-		// VALIDACAO
+		// VALIDAÇÃO
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 		assert.Equal(t, "{\"message\":\"invalid input. Check the data entered\"}", response.Body.String())
 	})
 
 	t.Run("create_conflict: quando o product_code já existir, ele retornará um erro 409 Conflict.", func(t *testing.T) {
 
-		// PREPARACAO
-
+		// PREPARAÇÃO
 		expectedError := errors.New("the product code has already been registered")
 		mockService.
 			On("Create", expectedProduct.ProductCode, expectedProduct.Description, expectedProduct.Width, expectedProduct.Height,
@@ -122,11 +121,219 @@ func TestProductController_Create(t *testing.T) {
 		router := SetUpRouter()
 		router.POST("/api/v1/products", controller.Create())
 
-		//  EXECUCAO -
+		// EXECUÇÃO
 		response := ExecuteTestRequest(router, "POST", "/api/v1/products", requestBody)
 
-		// VALIDACAO
+		// VALIDAÇÃO
 		assert.Equal(t, http.StatusConflict, response.Code)
 		assert.Equal(t, "{\"code\":409,\"message\":\"the product code has already been registered\"}", response.Body.String())
+	})
+}
+
+func TestProductController_GetAll(t *testing.T) {
+
+	mockService := mocks.NewProductService(t)
+
+	expectedProduct := []product.Product{
+		{
+			Id:                             1,
+			ProductCode:                    "PROD02",
+			Description:                    "Yogurt",
+			Width:                          1.2,
+			Height:                         6.4,
+			Length:                         4.5,
+			NetWeight:                      3.4,
+			ExpirationRate:                 1.5,
+			RecommendedFreezingTemperature: 1.3,
+			FreezingRate:                   2,
+			ProductTypeId:                  2,
+			SellerId:                       2,
+		},
+		{
+			Id:                             2,
+			ProductCode:                    "PROD03",
+			Description:                    "Yogurt light",
+			Width:                          1.5,
+			Height:                         5.4,
+			Length:                         3.5,
+			NetWeight:                      4.4,
+			ExpirationRate:                 1.8,
+			RecommendedFreezingTemperature: 1.2,
+			FreezingRate:                   2,
+			ProductTypeId:                  3,
+			SellerId:                       3,
+		},
+	}
+
+	body := []product.Product{
+		{
+			ProductCode:                    "PROD02",
+			Description:                    "Yogurt",
+			Width:                          1.2,
+			Height:                         6.4,
+			Length:                         4.5,
+			NetWeight:                      3.4,
+			ExpirationRate:                 1.5,
+			RecommendedFreezingTemperature: 1.3,
+			FreezingRate:                   2,
+			ProductTypeId:                  2,
+			SellerId:                       2,
+		},
+		{
+			ProductCode:                    "PROD03",
+			Description:                    "Yogurt light",
+			Width:                          1.5,
+			Height:                         5.4,
+			Length:                         3.5,
+			NetWeight:                      4.4,
+			ExpirationRate:                 1.8,
+			RecommendedFreezingTemperature: 1.2,
+			FreezingRate:                   2,
+			ProductTypeId:                  3,
+			SellerId:                       3,
+		},
+	}
+
+	t.Run("find_all_bad_request: quando a solicitação não for bem-sucedida, o back-end retornará um erro 400 BadRequest.", func(t *testing.T) {
+
+		// PREPARAÇÃO
+		expectedError := errors.New("the request sent to the server is invalid or corrupted")
+		mockService.
+			On("GetAll").
+			Return(nil, expectedError).
+			Once()
+
+		controller := controllers.CreateProductController(mockService)
+
+		requestBody, _ := json.Marshal(body)
+
+		// configura engine de rotas
+		router := SetUpRouter()
+		router.GET("/api/v1/products", controller.GetAll())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "GET", "/api/v1/products", requestBody)
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "{\"code\":400,\"message\":\"the request sent to the server is invalid or corrupted\"}", response.Body.String())
+	})
+
+	t.Run("find_all: quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os produtos existentes.", func(t *testing.T) {
+
+		// PREPARACÃO
+		mockService.
+			On("GetAll").
+			Return(expectedProduct, nil).
+			Once()
+
+		controller := controllers.CreateProductController(mockService)
+
+		requestBody, _ := json.Marshal(body)
+
+		router := SetUpRouter()
+		router.GET("/api/v1/products", controller.GetAll())
+
+		//  EXECUCAO
+		response := ExecuteTestRequest(router, "GET", "/api/v1/products", requestBody)
+
+		// VALIDACAO
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+}
+
+func TestProductController_GetById(t *testing.T) {
+
+	mockService := mocks.NewProductService(t)
+
+	t.Run("find_by_id_parse_error: quando o id do produto não for parseado", func(t *testing.T) {
+
+		controller := controllers.CreateProductController(mockService)
+
+		// configura engine de rotas
+		router := SetUpRouter()
+		router.GET("/api/v1/products/:id", controller.GetById())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "GET", "/api/v1/products/abc", []byte{})
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "{\"code\":400,\"message\":\"strconv.ParseInt: parsing \\\"abc\\\": invalid syntax\"}", response.Body.String())
+	})
+
+	t.Run("find_by_id_non_existent: quando o produto não existe, um código 404 será devolvido", func(t *testing.T) {
+
+		// PREPARAÇÃO
+		expectedError := errors.New("the product id was not found")
+		mockService.
+			On("GetById", int64(5)).
+			Return(nil, expectedError).
+			Once()
+
+		controller := controllers.CreateProductController(mockService)
+
+		// configura engine de rotas
+		router := SetUpRouter()
+		router.GET("/api/v1/products/:id", controller.GetById())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "GET", "/api/v1/products/5", []byte{})
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusNotFound, response.Code)
+		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
+	})
+
+	t.Run("find_by_id_existent: quando a solicitação for bem-sucedida, o backend retornará as informações do produto solicitado.", func(t *testing.T) {
+
+		expectedProduct := product.Product{
+			Id:                             1,
+			ProductCode:                    "PROD02",
+			Description:                    "Yogurt",
+			Width:                          1.2,
+			Height:                         6.4,
+			Length:                         4.5,
+			NetWeight:                      3.4,
+			ExpirationRate:                 1.5,
+			RecommendedFreezingTemperature: 1.3,
+			FreezingRate:                   2,
+			ProductTypeId:                  2,
+			SellerId:                       2,
+		}
+
+		body := product.Product{
+
+			ProductCode:                    "PROD02",
+			Description:                    "Yogurt",
+			Width:                          1.2,
+			Height:                         6.4,
+			Length:                         4.5,
+			NetWeight:                      3.4,
+			ExpirationRate:                 1.5,
+			RecommendedFreezingTemperature: 1.3,
+			FreezingRate:                   2,
+			ProductTypeId:                  2,
+			SellerId:                       2,
+		}
+
+		// PREPARACÃO
+		mockService.
+			On("GetById", int64(1)).
+			Return(&expectedProduct, nil).
+			Once()
+
+		controller := controllers.CreateProductController(mockService)
+
+		requestBody, _ := json.Marshal(body)
+
+		router := SetUpRouter()
+		router.GET("/api/v1/products/:id", controller.GetById())
+
+		//  EXECUCAO
+		response := ExecuteTestRequest(router, "GET", "/api/v1/products/1", requestBody)
+
+		// VALIDACAO
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }
