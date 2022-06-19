@@ -4,10 +4,10 @@ type service struct {
 	repository Repository
 }
 
-func (s service) Create(cardNumberId int64, firstName string, lastName string) (Buyer, error) {
+func (s service) Create(cardNumberId int64, firstName string, lastName string) (*Buyer, error) {
 	buyer, err := s.repository.Create(cardNumberId, firstName, lastName)
 	if err != nil {
-		return Buyer{}, err
+		return nil, err
 	}
 	return buyer, nil
 }
@@ -15,7 +15,7 @@ func (s service) Create(cardNumberId int64, firstName string, lastName string) (
 func (s service) GetAll() ([]Buyer, error) {
 	buyers, err := s.repository.GetAll()
 	if err != nil {
-		return []Buyer{}, err
+		return nil, err
 	}
 	return buyers, nil
 }
@@ -28,10 +28,10 @@ func (s service) GetId(id int64) (*Buyer, error) {
 	return buyer, nil
 }
 
-func (s service) Update(id int64, cardNumberId int64, lastName string) (Buyer, error) {
+func (s service) Update(id int64, cardNumberId int64, lastName string) (*Buyer, error) {
 	buyer, err := s.repository.Update(id, cardNumberId, lastName)
 	if err != nil {
-		return Buyer{}, err
+		return nil, err
 	}
 	return buyer, nil
 }
