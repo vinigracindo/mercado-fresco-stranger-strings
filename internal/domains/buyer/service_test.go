@@ -139,3 +139,25 @@ func TestService_Update(t *testing.T) {
 	})
 
 }
+
+func TestService_Delete(t *testing.T) {
+	t.Run("delete_non_existent: Quando o comprador não existir, será retornado null.", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("Delete", int64(1)).Return(fmt.Errorf("buyer not found."))
+		service := buyer.NewService(repo)
+
+		err := service.Delete(int64(1))
+
+		assert.NotNil(t, err)
+	})
+
+	t.Run("delete_ok: Se a exclusão for bem-sucedida, o item não aparecerá na lista.", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("Delete", int64(1)).Return(nil)
+		service := buyer.NewService(repo)
+
+		err := service.Delete(int64(1))
+
+		assert.Nil(t, err)
+	})
+}
