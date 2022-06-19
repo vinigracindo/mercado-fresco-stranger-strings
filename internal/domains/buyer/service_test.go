@@ -104,5 +104,38 @@ func TestService_GetId(t *testing.T) {
 		assert.Equal(t, buyer, &expectBuyer)
 
 	})
+}
+
+func TestService_Update(t *testing.T) {
+	expectBuyer := &buyer.Buyer{
+		Id:           1,
+		CardNumberId: 402323,
+		FirstName:    "FirstNameTest",
+		LastName:     "LastNameTest",
+	}
+
+	t.Run("update_existent: Quando a atualização dos dados for bem sucedida, o comprador será devolvido com as informações atualizadas", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+
+		repo.On("Update", int64(1), int64(456), "LastNameTest 2").Return(expectBuyer, nil)
+
+		service := buyer.NewService(repo)
+
+		buyer, err := service.Update(int64(1), int64(456), "LastNameTest 2")
+
+		assert.Equal(t, expectBuyer, buyer)
+		assert.Nil(t, err)
+
+	})
+
+	t.Run("update_non_existent: Se o comprador a ser atualizado não existir, será   retornado null.", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+		repo.On("Update", int64(1), int64(456), "LastNameTest 2").Return(nil, fmt.Errorf("Buyer not found."))
+		service := buyer.NewService(repo)
+
+		buyer, err := service.Update(int64(1), int64(456), "LastNameTest 2")
+		assert.Nil(t, buyer)
+		assert.NotNil(t, err)
+	})
 
 }
