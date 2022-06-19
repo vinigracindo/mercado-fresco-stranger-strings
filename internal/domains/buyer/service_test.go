@@ -44,3 +44,29 @@ func TestService_Create(t *testing.T) {
 
 	})
 }
+
+func TestService_GetAll(t *testing.T) {
+	expectBuyerList := []buyer.Buyer{
+		{
+			CardNumberId: 402323,
+			FirstName:    "FirstNameTest",
+			LastName:     "LastNameTest",
+		},
+		{
+			CardNumberId: 402300,
+			FirstName:    "FirstNameTest 2",
+			LastName:     "LastNameTestTest2",
+		},
+	}
+	t.Run("find_all: Se a lista tiver elementos, retornará o número total de elementos", func(t *testing.T) {
+		repo := mocks.NewRepository(t)
+
+		repo.On("GetAll").Return(expectBuyerList, nil)
+
+		service := buyer.NewService(repo)
+
+		buyerList, _ := service.GetAll()
+
+		assert.Equal(t, expectBuyerList, buyerList)
+	})
+}
