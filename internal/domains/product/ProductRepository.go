@@ -10,7 +10,7 @@ var lastId int64 = 1
 type repository struct {
 }
 
-func CreateRepository() Repository {
+func CreateRepository() ProductRepository {
 	listProducts = []Product{}
 
 	listProducts = append(listProducts)

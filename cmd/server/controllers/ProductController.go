@@ -28,10 +28,10 @@ type requestProductPatch struct {
 }
 
 type ProductController struct {
-	service product.Service
+	service product.ProductService
 }
 
-func CreateProductController(prodService product.Service) *ProductController {
+func CreateProductController(prodService product.ProductService) *ProductController {
 	return &(ProductController{service: prodService})
 }
 
@@ -73,13 +73,13 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 			return
 		}
 
-		product, err := c.service.GetById(id)
+		productId, err := c.service.GetById(id)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
 
-		httputil.NewResponse(ctx, http.StatusOK, product)
+		httputil.NewResponse(ctx, http.StatusOK, productId)
 	}
 }
 
@@ -143,12 +143,12 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 			httputil.NewError(ctx, http.StatusBadRequest, errors.New("description field is required"))
 			return
 		}
-		product, err := c.service.UpdateDescription(id, req.Description)
+		productUpdate, err := c.service.UpdateDescription(id, req.Description)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		httputil.NewResponse(ctx, http.StatusOK, product)
+		httputil.NewResponse(ctx, http.StatusOK, productUpdate)
 
 	}
 }

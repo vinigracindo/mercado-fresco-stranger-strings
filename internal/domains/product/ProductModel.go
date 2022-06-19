@@ -15,7 +15,7 @@ type Product struct {
 	SellerId                       int     `json:"seller_id"`
 }
 
-type Repository interface {
+type ProductRepository interface {
 	GetAll() ([]Product, error)
 	GetById(id int64) (*Product, error)
 	Create(productCode string, description string, width float64, height float64, length float64, netWeight float64,
@@ -24,7 +24,7 @@ type Repository interface {
 	Delete(id int64) error
 }
 
-type Service interface {
+type ProductService interface {
 	GetAll() ([]Product, error)
 	GetById(id int64) (*Product, error)
 	Create(productCode string, description string, width float64, height float64, length float64, netWeight float64,

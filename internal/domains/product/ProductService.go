@@ -1,10 +1,10 @@
 package product
 
 type service struct {
-	repository Repository
+	repository ProductRepository
 }
 
-func CreateService(r Repository) Service {
+func CreateService(r ProductRepository) ProductService {
 	return &service{repository: r}
 }
 
