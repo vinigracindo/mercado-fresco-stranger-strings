@@ -50,7 +50,7 @@ func (c *ProductController) GetAll() gin.HandlerFunc {
 		products, err := c.service.GetAll()
 
 		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, err)
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
 
@@ -149,11 +149,6 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
-			return
-		}
-
-		if req.Description == "" {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("description field is required"))
 			return
 		}
 

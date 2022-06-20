@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
@@ -87,6 +88,8 @@ func TestProductController_Create(t *testing.T) {
 		assert.JSONEq(t, "{\"data\":{\"id\":1,\"product_code\":\"PROD02\",\"description\":\"Yogurt\",\"width\":1.2,"+
 			"\"height\":6.4,\"length\":4.5,\"net_weight\":3.4,\"expiration_rate\":1.5,\"recommended_freezing_temperature\":1.3,"+
 			"\"freezing_rate\":2,\"product_type_id\":2,\"seller_id\":2}}", response.Body.String())
+
+		fmt.Println(response.Body.String())
 	})
 
 	t.Run("create_fail: quando o objeto JSON não contiver os campos necessários, um código 422 será retornado.", func(t *testing.T) {
@@ -208,8 +211,8 @@ func TestProductController_GetAll(t *testing.T) {
 
 		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT, requestBody)
 
-		assert.Equal(t, http.StatusBadRequest, response.Code)
-		assert.Equal(t, "{\"code\":400,\"message\":\"the request sent to the server is invalid or corrupted\"}", response.Body.String())
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+		assert.Equal(t, "{\"code\":500,\"message\":\"the request sent to the server is invalid or corrupted\"}", response.Body.String())
 	})
 
 	t.Run("find_all: quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os produtos existentes.", func(t *testing.T) {
@@ -380,7 +383,6 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		body := product.Product{
 			Description: "Yogurt",
 		}
-
 		expectedError := errors.New("the product id was not found")
 		mockService.
 			On("UpdateDescription", int64(8), body.Description).
