@@ -46,13 +46,6 @@ func Test_Controller_Buyer_CreateBuyer(t *testing.T) {
 		LastName:     "LastNameTest",
 	}
 
-	bodyFail := &buyer.Buyer{
-		Id:           0,
-		CardNumberId: 0,
-		FirstName:    "",
-		LastName:     "",
-	}
-
 	t.Run("create_ok", func(t *testing.T) {
 
 		service := mocks.NewService(t)
@@ -76,11 +69,10 @@ func Test_Controller_Buyer_CreateBuyer(t *testing.T) {
 
 		service := mocks.NewService(t)
 		controller := controllers.NewBuyer(service)
-		requestBody, _ := json.Marshal(bodyFail)
 
 		r := SetUpRouter()
 		r.POST("/api/v1/buyers", controller.Create())
-		response := CreateRequestTest(r, "POST", "/api/v1/buyers", requestBody)
+		response := CreateRequestTest(r, "POST", "/api/v1/buyers", []byte{})
 
 		assert.Equal(t, response.Code, http.StatusUnprocessableEntity)
 	})
