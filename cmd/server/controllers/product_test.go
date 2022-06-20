@@ -194,7 +194,7 @@ func TestProductController_GetAll(t *testing.T) {
 		},
 	}
 
-	t.Run("find_all_bad_request: quando a solicitação não for bem-sucedida, o back-end retornará um erro 400 BadRequest.", func(t *testing.T) {
+	t.Run("find_all_internal_server_error: quando a solicitação não for bem-sucedida, o back-end retornará um erro 500 InternalServerError.", func(t *testing.T) {
 
 		expectedError := errors.New("the request sent to the server is invalid or corrupted")
 		mockService.
