@@ -164,8 +164,95 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
+
 }
 
+func Test_Controller_Warehouse_Update(t *testing.T) {
+	body := controllers.RequestWarehousePatch{
+		MinimunCapacity:    66,
+		MinimunTemperature: 999.0,
+	}
+	expectWarehouse := warehouse.WarehouseModel{
+		Id:                 0,
+		Address:            "Avenida Teste",
+		Telephone:          "31 999999999",
+		WarehouseCode:      "AZADAS30",
+		MinimunCapacity:    66,
+		MinimunTemperature: 999.0,
+	}
+
+	t.Run("update_ok: retornar o warehouses atualizados com o junto do codigo 200", func(t *testing.T) {
+
+		var id int64 = 1
+		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+
+		service := mocks.NewService(t)
+		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(expectWarehouse, nil)
+
+		controller := controllers.NewWarehouse(service)
+
+		requestBody, _ := json.Marshal(body)
+
+		r := SetUpRouter()
+
+		r.PATCH(ENDPOINT+"/:id", controller.UpdateWarehouse())
+
+		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+	t.Run("update_non_existent: Se o armazém a ser atualizado não existir, será retornado um código 404", func(t *testing.T) {
+		var id int64 = 9999
+		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
+
+		service := mocks.NewService(t)
+		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(expectWarehouse, errMsg)
+
+		controller := controllers.NewWarehouse(service)
+
+		requestBody, _ := json.Marshal(body)
+
+		r := SetUpRouter()
+
+		r.PATCH(ENDPOINT+"/:id", controller.UpdateWarehouse())
+
+		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+
+	t.Run("update_non_id: Se não foi passado um ID, retonar um código 422", func(t *testing.T) {
+		url := fmt.Sprintf("%s/abc", ENDPOINT)
+		controller := controllers.NewWarehouse(nil)
+
+		r := SetUpRouter()
+
+		r.PATCH(ENDPOINT+"/:id", controller.UpdateWarehouse())
+
+		response := CreateRequestTest(r, http.MethodPatch, url, []byte{})
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+
+	t.Run("update_non_existent: Se o armazém a ser atualizado não existir, será retornado um código 404", func(t *testing.T) {
+		var id int64 = 1
+		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+
+		controller := controllers.NewWarehouse(nil)
+
+		requestBody, _ := json.Marshal("{\"minimun_capacity\":\"abc\",\"minimun_temperature\":\"abc2\"}")
+
+		r := SetUpRouter()
+
+		r.PATCH(ENDPOINT+"/:id", controller.UpdateWarehouse())
+
+		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
+
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
+}
 func CreateRequestTest(gin *gin.Engine, method string, url string, body []byte) *httptest.ResponseRecorder {
 
 	request := httptest.NewRequest(method, url, bytes.NewBuffer(body))

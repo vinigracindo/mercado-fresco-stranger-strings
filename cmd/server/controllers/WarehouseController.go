@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"errors"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -175,31 +173,27 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 		if paramId, check := ctx.Params.Get("id"); check {
 			id, err := strconv.Atoi(paramId)
 
+			if err != nil {
+				httputil.NewError(ctx, http.StatusBadRequest, err)
+			}
+
 			var body RequestWarehousePatch
 			var patchWh warehouse.WarehouseModel
 
 			if err := ctx.ShouldBindJSON(&body); err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, err)
-				return
-			}
-
-			if err != nil {
 				httputil.NewError(ctx, http.StatusInternalServerError, err)
-				log.Println(err)
 				return
 			}
 
 			patchWh, err = w.service.UpdateTempAndCap(int64(id), body.MinimunTemperature, body.MinimunCapacity)
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, err)
+				httputil.NewError(ctx, http.StatusNotFound, err)
 				return
 			}
 
 			httputil.NewResponse(ctx, http.StatusOK, patchWh)
-
 			return
 		}
-		httputil.NewError(ctx, http.StatusUnprocessableEntity, errors.New("error: id is mandatory"))
 	}
 }
