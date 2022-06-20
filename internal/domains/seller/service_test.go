@@ -45,23 +45,24 @@ func Test_Service_Creat(t *testing.T) {
 }
 
 func Test_Service_GetAll(t *testing.T) {
+
+	expectedListSeller := []seller.Seller{
+		{
+			Id:          1,
+			Cid:         123,
+			CompanyName: "Mercado Livre",
+			Address:     "Osasco, SP",
+			Telephone:   "11 99999999",
+		},
+		{
+			Id:          2,
+			Cid:         1234,
+			CompanyName: "Mercado Pago",
+			Address:     "Salvador, BA",
+			Telephone:   "11 88888888",
+		},
+	}
 	t.Run("find_all: Se a lista tiver 'n' elementos, retornará uma quantidade do total de elementos", func(t *testing.T) {
-		expectedListSeller := []seller.Seller{
-			{
-				Id:          1,
-				Cid:         123,
-				CompanyName: "Mercado Livre",
-				Address:     "Osasco, SP",
-				Telephone:   "11 99999999",
-			},
-			{
-				Id:          2,
-				Cid:         1234,
-				CompanyName: "Mercado Pago",
-				Address:     "Salvador, BA",
-				Telephone:   "11 88888888",
-			},
-		}
 		repo := mocks.NewRepository(t)
 		repo.On("GetAll").Return(expectedListSeller, nil)
 		service := seller.NewService(repo)
