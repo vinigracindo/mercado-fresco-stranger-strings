@@ -35,7 +35,7 @@ var expectedUpdatedSection = section.Section{
 func TestSectionService_Create(t *testing.T) {
 	mockRepository := mocks.NewRepository(t)
 
-	t.Run("create_ok: If it contains the required fields, it will be created", func(t *testing.T) {
+	t.Run("create_ok: when it contains the mandatory fields, should create a section", func(t *testing.T) {
 		mockRepository.
 			On("Create",
 				expectedSection.SectionNumber,
@@ -56,7 +56,7 @@ func TestSectionService_Create(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("create_conflict: If section_number already exists it cannot be created", func(t *testing.T) {
+	t.Run("create_conflict: when section_number already exists, should not create a section", func(t *testing.T) {
 		errorConflict := fmt.Errorf("Already a section with the code: %d", expectedSection.SectionNumber)
 
 		mockRepository.
@@ -82,7 +82,7 @@ func TestSectionService_Create(t *testing.T) {
 }
 
 func TestSectionService_GetAll(t *testing.T) {
-	t.Run("get_all: If the list has elements, it will return an amount of the total elements", func(t *testing.T) {
+	t.Run("get_all: when exists sections, should return a list", func(t *testing.T) {
 		mockRepository := mocks.NewRepository(t)
 		mockRepository.
 			On("GetAll").
@@ -96,7 +96,7 @@ func TestSectionService_GetAll(t *testing.T) {
 		assert.Equal(t, []section.Section{expectedSection}, result)
 	})
 
-	t.Run("get_all: ", func(t *testing.T) {
+	t.Run("get_all_error: should return any error", func(t *testing.T) {
 		mockRepository := mocks.NewRepository(t)
 		mockRepository.
 			On("GetAll").
@@ -114,7 +114,7 @@ func TestSectionService_GetAll(t *testing.T) {
 func TestSectionService_GetById(t *testing.T) {
 	mockRepository := mocks.NewRepository(t)
 
-	t.Run("find_by_id_existent: If the element searched for by id exists, it will be return", func(t *testing.T) {
+	t.Run("find_by_id_existent: when element searched for by id exists, should return a section", func(t *testing.T) {
 		mockRepository.
 			On("GetById", int64(1)).
 			Return(expectedSection, nil).
@@ -128,7 +128,7 @@ func TestSectionService_GetById(t *testing.T) {
 
 	})
 
-	t.Run("find_by_id_non_existent: If the element searched for by id does not exist, return null", func(t *testing.T) {
+	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 		id := int64(3)
 		errorNotFound := fmt.Errorf("Section %d not found", id)
 
@@ -148,7 +148,7 @@ func TestSectionService_GetById(t *testing.T) {
 func TestSectionService_Delete(t *testing.T) {
 	mockRepository := mocks.NewRepository(t)
 
-	t.Run("delete_ok: If the deletion is successful, the item will not appear in the list", func(t *testing.T) {
+	t.Run("delete_ok: when the section exist, should delete a section", func(t *testing.T) {
 		mockRepository.
 			On("Delete", int64(1)).
 			Return(nil).
@@ -160,7 +160,7 @@ func TestSectionService_Delete(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("delete_non_existent: When the section does not exist, null will be returned", func(t *testing.T) {
+	t.Run("delete_non_existent: when the section does not exist, should return an error", func(t *testing.T) {
 		id := int64(3)
 		errorNotFound := fmt.Errorf("Section %d not found", id)
 		mockRepository.
@@ -178,7 +178,7 @@ func TestSectionService_Delete(t *testing.T) {
 func TestSectionService_Update(t *testing.T) {
 	mockRepository := mocks.NewRepository(t)
 
-	t.Run("update_existent: When the data update is successful, the section with the updated information will be returned", func(t *testing.T) {
+	t.Run("update_existent: when the data update is successful, should return the updated session", func(t *testing.T) {
 		mockRepository.
 			On("UpdateCurrentCapacity", int64(1), int64(5)).
 			Return(expectedUpdatedSection, nil).
@@ -191,7 +191,7 @@ func TestSectionService_Update(t *testing.T) {
 		assert.Equal(t, expectedUpdatedSection.CurrentCapacity, result.CurrentCapacity)
 	})
 
-	t.Run("update_non_existent: If the section to be updated does not exist, null will be returned.", func(t *testing.T) {
+	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 		id := int64(3)
 		errorNotFound := fmt.Errorf("Section %d not found", id)
 		mockRepository.
