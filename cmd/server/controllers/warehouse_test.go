@@ -133,22 +133,6 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
-	t.Run("find_all_error: Retornar um erro 500 quando houver um erro interno", func(t *testing.T) {
-
-		service := mocks.NewService(t)
-
-		service.On("GetAll").Return(controllers.Warehouse{}, fmt.Errorf("error: internal error"))
-
-		controller := controllers.NewWarehouse(service)
-
-		r := SetUpRouter()
-
-		r.GET(ENDPOINT, controller.GetAllWarehouse())
-
-		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, []byte{})
-
-		assert.Equal(t, http.StatusInternalServerError, response.Code)
-	})
 }
 
 func Test_Controller_Warehouse_GetByID(t *testing.T) {
@@ -201,14 +185,6 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		MinimunCapacity:    66,
 		MinimunTemperature: 999.0,
 	}
-	expectWarehouse := warehouse.WarehouseModel{
-		Id:                 0,
-		Address:            "Avenida Teste",
-		Telephone:          "31 999999999",
-		WarehouseCode:      "AZADAS30",
-		MinimunCapacity:    66,
-		MinimunTemperature: 999.0,
-	}
 
 	t.Run("update_ok: retornar o warehouses atualizados com o junto do codigo 200", func(t *testing.T) {
 
@@ -216,7 +192,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
 
 		service := mocks.NewService(t)
-		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(expectWarehouse, nil)
+		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(listPossiblesWarehouses[0], nil)
 
 		controller := controllers.NewWarehouse(service)
 
@@ -237,7 +213,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
 		service := mocks.NewService(t)
-		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(expectWarehouse, errMsg)
+		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(listPossiblesWarehouses[0], errMsg)
 
 		controller := controllers.NewWarehouse(service)
 
