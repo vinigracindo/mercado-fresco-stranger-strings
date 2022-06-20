@@ -133,6 +133,21 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
+	t.Run("find_all_error: Quando ocorrer algum erro no banco de dados", func(t *testing.T) {
+		service := mocks.NewService(t)
+
+		service.On("GetAll").Return([]warehouse.WarehouseModel{}, fmt.Errorf("error: internal error"))
+
+		controller := controllers.NewWarehouse(service)
+
+		r := SetUpRouter()
+
+		r.GET(ENDPOINT, controller.GetAllWarehouse())
+
+		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, []byte{})
+
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
 }
 
 func Test_Controller_Warehouse_GetByID(t *testing.T) {
