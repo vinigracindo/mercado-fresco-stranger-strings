@@ -337,3 +337,68 @@ func TestProductController_GetById(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }
+
+func TestProductController_UpdateDescription(t *testing.T) {
+
+	mockService := mocks.NewProductService(t)
+
+	t.Run("update_description_parse_id_error: quando o id do produto não for parseado, um código 400 será retornado", func(t *testing.T) {
+
+		controller := controllers.CreateProductController(mockService)
+
+		// configura engine de rotas
+		router := SetUpRouter()
+		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/abc", []byte{})
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "{\"code\":400,\"message\":\"invalid id\"}", response.Body.String())
+	})
+
+	t.Run("update_err: quando falhar o parse do body da requisição, um código 400 será retornado.", func(t *testing.T) {
+
+		controller := controllers.CreateProductController(nil)
+
+		router := SetUpRouter()
+		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/1", []byte{})
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "{\"code\":400,\"message\":\"EOF\"}", response.Body.String())
+	})
+
+	t.Run("update_err: quando o campo a ser atualizado estiver vazio, um código 400 será retornado.", func(t *testing.T) {
+
+		body := product.Product{
+			Description: "",
+		}
+
+		controller := controllers.CreateProductController(nil)
+
+		requestBody, _ := json.Marshal(body)
+
+		router := SetUpRouter()
+		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/1", requestBody)
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "{\"code\":400,\"message\":\"Key: 'requestProductPatch.Description' Error:Field validation for 'Description' failed on the 'required' tag\"}", response.Body.String())
+	})
+
+	t.Run("update_ok: quando a atualização dos dados for bem-sucedida, o produto será devolvido com as informações atualizadas juntamente com um código 200.", func(t *testing.T) {
+
+	})
+
+	t.Run("update_non_existent: quando o produto a ser atualizado não existir, um código 404 será devolvido.", func(t *testing.T) {
+
+	})
+}

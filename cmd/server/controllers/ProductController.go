@@ -133,25 +133,33 @@ func (c *ProductController) Create() gin.HandlerFunc {
 // @Router /products/{id} [patch]
 func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, errors.New("invalid id"))
 			return
 		}
+
 		var req requestProductPatch
+
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
+
 		if req.Description == "" {
 			httputil.NewError(ctx, http.StatusBadRequest, errors.New("description field is required"))
 			return
 		}
+
 		productUpdate, err := c.service.UpdateDescription(id, req.Description)
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
+
 		httputil.NewResponse(ctx, http.StatusOK, productUpdate)
 
 	}
