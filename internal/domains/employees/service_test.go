@@ -41,15 +41,16 @@ func TestEmployeeService_Store(t *testing.T) {
 }
 
 func TestEmployeeService_GetAll(t *testing.T) {
+	repo := mocks.NewRepository(t)
+	service := employees.NewService(repo)
+
 	t.Run("find_all: Se a lista tiver \"n\" elementos, retornará uma quantidade do total de elementos", func(t *testing.T) {
 		expectedEmployees := []employees.Employee{
 			makeEmployee(),
 			makeEmployee(),
 		}
 
-		repo := mocks.NewRepository(t)
-		repo.On("GetAll").Return(expectedEmployees, nil)
-		service := employees.NewService(repo)
+		repo.On("GetAll").Return(expectedEmployees, nil).Once()
 
 		employees, err := service.GetAll()
 
@@ -89,12 +90,12 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 
 	t.Run("update_existent: Quando a atualização dos dados for bem-sucedida, o funcionário será devolvido com as informações atualizadas", func(t *testing.T) {
 		updatedEmployee := makeEmployee()
-		updatedEmployee.FirstName = "Luis"
-		updatedEmployee.LastName = "Rob"
+		updatedEmployee.FirstName = "Jane"
+		updatedEmployee.LastName = "Doe"
 
-		repo.On("UpdateFullname", int64(1), "Luis", "Rob").Return(&updatedEmployee, nil).Once()
+		repo.On("UpdateFullname", int64(1), "Jane", "Doe").Return(&updatedEmployee, nil).Once()
 
-		employee, err := service.UpdateFullname(int64(1), "Luis", "Rob")
+		employee, err := service.UpdateFullname(int64(1), "Jane", "Doe")
 
 		assert.Equal(t, employee, &updatedEmployee)
 		assert.Nil(t, err)
