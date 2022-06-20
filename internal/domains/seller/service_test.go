@@ -115,3 +115,26 @@ func Test_Service_GetById(t *testing.T) {
 		assert.Equal(t, expectedListSeller[1], result)
 	})
 }
+
+func Test_Service_Update(t *testing.T) {
+	repo := mocks.NewRepository(t)
+
+	expectedSeller := seller.Seller{
+		Id:          1,
+		Cid:         123,
+		CompanyName: "Mercado Livre",
+		Address:     "Osasco, SP",
+		Telephone:   "11 99999999",
+	}
+
+	t.Run("update_ok: Se os campos forem atualizados com sucesso retornará a informação do elemento atualizado", func(t *testing.T) {
+		repo.On("Update", int64(1), "Salvador, BA", "11 98989898").Return(expectedSeller, nil)
+		service := seller.NewService(repo)
+
+		result, err := service.Update(int64(1), "Salvador, BA", "11 98989898")
+
+		assert.Equal(t, result, expectedSeller)
+		assert.Nil(t, err)
+
+	})
+}
