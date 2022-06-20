@@ -135,7 +135,7 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
-		
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, errors.New("invalid id"))
 			return
@@ -180,7 +180,7 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 			return
 		}
 

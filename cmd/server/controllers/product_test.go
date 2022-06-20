@@ -465,3 +465,68 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }
+
+func TestProductController_Delete(t *testing.T) {
+
+	mockService := mocks.NewProductService(t)
+
+	t.Run("delete_parse_id_error: quando o id do produto não for parseado, um código 400 será retornado", func(t *testing.T) {
+
+		controller := controllers.CreateProductController(mockService)
+
+		// configura engine de rotas
+		router := SetUpRouter()
+		router.DELETE("/api/v1/products/:id", controller.Delete())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "DELETE", "/api/v1/products/abc", []byte{})
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "{\"error\":\"invalid id\"}", response.Body.String())
+	})
+
+	t.Run("delete_non_existent: quando o produto não existe, um código 404 será devolvido", func(t *testing.T) {
+
+		// PREPARAÇÃO
+		expectedError := errors.New("the product id was not found")
+		mockService.
+			On("Delete", int64(1)).
+			Return(expectedError).
+			Once()
+
+		controller := controllers.CreateProductController(mockService)
+
+		// configura engine de rotas
+		router := SetUpRouter()
+		router.DELETE("/api/v1/products/:id", controller.Delete())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "DELETE", "/api/v1/products/1", []byte{})
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusNotFound, response.Code)
+		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
+
+	})
+
+	t.Run("delete_ok: quando a exclusão for bem-sucedida, um código 204 será retornado.", func(t *testing.T) {
+
+		mockService.
+			On("Delete", int64(1)).
+			Return(nil).
+			Once()
+
+		controller := controllers.CreateProductController(mockService)
+
+		// configura engine de rotas
+		router := SetUpRouter()
+		router.DELETE("/api/v1/products/:id", controller.Delete())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "DELETE", "/api/v1/products/1", []byte{})
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusNoContent, response.Code)
+	})
+}
