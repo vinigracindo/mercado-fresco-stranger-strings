@@ -394,11 +394,74 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		assert.Equal(t, "{\"code\":400,\"message\":\"Key: 'requestProductPatch.Description' Error:Field validation for 'Description' failed on the 'required' tag\"}", response.Body.String())
 	})
 
-	t.Run("update_ok: quando a atualização dos dados for bem-sucedida, o produto será devolvido com as informações atualizadas juntamente com um código 200.", func(t *testing.T) {
-
-	})
-
 	t.Run("update_non_existent: quando o produto a ser atualizado não existir, um código 404 será devolvido.", func(t *testing.T) {
 
+		body := product.Product{
+			Description: "Yogurt",
+		}
+
+		// PREPARAÇÃO
+		expectedError := errors.New("the product id was not found")
+		mockService.
+			On("UpdateDescription", int64(8), body.Description).
+			Return(nil, expectedError).
+			Once()
+
+		controller := controllers.CreateProductController(mockService)
+
+		requestBody, _ := json.Marshal(body)
+
+		// configura engine de rotas
+		router := SetUpRouter()
+		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/8", requestBody)
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusNotFound, response.Code)
+		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
+	})
+
+	t.Run("update_ok: quando a atualização dos dados for bem-sucedida, o produto será devolvido com as informações atualizadas juntamente com um código 200.", func(t *testing.T) {
+
+		expectedProduct := product.Product{
+			Id:          1,
+			Description: "Yogurt light",
+		}
+
+		body := product.Product{
+			ProductCode:                    "PROD02",
+			Description:                    "Yogurt light",
+			Width:                          1.2,
+			Height:                         6.4,
+			Length:                         4.5,
+			NetWeight:                      3.4,
+			ExpirationRate:                 1.5,
+			RecommendedFreezingTemperature: 1.3,
+			FreezingRate:                   2,
+			ProductTypeId:                  2,
+			SellerId:                       2,
+		}
+
+		// PREPARAÇÃO
+		mockService.
+			On("UpdateDescription", expectedProduct.Id, expectedProduct.Description).
+			Return(&expectedProduct, nil).
+			Once()
+
+		controller := controllers.CreateProductController(mockService)
+
+		requestBody, _ := json.Marshal(body)
+
+		// configura engine de rotas
+		router := SetUpRouter()
+		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+
+		// EXECUÇÃO
+		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/1", requestBody)
+
+		// VALIDAÇÃO
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }
