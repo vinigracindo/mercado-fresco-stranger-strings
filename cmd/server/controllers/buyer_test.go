@@ -198,3 +198,36 @@ func Test_Controller_Update(t *testing.T) {
 		assert.Equal(t, response.Code, http.StatusNotFound)
 	})
 }
+
+func Test_Controller_Delete(t *testing.T) {
+
+	t.Run("delete_non_existent", func(t *testing.T) {
+
+		service := mocks.NewService(t)
+
+		service.On("Delete", int64(1)).Return(fmt.Errorf("buyer with id %d not found", int64(1)))
+
+		controller := controllers.NewBuyer(service)
+
+		r := SetUpRouter()
+		r.DELETE("/api/v1/buyers/:id", controller.DeleteBuyer())
+		response := CreateRequestTest(r, "DELETE", "/api/v1/buyers/1", nil)
+
+		assert.Equal(t, response.Code, http.StatusNotFound)
+	})
+
+	t.Run("delete_ok", func(t *testing.T) {
+
+		service := mocks.NewService(t)
+
+		service.On("Delete", int64(1)).Return(nil)
+
+		controller := controllers.NewBuyer(service)
+
+		r := SetUpRouter()
+		r.DELETE("/api/v1/buyers/:id", controller.DeleteBuyer())
+		response := CreateRequestTest(r, "DELETE", "/api/v1/buyers/1", nil)
+
+		assert.Equal(t, response.Code, http.StatusNoContent)
+	})
+}
