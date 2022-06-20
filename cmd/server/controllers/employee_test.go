@@ -30,14 +30,6 @@ func makeEmployee() employees.Employee {
 	}
 }
 
-func makeExpectedResponse(data any) string {
-	expectedOutput := map[string]any{
-		"data": data,
-	}
-	expectedResponseBody, _ := json.Marshal(expectedOutput)
-	return string(expectedResponseBody)
-}
-
 func SetUpRouter() *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
@@ -101,10 +93,16 @@ func TestEmployeeController_GetAll(t *testing.T) {
 		mockService.On("GetAll").Return(expectedEmployees, nil).Once()
 		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT, nil)
 
-		expectedResponseBody := makeExpectedResponse(expectedEmployees)
+		expectedBody := `
+			{"data":
+				[
+					{"id":1,"card_number_id":"123456","first_name":"John","last_name":"Doe","warehouse_id":1},
+					{"id":1,"card_number_id":"123456","first_name":"John","last_name":"Doe","warehouse_id":1}
+				]
+			}`
 
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, expectedResponseBody, response.Body.String())
+		assert.JSONEq(t, expectedBody, response.Body.String())
 	})
 }
 
@@ -127,10 +125,13 @@ func TestEmployeeController_GetById(t *testing.T) {
 		mockService.On("GetById", int64(1)).Return(&expectedEmployee, nil).Once()
 		response := ExecuteTestRequest(router, http.MethodGet, url, nil)
 
-		expectedResponseBody := makeExpectedResponse(expectedEmployee)
+		expectedBody := `
+			{"data":
+				{"id":1,"card_number_id":"123456","first_name":"John","last_name":"Doe","warehouse_id":1}
+			}`
 
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, string(expectedResponseBody), response.Body.String())
+		assert.JSONEq(t, expectedBody, response.Body.String())
 	})
 }
 
