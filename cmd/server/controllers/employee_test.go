@@ -164,3 +164,24 @@ func TestEmployeeController_Update(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 }
+
+func TestEmployeeController_Delete(t *testing.T) {
+	mockService := mocks.NewService(t)
+	controller := controllers.NewEmployee(mockService)
+	router := SetUpRouter()
+	router.DELETE("/api/v1/employees/:id", controller.Delete())
+
+	t.Run("delete_non_existent: Quando o funcionário não existir, um código 404 será retornado.", func(t *testing.T) {
+		mockService.On("Delete", int64(1)).Return(employees.ErrEmployeeNotFound).Once()
+		response := ExecuteTestRequest(router, http.MethodDelete, "/api/v1/employees/1", nil)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+
+	t.Run("delete_ok: Quando a exclusão for bem-sucedida, um código 204 será retornado.", func(t *testing.T) {
+		mockService.On("Delete", int64(1)).Return(nil).Once()
+		response := ExecuteTestRequest(router, http.MethodDelete, "/api/v1/employees/1", nil)
+
+		assert.Equal(t, http.StatusNoContent, response.Code)
+	})
+}
