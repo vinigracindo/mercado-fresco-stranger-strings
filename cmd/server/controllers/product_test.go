@@ -89,6 +89,7 @@ func TestProductController_Create(t *testing.T) {
 	})
 
 	t.Run("create_fail: quando o objeto JSON não contiver os campos necessários, um código 422 será retornado.", func(t *testing.T) {
+
 		controller := controllers.CreateProductController(nil)
 
 		router := SetUpRouter()
