@@ -57,17 +57,19 @@ var expectedSection = section.Section{
 func TestSectionController_Create(t *testing.T) {
 	mockService := mocks.NewService(t)
 
-	t.Run("create_ok: Quando a entrada de dados for bem-sucedida, um código 201 será retornado junto com o objeto inserido.", func(t *testing.T) {
-		mockService.On("Create",
-			expectedSection.SectionNumber,
-			expectedSection.CurrentTemperature,
-			expectedSection.MinimumTemperature,
-			expectedSection.CurrentCapacity,
-			expectedSection.MinimumCapacity,
-			expectedSection.MaximumCapacity,
-			expectedSection.WarehouseId,
-			expectedSection.ProductTypeId,
-		).Return(expectedSection, nil)
+	t.Run("create_ok: when data entry is successful, should return code 201", func(t *testing.T) {
+		mockService.
+			On("Create",
+				expectedSection.SectionNumber,
+				expectedSection.CurrentTemperature,
+				expectedSection.MinimumTemperature,
+				expectedSection.CurrentCapacity,
+				expectedSection.MinimumCapacity,
+				expectedSection.MaximumCapacity,
+				expectedSection.WarehouseId,
+				expectedSection.ProductTypeId,
+			).Return(expectedSection, nil).
+			Once()
 
 		controller := controllers.NewSection(mockService)
 
@@ -81,7 +83,7 @@ func TestSectionController_Create(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, response.Code)
 	})
 
-	t.Run("create_fail: Se o objeto JSON não contiver os campos necessários, um código 422 será retornado.", func(t *testing.T) {
+	t.Run("create_fail: when the JSON does not contain the required fields, should return code 422", func(t *testing.T) {
 		controller := controllers.NewSection(nil)
 
 		r := SetUpRouter()
@@ -91,19 +93,20 @@ func TestSectionController_Create(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 
-	t.Run("create_conflict: Se o section_number já existir, ele retornará um erro 409 Conflict", func(t *testing.T) {
-		mockService := mocks.NewService(t)
-
-		mockService.On("Create",
-			expectedSection.SectionNumber,
-			expectedSection.CurrentTemperature,
-			expectedSection.MinimumTemperature,
-			expectedSection.CurrentCapacity,
-			expectedSection.MinimumCapacity,
-			expectedSection.MaximumCapacity,
-			expectedSection.WarehouseId,
-			expectedSection.ProductTypeId,
-		).Return(section.Section{}, fmt.Errorf("Already a section with this code"))
+	t.Run("create_conflict: when the section_number already exists, should return code 409", func(t *testing.T) {
+		mockService.
+			On("Create",
+				expectedSection.SectionNumber,
+				expectedSection.CurrentTemperature,
+				expectedSection.MinimumTemperature,
+				expectedSection.CurrentCapacity,
+				expectedSection.MinimumCapacity,
+				expectedSection.MaximumCapacity,
+				expectedSection.WarehouseId,
+				expectedSection.ProductTypeId,
+			).
+			Return(section.Section{}, fmt.Errorf("Already a section with this code")).
+			Once()
 
 		controller := controllers.NewSection(mockService)
 
@@ -119,10 +122,13 @@ func TestSectionController_Create(t *testing.T) {
 }
 
 func TestSectionController_GetAll(t *testing.T) {
+	mockService := mocks.NewService(t)
 
-	t.Run("find_all: Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todas as seções existentes..", func(t *testing.T) {
-		mockService := mocks.NewService(t)
-		mockService.On("GetAll").Return([]section.Section{expectedSection}, nil)
+	t.Run("find_all: when data entry is successful, should return code 200", func(t *testing.T) {
+		mockService.
+			On("GetAll").
+			Return([]section.Section{expectedSection}, nil).
+			Once()
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(body)
@@ -134,9 +140,10 @@ func TestSectionController_GetAll(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
-	t.Run("get_all_fail: deve retornar um erro.", func(t *testing.T) {
-		mockService := mocks.NewService(t)
-		mockService.On("GetAll").Return([]section.Section{}, fmt.Errorf("any error"))
+	t.Run("get_all_fail: when GetAll fail, should return code 400", func(t *testing.T) {
+		mockService.
+			On("GetAll").
+			Return([]section.Section{}, fmt.Errorf("any error"))
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(body)
@@ -150,10 +157,12 @@ func TestSectionController_GetAll(t *testing.T) {
 }
 
 func TestSectionController_GetById(t *testing.T) {
+	mockService := mocks.NewService(t)
 
-	t.Run("find_by_id_existent: Quando a solicitação for bem-sucedida, o backend retornará as informações da seção solicitada", func(t *testing.T) {
-		mockService := mocks.NewService(t)
-		mockService.On("GetById", int64(1)).Return(expectedSection, nil)
+	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
+		mockService.
+			On("GetById", int64(1)).
+			Return(expectedSection, nil)
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(body)
@@ -165,7 +174,7 @@ func TestSectionController_GetById(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
-	t.Run("find_by_id_non_existent:Quando a seção não existir, um código 404 será retornado.", func(t *testing.T) {
+	t.Run("find_by_id_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService := mocks.NewService(t)
 		mockService.On("GetById", int64(1)).Return(section.Section{}, fmt.Errorf("Section not found"))
 		controller := controllers.NewSection(mockService)
@@ -179,7 +188,7 @@ func TestSectionController_GetById(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
-	t.Run("get_all_fail: deve retornar um erro quando o id nao foi int", func(t *testing.T) {
+	t.Run("find_by_id_parse_error: when section id is not parsed, should return code 400", func(t *testing.T) {
 		controller := controllers.NewSection(nil)
 
 		r := SetUpRouter()
@@ -191,6 +200,7 @@ func TestSectionController_GetById(t *testing.T) {
 }
 
 func TestSectionController_Update(t *testing.T) {
+	mockService := mocks.NewService(t)
 
 	var bodyUpdate = section.Section{
 		CurrentCapacity: int64(1),
@@ -200,9 +210,11 @@ func TestSectionController_Update(t *testing.T) {
 		CurrentCapacity: -1,
 	}
 
-	t.Run("update_ok: Quando a atualização dos dados for bem-sucedida, a seção com as informações atualizadas será retornada junto com um código 200", func(t *testing.T) {
-		mockService := mocks.NewService(t)
-		mockService.On("UpdateCurrentCapacity", int64(1), int64(1)).Return(expectedSection, nil)
+	t.Run("update_ok: when the request is successful, should return code 200", func(t *testing.T) {
+		mockService.
+			On("UpdateCurrentCapacity", int64(1), int64(1)).
+			Return(expectedSection, nil).
+			Once()
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(bodyUpdate)
@@ -214,9 +226,11 @@ func TestSectionController_Update(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
-	t.Run("update_non_existent: Se a seção a ser atualizada não existir, um código 404 será retornado", func(t *testing.T) {
-		mockService := mocks.NewService(t)
-		mockService.On("UpdateCurrentCapacity", int64(1), int64(1)).Return(section.Section{}, fmt.Errorf("Section not found"))
+	t.Run("update_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
+		mockService.
+			On("UpdateCurrentCapacity", int64(1), int64(1)).
+			Return(section.Section{}, fmt.Errorf("Section not found")).
+			Once()
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(bodyUpdate)
@@ -228,7 +242,7 @@ func TestSectionController_Update(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
-	t.Run("update_invalid_id: deve retornar um erro quando o id nao foi int", func(t *testing.T) {
+	t.Run("update_invalid_id_parse_error: when section id is not parsed, should return code 400", func(t *testing.T) {
 		controller := controllers.NewSection(nil)
 
 		r := SetUpRouter()
@@ -238,7 +252,7 @@ func TestSectionController_Update(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 
-	t.Run("update_invalid_field: deve retornar um erro quando o currententCapacity  for negativo", func(t *testing.T) {
+	t.Run("update_invalid_field_value: when the field is negative,should return code 400", func(t *testing.T) {
 		controller := controllers.NewSection(nil)
 
 		requestBody, _ := json.Marshal(bodyFailUpdate)
@@ -250,8 +264,7 @@ func TestSectionController_Update(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 
-	t.Run("update_invalid_field: deve retornar um erro quando o body for errado", func(t *testing.T) {
-		mockService := mocks.NewService(t)
+	t.Run("update_invalid_body: when the body is invalid, should return code 400", func(t *testing.T) {
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(bodyFail)
@@ -265,9 +278,13 @@ func TestSectionController_Update(t *testing.T) {
 }
 
 func TestSectionController_Delete(t *testing.T) {
-	t.Run("delete_ok: Quando a seção não existir, um código 404 será retornado.", func(t *testing.T) {
-		mockService := mocks.NewService(t)
-		mockService.On("Delete", int64(1)).Return(nil)
+	mockService := mocks.NewService(t)
+
+	t.Run("delete_ok: when the request is successful, should return code 204", func(t *testing.T) {
+		mockService.
+			On("Delete", int64(1)).
+			Return(nil).
+			Once()
 		controller := controllers.NewSection(mockService)
 
 		r := SetUpRouter()
@@ -277,11 +294,11 @@ func TestSectionController_Delete(t *testing.T) {
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
 
-	t.Run("delete_non_existent: Quando a seção não existir, um código 404 será retornado.", func(t *testing.T) {
-		mockService := mocks.NewService(t)
+	t.Run("delete_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService.
 			On("Delete", int64(1)).
-			Return(fmt.Errorf("Section not found"))
+			Return(fmt.Errorf("Section not found")).
+			Once()
 
 		controller := controllers.NewSection(mockService)
 
@@ -292,7 +309,7 @@ func TestSectionController_Delete(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
-	t.Run("delete_id_invalido:", func(t *testing.T) {
+	t.Run("delete_id_parse_error: when section id is not parsed, should return code 400", func(t *testing.T) {
 		controller := controllers.NewSection(nil)
 
 		r := SetUpRouter()
