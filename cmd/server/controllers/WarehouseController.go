@@ -103,7 +103,7 @@ func (w Warehouse) GetWarehouseByID() gin.HandlerFunc {
 			id, err := strconv.Atoi(paramId)
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusInternalServerError, err)
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 				return
 			}
 
@@ -181,7 +181,7 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 			var patchWh warehouse.WarehouseModel
 
 			if err := ctx.ShouldBindJSON(&body); err != nil {
-				httputil.NewError(ctx, http.StatusInternalServerError, err)
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 				return
 			}
 

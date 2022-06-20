@@ -165,6 +165,18 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
+	t.Run("find_by_id_non_id: Se o id não for valido, retonar um erro 422", func(t *testing.T) {
+		url := fmt.Sprintf("%s/abc", ENDPOINT)
+		controller := controllers.NewWarehouse(nil)
+
+		r := SetUpRouter()
+
+		r.GET(ENDPOINT+"/:id", controller.GetWarehouseByID())
+
+		response := CreateRequestTest(r, http.MethodGet, url, []byte{})
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
 }
 
 func Test_Controller_Warehouse_Update(t *testing.T) {
@@ -236,7 +248,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 
-	t.Run("update_non_existent: Se o armazém a ser atualizado não existir, será retornado um código 404", func(t *testing.T) {
+	t.Run("update_wrong_data_type: Retorna um erro quando o tipo de dado não for correto", func(t *testing.T) {
 		var id int64 = 1
 		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
 
@@ -250,7 +262,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 
 		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
 
-		assert.Equal(t, http.StatusInternalServerError, response.Code)
+		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 }
 func CreateRequestTest(gin *gin.Engine, method string, url string, body []byte) *httptest.ResponseRecorder {
