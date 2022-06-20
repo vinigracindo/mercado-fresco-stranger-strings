@@ -139,12 +139,37 @@ func Test_Service_Update(t *testing.T) {
 	})
 
 	t.Run("update_non_existent: Se o elemento a ser atualizado não existir, retornar nil", func(t *testing.T) {
-		repo.On("Update", int64(3), "Salvador, BA", "11 98989898").Return(seller.Seller{}, fmt.Errorf("Seller nor found"))
+		repo.On("Update", int64(3), "Salvador, BA", "11 98989898").Return(seller.Seller{}, fmt.Errorf("Seller not found"))
 		service := seller.NewService(repo)
 
 		result, err := service.Update(int64(3), "Salvador, BA", "11 98989898")
 
 		assert.Equal(t, seller.Seller{}, result)
+		assert.NotNil(t, err)
+
+	})
+
+}
+
+func Test_Service_Delete(t *testing.T) {
+	repo := mocks.NewRepository(t)
+
+	t.Run("delete_ok: Se a exclusão for bem sucedida, o item não aparecerá na lista", func(t *testing.T) {
+		repo.On("Delete", int64(1)).Return(nil)
+		service := seller.NewService(repo)
+
+		err := service.Delete(int64(1))
+
+		assert.Nil(t, err)
+
+	})
+
+	t.Run("delete_non_existent: Se o elemento a ser removido não existir, retornar nil", func(t *testing.T) {
+		repo.On("Delete", int64(3)).Return(fmt.Errorf("Seller not found."))
+		service := seller.NewService(repo)
+
+		err := service.Delete(int64(3))
+
 		assert.NotNil(t, err)
 
 	})
