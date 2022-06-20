@@ -126,7 +126,7 @@ func Test_Controller_GettAll(t *testing.T) {
 		r.GET("/api/v1/buyers", controller.GetAll())
 		response := CreateRequestTest(r, "GET", "/api/v1/buyers", nil)
 
-		assert.Equal(t, response.Code, http.StatusOK)
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
 	t.Run("find_by_id_non_existent", func(t *testing.T) {
@@ -140,7 +140,7 @@ func Test_Controller_GettAll(t *testing.T) {
 		r.GET("/api/v1/buyers/:id", controller.GetId())
 		response := CreateRequestTest(r, "GET", "/api/v1/buyers/1", nil)
 
-		assert.Equal(t, response.Code, http.StatusNotFound)
+		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
 	t.Run("find_by_id_existent", func(t *testing.T) {
@@ -154,7 +154,7 @@ func Test_Controller_GettAll(t *testing.T) {
 		r.GET("/api/v1/buyers/:id", controller.GetId())
 		response := CreateRequestTest(r, "GET", "/api/v1/buyers/1", nil)
 
-		assert.Equal(t, response.Code, http.StatusOK)
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }
 
@@ -179,7 +179,7 @@ func Test_Controller_Update(t *testing.T) {
 		r.PATCH("/api/v1/buyers/:id", controller.UpdateCardNumberLastName())
 		response := CreateRequestTest(r, "PATCH", "/api/v1/buyers/1", requestBody)
 
-		assert.Equal(t, response.Code, http.StatusOK)
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
 	t.Run("update_non_existent", func(t *testing.T) {
@@ -195,7 +195,7 @@ func Test_Controller_Update(t *testing.T) {
 		r.PATCH("/api/v1/buyers/:id", controller.UpdateCardNumberLastName())
 		response := CreateRequestTest(r, "PATCH", "/api/v1/buyers/1", requestBody)
 
-		assert.Equal(t, response.Code, http.StatusNotFound)
+		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 }
 
@@ -213,7 +213,7 @@ func Test_Controller_Delete(t *testing.T) {
 		r.DELETE("/api/v1/buyers/:id", controller.DeleteBuyer())
 		response := CreateRequestTest(r, "DELETE", "/api/v1/buyers/1", nil)
 
-		assert.Equal(t, response.Code, http.StatusNotFound)
+		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
 	t.Run("delete_ok", func(t *testing.T) {
@@ -228,6 +228,6 @@ func Test_Controller_Delete(t *testing.T) {
 		r.DELETE("/api/v1/buyers/:id", controller.DeleteBuyer())
 		response := CreateRequestTest(r, "DELETE", "/api/v1/buyers/1", nil)
 
-		assert.Equal(t, response.Code, http.StatusNoContent)
+		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
 }
