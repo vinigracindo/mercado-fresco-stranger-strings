@@ -116,7 +116,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 }
 
 func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
-	t.Run("create_ok: testar se a criação foi com sucessida", func(t *testing.T) {
+	t.Run("find_all: Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os armazéns existentes", func(t *testing.T) {
 
 		service := mocks.NewService(t)
 
@@ -131,6 +131,23 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, []byte{})
 
 		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+	t.Run("find_all_error: Retornar um erro 500 quando houver um erro interno", func(t *testing.T) {
+
+		service := mocks.NewService(t)
+
+		service.On("GetAll").Return(controllers.Warehouse{}, fmt.Errorf("error: internal error"))
+
+		controller := controllers.NewWarehouse(service)
+
+		r := SetUpRouter()
+
+		r.GET(ENDPOINT, controller.GetAllWarehouse())
+
+		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, []byte{})
+
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
 	})
 }
 
