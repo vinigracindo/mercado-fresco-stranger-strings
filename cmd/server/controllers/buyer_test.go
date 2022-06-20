@@ -104,3 +104,56 @@ func Test_Controller_Buyer_CreateBuyer(t *testing.T) {
 		assert.Equal(t, response.Code, http.StatusConflict)
 	})
 }
+
+func Test_Controller_GettAll(t *testing.T) {
+
+	body := &buyer.Buyer{
+		Id:           1,
+		CardNumberId: 402323,
+		FirstName:    "FirstNameTest",
+		LastName:     "LastNameTest",
+	}
+
+	t.Run("find_all", func(t *testing.T) {
+
+		service := mocks.NewService(t)
+
+		service.On("GetAll").Return([]buyer.Buyer{}, nil)
+
+		controller := controllers.NewBuyer(service)
+
+		r := SetUpRouter()
+		r.GET("/api/v1/buyers", controller.GetAll())
+		response := CreateRequestTest(r, "GET", "/api/v1/buyers", nil)
+
+		assert.Equal(t, response.Code, http.StatusOK)
+	})
+
+	t.Run("find_by_id_non_existent", func(t *testing.T) {
+		service := mocks.NewService(t)
+
+		service.On("GetId", int64(1)).Return(nil, fmt.Errorf("buyer with id %d not found", int64(1)))
+
+		controller := controllers.NewBuyer(service)
+
+		r := SetUpRouter()
+		r.GET("/api/v1/buyers/:id", controller.GetId())
+		response := CreateRequestTest(r, "GET", "/api/v1/buyers/1", nil)
+
+		assert.Equal(t, response.Code, http.StatusNotFound)
+	})
+
+	t.Run("find_by_id_existent", func(t *testing.T) {
+		service := mocks.NewService(t)
+
+		service.On("GetId", int64(1)).Return(body, nil)
+
+		controller := controllers.NewBuyer(service)
+
+		r := SetUpRouter()
+		r.GET("/api/v1/buyers/:id", controller.GetId())
+		response := CreateRequestTest(r, "GET", "/api/v1/buyers/1", nil)
+
+		assert.Equal(t, response.Code, http.StatusOK)
+	})
+}
