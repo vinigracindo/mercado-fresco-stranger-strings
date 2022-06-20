@@ -71,7 +71,7 @@ func (controller EmployeeController) GetById() gin.HandlerFunc {
 // @Produce      json
 // @Param Employee body requestEmployeePost true "Create employee"
 // @Success      201  {object} employees.Employee
-// @Failure      400  {object}  httputil.HTTPError
+// @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /employees [post]
 func (controller EmployeeController) Create() gin.HandlerFunc {

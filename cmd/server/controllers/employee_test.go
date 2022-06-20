@@ -18,6 +18,16 @@ var (
 	invalidJSON = []byte(`{invalid json}`)
 )
 
+func makeEmployee() employees.Employee {
+	return employees.Employee{
+		Id:           1,
+		CardNumberId: "123456",
+		FirstName:    "John",
+		LastName:     "Doe",
+		WarehouseId:  1,
+	}
+}
+
 func SetUpRouter() *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
@@ -34,12 +44,7 @@ func ExecuteTestRequest(router *gin.Engine, method string, path string, body []b
 }
 
 func TestEmployeeController_Create(t *testing.T) {
-	expectedEmployee := employees.Employee{
-		CardNumberId: "123456",
-		FirstName:    "John",
-		LastName:     "Doe",
-		WarehouseId:  1,
-	}
+	expectedEmployee := makeEmployee()
 	mockService := mocks.NewService(t)
 	controller := controllers.NewEmployee(mockService)
 	router := SetUpRouter()
@@ -69,4 +74,93 @@ func TestEmployeeController_Create(t *testing.T) {
 		assert.Equal(t, http.StatusConflict, response.Code)
 	})
 
+}
+
+func TestEmployeeController_GetAll(t *testing.T) {
+	mockService := mocks.NewService(t)
+	controller := controllers.NewEmployee(mockService)
+	router := SetUpRouter()
+	router.GET("/api/v1/employees", controller.GetAll())
+
+	expectedEmployees := []employees.Employee{
+		makeEmployee(),
+		makeEmployee(),
+	}
+
+	t.Run("find_all: Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os funcionários existentes.", func(t *testing.T) {
+		mockService.On("GetAll").Return(expectedEmployees, nil).Once()
+		response := ExecuteTestRequest(router, http.MethodGet, "/api/v1/employees", nil)
+
+		expectedOutput := map[string]any{
+			"data": expectedEmployees,
+		}
+		expectedResponseBody, _ := json.Marshal(expectedOutput)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Contains(t, string(expectedResponseBody), response.Body.String())
+	})
+}
+
+func TestEmployeeController_GetById(t *testing.T) {
+	mockService := mocks.NewService(t)
+	controller := controllers.NewEmployee(mockService)
+	router := SetUpRouter()
+	router.GET("/api/v1/employees/:id", controller.GetById())
+
+	t.Run("find_by_id_non_existent: Quando o funcionário não existir, um código 404 será retornado.", func(t *testing.T) {
+		mockService.On("GetById", int64(1)).Return(nil, employees.ErrEmployeeNotFound).Once()
+		response := ExecuteTestRequest(router, http.MethodGet, "/api/v1/employees/1", nil)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+
+	t.Run("find_by_id_existent: Quando a solicitação for bem-sucedida, o back-end retornará as informações solicitadas do funcionário", func(t *testing.T) {
+		expectedEmployee := makeEmployee()
+		mockService.On("GetById", int64(1)).Return(&expectedEmployee, nil).Once()
+		response := ExecuteTestRequest(router, http.MethodGet, "/api/v1/employees/1", nil)
+
+		expectedOutput := map[string]any{
+			"data": expectedEmployee,
+		}
+
+		expectedResponseBody, _ := json.Marshal(expectedOutput)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, string(expectedResponseBody), response.Body.String())
+	})
+}
+
+func TestEmployeeController_Update(t *testing.T) {
+	mockService := mocks.NewService(t)
+	controller := controllers.NewEmployee(mockService)
+	router := SetUpRouter()
+	router.PATCH("/api/v1/employees/:id", controller.UpdateFullname())
+
+	t.Run("update_ok: Quando a atualização dos dados for bem sucedida, o funcionário será devolvido	com as informações atualizadas juntamente com um código 200",
+		func(t *testing.T) {
+			expectedEmployee := makeEmployee()
+			expectedEmployee.FirstName = "Jane"
+			expectedEmployee.LastName = "Doe"
+
+			mockService.On("UpdateFullname", int64(1), "Jane", "Doe").Return(&expectedEmployee, nil).Once()
+			reqBody, _ := json.Marshal(expectedEmployee)
+			response := ExecuteTestRequest(router, http.MethodPatch, "/api/v1/employees/1", reqBody)
+
+			expectedOutput := map[string]any{
+				"data": expectedEmployee,
+			}
+
+			expectedResponseBody, _ := json.Marshal(expectedOutput)
+
+			assert.Equal(t, http.StatusOK, response.Code)
+			assert.JSONEq(t, string(expectedResponseBody), response.Body.String())
+		})
+
+	t.Run("update_non_existent: Se o funcionário a ser atualizado não existir, um código 404 será retornado.", func(t *testing.T) {
+		mockService.On("UpdateFullname", int64(1), "John", "Doe").Return(nil, employees.ErrEmployeeNotFound).Once()
+		reqBody, _ := json.Marshal(makeEmployee())
+		response := ExecuteTestRequest(router, http.MethodPatch, "/api/v1/employees/1", reqBody)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
 }
