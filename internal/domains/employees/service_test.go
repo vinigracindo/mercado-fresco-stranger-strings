@@ -8,7 +8,7 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees/mocks"
 )
 
-func makeEmployee() employees.Employee {
+func MakeEmployee() employees.Employee {
 	return employees.Employee{
 		CardNumberId: "123456",
 		FirstName:    "John",
@@ -18,7 +18,7 @@ func makeEmployee() employees.Employee {
 }
 
 func TestEmployeeService_Store(t *testing.T) {
-	expectedEmployee := makeEmployee()
+	expectedEmployee := MakeEmployee()
 
 	repo := mocks.NewRepository(t)
 	service := employees.NewService(repo)
@@ -43,8 +43,8 @@ func TestEmployeeService_Store(t *testing.T) {
 func TestEmployeeService_GetAll(t *testing.T) {
 	t.Run("find_all: Se a lista tiver \"n\" elementos, retornará uma quantidade do total de elementos", func(t *testing.T) {
 		expectedEmployees := []employees.Employee{
-			makeEmployee(),
-			makeEmployee(),
+			MakeEmployee(),
+			MakeEmployee(),
 		}
 
 		repo := mocks.NewRepository(t)
@@ -72,7 +72,7 @@ func TestEmployeeService_GetById(t *testing.T) {
 	})
 
 	t.Run("find_by_id_existent: Se o elemento procurado por id existir, ele retornará as informações do elemento solicitado", func(t *testing.T) {
-		expectedEmployee := makeEmployee()
+		expectedEmployee := MakeEmployee()
 
 		repo.On("GetById", int64(1)).Return(&expectedEmployee, nil).Once()
 
@@ -88,7 +88,7 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 	service := employees.NewService(repo)
 
 	t.Run("update_existent: Quando a atualização dos dados for bem-sucedida, o funcionário será devolvido com as informações atualizadas", func(t *testing.T) {
-		updatedEmployee := makeEmployee()
+		updatedEmployee := MakeEmployee()
 		updatedEmployee.FirstName = "Luis"
 		updatedEmployee.LastName = "Rob"
 
