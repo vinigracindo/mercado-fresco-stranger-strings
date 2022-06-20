@@ -1,6 +1,7 @@
 package seller_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,9 +23,23 @@ func Test_Service_Creat(t *testing.T) {
 		repo.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).Return(expectedSeller, nil)
 		service := seller.NewService(repo)
 
-		result, _ := service.Create(123, "Mercado Livre", "Osasco, SP", "11 99999999")
+		result, err := service.Create(123, "Mercado Livre", "Osasco, SP", "11 99999999")
 
+		assert.Nil(t, err)
 		assert.Equal(t, expectedSeller, result)
+
+	})
+
+	t.Run("create_conflict: Se o cid já existir ele não pode ser criado", func(t *testing.T) {
+		errMsg := fmt.Errorf("The seller whith cid %d has already been registered", expectedSeller.Cid)
+		repo := mocks.NewRepository(t)
+		repo.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).Return(seller.Seller{}, errMsg)
+		service := seller.NewService(repo)
+
+		result, err := service.Create(123, "Mercado Livre", "Osasco, SP", "11 99999999")
+
+		assert.Equal(t, seller.Seller{}, result)
+		assert.Equal(t, errMsg, err)
 
 	})
 }
