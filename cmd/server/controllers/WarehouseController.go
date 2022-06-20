@@ -112,7 +112,7 @@ func (w Warehouse) GetWarehouseByID() gin.HandlerFunc {
 			wh, err := w.service.GetById(int64(id))
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, err)
+				httputil.NewError(ctx, http.StatusNotFound, err)
 				return
 			}
 

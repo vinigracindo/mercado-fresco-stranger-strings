@@ -20,18 +20,28 @@ func SetUpRouter() *gin.Engine {
 	return router
 }
 
-func Test_Controller_Warehouse_CreateWarehouse_Ok(t *testing.T) {
+const ENDPOINT = "/api/v1/warehouses"
 
-	ENDPOINT := "/api/v1/warehouses"
-
-	expectedWh := warehouse.WarehouseModel{
+var listPossiblesWarehouses = []warehouse.WarehouseModel{
+	{
 		Id:                 0,
 		Address:            "Avenida Teste",
 		Telephone:          "31 999999999",
 		WarehouseCode:      "AZADAS30",
 		MinimunCapacity:    10,
 		MinimunTemperature: 9,
-	}
+	},
+	{
+		Id:                 1,
+		Address:            "Avenida Teste Segunda",
+		Telephone:          "31 77777777",
+		WarehouseCode:      "od78",
+		MinimunCapacity:    5555555,
+		MinimunTemperature: 444444,
+	},
+}
+
+func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 	body := controllers.RequestWarehousePost{
 		Address:            "Avenida Teste",
@@ -46,11 +56,11 @@ func Test_Controller_Warehouse_CreateWarehouse_Ok(t *testing.T) {
 		service := mocks.NewService(t)
 
 		service.On("Create",
-			expectedWh.Address,
-			expectedWh.Telephone,
-			expectedWh.WarehouseCode,
-			expectedWh.MinimunTemperature,
-			expectedWh.MinimunCapacity).Return(expectedWh, nil)
+			listPossiblesWarehouses[0].Address,
+			listPossiblesWarehouses[0].Telephone,
+			listPossiblesWarehouses[0].WarehouseCode,
+			listPossiblesWarehouses[0].MinimunTemperature,
+			listPossiblesWarehouses[0].MinimunCapacity).Return(listPossiblesWarehouses[0], nil)
 
 		controller := controllers.NewWarehouse(service)
 
@@ -72,11 +82,11 @@ func Test_Controller_Warehouse_CreateWarehouse_Ok(t *testing.T) {
 		errMsg := fmt.Errorf("error: already a warehouse with the code: %s", body.WarehouseCode)
 
 		service.On("Create",
-			expectedWh.Address,
-			expectedWh.Telephone,
-			expectedWh.WarehouseCode,
-			expectedWh.MinimunTemperature,
-			expectedWh.MinimunCapacity).Return(warehouse.WarehouseModel{}, errMsg)
+			listPossiblesWarehouses[0].Address,
+			listPossiblesWarehouses[0].Telephone,
+			listPossiblesWarehouses[0].WarehouseCode,
+			listPossiblesWarehouses[0].MinimunTemperature,
+			listPossiblesWarehouses[0].MinimunCapacity).Return(warehouse.WarehouseModel{}, errMsg)
 
 		controller := controllers.NewWarehouse(service)
 
@@ -102,6 +112,57 @@ func Test_Controller_Warehouse_CreateWarehouse_Ok(t *testing.T) {
 		response := CreateRequestTest(r, http.MethodPost, ENDPOINT, []byte{})
 
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+}
+
+func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
+	t.Run("create_ok: testar se a criação foi com sucessida", func(t *testing.T) {
+
+		service := mocks.NewService(t)
+
+		service.On("GetAll").Return(listPossiblesWarehouses, nil)
+
+		controller := controllers.NewWarehouse(service)
+
+		r := SetUpRouter()
+
+		r.GET(ENDPOINT, controller.GetAllWarehouse())
+
+		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, []byte{})
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+}
+
+func Test_Controller_Warehouse_GetByID(t *testing.T) {
+
+	t.Run("find_by_id_non_existent: Quando o armazém não existe, um código 404 será devolvido", func(t *testing.T) {
+
+		var id int64 = 99999
+		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
+
+		service := mocks.NewService(t)
+		service.On("GetById", int64(id)).Return(warehouse.WarehouseModel{}, errMsg)
+		controller := controllers.NewWarehouse(service)
+
+		r := SetUpRouter()
+		r.GET(ENDPOINT+"/:id", controller.GetWarehouseByID())
+		response := CreateRequestTest(r, http.MethodGet, url, []byte{})
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+
+	t.Run("find_by_id_existent: Quando a solicitação for bem-sucedida, o back-end retornará as informações solicitadas do armazém", func(t *testing.T) {
+		service := mocks.NewService(t)
+		service.On("GetById", int64(1)).Return(listPossiblesWarehouses[1], nil)
+		controller := controllers.NewWarehouse(service)
+
+		r := SetUpRouter()
+		r.GET(ENDPOINT+"/:id", controller.GetWarehouseByID())
+		response := CreateRequestTest(r, http.MethodGet, ENDPOINT+"/1", []byte{})
+
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }
 
