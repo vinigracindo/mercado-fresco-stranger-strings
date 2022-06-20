@@ -45,7 +45,6 @@ func Test_Service_Creat(t *testing.T) {
 }
 
 func Test_Service_GetAll(t *testing.T) {
-
 	expectedListSeller := []seller.Seller{
 		{
 			Id:          1,
@@ -74,4 +73,45 @@ func Test_Service_GetAll(t *testing.T) {
 
 	})
 
+}
+
+func Test_Service_GetById(t *testing.T) {
+	repo := mocks.NewRepository(t)
+
+	t.Run("find_by_id_non_existent: se o elemento procurado por id não existir, retorna nil", func(t *testing.T) {
+		repo.On("GetById", int64(1)).Return(seller.Seller{}, fmt.Errorf("Seller not found."))
+		service := seller.NewService(repo)
+
+		result, err := service.GetById(int64(1))
+
+		assert.Error(t, err)
+		assert.Equal(t, seller.Seller{}, result)
+	})
+
+	t.Run("find_by_id_existent: se o elemento procurado por id existir, ele retornará as informações do elemento solicitado", func(t *testing.T) {
+		expectedListSeller := []seller.Seller{
+			{
+				Id:          1,
+				Cid:         123,
+				CompanyName: "Mercado Livre",
+				Address:     "Osasco, SP",
+				Telephone:   "11 99999999",
+			},
+			{
+				Id:          2,
+				Cid:         1234,
+				CompanyName: "Mercado Pago",
+				Address:     "Salvador, BA",
+				Telephone:   "11 88888888",
+			},
+		}
+
+		repo.On("GetById", int64(2)).Return(expectedListSeller[1], nil)
+		service := seller.NewService(repo)
+
+		result, err := service.GetById(int64(2))
+
+		assert.Nil(t, err)
+		assert.Equal(t, expectedListSeller[1], result)
+	})
 }
