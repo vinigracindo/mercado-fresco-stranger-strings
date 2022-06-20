@@ -74,7 +74,7 @@ func (controller EmployeeController) GetById() gin.HandlerFunc {
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /employees [post]
-func (controller EmployeeController) Store() gin.HandlerFunc {
+func (controller EmployeeController) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req requestEmployeePost
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -84,10 +84,10 @@ func (controller EmployeeController) Store() gin.HandlerFunc {
 
 		employee, err := controller.service.Create(req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
 		if err != nil {
-			httputil.NewError(c, http.StatusBadRequest, err)
+			httputil.NewError(c, http.StatusConflict, err)
 			return
 		}
-		httputil.NewResponse(c, http.StatusOK, employee)
+		httputil.NewResponse(c, http.StatusCreated, employee)
 	}
 }
 
