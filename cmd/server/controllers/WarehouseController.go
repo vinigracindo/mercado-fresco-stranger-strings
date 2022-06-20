@@ -138,14 +138,14 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 			id, err := strconv.Atoi(paramId)
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusInternalServerError, err)
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 				return
 			}
 
 			err = w.service.Delete(int64(id))
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, err)
+				httputil.NewError(ctx, http.StatusNotFound, err)
 				return
 			}
 

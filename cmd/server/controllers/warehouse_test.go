@@ -252,7 +252,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
-	t.Run("update_non_id: Se não foi passado um ID, retonar um código 422", func(t *testing.T) {
+	t.Run("update_non_id: Se não foi passado um ID valido, retonar um código 422", func(t *testing.T) {
 		url := fmt.Sprintf("%s/abc", ENDPOINT)
 		controller := controllers.NewWarehouse(nil)
 
@@ -280,6 +280,58 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+}
+
+func Test_Controller_Warehouse_Delete(t *testing.T) {
+	t.Run("delete_non_existent: Quando o armazém não existir, será devolvido um código 404.", func(t *testing.T) {
+		var id int64 = 1
+		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
+
+		service := mocks.NewService(t)
+		service.On("Delete", id).Return(errMsg)
+
+		controller := controllers.NewWarehouse(service)
+
+		r := SetUpRouter()
+
+		r.DELETE(ENDPOINT+"/:id", controller.DeleteWarehouse())
+
+		response := CreateRequestTest(r, http.MethodDelete, url, []byte{})
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+
+	t.Run("delete_non_id: Se não foi passado um ID valido, retonar um código 422", func(t *testing.T) {
+		url := fmt.Sprintf("%s/abc", ENDPOINT)
+		controller := controllers.NewWarehouse(nil)
+
+		r := SetUpRouter()
+
+		r.DELETE(ENDPOINT+"/:id", controller.DeleteWarehouse())
+
+		response := CreateRequestTest(r, http.MethodDelete, url, []byte{})
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+
+	t.Run("delete_ok: Quando a exclusão for bem-sucedida, um código 204 será retornado", func(t *testing.T) {
+		var id int64 = 1
+		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+
+		service := mocks.NewService(t)
+		service.On("Delete", id).Return(nil)
+
+		controller := controllers.NewWarehouse(service)
+
+		r := SetUpRouter()
+
+		r.DELETE(ENDPOINT+"/:id", controller.DeleteWarehouse())
+
+		response := CreateRequestTest(r, http.MethodDelete, url, []byte{})
+
+		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
 }
 func CreateRequestTest(gin *gin.Engine, method string, url string, body []byte) *httptest.ResponseRecorder {
