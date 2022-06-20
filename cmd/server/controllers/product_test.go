@@ -19,7 +19,6 @@ func SetUpRouter() *gin.Engine {
 	return router
 }
 
-// simula uma requisição HTTP para a engine de rotas (gin) com o método HTTP, path e body  passados. Retorna a resposta da API.
 func ExecuteTestRequest(router *gin.Engine, method string, path string, body []byte) *httptest.ResponseRecorder {
 
 	request := httptest.NewRequest(method, path, bytes.NewBuffer(body))
@@ -30,6 +29,8 @@ func ExecuteTestRequest(router *gin.Engine, method string, path string, body []b
 
 	return response
 }
+
+const ENDPOINT = "/api/v1/products"
 
 func TestProductController_Create(t *testing.T) {
 
@@ -66,7 +67,6 @@ func TestProductController_Create(t *testing.T) {
 
 	t.Run("create_ok: quando a entrada de dados for bem-sucedida, um código 201 será retornado junto com o objeto inserido", func(t *testing.T) {
 
-		// PREPARAÇÃO
 		mockService.
 			On("Create", expectedProduct.ProductCode, expectedProduct.Description, expectedProduct.Width, expectedProduct.Height,
 				expectedProduct.Length, expectedProduct.NetWeight, expectedProduct.ExpirationRate, expectedProduct.RecommendedFreezingTemperature,
@@ -79,13 +79,14 @@ func TestProductController_Create(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.POST("/api/v1/products", controller.Create())
+		router.POST(ENDPOINT, controller.Create())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "POST", "/api/v1/products", requestBody)
+		response := ExecuteTestRequest(router, http.MethodPost, ENDPOINT, requestBody)
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusCreated, response.Code)
+		assert.JSONEq(t, "{\"data\":{\"id\":1,\"product_code\":\"PROD02\",\"description\":\"Yogurt\",\"width\":1.2,"+
+			"\"height\":6.4,\"length\":4.5,\"net_weight\":3.4,\"expiration_rate\":1.5,\"recommended_freezing_temperature\":1.3,"+
+			"\"freezing_rate\":2,\"product_type_id\":2,\"seller_id\":2}}", response.Body.String())
 	})
 
 	t.Run("create_fail: quando o objeto JSON não contiver os campos necessários, um código 422 será retornado.", func(t *testing.T) {
@@ -93,24 +94,22 @@ func TestProductController_Create(t *testing.T) {
 		controller := controllers.CreateProductController(nil)
 
 		router := SetUpRouter()
-		router.POST("/api/v1/products", controller.Create())
+		router.POST(ENDPOINT, controller.Create())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "POST", "/api/v1/products", []byte{})
+		response := ExecuteTestRequest(router, http.MethodPost, ENDPOINT, []byte{})
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
-		assert.Equal(t, "{\"message\":\"invalid input. Check the data entered\"}", response.Body.String())
+		assert.Equal(t, "{\"code\":422,\"message\":\"invalid input. Check the data entered\"}", response.Body.String())
 	})
 
 	t.Run("create_conflict: quando o product_code já existir, ele retornará um erro 409 Conflict.", func(t *testing.T) {
 
-		// PREPARAÇÃO
 		expectedError := errors.New("the product code has already been registered")
 		mockService.
-			On("Create", expectedProduct.ProductCode, expectedProduct.Description, expectedProduct.Width, expectedProduct.Height,
-				expectedProduct.Length, expectedProduct.NetWeight, expectedProduct.ExpirationRate, expectedProduct.RecommendedFreezingTemperature,
-				expectedProduct.FreezingRate, expectedProduct.ProductTypeId, expectedProduct.SellerId).
+			On("Create", expectedProduct.ProductCode, expectedProduct.Description, expectedProduct.Width,
+				expectedProduct.Height, expectedProduct.Length, expectedProduct.NetWeight, expectedProduct.ExpirationRate,
+				expectedProduct.RecommendedFreezingTemperature, expectedProduct.FreezingRate, expectedProduct.ProductTypeId,
+				expectedProduct.SellerId).
 			Return(nil, expectedError).
 			Once()
 
@@ -118,14 +117,11 @@ func TestProductController_Create(t *testing.T) {
 
 		requestBody, _ := json.Marshal(body)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.POST("/api/v1/products", controller.Create())
+		router.POST(ENDPOINT, controller.Create())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "POST", "/api/v1/products", requestBody)
+		response := ExecuteTestRequest(router, http.MethodPost, ENDPOINT, requestBody)
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusConflict, response.Code)
 		assert.Equal(t, "{\"code\":409,\"message\":\"the product code has already been registered\"}", response.Body.String())
 	})
@@ -197,7 +193,6 @@ func TestProductController_GetAll(t *testing.T) {
 
 	t.Run("find_all_bad_request: quando a solicitação não for bem-sucedida, o back-end retornará um erro 400 BadRequest.", func(t *testing.T) {
 
-		// PREPARAÇÃO
 		expectedError := errors.New("the request sent to the server is invalid or corrupted")
 		mockService.
 			On("GetAll").
@@ -208,21 +203,17 @@ func TestProductController_GetAll(t *testing.T) {
 
 		requestBody, _ := json.Marshal(body)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.GET("/api/v1/products", controller.GetAll())
+		router.GET(ENDPOINT, controller.GetAll())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "GET", "/api/v1/products", requestBody)
+		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT, requestBody)
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"code\":400,\"message\":\"the request sent to the server is invalid or corrupted\"}", response.Body.String())
 	})
 
 	t.Run("find_all: quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os produtos existentes.", func(t *testing.T) {
 
-		// PREPARACÃO
 		mockService.
 			On("GetAll").
 			Return(expectedProduct, nil).
@@ -233,13 +224,16 @@ func TestProductController_GetAll(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.GET("/api/v1/products", controller.GetAll())
+		router.GET(ENDPOINT, controller.GetAll())
 
-		//  EXECUCAO
-		response := ExecuteTestRequest(router, "GET", "/api/v1/products", requestBody)
+		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT, requestBody)
 
-		// VALIDACAO
 		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, "{\"data\":[{\"id\":1,\"product_code\":\"PROD02\",\"description\":\"Yogurt\",\"width\":1.2,\"height\":6.4,"+
+			"\"length\":4.5,\"net_weight\":3.4,\"expiration_rate\":1.5,\"recommended_freezing_temperature\":1.3,\"freezing_rate\":2,"+
+			"\"product_type_id\":2,\"seller_id\":2},{\"id\":2,\"product_code\":\"PROD03\",\"description\":\"Yogurt light\",\"width\":1.5,"+
+			"\"height\":5.4,\"length\":3.5,\"net_weight\":4.4,\"expiration_rate\":1.8,\"recommended_freezing_temperature\":1.2,"+
+			"\"freezing_rate\":2,\"product_type_id\":3,\"seller_id\":3}]}", response.Body.String())
 	})
 }
 
@@ -251,21 +245,17 @@ func TestProductController_GetById(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.GET("/api/v1/products/:id", controller.GetById())
+		router.GET(ENDPOINT+"/:id", controller.GetById())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "GET", "/api/v1/products/abc", []byte{})
+		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT+"/abc", []byte{})
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"code\":400,\"message\":\"strconv.ParseInt: parsing \\\"abc\\\": invalid syntax\"}", response.Body.String())
 	})
 
 	t.Run("find_by_id_non_existent: quando o produto não existe, um código 404 será devolvido", func(t *testing.T) {
 
-		// PREPARAÇÃO
 		expectedError := errors.New("the product id was not found")
 		mockService.
 			On("GetById", int64(5)).
@@ -274,14 +264,11 @@ func TestProductController_GetById(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.GET("/api/v1/products/:id", controller.GetById())
+		router.GET(ENDPOINT+"/:id", controller.GetById())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "GET", "/api/v1/products/5", []byte{})
+		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT+"/5", []byte{})
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusNotFound, response.Code)
 		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
 	})
@@ -318,7 +305,6 @@ func TestProductController_GetById(t *testing.T) {
 			SellerId:                       2,
 		}
 
-		// PREPARACÃO
 		mockService.
 			On("GetById", int64(1)).
 			Return(&expectedProduct, nil).
@@ -329,13 +315,14 @@ func TestProductController_GetById(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.GET("/api/v1/products/:id", controller.GetById())
+		router.GET(ENDPOINT+"/:id", controller.GetById())
 
-		//  EXECUCAO
-		response := ExecuteTestRequest(router, "GET", "/api/v1/products/1", requestBody)
+		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT+"/1", requestBody)
 
-		// VALIDACAO
 		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, "{\"data\":{\"id\":1,\"product_code\":\"PROD02\",\"description\":\"Yogurt\",\"width\":1.2,\"height\":6.4,"+
+			"\"length\":4.5,\"net_weight\":3.4,\"expiration_rate\":1.5,\"recommended_freezing_temperature\":1.3,\"freezing_rate\":2,"+
+			"\"product_type_id\":2,\"seller_id\":2}}", response.Body.String())
 	})
 }
 
@@ -347,14 +334,11 @@ func TestProductController_UpdateDescription(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/abc", []byte{})
+		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/abc", []byte{})
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"code\":400,\"message\":\"invalid id\"}", response.Body.String())
 	})
@@ -364,12 +348,10 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		controller := controllers.CreateProductController(nil)
 
 		router := SetUpRouter()
-		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/1", []byte{})
+		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/1", []byte{})
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"code\":400,\"message\":\"EOF\"}", response.Body.String())
 	})
@@ -385,12 +367,10 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/1", requestBody)
+		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/1", requestBody)
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"code\":400,\"message\":\"Key: 'requestProductPatch.Description' Error:Field validation for 'Description' failed on the 'required' tag\"}", response.Body.String())
 	})
@@ -401,7 +381,6 @@ func TestProductController_UpdateDescription(t *testing.T) {
 			Description: "Yogurt",
 		}
 
-		// PREPARAÇÃO
 		expectedError := errors.New("the product id was not found")
 		mockService.
 			On("UpdateDescription", int64(8), body.Description).
@@ -412,14 +391,11 @@ func TestProductController_UpdateDescription(t *testing.T) {
 
 		requestBody, _ := json.Marshal(body)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/8", requestBody)
+		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/8", requestBody)
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusNotFound, response.Code)
 		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
 	})
@@ -445,7 +421,6 @@ func TestProductController_UpdateDescription(t *testing.T) {
 			SellerId:                       2,
 		}
 
-		// PREPARAÇÃO
 		mockService.
 			On("UpdateDescription", expectedProduct.Id, expectedProduct.Description).
 			Return(&expectedProduct, nil).
@@ -455,15 +430,16 @@ func TestProductController_UpdateDescription(t *testing.T) {
 
 		requestBody, _ := json.Marshal(body)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.PATCH("/api/v1/products/:id", controller.UpdateDescription())
+		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "PATCH", "/api/v1/products/1", requestBody)
+		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/1", requestBody)
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusOK, response.Code)
+
+		assert.JSONEq(t, "{\"data\":{\"id\":1,\"product_code\":\"\",\"description\":\"Yogurt light\","+
+			"\"width\":0,\"height\":0,\"length\":0,\"net_weight\":0,\"expiration_rate\":0,\"recommended_freezing_temperature\":0,"+
+			"\"freezing_rate\":0,\"product_type_id\":0,\"seller_id\":0}}", response.Body.String())
 	})
 }
 
@@ -475,21 +451,17 @@ func TestProductController_Delete(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.DELETE("/api/v1/products/:id", controller.Delete())
+		router.DELETE(ENDPOINT+"/:id", controller.Delete())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "DELETE", "/api/v1/products/abc", []byte{})
+		response := ExecuteTestRequest(router, http.MethodDelete, ENDPOINT+"/abc", []byte{})
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"error\":\"invalid id\"}", response.Body.String())
 	})
 
 	t.Run("delete_non_existent: quando o produto não existe, um código 404 será devolvido", func(t *testing.T) {
 
-		// PREPARAÇÃO
 		expectedError := errors.New("the product id was not found")
 		mockService.
 			On("Delete", int64(1)).
@@ -498,14 +470,11 @@ func TestProductController_Delete(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.DELETE("/api/v1/products/:id", controller.Delete())
+		router.DELETE(ENDPOINT+"/:id", controller.Delete())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "DELETE", "/api/v1/products/1", []byte{})
+		response := ExecuteTestRequest(router, http.MethodDelete, ENDPOINT+"/1", []byte{})
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusNotFound, response.Code)
 		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
 
@@ -520,14 +489,11 @@ func TestProductController_Delete(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
-		// configura engine de rotas
 		router := SetUpRouter()
-		router.DELETE("/api/v1/products/:id", controller.Delete())
+		router.DELETE(ENDPOINT+"/:id", controller.Delete())
 
-		// EXECUÇÃO
-		response := ExecuteTestRequest(router, "DELETE", "/api/v1/products/1", []byte{})
+		response := ExecuteTestRequest(router, http.MethodDelete, ENDPOINT+"/1", []byte{})
 
-		// VALIDAÇÃO
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
 }

@@ -27,7 +27,9 @@ func (s *service) GetById(id int64) (*Product, error) {
 func (s *service) Create(productCode string, description string, width float64, height float64, length float64, netWeight float64,
 	expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (*Product, error) {
 
-	newProduct, err := s.repository.Create(productCode, description, width, height, length, netWeight, expirationRate, recommendedFreezingTemperature, freezingRate, productTypeId, sellerId)
+	newProduct, err := s.repository.
+		Create(productCode, description, width, height, length, netWeight, expirationRate,
+			recommendedFreezingTemperature, freezingRate, productTypeId, sellerId)
 
 	if err != nil {
 		return nil, err
