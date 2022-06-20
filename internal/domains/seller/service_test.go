@@ -137,4 +137,16 @@ func Test_Service_Update(t *testing.T) {
 		assert.Nil(t, err)
 
 	})
+
+	t.Run("update_non_existent: Se o elemento a ser atualizado não existir, retornar nil", func(t *testing.T) {
+		repo.On("Update", int64(3), "Salvador, BA", "11 98989898").Return(seller.Seller{}, fmt.Errorf("Seller nor found"))
+		service := seller.NewService(repo)
+
+		result, err := service.Update(int64(3), "Salvador, BA", "11 98989898")
+
+		assert.Equal(t, seller.Seller{}, result)
+		assert.NotNil(t, err)
+
+	})
+
 }
