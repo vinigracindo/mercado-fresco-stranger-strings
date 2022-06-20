@@ -157,3 +157,44 @@ func Test_Controller_GettAll(t *testing.T) {
 		assert.Equal(t, response.Code, http.StatusOK)
 	})
 }
+
+func Test_Controller_Update(t *testing.T) {
+
+	updateBody := &buyer.Buyer{
+		Id:           1,
+		CardNumberId: 402323,
+		LastName:     "LastNameTest",
+	}
+
+	t.Run("update_ok", func(t *testing.T) {
+
+		service := mocks.NewService(t)
+
+		service.On("Update", int64(1), updateBody.CardNumberId, updateBody.LastName).Return(updateBody, nil)
+
+		controller := controllers.NewBuyer(service)
+		requestBody, _ := json.Marshal(updateBody)
+
+		r := SetUpRouter()
+		r.PATCH("/api/v1/buyers/:id", controller.UpdateCardNumberLastName())
+		response := CreateRequestTest(r, "PATCH", "/api/v1/buyers/1", requestBody)
+
+		assert.Equal(t, response.Code, http.StatusOK)
+	})
+
+	t.Run("update_non_existent", func(t *testing.T) {
+
+		service := mocks.NewService(t)
+
+		service.On("Update", int64(1), updateBody.CardNumberId, updateBody.LastName).Return(nil, fmt.Errorf("buyer with id %d not found", int64(1)))
+
+		controller := controllers.NewBuyer(service)
+		requestBody, _ := json.Marshal(updateBody)
+
+		r := SetUpRouter()
+		r.PATCH("/api/v1/buyers/:id", controller.UpdateCardNumberLastName())
+		response := CreateRequestTest(r, "PATCH", "/api/v1/buyers/1", requestBody)
+
+		assert.Equal(t, response.Code, http.StatusNotFound)
+	})
+}
