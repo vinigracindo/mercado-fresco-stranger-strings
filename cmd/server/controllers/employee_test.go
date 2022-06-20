@@ -3,6 +3,7 @@ package controllers_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -104,6 +105,12 @@ func TestEmployeeController_GetAll(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 		assert.JSONEq(t, expectedBody, response.Body.String())
 	})
+
+	t.Run("find_all_err: Quando ocorrer um erro ao buscar todos os funcionários, o back-end retornará um código 500.", func(t *testing.T) {
+		mockService.On("GetAll").Return([]employees.Employee{}, errors.New("internal server error.")).Once()
+		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT, nil)
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
 }
 
 func TestEmployeeController_GetById(t *testing.T) {
@@ -132,6 +139,13 @@ func TestEmployeeController_GetById(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, response.Code)
 		assert.JSONEq(t, expectedBody, response.Body.String())
+	})
+
+	t.Run("invalid_id: Quando o id for inválido, um código 400 será retornado.", func(t *testing.T) {
+		url := fmt.Sprintf("%s/%s", ENDPOINT, "invalid_id")
+		response := ExecuteTestRequest(router, http.MethodGet, url, nil)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 }
 
@@ -169,6 +183,19 @@ func TestEmployeeController_Update(t *testing.T) {
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
+
+	t.Run("invalid_id: Quando o id for inválido, um código 400 será retornado.", func(t *testing.T) {
+		url := fmt.Sprintf("%s/%s", ENDPOINT, "invalid_id")
+		response := ExecuteTestRequest(router, http.MethodPatch, url, nil)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+
+	t.Run("invalid json: Quando ocorrer um erro ao converter o JSON, um código 400 será retornado.", func(t *testing.T) {
+		response := ExecuteTestRequest(router, http.MethodPatch, url, invalidJSON)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
 }
 
 func TestEmployeeController_Delete(t *testing.T) {
@@ -190,5 +217,12 @@ func TestEmployeeController_Delete(t *testing.T) {
 		response := ExecuteTestRequest(router, http.MethodDelete, url, nil)
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
+	})
+
+	t.Run("invalid_id: Quando o id for inválido, um código 400 será retornado.", func(t *testing.T) {
+		url := fmt.Sprintf("%s/%s", ENDPOINT, "invalid_id")
+		response := ExecuteTestRequest(router, http.MethodDelete, url, nil)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 }

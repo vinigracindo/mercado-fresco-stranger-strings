@@ -30,7 +30,7 @@ func (controller EmployeeController) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		employees, err := controller.service.GetAll()
 		if err != nil {
-			httputil.NewError(c, http.StatusNotFound, err)
+			httputil.NewError(c, http.StatusInternalServerError, err)
 			return
 		}
 		httputil.NewResponse(c, http.StatusOK, employees)
