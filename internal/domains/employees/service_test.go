@@ -17,7 +17,7 @@ func makeEmployee() employees.Employee {
 	}
 }
 
-func TestEmployeeService_Store(t *testing.T) {
+func TestEmployeeService_Create(t *testing.T) {
 	expectedEmployee := makeEmployee()
 
 	repo := mocks.NewRepository(t)
@@ -56,6 +56,15 @@ func TestEmployeeService_GetAll(t *testing.T) {
 
 		assert.Equal(t, employees, expectedEmployees)
 		assert.Nil(t, err)
+	})
+
+	t.Run("find_all_err: Se ocorrer um erro no Repository, será retornado um erro.", func(t *testing.T) {
+		repo.On("GetAll").Return(nil, employees.ErrEmployeeNotFound).Once()
+
+		employees, err := service.GetAll()
+
+		assert.Nil(t, employees)
+		assert.NotNil(t, err)
 	})
 }
 
