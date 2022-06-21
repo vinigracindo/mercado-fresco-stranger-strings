@@ -52,7 +52,7 @@ func (api *APIServer) Run(port int) {
 	employeeGroup := groupV1.Group("/employees")
 	employeeGroup.GET("/", employeeController.GetAll())
 	employeeGroup.GET("/:id", employeeController.GetById())
-	employeeGroup.POST("/", employeeController.Store())
+	employeeGroup.POST("/", employeeController.Create())
 	employeeGroup.PATCH("/:id", employeeController.UpdateFullname())
 	employeeGroup.DELETE("/:id", employeeController.Delete())
 
@@ -100,7 +100,7 @@ func (api *APIServer) Run(port int) {
 	buyerGroup := groupV1.Group("buyers")
 	buyerGroup.GET("/", buyerController.GetAll())
 	buyerGroup.GET("/:id", buyerController.GetId())
-	buyerGroup.POST("/", buyerController.Store())
+	buyerGroup.POST("/", buyerController.Create())
 	buyerGroup.PATCH("/:id", buyerController.UpdateCardNumberLastName())
 	buyerGroup.DELETE("/:id", buyerController.DeleteBuyer())
 
