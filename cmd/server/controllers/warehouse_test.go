@@ -20,7 +20,7 @@ func SetUpRouter() *gin.Engine {
 	return router
 }
 
-const ENDPOINT = "/api/v1/warehouses"
+const EndpointWarehouse = "/api/v1/warehouses"
 
 var listPossiblesWarehouses = []warehouse.WarehouseModel{
 	{
@@ -68,11 +68,16 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.POST(ENDPOINT, controller.CreateWarehouse())
+		r.POST(EndpointWarehouse, controller.CreateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPost, ENDPOINT, requestBody)
+		response := CreateRequestTest(r, http.MethodPost, EndpointWarehouse, requestBody)
+
+		expect := map[string]interface{}{
+			"data": listPossiblesWarehouses[0],
+		}
 
 		assert.Equal(t, http.StatusCreated, response.Code)
+		assert.JSONEq(t, CreateStringJSON(expect), response.Body.String())
 	})
 
 	t.Run("create_fail: return 409, because the is already an warehouse with that code", func(t *testing.T) {
@@ -94,9 +99,9 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.POST(ENDPOINT, controller.CreateWarehouse())
+		r.POST(EndpointWarehouse, controller.CreateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPost, ENDPOINT, requestBody)
+		response := CreateRequestTest(r, http.MethodPost, EndpointWarehouse, requestBody)
 
 		assert.Equal(t, http.StatusConflict, response.Code)
 	})
@@ -107,9 +112,9 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.POST(ENDPOINT, controller.CreateWarehouse())
+		r.POST(EndpointWarehouse, controller.CreateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPost, ENDPOINT, []byte{})
+		response := CreateRequestTest(r, http.MethodPost, EndpointWarehouse, []byte{})
 
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
@@ -126,11 +131,16 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.GET(ENDPOINT, controller.GetAllWarehouse())
+		r.GET(EndpointWarehouse, controller.GetAllWarehouse())
 
-		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, []byte{})
+		response := CreateRequestTest(r, http.MethodGet, EndpointWarehouse, []byte{})
+
+		expect := map[string]interface{}{
+			"data": listPossiblesWarehouses,
+		}
 
 		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, CreateStringJSON(expect), response.Body.String())
 	})
 
 	t.Run("find_all_error: when an error ocorrency in the server", func(t *testing.T) {
@@ -142,9 +152,9 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.GET(ENDPOINT, controller.GetAllWarehouse())
+		r.GET(EndpointWarehouse, controller.GetAllWarehouse())
 
-		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, []byte{})
+		response := CreateRequestTest(r, http.MethodGet, EndpointWarehouse, []byte{})
 
 		assert.Equal(t, http.StatusInternalServerError, response.Code)
 	})
@@ -155,7 +165,7 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 	t.Run("find_by_id_non_existent: if warehouse do not exist return 404 code", func(t *testing.T) {
 
 		var id int64 = 99999
-		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
 		service := mocks.NewService(t)
@@ -163,7 +173,7 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		controller := controllers.NewWarehouse(service)
 
 		r := SetUpRouter()
-		r.GET(ENDPOINT+"/:id", controller.GetWarehouseByID())
+		r.GET(EndpointWarehouse+"/:id", controller.GetWarehouseByID())
 		response := CreateRequestTest(r, http.MethodGet, url, []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
@@ -175,19 +185,24 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		controller := controllers.NewWarehouse(service)
 
 		r := SetUpRouter()
-		r.GET(ENDPOINT+"/:id", controller.GetWarehouseByID())
-		response := CreateRequestTest(r, http.MethodGet, ENDPOINT+"/1", []byte{})
+		r.GET(EndpointWarehouse+"/:id", controller.GetWarehouseByID())
+		response := CreateRequestTest(r, http.MethodGet, EndpointWarehouse+"/1", []byte{})
+
+		expect := map[string]interface{}{
+			"data": listPossiblesWarehouses[1],
+		}
 
 		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, CreateStringJSON(expect), response.Body.String())
 	})
 
 	t.Run("find_by_id_non_id: if id does not exist return 422 code", func(t *testing.T) {
-		url := fmt.Sprintf("%s/abc", ENDPOINT)
+		url := fmt.Sprintf("%s/abc", EndpointWarehouse)
 		controller := controllers.NewWarehouse(nil)
 
 		r := SetUpRouter()
 
-		r.GET(ENDPOINT+"/:id", controller.GetWarehouseByID())
+		r.GET(EndpointWarehouse+"/:id", controller.GetWarehouseByID())
 
 		response := CreateRequestTest(r, http.MethodGet, url, []byte{})
 
@@ -204,7 +219,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 	t.Run("update_ok: if warehouses was successfully updated return 200 code", func(t *testing.T) {
 
 		var id int64 = 1
-		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 
 		service := mocks.NewService(t)
 		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(listPossiblesWarehouses[0], nil)
@@ -215,16 +230,21 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.PATCH(ENDPOINT+"/:id", controller.UpdateWarehouse())
+		r.PATCH(EndpointWarehouse+"/:id", controller.UpdateWarehouse())
 
 		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
 
+		expect := map[string]interface{}{
+			"data": listPossiblesWarehouses[0],
+		}
+
 		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, CreateStringJSON(expect), response.Body.String())
 	})
 
 	t.Run("update_non_existent: if does not find warehouses with the id, return 404 code", func(t *testing.T) {
 		var id int64 = 9999
-		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
 		service := mocks.NewService(t)
@@ -236,7 +256,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.PATCH(ENDPOINT+"/:id", controller.UpdateWarehouse())
+		r.PATCH(EndpointWarehouse+"/:id", controller.UpdateWarehouse())
 
 		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
 
@@ -244,12 +264,12 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 	})
 
 	t.Run("update_non_id: return 422 code when id is of a invalid type", func(t *testing.T) {
-		url := fmt.Sprintf("%s/abc", ENDPOINT)
+		url := fmt.Sprintf("%s/abc", EndpointWarehouse)
 		controller := controllers.NewWarehouse(nil)
 
 		r := SetUpRouter()
 
-		r.PATCH(ENDPOINT+"/:id", controller.UpdateWarehouse())
+		r.PATCH(EndpointWarehouse+"/:id", controller.UpdateWarehouse())
 
 		response := CreateRequestTest(r, http.MethodPatch, url, []byte{})
 
@@ -258,7 +278,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 
 	t.Run("update_wrong_data_type: return 400 code when data are of the wrong type", func(t *testing.T) {
 		var id int64 = 1
-		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 
 		controller := controllers.NewWarehouse(nil)
 
@@ -266,7 +286,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.PATCH(ENDPOINT+"/:id", controller.UpdateWarehouse())
+		r.PATCH(EndpointWarehouse+"/:id", controller.UpdateWarehouse())
 
 		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
 
@@ -277,7 +297,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 func Test_Controller_Warehouse_Delete(t *testing.T) {
 	t.Run("delete_non_existent: return 404 code when no warehouses was found with the id", func(t *testing.T) {
 		var id int64 = 1
-		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
 		service := mocks.NewService(t)
@@ -287,7 +307,7 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.DELETE(ENDPOINT+"/:id", controller.DeleteWarehouse())
+		r.DELETE(EndpointWarehouse+"/:id", controller.DeleteWarehouse())
 
 		response := CreateRequestTest(r, http.MethodDelete, url, []byte{})
 
@@ -295,12 +315,12 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 	})
 
 	t.Run("delete_non_id: return 422 code when id is of a invalid type", func(t *testing.T) {
-		url := fmt.Sprintf("%s/abc", ENDPOINT)
+		url := fmt.Sprintf("%s/abc", EndpointWarehouse)
 		controller := controllers.NewWarehouse(nil)
 
 		r := SetUpRouter()
 
-		r.DELETE(ENDPOINT+"/:id", controller.DeleteWarehouse())
+		r.DELETE(EndpointWarehouse+"/:id", controller.DeleteWarehouse())
 
 		response := CreateRequestTest(r, http.MethodDelete, url, []byte{})
 
@@ -309,7 +329,7 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 
 	t.Run("delete_ok: return 204 code when an warehouses is successfully deleted", func(t *testing.T) {
 		var id int64 = 1
-		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
+		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 
 		service := mocks.NewService(t)
 		service.On("Delete", id).Return(nil)
@@ -318,7 +338,7 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 
 		r := SetUpRouter()
 
-		r.DELETE(ENDPOINT+"/:id", controller.DeleteWarehouse())
+		r.DELETE(EndpointWarehouse+"/:id", controller.DeleteWarehouse())
 
 		response := CreateRequestTest(r, http.MethodDelete, url, []byte{})
 
@@ -334,4 +354,9 @@ func CreateRequestTest(gin *gin.Engine, method string, url string, body []byte) 
 	gin.ServeHTTP(response, request)
 
 	return response
+}
+
+func CreateStringJSON(obj interface{}) string {
+	jsonObj, _ := json.Marshal(obj)
+	return string(jsonObj)
 }
