@@ -51,7 +51,7 @@ func TestEmployeeController_Create(t *testing.T) {
 	mockService := mocks.NewService(t)
 	controller := controllers.NewEmployee(mockService)
 	router := SetUpRouter()
-	router.POST("/api/v1/employees", controller.Create())
+	router.POST(ENDPOINT, controller.Create())
 
 	t.Run("create_ok: when data entry is successful, should return code 201. The object must be returned.", func(t *testing.T) {
 		mockService.
@@ -90,7 +90,7 @@ func TestEmployeeController_GetAll(t *testing.T) {
 	mockService := mocks.NewService(t)
 	controller := controllers.NewEmployee(mockService)
 	router := SetUpRouter()
-	router.GET("/api/v1/employees", controller.GetAll())
+	router.GET(ENDPOINT, controller.GetAll())
 
 	expectedEmployees := []employees.Employee{
 		makeEmployee(),
@@ -128,7 +128,7 @@ func TestEmployeeController_GetById(t *testing.T) {
 	mockService := mocks.NewService(t)
 	controller := controllers.NewEmployee(mockService)
 	router := SetUpRouter()
-	router.GET("/api/v1/employees/:id", controller.GetById())
+	router.GET(ENDPOINT+"/:id", controller.GetById())
 	url := fmt.Sprintf("%s/%d", ENDPOINT, 1)
 
 	t.Run("find_by_id_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
@@ -173,7 +173,7 @@ func TestEmployeeController_Update(t *testing.T) {
 	mockService := mocks.NewService(t)
 	controller := controllers.NewEmployee(mockService)
 	router := SetUpRouter()
-	router.PATCH("/api/v1/employees/:id", controller.UpdateFullname())
+	router.PATCH(ENDPOINT+"/:id", controller.UpdateFullname())
 	url := fmt.Sprintf("%s/%d", ENDPOINT, 1)
 
 	t.Run("update_ok: when the request is successful, should return code 200. The object must be returned.", func(t *testing.T) {
@@ -229,7 +229,7 @@ func TestEmployeeController_Delete(t *testing.T) {
 	mockService := mocks.NewService(t)
 	controller := controllers.NewEmployee(mockService)
 	router := SetUpRouter()
-	router.DELETE("/api/v1/employees/:id", controller.Delete())
+	router.DELETE(ENDPOINT+"/:id", controller.Delete())
 	url := fmt.Sprintf("%s/%d", ENDPOINT, 1)
 
 	t.Run("delete_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
