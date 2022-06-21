@@ -20,7 +20,7 @@ func SetUpRouter() *gin.Engine {
 	return router
 }
 
-var body = section.Section{
+var bodySection = section.Section{
 	SectionNumber:      int64(1),
 	CurrentTemperature: int64(1),
 	MinimumTemperature: int64(1),
@@ -75,7 +75,7 @@ func TestSectionController_Create(t *testing.T) {
 
 		controller := controllers.NewSection(mockService)
 
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodySection)
 
 		r := SetUpRouter()
 
@@ -118,7 +118,7 @@ func TestSectionController_Create(t *testing.T) {
 
 		controller := controllers.NewSection(mockService)
 
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodySection)
 
 		r := SetUpRouter()
 
@@ -141,7 +141,7 @@ func TestSectionController_GetAll(t *testing.T) {
 			Once()
 		controller := controllers.NewSection(mockService)
 
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodySection)
 
 		r := SetUpRouter()
 		r.GET(EndpointSection, controller.GetAll())
@@ -160,7 +160,7 @@ func TestSectionController_GetAll(t *testing.T) {
 			Return([]section.Section{}, fmt.Errorf("any error"))
 		controller := controllers.NewSection(mockService)
 
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodySection)
 
 		r := SetUpRouter()
 		r.GET(EndpointSection, controller.GetAll())
@@ -180,7 +180,7 @@ func TestSectionController_GetById(t *testing.T) {
 			Return(expectedSection, nil)
 		controller := controllers.NewSection(mockService)
 
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodySection)
 
 		r := SetUpRouter()
 		r.GET(EndpointSection+"/:id", controller.GetById())
@@ -195,7 +195,7 @@ func TestSectionController_GetById(t *testing.T) {
 		mockService.On("GetById", int64(1)).Return(section.Section{}, fmt.Errorf("section not found"))
 		controller := controllers.NewSection(mockService)
 
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodySection)
 
 		r := SetUpRouter()
 		r.GET(EndpointSection+"/:id", controller.GetById())
