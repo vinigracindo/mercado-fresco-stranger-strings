@@ -1,13 +1,5 @@
 package employees
 
-type Service interface {
-	GetAll() ([]Employee, error)
-	GetById(id int64) (Employee, error)
-	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
-	UpdateFullname(id int64, firstName string, lastName string) (Employee, error)
-	Delete(id int64) error
-}
-
 type service struct {
 	repo Repository
 }
@@ -22,26 +14,26 @@ func (s service) GetAll() ([]Employee, error) {
 	return employees, nil
 }
 
-func (s service) GetById(id int64) (Employee, error) {
+func (s service) GetById(id int64) (*Employee, error) {
 	employee, err := s.repo.GetById(id)
 
 	if err != nil {
-		return Employee{}, err
+		return nil, err
 	}
 
 	return employee, nil
 }
 
-func (s service) UpdateFullname(id int64, firstName string, lastName string) (Employee, error) {
+func (s service) UpdateFullname(id int64, firstName string, lastName string) (*Employee, error) {
 	employee, err := s.repo.UpdateFullname(id, firstName, lastName)
 	if err != nil {
-		return Employee{}, err
+		return nil, err
 	}
 	return employee, nil
 }
 
-func (s service) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
-	employee, err := s.repo.Store(cardNumberId, firstName, lastName, warehouseId)
+func (s service) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+	employee, err := s.repo.Create(cardNumberId, firstName, lastName, warehouseId)
 
 	if err != nil {
 		return Employee{}, err

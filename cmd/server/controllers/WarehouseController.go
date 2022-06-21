@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"errors"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -11,15 +9,15 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
-type requestWarehousePost struct {
-	Address            string  `json:"address"`
-	Telephone          string  `json:"telephone"`
-	WarehouseCode      string  `json:"warehouse_code"`
-	MinimunCapacity    int64   `json:"minimun_capacity"`
-	MinimunTemperature float64 `json:"minimun_temperature"`
+type RequestWarehousePost struct {
+	Address            string  `json:"address" binding:"required"`
+	Telephone          string  `json:"telephone" binding:"required"`
+	WarehouseCode      string  `json:"warehouse_code" binding:"required"`
+	MinimunCapacity    int64   `json:"minimun_capacity" binding:"required"`
+	MinimunTemperature float64 `json:"minimun_temperature" binding:"required"`
 }
 
-type requestWarehousePatch struct {
+type RequestWarehousePatch struct {
 	MinimunCapacity    int64   `json:"minimun_capacity"`
 	MinimunTemperature float64 `json:"minimun_temperature"`
 }
@@ -48,9 +46,9 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		var wh requestWarehousePost
+		var wh RequestWarehousePost
 
-		if err := ctx.BindJSON(&wh); err != nil {
+		if err := ctx.ShouldBindJSON(&wh); err != nil {
 			httputil.NewError(ctx, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -58,7 +56,7 @@ func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 		newWh, err := w.service.Create(wh.Address, wh.Telephone, wh.WarehouseCode, wh.MinimunTemperature, wh.MinimunCapacity)
 
 		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, err)
+			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
 
@@ -80,7 +78,7 @@ func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 		shw, err := w.service.GetAll()
 
 		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, err)
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
 
@@ -105,14 +103,14 @@ func (w Warehouse) GetWarehouseByID() gin.HandlerFunc {
 			id, err := strconv.Atoi(paramId)
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusInternalServerError, err)
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 				return
 			}
 
 			wh, err := w.service.GetById(int64(id))
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, err)
+				httputil.NewError(ctx, http.StatusNotFound, err)
 				return
 			}
 
@@ -140,14 +138,14 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 			id, err := strconv.Atoi(paramId)
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusInternalServerError, err)
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 				return
 			}
 
 			err = w.service.Delete(int64(id))
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, err)
+				httputil.NewError(ctx, http.StatusNotFound, err)
 				return
 			}
 
@@ -175,31 +173,27 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 		if paramId, check := ctx.Params.Get("id"); check {
 			id, err := strconv.Atoi(paramId)
 
-			var body requestWarehousePatch
-			var patchWh warehouse.WarehouseModel
-
-			if err := ctx.BindJSON(&body); err != nil {
+			if err != nil {
 				httputil.NewError(ctx, http.StatusBadRequest, err)
-				return
 			}
 
-			if err != nil {
-				httputil.NewError(ctx, http.StatusInternalServerError, err)
-				log.Println(err)
+			var body RequestWarehousePatch
+			var patchWh warehouse.WarehouseModel
+
+			if err := ctx.ShouldBindJSON(&body); err != nil {
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 				return
 			}
 
 			patchWh, err = w.service.UpdateTempAndCap(int64(id), body.MinimunTemperature, body.MinimunCapacity)
 
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, err)
+				httputil.NewError(ctx, http.StatusNotFound, err)
 				return
 			}
 
 			httputil.NewResponse(ctx, http.StatusOK, patchWh)
-
 			return
 		}
-		httputil.NewError(ctx, http.StatusUnprocessableEntity, errors.New("error: id is mandatory"))
 	}
 }
