@@ -9,16 +9,35 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/mocks"
 )
 
-func Test_Service_Create(t *testing.T) {
+var expectedWarehouse = warehouse.WarehouseModel{
+	Id:                 0,
+	Address:            "Avenida Teste",
+	Telephone:          "31 999999999",
+	WarehouseCode:      "30",
+	MinimunCapacity:    10,
+	MinimunTemperature: 9,
+}
 
-	expectedWarehouse := warehouse.WarehouseModel{
+var expectedWarehouseList = []warehouse.WarehouseModel{
+	{
 		Id:                 0,
 		Address:            "Avenida Teste",
 		Telephone:          "31 999999999",
-		WarehouseCode:      "30",
-		MinimunCapacity:    10,
-		MinimunTemperature: 9,
-	}
+		WarehouseCode:      "hg312",
+		MinimunCapacity:    1111111,
+		MinimunTemperature: 9999999,
+	},
+	{
+		Id:                 1,
+		Address:            "Avenida Teste Segunda",
+		Telephone:          "31 77777777",
+		WarehouseCode:      "od78",
+		MinimunCapacity:    5555555,
+		MinimunTemperature: 444444,
+	},
+}
+
+func Test_Service_Create(t *testing.T) {
 
 	t.Run("create_ok: if all the fields are correct warehouse will be created", func(t *testing.T) {
 
@@ -51,24 +70,6 @@ func Test_Service_Create(t *testing.T) {
 }
 
 func Test_Service_GetAll(t *testing.T) {
-	expectedWarehouseList := []warehouse.WarehouseModel{
-		{
-			Id:                 0,
-			Address:            "Avenida Teste",
-			Telephone:          "31 999999999",
-			WarehouseCode:      "hg312",
-			MinimunCapacity:    1111111,
-			MinimunTemperature: 9999999,
-		},
-		{
-			Id:                 1,
-			Address:            "Avenida Teste Segunda",
-			Telephone:          "31 77777777",
-			WarehouseCode:      "od78",
-			MinimunCapacity:    5555555,
-			MinimunTemperature: 444444,
-		},
-	}
 
 	t.Run("find_all: return list of warehouses", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
@@ -99,24 +100,6 @@ func Test_Service_GetAll(t *testing.T) {
 }
 
 func Test_Service_GetByID(t *testing.T) {
-	expectedWarehouseList := []warehouse.WarehouseModel{
-		{
-			Id:                 0,
-			Address:            "Avenida Teste",
-			Telephone:          "31 999999999",
-			WarehouseCode:      "hg312",
-			MinimunCapacity:    1111111,
-			MinimunTemperature: 9999999,
-		},
-		{
-			Id:                 1,
-			Address:            "Avenida Teste Segunda",
-			Telephone:          "31 77777777",
-			WarehouseCode:      "od78",
-			MinimunCapacity:    5555555,
-			MinimunTemperature: 444444,
-		},
-	}
 
 	t.Run("find_by_id_existent: search warehouses by id and return", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
@@ -148,14 +131,6 @@ func Test_Service_GetByID(t *testing.T) {
 }
 
 func Test_Service_UpdateTempAndCap(t *testing.T) {
-	expectedWarehouse := warehouse.WarehouseModel{
-		Id:                 1,
-		Address:            "Avenida Teste Segunda",
-		Telephone:          "31 77777777",
-		WarehouseCode:      "od78",
-		MinimunCapacity:    999.0,
-		MinimunTemperature: 999.0,
-	}
 
 	updateWarehouse := warehouse.WarehouseModel{
 		MinimunCapacity:    999.0,
