@@ -135,7 +135,7 @@ func Test_Controller_Get(t *testing.T) {
 		},
 	}
 	t.Run("find_all: Quando a solicitação for bem sucedida, o back-end retornará uma lista de todos os vendedores existentes", func(t *testing.T) {
-		service.On("GetAll").Return(expectedListSeller, nil)
+		service.On("GetAll").Return(expectedListSeller, nil).Once()
 
 		controller := controllers.NewSeller(service)
 		r := SetUpRouter()
@@ -144,5 +144,18 @@ func Test_Controller_Get(t *testing.T) {
 		response := CreateRequestTest(r, "GET", ENDPOINT, []byte{})
 
 		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+	t.Run("find_by_id_non_exitent: Quando o vendedor não existir, um código 404 será devolvido", func(t *testing.T) {
+		service.On("GetById", int64(9999)).Return(seller.Seller{}, fmt.Errorf("Seller not found")).Once()
+
+		controller := controllers.NewSeller(service)
+		r := SetUpRouter()
+		r.GET(ENDPOINT+"/:id", controller.GetById())
+
+		response := CreateRequestTest(r, "GET", ENDPOINT+"/9999", []byte{})
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+
 	})
 }
