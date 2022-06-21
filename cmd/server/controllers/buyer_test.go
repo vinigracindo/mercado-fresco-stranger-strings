@@ -48,7 +48,7 @@ var body = &buyer.Buyer{
 func Test_Controller_Create(t *testing.T) {
 	service := mocks.NewService(t)
 
-	t.Run("create_ok: Quando a entrada de dados for bem-sucedida, um código 201 será retornado junto com o objeto inserido.", func(t *testing.T) {
+	t.Run("create_ok: when data entry is successful, should return code 201.", func(t *testing.T) {
 
 		service.On("Create",
 			expectBuyer.CardNumberId,
@@ -66,7 +66,7 @@ func Test_Controller_Create(t *testing.T) {
 
 	})
 
-	t.Run("create_fail: Se o objeto JSON não contiver os campos necessários, um código 422 será retornado.", func(t *testing.T) {
+	t.Run("create_fail: when the JSON does not contain the required fields, should return code 422", func(t *testing.T) {
 
 		service := mocks.NewService(t)
 		controller := controllers.NewBuyer(service)
@@ -78,7 +78,7 @@ func Test_Controller_Create(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 
-	t.Run("create_conflict: Se o card_number_id já existir, ele retornará um erro 409 Conflict.", func(t *testing.T) {
+	t.Run("create_conflict: when the card_number already exists, should return code 409.", func(t *testing.T) {
 
 		service.On("Create",
 			expectBuyer.CardNumberId,
@@ -100,7 +100,7 @@ func Test_Controller_Create(t *testing.T) {
 func Test_Controller_GetAll(t *testing.T) {
 	service := mocks.NewService(t)
 
-	t.Run("find_all: Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os compradores existentes.", func(t *testing.T) {
+	t.Run("find_all: when data entry is successful, should return code 200.", func(t *testing.T) {
 
 		service.On("GetAll").Return([]buyer.Buyer{*expectBuyer}, nil).Once()
 
@@ -116,7 +116,7 @@ func Test_Controller_GetAll(t *testing.T) {
 		assert.JSONEq(t, "{\"data\":[{\"id\":0,\"card_number_id\":402323,\"first_name\":\"FirstNameTest\",\"last_name\":\"LastNameTest\"}]}", response.Body.String())
 	})
 
-	t.Run("find_all_fail: Quando a solicitação não for bem-sucedida, o back-end retornará um erro 400.", func(t *testing.T) {
+	t.Run("find_all_fail: when GetAll fail, should return code 400.", func(t *testing.T) {
 
 		service.On("GetAll").Return([]buyer.Buyer{}, fmt.Errorf("error"))
 		controller := controllers.NewBuyer(service)
@@ -134,7 +134,7 @@ func Test_Controller_GetAll(t *testing.T) {
 func Test_Controller_GetById(t *testing.T) {
 	service := mocks.NewService(t)
 
-	t.Run("find_by_id_existent: Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os compradores existentes.", func(t *testing.T) {
+	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 
 		service.On("GetId", int64(1)).Return(body, nil).Once()
 
@@ -149,7 +149,7 @@ func Test_Controller_GetById(t *testing.T) {
 
 	})
 
-	t.Run("find_by_id_inexistent: Quando o funcionário não existir, um código 404 será retornado", func(t *testing.T) {
+	t.Run("find_by_id_inexistent: when the buyer does not exist, should return code 404", func(t *testing.T) {
 
 		service.On("GetId", int64(1)).Return(nil, fmt.Errorf("buyer not found")).Once()
 		controller := controllers.NewBuyer(service)
@@ -161,7 +161,7 @@ func Test_Controller_GetById(t *testing.T) {
 
 	})
 
-	t.Run("find_by_id_parse_error: Quando a solicitação não for bem-sucedida, o back-end retornará um erro 400.", func(t *testing.T) {
+	t.Run("find_by_id_parse_error: when buyer id is not parsed, should return code 400.", func(t *testing.T) {
 		controller := controllers.NewBuyer(service)
 
 		r := SetUpRouter()
@@ -181,7 +181,7 @@ func Test_Controller_Update(t *testing.T) {
 		LastName:     "LastNameTest 2",
 	}
 
-	t.Run("update_ok: Quando a atualização dos dados for bem sucedida, o comprador será devolvido com as informações atualizadas juntamente com um código 200", func(t *testing.T) {
+	t.Run("update_ok: when the request is successful, should return code 200", func(t *testing.T) {
 
 		service.On("Update", int64(1), updateBody.CardNumberId, updateBody.LastName).Return(updateBody, nil).Once()
 
@@ -196,7 +196,7 @@ func Test_Controller_Update(t *testing.T) {
 		assert.JSONEq(t, "{\"data\":{\"id\":1,\"card_number_id\":402324,\"first_name\":\"\",\"last_name\":\"LastNameTest 2\"}}", response.Body.String())
 	})
 
-	t.Run("update_non_existent: Se o comprador a ser atualizado não existir, um código 404 será devolvido.", func(t *testing.T) {
+	t.Run("update_non_existent: when the buyer does not exist, should return code 404.", func(t *testing.T) {
 		service.On("Update", int64(1), updateBody.CardNumberId, updateBody.LastName).Return(nil, fmt.Errorf("buyer with id %d not found", int64(1))).Once()
 
 		controller := controllers.NewBuyer(service)
@@ -209,7 +209,7 @@ func Test_Controller_Update(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
-	t.Run("update_id_parse_error: Quando a solicitação não for bem-sucedida, o back-end retornará um erro 400.", func(t *testing.T) {
+	t.Run("update_id_parse_error: when buyer id is not parsed, should return code 400.", func(t *testing.T) {
 		controller := controllers.NewBuyer(service)
 		r := SetUpRouter()
 		r.PATCH(ENDPOINT+"/:id", controller.UpdateCardNumberLastName())
@@ -221,7 +221,7 @@ func Test_Controller_Update(t *testing.T) {
 func Test_Controller_Delete(t *testing.T) {
 	service := mocks.NewService(t)
 
-	t.Run("delete_non_existent: Quando o comprador não existir, um código 404 será devolvido", func(t *testing.T) {
+	t.Run("delete_non_existent: when the buyer does not exist, should return code 404", func(t *testing.T) {
 
 		service.On("Delete", int64(1)).Return(fmt.Errorf("buyer with id not found")).Once()
 
@@ -235,7 +235,7 @@ func Test_Controller_Delete(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
-	t.Run("delete_ok: Quando a exclusão for bem-sucedida, um código 204 será retornado.", func(t *testing.T) {
+	t.Run("delete_ok: when the request is successful, should return code 204.", func(t *testing.T) {
 
 		service.On("Delete", int64(1)).Return(nil).Once()
 
@@ -248,7 +248,7 @@ func Test_Controller_Delete(t *testing.T) {
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
 
-	t.Run("delete_id_parse_error: Quando o id do comprador for inválido, um código 400 será devolvido", func(t *testing.T) {
+	t.Run("delete_id_parse_error: when buyer id is not parsed, should return code 400", func(t *testing.T) {
 
 		controller := controllers.NewBuyer(service)
 		r := SetUpRouter()
