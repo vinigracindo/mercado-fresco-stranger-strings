@@ -11,6 +11,32 @@ definitions:
       last_name:
         type: string
     type: object
+  controllers.RequestWarehousePatch:
+    properties:
+      minimun_capacity:
+        type: integer
+      minimun_temperature:
+        type: number
+    type: object
+  controllers.RequestWarehousePost:
+    properties:
+      address:
+        type: string
+      minimun_capacity:
+        type: integer
+      minimun_temperature:
+        type: number
+      telephone:
+        type: string
+      warehouse_code:
+        type: string
+    required:
+    - address
+    - minimun_capacity
+    - minimun_temperature
+    - telephone
+    - warehouse_code
+    type: object
   controllers.requestBuyerPatch:
     properties:
       card_number_id:
@@ -139,25 +165,33 @@ definitions:
     - section_number
     - warehouse_id
     type: object
-  controllers.requestWarehousePatch:
-    properties:
-      minimun_capacity:
-        type: integer
-      minimun_temperature:
-        type: number
-    type: object
-  controllers.requestWarehousePost:
+  controllers.requestSellerPatch:
     properties:
       address:
         type: string
-      minimun_capacity:
-        type: integer
-      minimun_temperature:
-        type: number
       telephone:
         type: string
-      warehouse_code:
+    required:
+    - address
+    - telephone
+    type: object
+  controllers.requestSellerPost:
+    properties:
+      address:
         type: string
+      cid:
+        type: integer
+      company_name:
+        type: string
+      id:
+        type: integer
+      telephone:
+        type: string
+    required:
+    - address
+    - cid
+    - company_name
+    - telephone
     type: object
   employees.Employee:
     properties:
@@ -226,6 +260,19 @@ definitions:
         type: integer
       warehouse_id:
         type: integer
+    type: object
+  seller.Seller:
+    properties:
+      address:
+        type: string
+      cid:
+        type: integer
+      company_name:
+        type: string
+      id:
+        type: integer
+      telephone:
+        type: string
     type: object
   warehouse.WarehouseModel:
     properties:
@@ -433,8 +480,8 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/employees.Employee'
-        "400":
-          description: Bad Request
+        "409":
+          description: Conflict
           schema:
             $ref: '#/definitions/httputil.HTTPError'
         "422":
@@ -682,8 +729,8 @@ paths:
             items:
               $ref: '#/definitions/section.Section'
             type: array
-        "404":
-          description: Not Found
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/httputil.HTTPError'
       summary: List all sections
@@ -807,6 +854,149 @@ paths:
       summary: Update currentCapacity
       tags:
       - Sections
+  /sellers:
+    get:
+      consumes:
+      - application/json
+      description: get Seller
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/seller.Seller'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List all seller
+      tags:
+      - Seller
+    post:
+      consumes:
+      - application/json
+      description: create seller
+      parameters:
+      - description: Create seller
+        in: body
+        name: Seller
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestSellerPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/seller.Seller'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create seller
+      tags:
+      - Seller
+  /sellers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Seller by id
+      parameters:
+      - description: Seller ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete Seller
+      tags:
+      - Seller
+    get:
+      consumes:
+      - application/json
+      description: get Seller by id
+      parameters:
+      - description: Seller ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/seller.Seller'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List Seller by id
+      tags:
+      - Seller
+    patch:
+      consumes:
+      - application/json
+      description: Update seller
+      parameters:
+      - description: Seller ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update seller
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.requestSellerPatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/seller.Seller'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update seller
+      tags:
+      - Seller
   /warehouses:
     get:
       consumes:
@@ -838,7 +1028,7 @@ paths:
         name: Warehouse
         required: true
         schema:
-          $ref: '#/definitions/controllers.requestWarehousePost'
+          $ref: '#/definitions/controllers.RequestWarehousePost'
       produces:
       - application/json
       responses:
@@ -927,7 +1117,7 @@ paths:
         name: Warehouse
         required: true
         schema:
-          $ref: '#/definitions/controllers.requestWarehousePatch'
+          $ref: '#/definitions/controllers.RequestWarehousePatch'
       produces:
       - application/json
       responses:

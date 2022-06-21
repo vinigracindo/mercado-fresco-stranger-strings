@@ -295,8 +295,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/employees.Employee"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/httputil.HTTPError"
                         }
@@ -671,8 +671,8 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/httputil.HTTPError"
                         }
@@ -858,6 +858,222 @@ const docTemplate = `{
                 }
             }
         },
+        "/sellers": {
+            "get": {
+                "description": "get Seller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller"
+                ],
+                "summary": "List all seller",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/seller.Seller"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create seller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller"
+                ],
+                "summary": "Create seller",
+                "parameters": [
+                    {
+                        "description": "Create seller",
+                        "name": "Seller",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.requestSellerPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/seller.Seller"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sellers/{id}": {
+            "get": {
+                "description": "get Seller by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller"
+                ],
+                "summary": "List Seller by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Seller ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/seller.Seller"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Seller by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller"
+                ],
+                "summary": "Delete Seller",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Seller ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update seller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller"
+                ],
+                "summary": "Update seller",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Seller ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update seller",
+                        "name": "Warehouse",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.requestSellerPatch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/seller.Seller"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/warehouses": {
             "get": {
                 "description": "get Warehouse",
@@ -908,7 +1124,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.requestWarehousePost"
+                            "$ref": "#/definitions/controllers.RequestWarehousePost"
                         }
                     }
                 ],
@@ -1042,7 +1258,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.requestWarehousePatch"
+                            "$ref": "#/definitions/controllers.RequestWarehousePatch"
                         }
                     }
                 ],
@@ -1083,6 +1299,44 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "last_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.RequestWarehousePatch": {
+            "type": "object",
+            "properties": {
+                "minimun_capacity": {
+                    "type": "integer"
+                },
+                "minimun_temperature": {
+                    "type": "number"
+                }
+            }
+        },
+        "controllers.RequestWarehousePost": {
+            "type": "object",
+            "required": [
+                "address",
+                "minimun_capacity",
+                "minimun_temperature",
+                "telephone",
+                "warehouse_code"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "minimun_capacity": {
+                    "type": "integer"
+                },
+                "minimun_temperature": {
+                    "type": "number"
+                },
+                "telephone": {
+                    "type": "string"
+                },
+                "warehouse_code": {
                     "type": "string"
                 }
             }
@@ -1271,33 +1525,43 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.requestWarehousePatch": {
+        "controllers.requestSellerPatch": {
             "type": "object",
-            "properties": {
-                "minimun_capacity": {
-                    "type": "integer"
-                },
-                "minimun_temperature": {
-                    "type": "number"
-                }
-            }
-        },
-        "controllers.requestWarehousePost": {
-            "type": "object",
+            "required": [
+                "address",
+                "telephone"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
                 },
-                "minimun_capacity": {
-                    "type": "integer"
-                },
-                "minimun_temperature": {
-                    "type": "number"
-                },
                 "telephone": {
                     "type": "string"
+                }
+            }
+        },
+        "controllers.requestSellerPost": {
+            "type": "object",
+            "required": [
+                "address",
+                "cid",
+                "company_name",
+                "telephone"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
                 },
-                "warehouse_code": {
+                "cid": {
+                    "type": "integer"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "telephone": {
                     "type": "string"
                 }
             }
@@ -1403,6 +1667,26 @@ const docTemplate = `{
                 },
                 "warehouse_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "seller.Seller": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cid": {
+                    "type": "integer"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "telephone": {
+                    "type": "string"
                 }
             }
         },
