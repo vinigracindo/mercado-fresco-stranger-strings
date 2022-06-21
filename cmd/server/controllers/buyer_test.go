@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/assert/v2"
+	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/mocks"
@@ -112,6 +112,8 @@ func Test_Controller_GetAll(t *testing.T) {
 		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
+
+		assert.JSONEq(t, "{\"data\":[{\"id\":0,\"card_number_id\":402323,\"first_name\":\"FirstNameTest\",\"last_name\":\"LastNameTest\"}]}", response.Body.String())
 	})
 
 	t.Run("find_all_fail: Quando a solicitação não for bem-sucedida, o back-end retornará um erro 400.", func(t *testing.T) {
@@ -125,6 +127,7 @@ func Test_Controller_GetAll(t *testing.T) {
 		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, requestBody)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
+
 	})
 }
 
@@ -142,6 +145,7 @@ func Test_Controller_GetById(t *testing.T) {
 		r.GET(ENDPOINT+"/:id", controller.GetId())
 		response := CreateRequestTest(r, http.MethodGet, ENDPOINT+"/1", requestBody)
 		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, "{\"data\":{\"id\":0,\"card_number_id\":402323,\"first_name\":\"FirstNameTest\",\"last_name\":\"LastNameTest\"}}", response.Body.String())
 
 	})
 
@@ -154,6 +158,7 @@ func Test_Controller_GetById(t *testing.T) {
 		r.GET(ENDPOINT+"/:id", controller.GetId())
 		response := CreateRequestTest(r, http.MethodGet, ENDPOINT+"/1", []byte{})
 		assert.Equal(t, http.StatusNotFound, response.Code)
+
 	})
 
 	t.Run("find_by_id_parse_error: Quando a solicitação não for bem-sucedida, o back-end retornará um erro 400.", func(t *testing.T) {
@@ -188,6 +193,7 @@ func Test_Controller_Update(t *testing.T) {
 		response := CreateRequestTest(r, http.MethodPatch, ENDPOINT+"/1", requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, "{\"data\":{\"id\":1,\"card_number_id\":402324,\"first_name\":\"\",\"last_name\":\"LastNameTest 2\"}}", response.Body.String())
 	})
 
 	t.Run("update_non_existent: Se o comprador a ser atualizado não existir, um código 404 será devolvido.", func(t *testing.T) {
