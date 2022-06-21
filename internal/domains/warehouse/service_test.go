@@ -20,7 +20,7 @@ func Test_Service_Create(t *testing.T) {
 		MinimunTemperature: 9,
 	}
 
-	t.Run("create_ok: Se contiver os campos necessários, será criado", func(t *testing.T) {
+	t.Run("create_ok: if all the fields are correct warehouse will be created", func(t *testing.T) {
 
 		repo := mocks.NewRepository(t)
 
@@ -33,7 +33,7 @@ func Test_Service_Create(t *testing.T) {
 		assert.Equal(t, expectedWarehouse, result)
 	})
 
-	t.Run("create_conflict: warehouse_code duplicado", func(t *testing.T) {
+	t.Run("create_conflict: return erro when try to register a warehouse with code the already exist", func(t *testing.T) {
 
 		errMsg := fmt.Errorf("the product with code %d has already been registered", expectedWarehouse.Id)
 
@@ -70,7 +70,7 @@ func Test_Service_GetAll(t *testing.T) {
 		},
 	}
 
-	t.Run("find_all: retonar uma list com varios warehouses", func(t *testing.T) {
+	t.Run("find_all: return list of warehouses", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
 
 		repo.On("GetAll").Return(expectedWarehouseList, nil)
@@ -82,7 +82,7 @@ func Test_Service_GetAll(t *testing.T) {
 		assert.Equal(t, expectedWarehouseList, resultList)
 	})
 
-	t.Run("find_all_err: retonar um erro ao tentar buscar pro todas as warehouses", func(t *testing.T) {
+	t.Run("find_all_err: error ocorrency on when try to get a list of warehouses", func(t *testing.T) {
 
 		errMsg := fmt.Errorf("error: database não found")
 
@@ -118,7 +118,7 @@ func Test_Service_GetByID(t *testing.T) {
 		},
 	}
 
-	t.Run("find_by_id_existent: procura um warehouse pelo id valida e retornar", func(t *testing.T) {
+	t.Run("find_by_id_existent: search warehouses by id and return", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
 
 		repo.On("GetById", int64(1)).Return(expectedWarehouseList[1], nil)
@@ -130,7 +130,7 @@ func Test_Service_GetByID(t *testing.T) {
 		assert.Equal(t, expectedWarehouseList[1], result)
 	})
 
-	t.Run("find_by_id_non_existent: procura um warehouse por um ID invalida e retonar um erro", func(t *testing.T) {
+	t.Run("find_by_id_non_existent: search warehouses by an invalid id and return an error", func(t *testing.T) {
 
 		var Id int64 = 9999
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", Id)
@@ -192,7 +192,7 @@ func Test_Service_UpdateTempAndCap(t *testing.T) {
 
 func Test_Service_Delete(t *testing.T) {
 
-	t.Run("delete_non_existent: Se o elemento a ser removido não existir, ele retornará erro.", func(t *testing.T) {
+	t.Run("delete_non_existent: return error when try to remove an element the do not exist", func(t *testing.T) {
 		var id int64 = 1
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
@@ -207,7 +207,7 @@ func Test_Service_Delete(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
-	t.Run("delete_ok: Se a exclusão for bem-sucedida, retorna um erro vazio.", func(t *testing.T) {
+	t.Run("delete_ok: if warehouse was successfully deleted, return empty struct", func(t *testing.T) {
 		var id int64 = 1
 
 		repo := mocks.NewRepository(t)
