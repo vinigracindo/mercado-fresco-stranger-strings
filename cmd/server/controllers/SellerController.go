@@ -38,7 +38,7 @@ func NewSeller(s seller.Service) SellerController {
 // @Accept       json
 // @Produce      json
 // @Success      200  {object} []seller.SellerModel
-// @Failure      404  {object}  httputil.HTTPError
+// @Failure      400  {object}  httputil.HTTPError
 // @Router /sellers [get]
 func (c SellerController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -64,7 +64,7 @@ func (c SellerController) GetAll() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Seller ID"
 // @Success      200  {object} seller.SellerModel
-// @Failure      400  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /sellers/{id} [get]
 func (c SellerController) GetById() gin.HandlerFunc {
@@ -131,9 +131,10 @@ func (c SellerController) Create() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Seller ID"
 // @Param Warehouse body requestWarehousePatch true "Update seller"
-// @Success      201  {object} seller.SellerModel
-// @Failure      409  {object}  httputil.HTTPError
+// @Success      200  {object} seller.SellerModel
+// @Failure      404  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
 // @Router /sellers/{id} [patch]
 func (c SellerController) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -174,7 +175,7 @@ func (c SellerController) Update() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Seller ID"
 // @Success      204
-// @Failure      400  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /sellers/{id} [delete]
 func (c SellerController) Delete() gin.HandlerFunc {

@@ -18,9 +18,10 @@ func Test_Service_Creat(t *testing.T) {
 		Telephone:   "11 99999999",
 	}
 
-	t.Run("create_ok: Se contiver os campos necessários, será criado", func(t *testing.T) {
+	t.Run("create_ok: when it contains the mandatory fields, should create a employee", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
-		repo.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).Return(expectedSeller, nil)
+		repo.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).
+			Return(expectedSeller, nil)
 		service := seller.NewService(repo)
 
 		result, err := service.Create(123, "Mercado Livre", "Osasco, SP", "11 99999999")
@@ -30,10 +31,11 @@ func Test_Service_Creat(t *testing.T) {
 
 	})
 
-	t.Run("create_conflict: Se o cid já existir ele não pode ser criado", func(t *testing.T) {
+	t.Run("create_conflict: when cid already exists, should not create a seller", func(t *testing.T) {
 		errMsg := fmt.Errorf("The seller whith cid %d has already been registered", expectedSeller.Cid)
 		repo := mocks.NewRepository(t)
-		repo.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).Return(seller.Seller{}, errMsg)
+		repo.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).
+			Return(seller.Seller{}, errMsg)
 		service := seller.NewService(repo)
 
 		result, err := service.Create(123, "Mercado Livre", "Osasco, SP", "11 99999999")
@@ -61,9 +63,10 @@ func Test_Service_GetAll(t *testing.T) {
 			Telephone:   "11 88888888",
 		},
 	}
-	t.Run("find_all: Se a lista tiver 'n' elementos, retornará uma quantidade do total de elementos", func(t *testing.T) {
+	t.Run("find_all: when exists sellers, should return a list", func(t *testing.T) {
 		repo := mocks.NewRepository(t)
-		repo.On("GetAll").Return(expectedListSeller, nil)
+		repo.On("GetAll").
+			Return(expectedListSeller, nil)
 		service := seller.NewService(repo)
 
 		seller, err := service.GetAll()
@@ -78,8 +81,9 @@ func Test_Service_GetAll(t *testing.T) {
 func Test_Service_GetById(t *testing.T) {
 	repo := mocks.NewRepository(t)
 
-	t.Run("find_by_id_non_existent: se o elemento procurado por id não existir, retorna nil", func(t *testing.T) {
-		repo.On("GetById", int64(1)).Return(seller.Seller{}, fmt.Errorf("Seller not found."))
+	t.Run("find_by_id_non_existent: when element searched for by id non exists, should return nil", func(t *testing.T) {
+		repo.On("GetById", int64(1)).
+			Return(seller.Seller{}, fmt.Errorf("Seller not found."))
 		service := seller.NewService(repo)
 
 		result, err := service.GetById(int64(1))
@@ -88,7 +92,7 @@ func Test_Service_GetById(t *testing.T) {
 		assert.Equal(t, seller.Seller{}, result)
 	})
 
-	t.Run("find_by_id_existent: se o elemento procurado por id existir, ele retornará as informações do elemento solicitado", func(t *testing.T) {
+	t.Run("find_by_id_existent: when element searched for by id exists, should return a seller", func(t *testing.T) {
 		expectedListSeller := []seller.Seller{
 			{
 				Id:          1,
@@ -127,8 +131,10 @@ func Test_Service_Update(t *testing.T) {
 		Telephone:   "11 99999999",
 	}
 
-	t.Run("update_ok: Se os campos forem atualizados com sucesso retornará a informação do elemento atualizado", func(t *testing.T) {
-		repo.On("Update", int64(1), "Salvador, BA", "11 98989898").Return(expectedSeller, nil)
+	t.Run("update_ok: when the data update is successful, should return the updated seller", func(t *testing.T) {
+		repo.On("Update", int64(1), "Salvador, BA", "11 98989898").
+			Return(expectedSeller, nil).
+			Once()
 		service := seller.NewService(repo)
 
 		result, err := service.Update(int64(1), "Salvador, BA", "11 98989898")
@@ -138,8 +144,9 @@ func Test_Service_Update(t *testing.T) {
 
 	})
 
-	t.Run("update_non_existent: Se o elemento a ser atualizado não existir, retornar nil", func(t *testing.T) {
-		repo.On("Update", int64(3), "Salvador, BA", "11 98989898").Return(seller.Seller{}, fmt.Errorf("Seller not found"))
+	t.Run("update_non_existent: when element searched for by id non exists, should return nil", func(t *testing.T) {
+		repo.On("Update", int64(3), "Salvador, BA", "11 98989898").
+			Return(seller.Seller{}, fmt.Errorf("Seller not found"))
 		service := seller.NewService(repo)
 
 		result, err := service.Update(int64(3), "Salvador, BA", "11 98989898")
@@ -154,8 +161,9 @@ func Test_Service_Update(t *testing.T) {
 func Test_Service_Delete(t *testing.T) {
 	repo := mocks.NewRepository(t)
 
-	t.Run("delete_ok: Se a exclusão for bem sucedida, o item não aparecerá na lista", func(t *testing.T) {
-		repo.On("Delete", int64(1)).Return(nil)
+	t.Run("delete_ok: when the seller exists, should delete", func(t *testing.T) {
+		repo.On("Delete", int64(1)).
+			Return(nil)
 		service := seller.NewService(repo)
 
 		err := service.Delete(int64(1))
@@ -164,8 +172,9 @@ func Test_Service_Delete(t *testing.T) {
 
 	})
 
-	t.Run("delete_non_existent: Se o elemento a ser removido não existir, retornar nil", func(t *testing.T) {
-		repo.On("Delete", int64(3)).Return(fmt.Errorf("Seller not found."))
+	t.Run("delete_non_existent: when seller does not exist, should return nil", func(t *testing.T) {
+		repo.On("Delete", int64(3)).
+			Return(fmt.Errorf("Seller not found."))
 		service := seller.NewService(repo)
 
 		err := service.Delete(int64(3))
