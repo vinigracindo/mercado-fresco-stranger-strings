@@ -3,6 +3,7 @@ package controllers_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -58,7 +59,7 @@ func Test_Controller_Create(t *testing.T) {
 	service := mocks.NewService(t)
 
 	t.Run("create_ok: Quando a entrada de dados for bem-sucedida, um código 201 será retornado junto com o objeto inserido", func(t *testing.T) {
-		service.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).Return(expectedSeller, nil)
+		service.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).Return(expectedSeller, nil).Once()
 
 		controller := controllers.NewSeller(service)
 
@@ -98,5 +99,50 @@ func Test_Controller_Create(t *testing.T) {
 		response := CreateRequestTest(r, "POST", ENDPOINT, []byte{})
 
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+
+	t.Run("create_conflict: se o cid já existir, ele retornará um erro 409 conflict", func(t *testing.T) {
+		service.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).Return(seller.Seller{}, fmt.Errorf("Seller with this cid alredy exists")).Once()
+
+		controller := controllers.NewSeller(service)
+		requestBody, _ := json.Marshal(body)
+		r := SetUpRouter()
+		r.POST(ENDPOINT, controller.Create())
+
+		response := CreateRequestTest(r, "POST", ENDPOINT, requestBody)
+
+		assert.Equal(t, http.StatusConflict, response.Code)
+
+	})
+}
+
+func Test_Controller_Get(t *testing.T) {
+	service := mocks.NewService(t)
+	expectedListSeller := []seller.Seller{
+		{
+			Id:          1,
+			Cid:         123,
+			CompanyName: "Mercado Livre",
+			Address:     "Osasco, SP",
+			Telephone:   "11 99999999",
+		},
+		{
+			Id:          2,
+			Cid:         1234,
+			CompanyName: "Mercado Pago",
+			Address:     "Salvador, BA",
+			Telephone:   "11 88888888",
+		},
+	}
+	t.Run("find_all: Quando a solicitação for bem sucedida, o back-end retornará uma lista de todos os vendedores existentes", func(t *testing.T) {
+		service.On("GetAll").Return(expectedListSeller, nil)
+
+		controller := controllers.NewSeller(service)
+		r := SetUpRouter()
+		r.GET(ENDPOINT, controller.GetAll())
+
+		response := CreateRequestTest(r, "GET", ENDPOINT, []byte{})
+
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }
