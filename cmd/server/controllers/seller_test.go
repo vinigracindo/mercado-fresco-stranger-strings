@@ -158,4 +158,17 @@ func Test_Controller_Get(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 
 	})
+
+	t.Run("find_by_id_exixtent: Quando a solicitação for bem sucedida, o back-end retornará as informações solicitadas do vendedor", func(t *testing.T) {
+		service.On("GetById", int64(1)).Return(expectedListSeller[0], nil).Once()
+
+		controller := controllers.NewSeller(service)
+		requestBody, _ := json.Marshal(body)
+		r := SetUpRouter()
+		r.GET(ENDPOINT+"/:id", controller.GetById())
+
+		response := CreateRequestTest(r, "GET", ENDPOINT+"/1", requestBody)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
 }
