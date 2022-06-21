@@ -1,24 +1,17 @@
 package controllers_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
-
-func SetUpRouter() *gin.Engine {
-	router := gin.Default()
-	return router
-}
 
 const EndpointWarehouse = "/api/v1/warehouses"
 
@@ -66,11 +59,11 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 		requestBody, _ := json.Marshal(body)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.POST(EndpointWarehouse, controller.CreateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPost, EndpointWarehouse, requestBody)
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointWarehouse, requestBody)
 
 		expect := map[string]interface{}{
 			"data": listPossiblesWarehouses[0],
@@ -97,11 +90,11 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 		requestBody, _ := json.Marshal(body)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.POST(EndpointWarehouse, controller.CreateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPost, EndpointWarehouse, requestBody)
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointWarehouse, requestBody)
 
 		assert.Equal(t, http.StatusConflict, response.Code)
 	})
@@ -110,11 +103,11 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 		controller := controllers.NewWarehouse(nil)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.POST(EndpointWarehouse, controller.CreateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPost, EndpointWarehouse, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointWarehouse, []byte{})
 
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
@@ -129,11 +122,11 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 
 		controller := controllers.NewWarehouse(service)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.GET(EndpointWarehouse, controller.GetAllWarehouse())
 
-		response := CreateRequestTest(r, http.MethodGet, EndpointWarehouse, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointWarehouse, []byte{})
 
 		expect := map[string]interface{}{
 			"data": listPossiblesWarehouses,
@@ -150,11 +143,11 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 
 		controller := controllers.NewWarehouse(service)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.GET(EndpointWarehouse, controller.GetAllWarehouse())
 
-		response := CreateRequestTest(r, http.MethodGet, EndpointWarehouse, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointWarehouse, []byte{})
 
 		assert.Equal(t, http.StatusInternalServerError, response.Code)
 	})
@@ -172,9 +165,9 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		service.On("GetById", int64(id)).Return(warehouse.WarehouseModel{}, errMsg)
 		controller := controllers.NewWarehouse(service)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.GET(EndpointWarehouse+"/:id", controller.GetWarehouseByID())
-		response := CreateRequestTest(r, http.MethodGet, url, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, url, []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
@@ -184,9 +177,9 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		service.On("GetById", int64(1)).Return(listPossiblesWarehouses[1], nil)
 		controller := controllers.NewWarehouse(service)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.GET(EndpointWarehouse+"/:id", controller.GetWarehouseByID())
-		response := CreateRequestTest(r, http.MethodGet, EndpointWarehouse+"/1", []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointWarehouse+"/1", []byte{})
 
 		expect := map[string]interface{}{
 			"data": listPossiblesWarehouses[1],
@@ -200,11 +193,11 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		url := fmt.Sprintf("%s/abc", EndpointWarehouse)
 		controller := controllers.NewWarehouse(nil)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.GET(EndpointWarehouse+"/:id", controller.GetWarehouseByID())
 
-		response := CreateRequestTest(r, http.MethodGet, url, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, url, []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
@@ -228,11 +221,11 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 
 		requestBody, _ := json.Marshal(body)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.PATCH(EndpointWarehouse+"/:id", controller.UpdateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, url, requestBody)
 
 		expect := map[string]interface{}{
 			"data": listPossiblesWarehouses[0],
@@ -254,11 +247,11 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 
 		requestBody, _ := json.Marshal(body)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.PATCH(EndpointWarehouse+"/:id", controller.UpdateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, url, requestBody)
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
@@ -267,11 +260,11 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		url := fmt.Sprintf("%s/abc", EndpointWarehouse)
 		controller := controllers.NewWarehouse(nil)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.PATCH(EndpointWarehouse+"/:id", controller.UpdateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPatch, url, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, url, []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
@@ -284,11 +277,11 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 
 		requestBody, _ := json.Marshal("{\"minimun_capacity\":\"abc\",\"minimun_temperature\":\"abc2\"}")
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.PATCH(EndpointWarehouse+"/:id", controller.UpdateWarehouse())
 
-		response := CreateRequestTest(r, http.MethodPatch, url, requestBody)
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, url, requestBody)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
@@ -305,11 +298,11 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 
 		controller := controllers.NewWarehouse(service)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.DELETE(EndpointWarehouse+"/:id", controller.DeleteWarehouse())
 
-		response := CreateRequestTest(r, http.MethodDelete, url, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodDelete, url, []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
@@ -318,11 +311,11 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 		url := fmt.Sprintf("%s/abc", EndpointWarehouse)
 		controller := controllers.NewWarehouse(nil)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.DELETE(EndpointWarehouse+"/:id", controller.DeleteWarehouse())
 
-		response := CreateRequestTest(r, http.MethodDelete, url, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodDelete, url, []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
@@ -336,24 +329,14 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 
 		controller := controllers.NewWarehouse(service)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.DELETE(EndpointWarehouse+"/:id", controller.DeleteWarehouse())
 
-		response := CreateRequestTest(r, http.MethodDelete, url, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodDelete, url, []byte{})
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
-}
-func CreateRequestTest(gin *gin.Engine, method string, url string, body []byte) *httptest.ResponseRecorder {
-
-	request := httptest.NewRequest(method, url, bytes.NewBuffer(body))
-
-	response := httptest.NewRecorder()
-
-	gin.ServeHTTP(response, request)
-
-	return response
 }
 
 func CreateStringJSON(obj interface{}) string {

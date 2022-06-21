@@ -1,35 +1,17 @@
 package controllers_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
-
-func SetUpRouter() *gin.Engine {
-	router := gin.Default()
-	return router
-}
-
-func CreateRequestTest(gin *gin.Engine, method string, url string, bodySeller []byte) *httptest.ResponseRecorder {
-
-	request := httptest.NewRequest(method, url, bytes.NewBuffer(bodySeller))
-
-	response := httptest.NewRecorder()
-
-	gin.ServeHTTP(response, request)
-
-	return response
-}
 
 const EndpointSeller = "/api/v1/sellers"
 
@@ -55,7 +37,7 @@ var expectedSeller = seller.Seller{
 	Telephone:   "11 99999999",
 }
 
-func Test_Controller_Create(t *testing.T) {
+func TestSellerController_Create(t *testing.T) {
 	service := mocks.NewService(t)
 
 	t.Run("create_ok: when data entry is successful, should return code 201.", func(t *testing.T) {
@@ -67,11 +49,11 @@ func Test_Controller_Create(t *testing.T) {
 
 		requestbodySeller, _ := json.Marshal(bodySeller)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.POST(EndpointSeller, controller.Create())
 
-		response := CreateRequestTest(r, http.MethodPost, EndpointSeller, requestbodySeller)
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointSeller, requestbodySeller)
 
 		assert.Equal(t, http.StatusCreated, response.Code)
 	})
@@ -79,9 +61,9 @@ func Test_Controller_Create(t *testing.T) {
 	t.Run("create_fail: when the JSON does not contain the required fields, should return code 422", func(t *testing.T) {
 		controller := controllers.NewSeller(nil)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.POST(EndpointSeller, controller.Create())
-		response := CreateRequestTest(r, http.MethodPost, EndpointSeller, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointSeller, []byte{})
 
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
@@ -93,17 +75,17 @@ func Test_Controller_Create(t *testing.T) {
 
 		controller := controllers.NewSeller(service)
 		requestbodySeller, _ := json.Marshal(bodySeller)
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.POST(EndpointSeller, controller.Create())
 
-		response := CreateRequestTest(r, http.MethodPost, EndpointSeller, requestbodySeller)
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointSeller, requestbodySeller)
 
 		assert.Equal(t, http.StatusConflict, response.Code)
 
 	})
 }
 
-func Test_Controller_Get(t *testing.T) {
+func TestSellerController_Get(t *testing.T) {
 	service := mocks.NewService(t)
 	expectedListSeller := []seller.Seller{
 		{
@@ -125,10 +107,10 @@ func Test_Controller_Get(t *testing.T) {
 		service.On("GetAll").Return(expectedListSeller, nil).Once()
 
 		controller := controllers.NewSeller(service)
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.GET(EndpointSeller, controller.GetAll())
 
-		response := CreateRequestTest(r, http.MethodGet, EndpointSeller, []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointSeller, []byte{})
 
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
@@ -137,10 +119,10 @@ func Test_Controller_Get(t *testing.T) {
 		service.On("GetById", int64(9999)).Return(seller.Seller{}, fmt.Errorf("Seller not found")).Once()
 
 		controller := controllers.NewSeller(service)
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.GET(EndpointSeller+"/:id", controller.GetById())
 
-		response := CreateRequestTest(r, http.MethodGet, EndpointSeller+"/9999", []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointSeller+"/9999", []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 
@@ -151,10 +133,10 @@ func Test_Controller_Get(t *testing.T) {
 
 		controller := controllers.NewSeller(service)
 		requestbodySeller, _ := json.Marshal(bodySeller)
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.GET(EndpointSeller+"/:id", controller.GetById())
 
-		response := CreateRequestTest(r, http.MethodGet, EndpointSeller+"/1", requestbodySeller)
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointSeller+"/1", requestbodySeller)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
@@ -174,10 +156,10 @@ func Test_Controller_Update(t *testing.T) {
 
 		controller := controllers.NewSeller(service)
 		requestbodySeller, _ := json.Marshal(bodySellerUpdate)
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.PATCH(EndpointSeller+"/:id", controller.Update())
 
-		response := CreateRequestTest(r, http.MethodPatch, EndpointSeller+"/1", requestbodySeller)
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, EndpointSeller+"/1", requestbodySeller)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
@@ -189,16 +171,16 @@ func Test_Controller_Update(t *testing.T) {
 
 		controller := controllers.NewSeller(service)
 		requestbodySeller, _ := json.Marshal(bodySellerUpdate)
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.PATCH(EndpointSeller+"/:id", controller.Update())
 
-		response := CreateRequestTest(r, http.MethodPatch, EndpointSeller+"/9999", requestbodySeller)
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, EndpointSeller+"/9999", requestbodySeller)
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 }
 
-func Test_Controller_Delete(t *testing.T) {
+func TestSellerController_Delete(t *testing.T) {
 	service := mocks.NewService(t)
 
 	t.Run("delete_non_existent: when the seller does not exist, should return code 404.", func(t *testing.T) {
@@ -207,11 +189,11 @@ func Test_Controller_Delete(t *testing.T) {
 			Once()
 
 		controller := controllers.NewSeller(service)
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
 		r.DELETE(EndpointSeller+"/:id", controller.Delete())
 
-		response := CreateRequestTest(r, http.MethodDelete, EndpointSeller+"/9999", []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodDelete, EndpointSeller+"/9999", []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
@@ -222,10 +204,10 @@ func Test_Controller_Delete(t *testing.T) {
 			Once()
 
 		controller := controllers.NewSeller(service)
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.DELETE(EndpointSeller+"/:id", controller.Delete())
 
-		response := CreateRequestTest(r, http.MethodDelete, EndpointSeller+"/1", []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodDelete, EndpointSeller+"/1", []byte{})
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
 

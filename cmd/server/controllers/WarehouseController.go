@@ -38,7 +38,7 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 // @Tags         Warehouse
 // @Accept       json
 // @Produce      json
-// @Param Warehouse body requestWarehousePost true "Create warehouse"
+// @Param Warehouse body RequestWarehousePost true "Create warehouse"
 // @Success      201  {object}  warehouse.WarehouseModel
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
@@ -163,7 +163,7 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param id path int true "Warehouse ID"
-// @Param Warehouse body requestWarehousePatch true "Update warehouse"
+// @Param Warehouse body RequestWarehousePatch true "Update warehouse"
 // @Success      201  {object} warehouse.WarehouseModel
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
