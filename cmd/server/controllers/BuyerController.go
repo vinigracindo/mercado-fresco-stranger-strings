@@ -39,7 +39,7 @@ func NewBuyer(service buyer.Service) BuyerController {
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /buyers [post]
-func (c *BuyerController) Store() gin.HandlerFunc {
+func (c *BuyerController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestBuyerPost
 		if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -47,7 +47,7 @@ func (c *BuyerController) Store() gin.HandlerFunc {
 			return
 		}
 
-		buyer, err := c.service.Store(req.CardNumberId, req.FirstName, req.LastName)
+		buyer, err := c.service.Create(req.CardNumberId, req.FirstName, req.LastName)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusConflict, err)
 			return
