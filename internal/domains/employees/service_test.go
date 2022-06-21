@@ -24,7 +24,7 @@ func TestEmployeeService_Create(t *testing.T) {
 	service := employees.NewService(repo)
 
 	t.Run("create_ok: when it contains the mandatory fields, should create a employee", func(t *testing.T) {
-		repo.On("Create", "123456", "John", "Doe", int64(1)).Return(expectedEmployee, nil)
+		repo.On("Create", "123456", "John", "Doe", int64(1)).Return(expectedEmployee, nil).Once()
 		employee, err := service.Create("123456", "John", "Doe", int64(1))
 
 		assert.Nil(t, err)
@@ -32,7 +32,7 @@ func TestEmployeeService_Create(t *testing.T) {
 	})
 
 	t.Run("create_conflict: when card_number already exists, should not create a employee", func(t *testing.T) {
-		repo.On("Create", "123456", "First Name", "Last Name", int64(1)).Return(employees.Employee{}, employees.ErrCardNumberMustBeUnique)
+		repo.On("Create", "123456", "First Name", "Last Name", int64(1)).Return(employees.Employee{}, employees.ErrCardNumberMustBeUnique).Once()
 		employee, err := service.Create("123456", "First Name", "Last Name", 1)
 
 		assert.NotNil(t, err)
