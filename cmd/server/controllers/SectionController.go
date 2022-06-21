@@ -84,13 +84,13 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 		}
 
 		var req requestSectionPatch
-		if err := ctx.Bind(&req); err != nil {
+		if err := ctx.ShouldBindJSON(&req); err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
-		if req.CurrentCapacity == 0 {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("The field CurrentCapacity is required"))
+		if req.CurrentCapacity < 0 {
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("The field CurrentCapacity invalid"))
 			return
 		}
 
@@ -114,7 +114,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /sections [post]
-func (c ControllerSection) CreateSection() gin.HandlerFunc {
+func (c ControllerSection) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestSectionPost
 
@@ -123,7 +123,7 @@ func (c ControllerSection) CreateSection() gin.HandlerFunc {
 			return
 		}
 
-		response, err := c.service.CreateSection(
+		response, err := c.service.Create(
 			req.SectionNumber,
 			req.CurrentTemperature,
 			req.MinimumTemperature,
@@ -178,13 +178,13 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Success      200  {object} []section.Section
-// @Failure      404  {object}  httputil.HTTPError
+// @Failure      400  {object}  httputil.HTTPError
 // @Router /sections [get]
 func (c *ControllerSection) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		section, err := c.service.GetAll()
 		if err != nil {
-			httputil.NewError(ctx, http.StatusNotFound, err)
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
 		httputil.NewResponse(ctx, http.StatusOK, section)
