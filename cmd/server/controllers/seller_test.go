@@ -214,13 +214,25 @@ func Test_Controller_Delete(t *testing.T) {
 		service.On("Delete", int64(9999)).Return(fmt.Errorf("Seller not found")).Once()
 
 		controller := controllers.NewSeller(service)
-		requestBody, _ := json.Marshal(body)
 		r := SetUpRouter()
 
-		r.PATCH(ENDPOINT+"/:id", controller.Delete())
+		r.DELETE(ENDPOINT+"/:id", controller.Delete())
 
-		response := CreateRequestTest(r, "PATCH", ENDPOINT+"/9999", requestBody)
+		response := CreateRequestTest(r, "DELETE", ENDPOINT+"/9999", []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+
+	t.Run("delete_ok: Quando a exclusão for bem sucedida, um código 204 será retornado", func(t *testing.T) {
+		service.On("Delete", int64(1)).Return(nil).Once()
+
+		controller := controllers.NewSeller(service)
+		r := SetUpRouter()
+		r.DELETE(ENDPOINT+"/:id", controller.Delete())
+
+		response := CreateRequestTest(r, "DELETE", ENDPOINT+"/1", []byte{})
+
+		assert.Equal(t, http.StatusNoContent, response.Code)
+
 	})
 }
