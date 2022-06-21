@@ -52,7 +52,7 @@ func (api *APIServer) Run(port int) {
 	employeeGroup := groupV1.Group("/employees")
 	employeeGroup.GET("/", employeeController.GetAll())
 	employeeGroup.GET("/:id", employeeController.GetById())
-	employeeGroup.POST("/", employeeController.Store())
+	employeeGroup.POST("/", employeeController.Create())
 	employeeGroup.PATCH("/:id", employeeController.UpdateFullname())
 	employeeGroup.DELETE("/:id", employeeController.Delete())
 
