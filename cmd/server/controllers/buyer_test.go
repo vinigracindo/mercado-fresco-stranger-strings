@@ -1,36 +1,19 @@
 package controllers_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
 
-func SetUpRouter() *gin.Engine {
-	router := gin.Default()
-	return router
-}
-
-func ExecuteTestRequest(router *gin.Engine, method string, path string, body []byte) *httptest.ResponseRecorder {
-
-	request := httptest.NewRequest(method, path, bytes.NewBuffer(body))
-	response := httptest.NewRecorder()
-
-	router.ServeHTTP(response, request)
-
-	return response
-}
-
-var ENDPOINT = "/api/v1/buyers"
+var EndpointBuyer = "/api/v1/buyers"
 
 var expectBuyer = &buyer.Buyer{
 	Id:           0,
@@ -39,13 +22,13 @@ var expectBuyer = &buyer.Buyer{
 	LastName:     "LastNameTest",
 }
 
-var body = &buyer.Buyer{
+var bodyBuyer = &buyer.Buyer{
 	CardNumberId: 402323,
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
 }
 
-func Test_Controller_Create(t *testing.T) {
+func TestBuyerController_Create(t *testing.T) {
 	service := mocks.NewService(t)
 
 	t.Run("create_ok: when data entry is successful, should return code 201.", func(t *testing.T) {
@@ -59,11 +42,11 @@ func Test_Controller_Create(t *testing.T) {
 			Once()
 
 		controller := controllers.NewBuyer(service)
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodyBuyer)
 
-		r := SetUpRouter()
-		r.POST(ENDPOINT, controller.Create())
-		response := ExecuteTestRequest(r, http.MethodPost, ENDPOINT, requestBody)
+		r := testutil.SetUpRouter()
+		r.POST(EndpointBuyer, controller.Create())
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointBuyer, requestBody)
 
 		assert.Equal(t, http.StatusCreated, response.Code)
 
@@ -74,9 +57,9 @@ func Test_Controller_Create(t *testing.T) {
 		service := mocks.NewService(t)
 		controller := controllers.NewBuyer(service)
 
-		r := SetUpRouter()
-		r.POST(ENDPOINT, controller.Create())
-		response := ExecuteTestRequest(r, http.MethodPost, ENDPOINT, []byte{})
+		r := testutil.SetUpRouter()
+		r.POST(EndpointBuyer, controller.Create())
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointBuyer, []byte{})
 
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
@@ -92,18 +75,18 @@ func Test_Controller_Create(t *testing.T) {
 			Once()
 
 		controller := controllers.NewBuyer(service)
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodyBuyer)
 
-		r := SetUpRouter()
-		r.POST(ENDPOINT, controller.Create())
-		response := ExecuteTestRequest(r, http.MethodPost, ENDPOINT, requestBody)
+		r := testutil.SetUpRouter()
+		r.POST(EndpointBuyer, controller.Create())
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointBuyer, requestBody)
 
 		assert.Equal(t, http.StatusConflict, response.Code)
 
 	})
 }
 
-func Test_Controller_GetAll(t *testing.T) {
+func TestBuyerController_GetAll(t *testing.T) {
 	service := mocks.NewService(t)
 
 	t.Run("find_all: when data entry is successful, should return code 200.", func(t *testing.T) {
@@ -114,11 +97,11 @@ func Test_Controller_GetAll(t *testing.T) {
 			Once()
 
 		controller := controllers.NewBuyer(service)
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodyBuyer)
 
-		r := SetUpRouter()
-		r.GET(ENDPOINT, controller.GetAll())
-		response := ExecuteTestRequest(r, http.MethodGet, ENDPOINT, requestBody)
+		r := testutil.SetUpRouter()
+		r.GET(EndpointBuyer, controller.GetAll())
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointBuyer, requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 
@@ -133,33 +116,33 @@ func Test_Controller_GetAll(t *testing.T) {
 			Once()
 
 		controller := controllers.NewBuyer(service)
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodyBuyer)
 
-		r := SetUpRouter()
-		r.GET(ENDPOINT, controller.GetAll())
-		response := ExecuteTestRequest(r, http.MethodGet, ENDPOINT, requestBody)
+		r := testutil.SetUpRouter()
+		r.GET(EndpointBuyer, controller.GetAll())
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointBuyer, requestBody)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 
 	})
 }
 
-func Test_Controller_GetById(t *testing.T) {
+func TestBuyerController_GetById(t *testing.T) {
 	service := mocks.NewService(t)
 
 	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 
 		service.
 			On("GetId", int64(1)).
-			Return(body, nil).
+			Return(bodyBuyer, nil).
 			Once()
 
 		controller := controllers.NewBuyer(service)
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodyBuyer)
 
-		r := SetUpRouter()
-		r.GET(ENDPOINT+"/:id", controller.GetId())
-		response := ExecuteTestRequest(r, http.MethodGet, ENDPOINT+"/1", requestBody)
+		r := testutil.SetUpRouter()
+		r.GET(EndpointBuyer+"/:id", controller.GetId())
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointBuyer+"/1", requestBody)
 		assert.Equal(t, http.StatusOK, response.Code)
 		assert.JSONEq(t, "{\"data\":{\"id\":0,\"card_number_id\":402323,\"first_name\":\"FirstNameTest\",\"last_name\":\"LastNameTest\"}}", response.Body.String())
 
@@ -173,9 +156,9 @@ func Test_Controller_GetById(t *testing.T) {
 			Once()
 		controller := controllers.NewBuyer(service)
 
-		r := SetUpRouter()
-		r.GET(ENDPOINT+"/:id", controller.GetId())
-		response := ExecuteTestRequest(r, http.MethodGet, ENDPOINT+"/1", []byte{})
+		r := testutil.SetUpRouter()
+		r.GET(EndpointBuyer+"/:id", controller.GetId())
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointBuyer+"/1", []byte{})
 		assert.Equal(t, http.StatusNotFound, response.Code)
 
 	})
@@ -183,15 +166,15 @@ func Test_Controller_GetById(t *testing.T) {
 	t.Run("find_by_id_parse_error: when buyer id is not parsed, should return code 400.", func(t *testing.T) {
 		controller := controllers.NewBuyer(service)
 
-		r := SetUpRouter()
-		r.GET(ENDPOINT+"/:id", controller.GetId())
-		response := ExecuteTestRequest(r, http.MethodGet, ENDPOINT+"/idInvalido", []byte{})
+		r := testutil.SetUpRouter()
+		r.GET(EndpointBuyer+"/:id", controller.GetId())
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointBuyer+"/idInvalido", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 }
 
-func Test_Controller_Update(t *testing.T) {
+func TestBuyerController_Update(t *testing.T) {
 	service := mocks.NewService(t)
 
 	updateBody := &buyer.Buyer{
@@ -210,9 +193,9 @@ func Test_Controller_Update(t *testing.T) {
 		controller := controllers.NewBuyer(service)
 		requestBody, _ := json.Marshal(updateBody)
 
-		r := SetUpRouter()
-		r.PATCH(ENDPOINT+"/:id", controller.UpdateCardNumberLastName())
-		response := ExecuteTestRequest(r, http.MethodPatch, ENDPOINT+"/1", requestBody)
+		r := testutil.SetUpRouter()
+		r.PATCH(EndpointBuyer+"/:id", controller.UpdateCardNumberLastName())
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, EndpointBuyer+"/1", requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 		assert.JSONEq(t, "{\"data\":{\"id\":1,\"card_number_id\":402324,\"first_name\":\"\",\"last_name\":\"LastNameTest 2\"}}", response.Body.String())
@@ -227,18 +210,18 @@ func Test_Controller_Update(t *testing.T) {
 		controller := controllers.NewBuyer(service)
 		requestBody, _ := json.Marshal(updateBody)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 		r.PATCH("/api/v1/buyers/:id", controller.UpdateCardNumberLastName())
-		response := ExecuteTestRequest(r, http.MethodPatch, "/api/v1/buyers/1", requestBody)
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, "/api/v1/buyers/1", requestBody)
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
 	t.Run("update_id_parse_error: when buyer id is not parsed, should return code 400.", func(t *testing.T) {
 		controller := controllers.NewBuyer(service)
-		r := SetUpRouter()
-		r.PATCH(ENDPOINT+"/:id", controller.UpdateCardNumberLastName())
-		response := ExecuteTestRequest(r, http.MethodPatch, ENDPOINT+"/idInvalido", []byte{})
+		r := testutil.SetUpRouter()
+		r.PATCH(EndpointBuyer+"/:id", controller.UpdateCardNumberLastName())
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, EndpointBuyer+"/idInvalido", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
@@ -246,14 +229,14 @@ func Test_Controller_Update(t *testing.T) {
 	t.Run("update_body_invalid: when the request body is not valid json, should return code 400.", func(t *testing.T) {
 		controller := controllers.NewBuyer(service)
 
-		r := SetUpRouter()
-		r.PATCH(ENDPOINT+"/:id", controller.UpdateCardNumberLastName())
-		response := ExecuteTestRequest(r, http.MethodPatch, ENDPOINT+"/1", nil)
+		r := testutil.SetUpRouter()
+		r.PATCH(EndpointBuyer+"/:id", controller.UpdateCardNumberLastName())
+		response := testutil.ExecuteTestRequest(r, http.MethodPatch, EndpointBuyer+"/1", nil)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 }
-func Test_Controller_Delete(t *testing.T) {
+func TestBuyerController_Delete(t *testing.T) {
 	service := mocks.NewService(t)
 
 	t.Run("delete_non_existent: when the buyer does not exist, should return code 404", func(t *testing.T) {
@@ -265,10 +248,10 @@ func Test_Controller_Delete(t *testing.T) {
 
 		controller := controllers.NewBuyer(service)
 
-		r := SetUpRouter()
+		r := testutil.SetUpRouter()
 
-		r.DELETE(ENDPOINT+"/:id", controller.DeleteBuyer())
-		response := ExecuteTestRequest(r, http.MethodDelete, ENDPOINT+"/1", []byte{})
+		r.DELETE(EndpointBuyer+"/:id", controller.DeleteBuyer())
+		response := testutil.ExecuteTestRequest(r, http.MethodDelete, EndpointBuyer+"/1", []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
@@ -282,9 +265,9 @@ func Test_Controller_Delete(t *testing.T) {
 
 		controller := controllers.NewBuyer(service)
 
-		r := SetUpRouter()
-		r.DELETE(ENDPOINT+"/:id", controller.DeleteBuyer())
-		response := ExecuteTestRequest(r, http.MethodDelete, ENDPOINT+"/1", []byte{})
+		r := testutil.SetUpRouter()
+		r.DELETE(EndpointBuyer+"/:id", controller.DeleteBuyer())
+		response := testutil.ExecuteTestRequest(r, http.MethodDelete, EndpointBuyer+"/1", []byte{})
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
@@ -292,10 +275,10 @@ func Test_Controller_Delete(t *testing.T) {
 	t.Run("delete_id_parse_error: when buyer id is not parsed, should return code 400", func(t *testing.T) {
 
 		controller := controllers.NewBuyer(service)
-		r := SetUpRouter()
-		r.DELETE(ENDPOINT+"/:id", controller.DeleteBuyer())
+		r := testutil.SetUpRouter()
+		r.DELETE(EndpointBuyer+"/:id", controller.DeleteBuyer())
 
-		response := ExecuteTestRequest(r, http.MethodDelete, ENDPOINT+"/idInvalido", []byte{})
+		response := testutil.ExecuteTestRequest(r, http.MethodDelete, EndpointBuyer+"/idInvalido", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
