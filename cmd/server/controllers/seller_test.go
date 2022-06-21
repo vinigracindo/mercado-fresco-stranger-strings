@@ -193,4 +193,16 @@ func Test_Controller_Update(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
+	t.Run("update_non_existent: Se o vendedor a ser atualizado não existir, um código 404 será devolvido", func(t *testing.T) {
+		service.On("Update", int64(9999), "Salvador, BA", "71 88888888").Return(seller.Seller{}, fmt.Errorf("Seller not found")).Once()
+
+		controller := controllers.NewSeller(service)
+		requestBody, _ := json.Marshal(bodyUpdate)
+		r := SetUpRouter()
+		r.PATCH(ENDPOINT+"/:id", controller.Update())
+
+		response := CreateRequestTest(r, "PATCH", ENDPOINT+"/9999", requestBody)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
 }
