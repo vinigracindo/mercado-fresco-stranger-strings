@@ -51,7 +51,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 		MinimunTemperature: 9,
 	}
 
-	t.Run("create_ok: testar se a criação foi com sucessida", func(t *testing.T) {
+	t.Run("create_ok: if warehouses was successfully created", func(t *testing.T) {
 
 		service := mocks.NewService(t)
 
@@ -75,7 +75,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, response.Code)
 	})
 
-	t.Run("create_fail: retornar um erro 409, porque ja existe uma warehouse com o codigo", func(t *testing.T) {
+	t.Run("create_fail: return 409, because the is already an warehouse with that code", func(t *testing.T) {
 
 		service := mocks.NewService(t)
 
@@ -101,7 +101,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 		assert.Equal(t, http.StatusConflict, response.Code)
 	})
 
-	t.Run("create_fail: quando o objeto JSON não contiver os campos necessários, um código 422 será retornado", func(t *testing.T) {
+	t.Run("create_fail: when json object do not have all necessary fields, return 422 code", func(t *testing.T) {
 
 		controller := controllers.NewWarehouse(nil)
 
@@ -116,7 +116,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 }
 
 func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
-	t.Run("find_all: Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os armazéns existentes", func(t *testing.T) {
+	t.Run("find_all: return a list with all warehouses storages", func(t *testing.T) {
 
 		service := mocks.NewService(t)
 
@@ -133,7 +133,7 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
-	t.Run("find_all_error: Quando ocorrer algum erro no banco de dados", func(t *testing.T) {
+	t.Run("find_all_error: when an error ocorrency in the server", func(t *testing.T) {
 		service := mocks.NewService(t)
 
 		service.On("GetAll").Return([]warehouse.WarehouseModel{}, fmt.Errorf("error: internal error"))
@@ -152,7 +152,7 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 
 func Test_Controller_Warehouse_GetByID(t *testing.T) {
 
-	t.Run("find_by_id_non_existent: Quando o armazém não existe, um código 404 será devolvido", func(t *testing.T) {
+	t.Run("find_by_id_non_existent: if warehouse do not exist return 404 code", func(t *testing.T) {
 
 		var id int64 = 99999
 		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
@@ -169,7 +169,7 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
-	t.Run("find_by_id_existent: Quando a solicitação for bem-sucedida, o back-end retornará as informações solicitadas do armazém", func(t *testing.T) {
+	t.Run("find_by_id_existent: when request was sucessufuly return an warehouse", func(t *testing.T) {
 		service := mocks.NewService(t)
 		service.On("GetById", int64(1)).Return(listPossiblesWarehouses[1], nil)
 		controller := controllers.NewWarehouse(service)
@@ -181,7 +181,7 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
-	t.Run("find_by_id_non_id: Se o id não for valido, retonar um erro 422", func(t *testing.T) {
+	t.Run("find_by_id_non_id: if id does not exist return 422 code", func(t *testing.T) {
 		url := fmt.Sprintf("%s/abc", ENDPOINT)
 		controller := controllers.NewWarehouse(nil)
 
@@ -201,7 +201,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		MinimunTemperature: 999.0,
 	}
 
-	t.Run("update_ok: retornar o warehouses atualizados com o junto do codigo 200", func(t *testing.T) {
+	t.Run("update_ok: if warehouses was successfully updated return 200 code", func(t *testing.T) {
 
 		var id int64 = 1
 		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
@@ -222,7 +222,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
-	t.Run("update_non_existent: Se o armazém a ser atualizado não existir, será retornado um código 404", func(t *testing.T) {
+	t.Run("update_non_existent: if does not find warehouses with the id, return 404 code", func(t *testing.T) {
 		var id int64 = 9999
 		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
@@ -243,7 +243,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
-	t.Run("update_non_id: Se não foi passado um ID valido, retonar um código 422", func(t *testing.T) {
+	t.Run("update_non_id: return 422 code when id is of a invalid type", func(t *testing.T) {
 		url := fmt.Sprintf("%s/abc", ENDPOINT)
 		controller := controllers.NewWarehouse(nil)
 
@@ -256,7 +256,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 
-	t.Run("update_wrong_data_type: Retorna um erro quando o tipo de dado não for correto", func(t *testing.T) {
+	t.Run("update_wrong_data_type: return 400 code when data are of the wrong type", func(t *testing.T) {
 		var id int64 = 1
 		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
 
@@ -275,7 +275,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 }
 
 func Test_Controller_Warehouse_Delete(t *testing.T) {
-	t.Run("delete_non_existent: Quando o armazém não existir, será devolvido um código 404.", func(t *testing.T) {
+	t.Run("delete_non_existent: return 404 code when no warehouses was found with the id", func(t *testing.T) {
 		var id int64 = 1
 		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
@@ -294,7 +294,7 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
-	t.Run("delete_non_id: Se não foi passado um ID valido, retonar um código 422", func(t *testing.T) {
+	t.Run("delete_non_id: return 422 code when id is of a invalid type", func(t *testing.T) {
 		url := fmt.Sprintf("%s/abc", ENDPOINT)
 		controller := controllers.NewWarehouse(nil)
 
@@ -307,7 +307,7 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 
-	t.Run("delete_ok: Quando a exclusão for bem-sucedida, um código 204 será retornado", func(t *testing.T) {
+	t.Run("delete_ok: return 204 code when an warehouses is successfully deleted", func(t *testing.T) {
 		var id int64 = 1
 		url := fmt.Sprintf("%s/%d", ENDPOINT, id)
 
