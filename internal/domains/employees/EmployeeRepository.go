@@ -1,17 +1,7 @@
 package employees
 
-import "fmt"
-
 var employees = []Employee{}
 var lastId int64 = 1
-
-type Repository interface {
-	GetAll() ([]Employee, error)
-	GetById(id int64) (Employee, error)
-	Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
-	UpdateFullname(id int64, firstName string, lastName string) (Employee, error)
-	Delete(id int64) error
-}
 
 type repository struct{}
 
@@ -28,17 +18,17 @@ func (repository) GetAll() ([]Employee, error) {
 	return employees, nil
 }
 
-func (repository) GetById(id int64) (Employee, error) {
+func (repository) GetById(id int64) (*Employee, error) {
 	for _, employee := range employees {
 		if employee.Id == id {
-			return employee, nil
+			return &employee, nil
 		}
 	}
 
-	return Employee{}, fmt.Errorf("employee with id %d not found", id)
+	return nil, ErrEmployeeNotFound
 }
 
-func (repo repository) Store(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+func (repo repository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
 	nextId := lastId
 	employee := Employee{
 		Id:           nextId,
@@ -49,7 +39,7 @@ func (repo repository) Store(cardNumberId string, firstName string, lastName str
 	}
 
 	if !repo.cardNumberIsUnique(cardNumberId) {
-		return Employee{}, fmt.Errorf("card number %s is already in use", cardNumberId)
+		return Employee{}, ErrCardNumberMustBeUnique
 	}
 
 	employees = append(employees, employee)
@@ -57,15 +47,15 @@ func (repo repository) Store(cardNumberId string, firstName string, lastName str
 	return employee, nil
 }
 
-func (repo repository) UpdateFullname(id int64, firstName string, lastName string) (Employee, error) {
+func (repo repository) UpdateFullname(id int64, firstName string, lastName string) (*Employee, error) {
 	for i, employee := range employees {
 		if employee.Id == id {
 			employees[i].FirstName = firstName
 			employees[i].LastName = lastName
-			return employees[i], nil
+			return &employees[i], nil
 		}
 	}
-	return Employee{}, fmt.Errorf("employee with id %d not found", id)
+	return nil, ErrEmployeeNotFound
 }
 
 func (repo repository) Delete(id int64) error {
@@ -75,7 +65,7 @@ func (repo repository) Delete(id int64) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("employee with id %d not found", id)
+	return ErrEmployeeNotFound
 }
 
 func NewRepository() Repository {
