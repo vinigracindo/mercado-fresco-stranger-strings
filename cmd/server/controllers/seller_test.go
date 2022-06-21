@@ -172,3 +172,25 @@ func Test_Controller_Get(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }
+
+func Test_Controller_Update(t *testing.T) {
+	service := mocks.NewService(t)
+	var bodyUpdate = seller.Seller{
+		Address:   "Salvador, BA",
+		Telephone: "71 88888888",
+	}
+
+	t.Run("update_ok: Quando a atualização dos dados for bem sucedida o vendedor será devolvido com as infomações atualizadas juntamente com um código 200", func(t *testing.T) {
+		service.On("Update", int64(1), "Salvador, BA", "71 88888888").Return(expectedSeller, nil).Once()
+
+		controller := controllers.NewSeller(service)
+		requestBody, _ := json.Marshal(bodyUpdate)
+		r := SetUpRouter()
+		r.PATCH(ENDPOINT+"/:id", controller.Update())
+
+		response := CreateRequestTest(r, "PATCH", ENDPOINT+"/1", requestBody)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+}
