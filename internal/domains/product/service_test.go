@@ -8,45 +8,46 @@ import (
 	"testing"
 )
 
+var expectedProduct = product.Product{
+	Id:                             1,
+	ProductCode:                    "PROD02",
+	Description:                    "Yogurt",
+	Width:                          1.2,
+	Height:                         6.4,
+	Length:                         4.5,
+	NetWeight:                      3.4,
+	ExpirationRate:                 1.5,
+	RecommendedFreezingTemperature: 1.3,
+	FreezingRate:                   2,
+	ProductTypeId:                  2,
+	SellerId:                       2,
+}
+
 func TestProductService_Create(t *testing.T) {
-	mockRepo := mocks.NewProductRepository(t)
+	mockRepository := mocks.NewProductRepository(t)
 
-	t.Run("create_ok: Se contiver os campos necessários, será criado", func(t *testing.T) {
-		expectedProduct := &product.Product{
-			ProductCode:                    "PROD02",
-			Description:                    "Yogurt",
-			Width:                          1.2,
-			Height:                         6.4,
-			Length:                         4.5,
-			NetWeight:                      3.4,
-			ExpirationRate:                 1.5,
-			RecommendedFreezingTemperature: 1.3,
-			FreezingRate:                   2,
-			ProductTypeId:                  2,
-			SellerId:                       2,
-		}
-
-		mockRepo.
+	t.Run("create_ok: when it contains the mandatory fields, should create a product", func(t *testing.T) {
+		mockRepository.
 			On("Create", "PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2).
-			Return(expectedProduct, nil).
+			Return(&expectedProduct, nil).
 			Once()
 
-		service := product.CreateService(mockRepo)
+		service := product.CreateService(mockRepository)
 
 		prod, err := service.Create("PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2)
 
 		assert.Nil(t, err)
-		assert.Equal(t, prod, expectedProduct)
+		assert.Equal(t, prod, &expectedProduct)
 	})
 
-	t.Run("create_conflict: Se o product_code já existir, ele não pode ser criado", func(t *testing.T) {
+	t.Run("create_conflict: when product_code already exists, should not create a product", func(t *testing.T) {
 
-		mockRepo.
+		mockRepository.
 			On("Create", "PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2).
 			Return(nil, fmt.Errorf("the product code has already been registered")).
 			Once()
 
-		service := product.CreateService(mockRepo)
+		service := product.CreateService(mockRepository)
 
 		expectedProduct, err := service.Create("PROD02", "Yogurt", 1.2, 6.4, 4.5,
 			3.4, 1.5, 1.3, 2, 2, 2)
@@ -58,79 +59,50 @@ func TestProductService_Create(t *testing.T) {
 }
 
 func TestProductService_GetAll(t *testing.T) {
-	mockRepo := mocks.NewProductRepository(t)
+	mockRepository := mocks.NewProductRepository(t)
 
-	t.Run("find_all: Se a lista tiver 'n' elementos, retornará uma quantidade do total de elementos", func(t *testing.T) {
-		expectedProduct := []product.Product{
-			{
-				Id:                             1,
-				ProductCode:                    "PROD02",
-				Description:                    "Yogurt",
-				Width:                          1.2,
-				Height:                         6.4,
-				Length:                         4.5,
-				NetWeight:                      3.4,
-				ExpirationRate:                 1.5,
-				RecommendedFreezingTemperature: 1.3,
-				FreezingRate:                   2,
-				ProductTypeId:                  2,
-				SellerId:                       2,
-			},
-			{
-				Id:                             2,
-				ProductCode:                    "PROD03",
-				Description:                    "Yogurt light",
-				Width:                          1.5,
-				Height:                         5.4,
-				Length:                         3.5,
-				NetWeight:                      4.4,
-				ExpirationRate:                 1.8,
-				RecommendedFreezingTemperature: 1.2,
-				FreezingRate:                   2,
-				ProductTypeId:                  3,
-				SellerId:                       3,
-			},
-		}
+	t.Run("get_all: when exists products, should return a list", func(t *testing.T) {
+		expectedProductList := []product.Product{expectedProduct, expectedProduct}
 
-		mockRepo.
+		mockRepository.
 			On("GetAll").
-			Return(expectedProduct, nil).
+			Return(expectedProductList, nil).
 			Once()
-		service := product.CreateService(mockRepo)
+		service := product.CreateService(mockRepository)
 
 		productList, err := service.GetAll()
 
 		assert.Nil(t, err)
-		assert.Equal(t, expectedProduct, productList)
+		assert.Equal(t, expectedProductList, productList)
 
 	})
 
-	t.Run("find_all_err: quando não encontrar todos os produtos, retornará um erro", func(t *testing.T) {
+	t.Run("get_all_error: should return any error", func(t *testing.T) {
 
-		mockRepo.
+		mockRepository.
 			On("GetAll").
 			Return([]product.Product{}, fmt.Errorf("error: products not found")).
 			Once()
 
-		service := product.CreateService(mockRepo)
+		service := product.CreateService(mockRepository)
 
 		_, err := service.GetAll()
 
-		assert.Error(t, err)
+		assert.NotNil(t, err)
 	})
 }
 
 func TestProductService_GetById(t *testing.T) {
-	mockRepo := mocks.NewProductRepository(t)
+	mockRepository := mocks.NewProductRepository(t)
 
-	t.Run("find_by_id_non_existent: Se o elemento procurado por id não existir, retorna null", func(t *testing.T) {
+	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
-		mockRepo.
+		mockRepository.
 			On("GetById", int64(1)).
 			Return(nil, fmt.Errorf("the product id was not found")).
 			Once()
 
-		service := product.CreateService(mockRepo)
+		service := product.CreateService(mockRepository)
 
 		prod, err := service.GetById(int64(1))
 
@@ -138,57 +110,25 @@ func TestProductService_GetById(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
-	t.Run("find_by_id_existent: Se o elemento procurado por id existir, ele retornará as informações do elemento solicitado", func(t *testing.T) {
-		expectedProduct := []*product.Product{
-			{
-				Id:                             1,
-				ProductCode:                    "PROD02",
-				Description:                    "Yogurt",
-				Width:                          1.2,
-				Height:                         6.4,
-				Length:                         4.5,
-				NetWeight:                      3.4,
-				ExpirationRate:                 1.5,
-				RecommendedFreezingTemperature: 1.3,
-				FreezingRate:                   2,
-				ProductTypeId:                  2,
-				SellerId:                       2,
-			},
-			{
-				Id:                             2,
-				ProductCode:                    "PROD03",
-				Description:                    "Yogurt light",
-				Width:                          1.5,
-				Height:                         5.4,
-				Length:                         3.5,
-				NetWeight:                      4.4,
-				ExpirationRate:                 1.8,
-				RecommendedFreezingTemperature: 1.2,
-				FreezingRate:                   2,
-				ProductTypeId:                  3,
-				SellerId:                       3,
-			},
-		}
-
-		mockRepo.
+	t.Run("find_by_id_existent: when element searched for by id exists, should return a product", func(t *testing.T) {
+		mockRepository.
 			On("GetById", int64(1)).
-			Return(expectedProduct[1], nil).
+			Return(&expectedProduct, nil).
 			Once()
 
-		service := product.CreateService(mockRepo)
-
-		resultProduct, err := service.GetById(int64(1))
+		service := product.CreateService(mockRepository)
+		resultProduct, err := service.GetById(1)
 
 		assert.Nil(t, err)
-		assert.Equal(t, expectedProduct[1], resultProduct)
-
+		assert.Equal(t, &expectedProduct, resultProduct)
 	})
+
 }
 
 func TestProductService_UpdateDescription(t *testing.T) {
 	mockRepo := mocks.NewProductRepository(t)
 
-	t.Run("update_existent: Quando a atualização dos dados for bem sucedida, o produto será devolvido com as informações atualizadas", func(t *testing.T) {
+	t.Run("update_existent: when the data update is successful, should return the updated product", func(t *testing.T) {
 		expectedProduct := &product.Product{
 			Id:                             1,
 			ProductCode:                    "PROD02",
@@ -217,7 +157,7 @@ func TestProductService_UpdateDescription(t *testing.T) {
 		assert.Equal(t, prod, expectedProduct)
 	})
 
-	t.Run("update_non_existent: Se o produto a ser atualizado não existir, será retornado null.", func(t *testing.T) {
+	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
 		mockRepo.
 			On("UpdateDescription", int64(1), "Strawberry yogurt").
@@ -236,7 +176,7 @@ func TestProductService_UpdateDescription(t *testing.T) {
 func TestProductService_Delete(t *testing.T) {
 	mockRepo := mocks.NewProductRepository(t)
 
-	t.Run("delete_non_existent: Quando o produto não existe, null será retornado.", func(t *testing.T) {
+	t.Run("delete_non_existent: when the product does not exist, should return an error", func(t *testing.T) {
 
 		mockRepo.
 			On("Delete", int64(1)).
@@ -250,7 +190,7 @@ func TestProductService_Delete(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
-	t.Run("delete_ok: Se a exclusão for bem-sucedida, o item não aparecerá na lista.", func(t *testing.T) {
+	t.Run("delete_ok: when the section exist, should delete a product", func(t *testing.T) {
 
 		mockRepo.
 			On("Delete", int64(1)).

@@ -31,42 +31,42 @@ func ExecuteTestRequest(router *gin.Engine, method string, path string, body []b
 	return response
 }
 
-const ENDPOINT = "/api/v1/products"
+const EndpointProduct = "/api/v1/products"
+
+var expectedProduct = product.Product{
+	Id:                             1,
+	ProductCode:                    "PROD02",
+	Description:                    "Yogurt",
+	Width:                          1.2,
+	Height:                         6.4,
+	Length:                         4.5,
+	NetWeight:                      3.4,
+	ExpirationRate:                 1.5,
+	RecommendedFreezingTemperature: 1.3,
+	FreezingRate:                   2,
+	ProductTypeId:                  2,
+	SellerId:                       2,
+}
+
+var body = product.Product{
+	ProductCode:                    "PROD02",
+	Description:                    "Yogurt",
+	Width:                          1.2,
+	Height:                         6.4,
+	Length:                         4.5,
+	NetWeight:                      3.4,
+	ExpirationRate:                 1.5,
+	RecommendedFreezingTemperature: 1.3,
+	FreezingRate:                   2,
+	ProductTypeId:                  2,
+	SellerId:                       2,
+}
 
 func TestProductController_Create(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
-	expectedProduct := product.Product{
-		Id:                             1,
-		ProductCode:                    "PROD02",
-		Description:                    "Yogurt",
-		Width:                          1.2,
-		Height:                         6.4,
-		Length:                         4.5,
-		NetWeight:                      3.4,
-		ExpirationRate:                 1.5,
-		RecommendedFreezingTemperature: 1.3,
-		FreezingRate:                   2,
-		ProductTypeId:                  2,
-		SellerId:                       2,
-	}
-
-	body := product.Product{
-		ProductCode:                    "PROD02",
-		Description:                    "Yogurt",
-		Width:                          1.2,
-		Height:                         6.4,
-		Length:                         4.5,
-		NetWeight:                      3.4,
-		ExpirationRate:                 1.5,
-		RecommendedFreezingTemperature: 1.3,
-		FreezingRate:                   2,
-		ProductTypeId:                  2,
-		SellerId:                       2,
-	}
-
-	t.Run("create_ok: quando a entrada de dados for bem-sucedida, um código 201 será retornado junto com o objeto inserido", func(t *testing.T) {
+	t.Run("create_ok: when data entry is successful, should return code 201", func(t *testing.T) {
 
 		mockService.
 			On("Create", expectedProduct.ProductCode, expectedProduct.Description, expectedProduct.Width, expectedProduct.Height,
@@ -80,9 +80,9 @@ func TestProductController_Create(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.POST(ENDPOINT, controller.Create())
+		router.POST(EndpointProduct, controller.Create())
 
-		response := ExecuteTestRequest(router, http.MethodPost, ENDPOINT, requestBody)
+		response := ExecuteTestRequest(router, http.MethodPost, EndpointProduct, requestBody)
 
 		assert.Equal(t, http.StatusCreated, response.Code)
 		assert.JSONEq(t, "{\"data\":{\"id\":1,\"product_code\":\"PROD02\",\"description\":\"Yogurt\",\"width\":1.2,"+
@@ -92,20 +92,20 @@ func TestProductController_Create(t *testing.T) {
 		fmt.Println(response.Body.String())
 	})
 
-	t.Run("create_fail: quando o objeto JSON não contiver os campos necessários, um código 422 será retornado.", func(t *testing.T) {
+	t.Run("create_fail: when the JSON does not contain the required fields, should return code 422", func(t *testing.T) {
 
 		controller := controllers.CreateProductController(nil)
 
 		router := SetUpRouter()
-		router.POST(ENDPOINT, controller.Create())
+		router.POST(EndpointProduct, controller.Create())
 
-		response := ExecuteTestRequest(router, http.MethodPost, ENDPOINT, []byte{})
+		response := ExecuteTestRequest(router, http.MethodPost, EndpointProduct, []byte{})
 
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 		assert.Equal(t, "{\"code\":422,\"message\":\"invalid input. Check the data entered\"}", response.Body.String())
 	})
 
-	t.Run("create_conflict: quando o product_code já existir, ele retornará um erro 409 Conflict.", func(t *testing.T) {
+	t.Run("create_conflict: when the product_code already exists, should return code 409", func(t *testing.T) {
 
 		expectedError := errors.New("the product code has already been registered")
 		mockService.
@@ -121,9 +121,9 @@ func TestProductController_Create(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.POST(ENDPOINT, controller.Create())
+		router.POST(EndpointProduct, controller.Create())
 
-		response := ExecuteTestRequest(router, http.MethodPost, ENDPOINT, requestBody)
+		response := ExecuteTestRequest(router, http.MethodPost, EndpointProduct, requestBody)
 
 		assert.Equal(t, http.StatusConflict, response.Code)
 		assert.Equal(t, "{\"code\":409,\"message\":\"the product code has already been registered\"}", response.Body.String())
@@ -134,67 +134,11 @@ func TestProductController_GetAll(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
-	expectedProduct := []product.Product{
-		{
-			Id:                             1,
-			ProductCode:                    "PROD02",
-			Description:                    "Yogurt",
-			Width:                          1.2,
-			Height:                         6.4,
-			Length:                         4.5,
-			NetWeight:                      3.4,
-			ExpirationRate:                 1.5,
-			RecommendedFreezingTemperature: 1.3,
-			FreezingRate:                   2,
-			ProductTypeId:                  2,
-			SellerId:                       2,
-		},
-		{
-			Id:                             2,
-			ProductCode:                    "PROD03",
-			Description:                    "Yogurt light",
-			Width:                          1.5,
-			Height:                         5.4,
-			Length:                         3.5,
-			NetWeight:                      4.4,
-			ExpirationRate:                 1.8,
-			RecommendedFreezingTemperature: 1.2,
-			FreezingRate:                   2,
-			ProductTypeId:                  3,
-			SellerId:                       3,
-		},
-	}
+	expectedProductList := []product.Product{expectedProduct, expectedProduct}
 
-	body := []product.Product{
-		{
-			ProductCode:                    "PROD02",
-			Description:                    "Yogurt",
-			Width:                          1.2,
-			Height:                         6.4,
-			Length:                         4.5,
-			NetWeight:                      3.4,
-			ExpirationRate:                 1.5,
-			RecommendedFreezingTemperature: 1.3,
-			FreezingRate:                   2,
-			ProductTypeId:                  2,
-			SellerId:                       2,
-		},
-		{
-			ProductCode:                    "PROD03",
-			Description:                    "Yogurt light",
-			Width:                          1.5,
-			Height:                         5.4,
-			Length:                         3.5,
-			NetWeight:                      4.4,
-			ExpirationRate:                 1.8,
-			RecommendedFreezingTemperature: 1.2,
-			FreezingRate:                   2,
-			ProductTypeId:                  3,
-			SellerId:                       3,
-		},
-	}
+	bodyList := []product.Product{body, body}
 
-	t.Run("find_all_internal_server_error: quando a solicitação não for bem-sucedida, o back-end retornará um erro 500 InternalServerError.", func(t *testing.T) {
+	t.Run("find_all_internal_server_error: when the request is not successful, should return code 500 ", func(t *testing.T) {
 
 		expectedError := errors.New("the request sent to the server is invalid or corrupted")
 		mockService.
@@ -204,39 +148,39 @@ func TestProductController_GetAll(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodyList)
 
 		router := SetUpRouter()
-		router.GET(ENDPOINT, controller.GetAll())
+		router.GET(EndpointProduct, controller.GetAll())
 
-		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT, requestBody)
+		response := ExecuteTestRequest(router, http.MethodGet, EndpointProduct, requestBody)
 
 		assert.Equal(t, http.StatusInternalServerError, response.Code)
 		assert.Equal(t, "{\"code\":500,\"message\":\"the request sent to the server is invalid or corrupted\"}", response.Body.String())
 	})
 
-	t.Run("find_all: quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os produtos existentes.", func(t *testing.T) {
+	t.Run("find_all: when data entry is successful, should return code 200", func(t *testing.T) {
 
 		mockService.
 			On("GetAll").
-			Return(expectedProduct, nil).
+			Return(expectedProductList, nil).
 			Once()
 
 		controller := controllers.CreateProductController(mockService)
 
-		requestBody, _ := json.Marshal(body)
+		requestBody, _ := json.Marshal(bodyList)
 
 		router := SetUpRouter()
-		router.GET(ENDPOINT, controller.GetAll())
+		router.GET(EndpointProduct, controller.GetAll())
 
-		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT, requestBody)
+		response := ExecuteTestRequest(router, http.MethodGet, EndpointProduct, requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 		assert.JSONEq(t, "{\"data\":[{\"id\":1,\"product_code\":\"PROD02\",\"description\":\"Yogurt\",\"width\":1.2,\"height\":6.4,"+
 			"\"length\":4.5,\"net_weight\":3.4,\"expiration_rate\":1.5,\"recommended_freezing_temperature\":1.3,\"freezing_rate\":2,"+
-			"\"product_type_id\":2,\"seller_id\":2},{\"id\":2,\"product_code\":\"PROD03\",\"description\":\"Yogurt light\",\"width\":1.5,"+
-			"\"height\":5.4,\"length\":3.5,\"net_weight\":4.4,\"expiration_rate\":1.8,\"recommended_freezing_temperature\":1.2,"+
-			"\"freezing_rate\":2,\"product_type_id\":3,\"seller_id\":3}]}", response.Body.String())
+			"\"product_type_id\":2,\"seller_id\":2},{\"id\":1,\"product_code\":\"PROD02\",\"description\":\"Yogurt\",\"width\":1.2,"+
+			"\"height\":6.4,\"length\":4.5,\"net_weight\":3.4,\"expiration_rate\":1.5,\"recommended_freezing_temperature\":1.3,"+
+			"\"freezing_rate\":2,\"product_type_id\":2,\"seller_id\":2}]}", response.Body.String())
 	})
 }
 
@@ -244,20 +188,20 @@ func TestProductController_GetById(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
-	t.Run("find_by_id_parse_error: quando o id do produto não for parseado", func(t *testing.T) {
+	t.Run("find_by_id_parse_error: when product id is not parsed, should return code 400", func(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
 		router := SetUpRouter()
-		router.GET(ENDPOINT+"/:id", controller.GetById())
+		router.GET(EndpointProduct+"/:id", controller.GetById())
 
-		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT+"/abc", []byte{})
+		response := ExecuteTestRequest(router, http.MethodGet, EndpointProduct+"/abc", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"code\":400,\"message\":\"strconv.ParseInt: parsing \\\"abc\\\": invalid syntax\"}", response.Body.String())
 	})
 
-	t.Run("find_by_id_non_existent: quando o produto não existe, um código 404 será devolvido", func(t *testing.T) {
+	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 
 		expectedError := errors.New("the product id was not found")
 		mockService.
@@ -268,45 +212,15 @@ func TestProductController_GetById(t *testing.T) {
 		controller := controllers.CreateProductController(mockService)
 
 		router := SetUpRouter()
-		router.GET(ENDPOINT+"/:id", controller.GetById())
+		router.GET(EndpointProduct+"/:id", controller.GetById())
 
-		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT+"/5", []byte{})
+		response := ExecuteTestRequest(router, http.MethodGet, EndpointProduct+"/5", []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
 	})
 
-	t.Run("find_by_id_existent: quando a solicitação for bem-sucedida, o backend retornará as informações do produto solicitado.", func(t *testing.T) {
-
-		expectedProduct := product.Product{
-			Id:                             1,
-			ProductCode:                    "PROD02",
-			Description:                    "Yogurt",
-			Width:                          1.2,
-			Height:                         6.4,
-			Length:                         4.5,
-			NetWeight:                      3.4,
-			ExpirationRate:                 1.5,
-			RecommendedFreezingTemperature: 1.3,
-			FreezingRate:                   2,
-			ProductTypeId:                  2,
-			SellerId:                       2,
-		}
-
-		body := product.Product{
-
-			ProductCode:                    "PROD02",
-			Description:                    "Yogurt",
-			Width:                          1.2,
-			Height:                         6.4,
-			Length:                         4.5,
-			NetWeight:                      3.4,
-			ExpirationRate:                 1.5,
-			RecommendedFreezingTemperature: 1.3,
-			FreezingRate:                   2,
-			ProductTypeId:                  2,
-			SellerId:                       2,
-		}
+	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 
 		mockService.
 			On("GetById", int64(1)).
@@ -318,9 +232,9 @@ func TestProductController_GetById(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.GET(ENDPOINT+"/:id", controller.GetById())
+		router.GET(EndpointProduct+"/:id", controller.GetById())
 
-		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT+"/1", requestBody)
+		response := ExecuteTestRequest(router, http.MethodGet, EndpointProduct+"/1", requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 		assert.JSONEq(t, "{\"data\":{\"id\":1,\"product_code\":\"PROD02\",\"description\":\"Yogurt\",\"width\":1.2,\"height\":6.4,"+
@@ -333,33 +247,33 @@ func TestProductController_UpdateDescription(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
-	t.Run("update_description_parse_id_error: quando o id do produto não for parseado, um código 400 será retornado", func(t *testing.T) {
+	t.Run("update_invalid_id_parse_error: when product id is not parsed, should return code 400", func(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
 		router := SetUpRouter()
-		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
+		router.PATCH(EndpointProduct+"/:id", controller.UpdateDescription())
 
-		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/abc", []byte{})
+		response := ExecuteTestRequest(router, http.MethodPatch, EndpointProduct+"/abc", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"code\":400,\"message\":\"invalid id\"}", response.Body.String())
 	})
 
-	t.Run("update_err: quando falhar o parse do body da requisição, um código 400 será retornado.", func(t *testing.T) {
+	t.Run("update_invalid_body: when the body is invalid, should return code 400", func(t *testing.T) {
 
 		controller := controllers.CreateProductController(nil)
 
 		router := SetUpRouter()
-		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
+		router.PATCH(EndpointProduct+"/:id", controller.UpdateDescription())
 
-		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/1", []byte{})
+		response := ExecuteTestRequest(router, http.MethodPatch, EndpointProduct+"/1", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"code\":400,\"message\":\"EOF\"}", response.Body.String())
 	})
 
-	t.Run("update_err: quando o campo a ser atualizado estiver vazio, um código 400 será retornado.", func(t *testing.T) {
+	t.Run("update_invalid_field_value: when the field is empty,should return code 400", func(t *testing.T) {
 
 		body := product.Product{
 			Description: "",
@@ -370,15 +284,15 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
+		router.PATCH(EndpointProduct+"/:id", controller.UpdateDescription())
 
-		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/1", requestBody)
+		response := ExecuteTestRequest(router, http.MethodPatch, EndpointProduct+"/1", requestBody)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"code\":400,\"message\":\"Key: 'requestProductPatch.Description' Error:Field validation for 'Description' failed on the 'required' tag\"}", response.Body.String())
 	})
 
-	t.Run("update_non_existent: quando o produto a ser atualizado não existir, um código 404 será devolvido.", func(t *testing.T) {
+	t.Run("update_non_existent: when the product does not exist, should return code 404", func(t *testing.T) {
 
 		body := product.Product{
 			Description: "Yogurt",
@@ -394,22 +308,18 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
+		router.PATCH(EndpointProduct+"/:id", controller.UpdateDescription())
 
-		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/8", requestBody)
+		response := ExecuteTestRequest(router, http.MethodPatch, EndpointProduct+"/8", requestBody)
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
 	})
 
-	t.Run("update_ok: quando a atualização dos dados for bem-sucedida, o produto será devolvido com as informações atualizadas juntamente com um código 200.", func(t *testing.T) {
+	t.Run("update_ok: when the request is successful, should return code 200", func(t *testing.T) {
 
 		expectedProduct := product.Product{
-			Id:          1,
-			Description: "Yogurt light",
-		}
-
-		body := product.Product{
+			Id:                             1,
 			ProductCode:                    "PROD02",
 			Description:                    "Yogurt light",
 			Width:                          1.2,
@@ -423,6 +333,10 @@ func TestProductController_UpdateDescription(t *testing.T) {
 			SellerId:                       2,
 		}
 
+		body := product.Product{
+			Description: "Yogurt light",
+		}
+
 		mockService.
 			On("UpdateDescription", expectedProduct.Id, expectedProduct.Description).
 			Return(&expectedProduct, nil).
@@ -433,15 +347,17 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		requestBody, _ := json.Marshal(body)
 
 		router := SetUpRouter()
-		router.PATCH(ENDPOINT+"/:id", controller.UpdateDescription())
+		router.PATCH(EndpointProduct+"/:id", controller.UpdateDescription())
 
-		response := ExecuteTestRequest(router, http.MethodPatch, ENDPOINT+"/1", requestBody)
+		response := ExecuteTestRequest(router, http.MethodPatch, EndpointProduct+"/1", requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 
-		assert.JSONEq(t, "{\"data\":{\"id\":1,\"product_code\":\"\",\"description\":\"Yogurt light\","+
-			"\"width\":0,\"height\":0,\"length\":0,\"net_weight\":0,\"expiration_rate\":0,\"recommended_freezing_temperature\":0,"+
-			"\"freezing_rate\":0,\"product_type_id\":0,\"seller_id\":0}}", response.Body.String())
+		assert.JSONEq(t, "{\"data\":{\"id\":1,\"product_code\":\"PROD02\",\"description\":\"Yogurt light\","+
+			"\"width\":1.2,\"height\":6.4,\"length\":4.5,\"net_weight\":3.4,\"expiration_rate\":1.5,"+
+			"\"recommended_freezing_temperature\":1.3,\"freezing_rate\":2,\"product_type_id\":2,\"seller_id\":2}}", response.Body.String())
+
+		print(response.Body.String())
 	})
 }
 
@@ -449,20 +365,20 @@ func TestProductController_Delete(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
-	t.Run("delete_parse_id_error: quando o id do produto não for parseado, um código 400 será retornado", func(t *testing.T) {
+	t.Run("delete_id_parse_error: when product id is not parsed, should return code 400", func(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
 
 		router := SetUpRouter()
-		router.DELETE(ENDPOINT+"/:id", controller.Delete())
+		router.DELETE(EndpointProduct+"/:id", controller.Delete())
 
-		response := ExecuteTestRequest(router, http.MethodDelete, ENDPOINT+"/abc", []byte{})
+		response := ExecuteTestRequest(router, http.MethodDelete, EndpointProduct+"/abc", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.Equal(t, "{\"error\":\"invalid id\"}", response.Body.String())
 	})
 
-	t.Run("delete_non_existent: quando o produto não existe, um código 404 será devolvido", func(t *testing.T) {
+	t.Run("delete_non_existent: when the product does not exist, should return code 404", func(t *testing.T) {
 
 		expectedError := errors.New("the product id was not found")
 		mockService.
@@ -473,16 +389,16 @@ func TestProductController_Delete(t *testing.T) {
 		controller := controllers.CreateProductController(mockService)
 
 		router := SetUpRouter()
-		router.DELETE(ENDPOINT+"/:id", controller.Delete())
+		router.DELETE(EndpointProduct+"/:id", controller.Delete())
 
-		response := ExecuteTestRequest(router, http.MethodDelete, ENDPOINT+"/1", []byte{})
+		response := ExecuteTestRequest(router, http.MethodDelete, EndpointProduct+"/1", []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
 
 	})
 
-	t.Run("delete_ok: quando a exclusão for bem-sucedida, um código 204 será retornado.", func(t *testing.T) {
+	t.Run("delete_ok: when the request is successful, should return code 204", func(t *testing.T) {
 
 		mockService.
 			On("Delete", int64(1)).
@@ -492,9 +408,9 @@ func TestProductController_Delete(t *testing.T) {
 		controller := controllers.CreateProductController(mockService)
 
 		router := SetUpRouter()
-		router.DELETE(ENDPOINT+"/:id", controller.Delete())
+		router.DELETE(EndpointProduct+"/:id", controller.Delete())
 
-		response := ExecuteTestRequest(router, http.MethodDelete, ENDPOINT+"/1", []byte{})
+		response := ExecuteTestRequest(router, http.MethodDelete, EndpointProduct+"/1", []byte{})
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
