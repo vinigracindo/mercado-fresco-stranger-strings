@@ -31,6 +31,15 @@ func NewSeller(s seller.Service) SellerController {
 	}
 }
 
+// Seller godoc
+// @Summary      List all seller
+// @Description  get Seller
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Success      200  {object} []seller.SellerModel
+// @Failure      400  {object}  httputil.HTTPError
+// @Router /sellers [get]
 func (c SellerController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		seller, err := c.service.GetAll()
@@ -47,6 +56,17 @@ func (c SellerController) GetAll() gin.HandlerFunc {
 	}
 }
 
+// Seller godoc
+// @Summary      List Seller by id
+// @Description  get Seller by id
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Seller ID"
+// @Success      200  {object} seller.SellerModel
+// @Failure      500  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /sellers/{id} [get]
 func (c SellerController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
@@ -69,7 +89,18 @@ func (c SellerController) GetById() gin.HandlerFunc {
 	}
 }
 
-func (c SellerController) CreateSeller() gin.HandlerFunc {
+// Seller godoc
+// @Summary      Create seller
+// @Description  create seller
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Param Seller body requestSellerPost true "Create seller"
+// @Success      201  {object}  seller.SellerModel
+// @Failure      409  {object}  httputil.HTTPError
+// @Failure      422  {object}  httputil.HTTPError
+// @Router /sellers [post]
+func (c SellerController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestSellerPost
 		if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -79,7 +110,7 @@ func (c SellerController) CreateSeller() gin.HandlerFunc {
 			})
 			return
 		}
-		seller, err := c.service.CreateSeller(req.Cid, req.CompanyName, req.Address, req.Telephone)
+		seller, err := c.service.Create(req.Cid, req.CompanyName, req.Address, req.Telephone)
 		if err != nil {
 			ctx.JSON(http.StatusConflict, gin.H{
 				"error": err.Error(),
@@ -92,7 +123,20 @@ func (c SellerController) CreateSeller() gin.HandlerFunc {
 	}
 }
 
-func (c SellerController) UpdateSellerAddresAndTel() gin.HandlerFunc {
+// Seller godoc
+// @Summary      Update seller
+// @Description  Update seller
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Seller ID"
+// @Param Warehouse body requestWarehousePatch true "Update seller"
+// @Success      200  {object} seller.SellerModel
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure      422  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
+// @Router /sellers/{id} [patch]
+func (c SellerController) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
@@ -110,7 +154,7 @@ func (c SellerController) UpdateSellerAddresAndTel() gin.HandlerFunc {
 			})
 			return
 		}
-		seller, err := c.service.UpdateSellerAddresAndTel(id, req.Address, req.Telephone)
+		seller, err := c.service.Update(id, req.Address, req.Telephone)
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
@@ -123,7 +167,18 @@ func (c SellerController) UpdateSellerAddresAndTel() gin.HandlerFunc {
 	}
 }
 
-func (c SellerController) DeleteSeller() gin.HandlerFunc {
+// Seller godoc
+// @Summary      Delete Seller
+// @Description  Delete Seller by id
+// @Tags         Seller
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Seller ID"
+// @Success      204
+// @Failure      500  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /sellers/{id} [delete]
+func (c SellerController) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
@@ -132,7 +187,7 @@ func (c SellerController) DeleteSeller() gin.HandlerFunc {
 			})
 			return
 		}
-		err = c.service.DeleteSeller(id)
+		err = c.service.Delete(id)
 		if err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
