@@ -72,4 +72,31 @@ func Test_Controller_Create(t *testing.T) {
 
 		assert.Equal(t, http.StatusCreated, response.Code)
 	})
+
+	/*t.Run("create_bad_request: Quando o JSON tiver um campo incorreto, um código 400 será retornado", func(t *testing.T) {
+		service.On("Create", 0, "", "", "").Return(seller.Seller{}, fmt.Errorf("Invalid Request"))
+
+		controller := controllers.NewSeller(service)
+
+		requestBody, _ := json.Marshal(bodyFail)
+
+		r := SetUpRouter()
+
+		r.POST(ENDPOINT, controller.Create())
+
+		response := CreateRequestTest(r, "POST", ENDPOINT, requestBody)
+
+		assert.Equal(t,  response.Code)
+
+	})*/
+
+	t.Run("create_fail: Se o objeto JSON não contiver os campos necessários, um código 422 será retornado", func(t *testing.T) {
+		controller := controllers.NewSeller(nil)
+
+		r := SetUpRouter()
+		r.POST(ENDPOINT, controller.Create())
+		response := CreateRequestTest(r, "POST", ENDPOINT, []byte{})
+
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
 }
