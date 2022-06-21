@@ -206,3 +206,21 @@ func Test_Controller_Update(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 }
+
+func Test_Controller_Delete(t *testing.T) {
+	service := mocks.NewService(t)
+
+	t.Run("delete_non_existent: Quando o vendedor não existir um código 404 deverá ser devolvido", func(t *testing.T) {
+		service.On("Delete", int64(9999)).Return(fmt.Errorf("Seller not found")).Once()
+
+		controller := controllers.NewSeller(service)
+		requestBody, _ := json.Marshal(body)
+		r := SetUpRouter()
+
+		r.PATCH(ENDPOINT+"/:id", controller.Delete())
+
+		response := CreateRequestTest(r, "PATCH", ENDPOINT+"/9999", requestBody)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+}
