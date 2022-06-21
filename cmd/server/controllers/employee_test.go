@@ -54,7 +54,10 @@ func TestEmployeeController_Create(t *testing.T) {
 	router.POST("/api/v1/employees", controller.Create())
 
 	t.Run("create_ok: when data entry is successful, should return code 201. The object must be returned.", func(t *testing.T) {
-		mockService.On("Create", "123456", "John", "Doe", int64(1)).Return(expectedEmployee, nil).Once()
+		mockService.
+			On("Create", "123456", "John", "Doe", int64(1)).
+			Return(expectedEmployee, nil).
+			Once()
 
 		reqBody, _ := json.Marshal(expectedEmployee)
 		response := ExecuteTestRequest(router, http.MethodPost, ENDPOINT, reqBody)
@@ -70,7 +73,11 @@ func TestEmployeeController_Create(t *testing.T) {
 	})
 
 	t.Run("create_conflict: when the card_number already exists, should return code 409.", func(t *testing.T) {
-		mockService.On("Create", "123456", "John", "Doe", int64(1)).Return(employees.Employee{}, employees.ErrCardNumberMustBeUnique).Once()
+		mockService.
+			On("Create", "123456", "John", "Doe", int64(1)).
+			Return(employees.Employee{}, employees.ErrCardNumberMustBeUnique).
+			Once()
+
 		reqBody, _ := json.Marshal(expectedEmployee)
 		response := ExecuteTestRequest(router, http.MethodPost, ENDPOINT, reqBody)
 
@@ -91,7 +98,11 @@ func TestEmployeeController_GetAll(t *testing.T) {
 	}
 
 	t.Run("find_all: when data entry is successful, should return code 200.", func(t *testing.T) {
-		mockService.On("GetAll").Return(expectedEmployees, nil).Once()
+		mockService.
+			On("GetAll").
+			Return(expectedEmployees, nil).
+			Once()
+
 		response := ExecuteTestRequest(router, http.MethodGet, ENDPOINT, nil)
 
 		expectedBody := `
@@ -121,7 +132,11 @@ func TestEmployeeController_GetById(t *testing.T) {
 	url := fmt.Sprintf("%s/%d", ENDPOINT, 1)
 
 	t.Run("find_by_id_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
-		mockService.On("GetById", int64(1)).Return(nil, employees.ErrEmployeeNotFound).Once()
+		mockService.
+			On("GetById", int64(1)).
+			Return(nil, employees.ErrEmployeeNotFound).
+			Once()
+
 		response := ExecuteTestRequest(router, http.MethodGet, url, nil)
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
@@ -129,7 +144,12 @@ func TestEmployeeController_GetById(t *testing.T) {
 
 	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 		expectedEmployee := makeEmployee()
-		mockService.On("GetById", int64(1)).Return(&expectedEmployee, nil).Once()
+
+		mockService.
+			On("GetById", int64(1)).
+			Return(&expectedEmployee, nil).
+			Once()
+
 		response := ExecuteTestRequest(router, http.MethodGet, url, nil)
 
 		expectedBody := `
@@ -161,7 +181,11 @@ func TestEmployeeController_Update(t *testing.T) {
 		expectedEmployee.FirstName = "Jane"
 		expectedEmployee.LastName = "Doe"
 
-		mockService.On("UpdateFullname", int64(1), "Jane", "Doe").Return(&expectedEmployee, nil).Once()
+		mockService.
+			On("UpdateFullname", int64(1), "Jane", "Doe").
+			Return(&expectedEmployee, nil).
+			Once()
+
 		reqBody, _ := json.Marshal(expectedEmployee)
 		response := ExecuteTestRequest(router, http.MethodPatch, url, reqBody)
 
@@ -176,7 +200,11 @@ func TestEmployeeController_Update(t *testing.T) {
 	})
 
 	t.Run("update_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
-		mockService.On("UpdateFullname", int64(1), "John", "Doe").Return(nil, employees.ErrEmployeeNotFound).Once()
+		mockService.
+			On("UpdateFullname", int64(1), "John", "Doe").
+			Return(nil, employees.ErrEmployeeNotFound).
+			Once()
+
 		reqBody, _ := json.Marshal(makeEmployee())
 		response := ExecuteTestRequest(router, http.MethodPatch, url, reqBody)
 
@@ -205,14 +233,22 @@ func TestEmployeeController_Delete(t *testing.T) {
 	url := fmt.Sprintf("%s/%d", ENDPOINT, 1)
 
 	t.Run("delete_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
-		mockService.On("Delete", int64(1)).Return(employees.ErrEmployeeNotFound).Once()
+		mockService.
+			On("Delete", int64(1)).
+			Return(employees.ErrEmployeeNotFound).
+			Once()
+
 		response := ExecuteTestRequest(router, http.MethodDelete, url, nil)
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 
 	t.Run("delete_ok: when the request is successful, should return code 204.", func(t *testing.T) {
-		mockService.On("Delete", int64(1)).Return(nil).Once()
+		mockService.
+			On("Delete", int64(1)).
+			Return(nil).
+			Once()
+
 		response := ExecuteTestRequest(router, http.MethodDelete, url, nil)
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
