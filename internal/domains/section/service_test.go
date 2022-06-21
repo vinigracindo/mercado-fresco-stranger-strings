@@ -51,9 +51,10 @@ func TestSectionService_Create(t *testing.T) {
 			Once()
 
 		service := section.NewService(mockRepository)
-		_, err := service.Create(1, 1, 1, 1, 1, 1, 1, 1)
+		result, err := service.Create(1, 1, 1, 1, 1, 1, 1, 1)
 
 		assert.Nil(t, err)
+		assert.Equal(t, result, expectedSection)
 	})
 
 	t.Run("create_conflict: when section_number already exists, should not create a section", func(t *testing.T) {
@@ -130,7 +131,7 @@ func TestSectionService_GetById(t *testing.T) {
 
 	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 		id := int64(3)
-		errorNotFound := fmt.Errorf("Section %d not found", id)
+		errorNotFound := fmt.Errorf("section %d not found", id)
 
 		mockRepository.
 			On("GetById", id).
@@ -162,7 +163,7 @@ func TestSectionService_Delete(t *testing.T) {
 
 	t.Run("delete_non_existent: when the section does not exist, should return an error", func(t *testing.T) {
 		id := int64(3)
-		errorNotFound := fmt.Errorf("Section %d not found", id)
+		errorNotFound := fmt.Errorf("section %d not found", id)
 		mockRepository.
 			On("Delete", id).
 			Return(errorNotFound).
@@ -193,7 +194,7 @@ func TestSectionService_Update(t *testing.T) {
 
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 		id := int64(3)
-		errorNotFound := fmt.Errorf("Section %d not found", id)
+		errorNotFound := fmt.Errorf("section %d not found", id)
 		mockRepository.
 			On("UpdateCurrentCapacity", id, int64(5)).
 			Return(section.Section{}, errorNotFound).

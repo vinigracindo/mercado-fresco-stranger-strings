@@ -184,7 +184,7 @@ func (c *ControllerSection) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		section, err := c.service.GetAll()
 		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, err)
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
 		httputil.NewResponse(ctx, http.StatusOK, section)

@@ -81,7 +81,7 @@ func TestSectionController_Create(t *testing.T) {
 
 		r.POST(ENDPOINT, controller.Create())
 
-		response := CreateRequestTest(r, "POST", ENDPOINT, requestBody)
+		response := CreateRequestTest(r, http.MethodPost, ENDPOINT, requestBody)
 
 		assert.Equal(t, http.StatusCreated, response.Code)
 		assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":1,\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
@@ -92,7 +92,7 @@ func TestSectionController_Create(t *testing.T) {
 
 		r := SetUpRouter()
 		r.POST(ENDPOINT, controller.Create())
-		response := CreateRequestTest(r, "POST", ENDPOINT, []byte{})
+		response := CreateRequestTest(r, http.MethodPost, ENDPOINT, []byte{})
 
 		print("TESTANDO")
 		print(response.Body.String())
@@ -113,7 +113,7 @@ func TestSectionController_Create(t *testing.T) {
 				expectedSection.WarehouseId,
 				expectedSection.ProductTypeId,
 			).
-			Return(section.Section{}, fmt.Errorf("Already a section with this code")).
+			Return(section.Section{}, fmt.Errorf("already a section with this code")).
 			Once()
 
 		controller := controllers.NewSection(mockService)
@@ -124,10 +124,10 @@ func TestSectionController_Create(t *testing.T) {
 
 		r.POST(ENDPOINT, controller.Create())
 
-		response := CreateRequestTest(r, "POST", ENDPOINT, requestBody)
+		response := CreateRequestTest(r, http.MethodPost, ENDPOINT, requestBody)
 
 		assert.Equal(t, http.StatusConflict, response.Code)
-		assert.JSONEq(t, "{\"code\":409,\"message\":\"Already a section with this code\"}", response.Body.String())
+		assert.JSONEq(t, "{\"code\":409,\"message\":\"already a section with this code\"}", response.Body.String())
 	})
 }
 
@@ -145,7 +145,7 @@ func TestSectionController_GetAll(t *testing.T) {
 
 		r := SetUpRouter()
 		r.GET(ENDPOINT, controller.GetAll())
-		response := CreateRequestTest(r, "GET", ENDPOINT, requestBody)
+		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, requestBody)
 
 		print("TESTANDO")
 		print(response.Body.String())
@@ -164,10 +164,10 @@ func TestSectionController_GetAll(t *testing.T) {
 
 		r := SetUpRouter()
 		r.GET(ENDPOINT, controller.GetAll())
-		response := CreateRequestTest(r, "GET", ENDPOINT, requestBody)
+		response := CreateRequestTest(r, http.MethodGet, ENDPOINT, requestBody)
 
-		assert.Equal(t, http.StatusBadRequest, response.Code)
-		assert.JSONEq(t, "{\"code\":400,\"message\":\"any error\"}", response.Body.String())
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+		assert.JSONEq(t, "{\"code\":500,\"message\":\"any error\"}", response.Body.String())
 	})
 }
 
@@ -184,7 +184,7 @@ func TestSectionController_GetById(t *testing.T) {
 
 		r := SetUpRouter()
 		r.GET(ENDPOINT+"/:id", controller.GetById())
-		response := CreateRequestTest(r, "GET", ENDPOINT+"/1", requestBody)
+		response := CreateRequestTest(r, http.MethodGet, ENDPOINT+"/1", requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 		assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":1,\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
@@ -192,20 +192,20 @@ func TestSectionController_GetById(t *testing.T) {
 
 	t.Run("find_by_id_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService := mocks.NewService(t)
-		mockService.On("GetById", int64(1)).Return(section.Section{}, fmt.Errorf("Section not found"))
+		mockService.On("GetById", int64(1)).Return(section.Section{}, fmt.Errorf("section not found"))
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(body)
 
 		r := SetUpRouter()
 		r.GET(ENDPOINT+"/:id", controller.GetById())
-		response := CreateRequestTest(r, "GET", ENDPOINT+"/1", requestBody)
+		response := CreateRequestTest(r, http.MethodGet, ENDPOINT+"/1", requestBody)
 
 		print("TESTANDO 1")
 		print(response.Body.String())
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
-		assert.JSONEq(t, "{\"code\":404,\"message\":\"Section not found\"}", response.Body.String())
+		assert.JSONEq(t, "{\"code\":404,\"message\":\"section not found\"}", response.Body.String())
 	})
 
 	t.Run("find_by_id_parse_error: when section id is not parsed, should return code 400", func(t *testing.T) {
@@ -213,7 +213,7 @@ func TestSectionController_GetById(t *testing.T) {
 
 		r := SetUpRouter()
 		r.GET(ENDPOINT+"/:id", controller.GetById())
-		response := CreateRequestTest(r, "GET", ENDPOINT+"/idInvalid", []byte{})
+		response := CreateRequestTest(r, http.MethodGet, ENDPOINT+"/idInvalid", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.JSONEq(t, "{\"code\":400,\"message\":\"strconv.ParseInt: parsing \\\"idInvalid\\\": invalid syntax\"}", response.Body.String())
@@ -242,7 +242,7 @@ func TestSectionController_Update(t *testing.T) {
 
 		r := SetUpRouter()
 		r.PATCH(ENDPOINT+"/:id", controller.UpdateCurrentCapacity())
-		response := CreateRequestTest(r, "PATCH", ENDPOINT+"/1", requestBody)
+		response := CreateRequestTest(r, http.MethodPatch, ENDPOINT+"/1", requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 		assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":1,\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
@@ -251,7 +251,7 @@ func TestSectionController_Update(t *testing.T) {
 	t.Run("update_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService.
 			On("UpdateCurrentCapacity", int64(1), int64(1)).
-			Return(section.Section{}, fmt.Errorf("Section not found")).
+			Return(section.Section{}, fmt.Errorf("section not found")).
 			Once()
 		controller := controllers.NewSection(mockService)
 
@@ -259,10 +259,10 @@ func TestSectionController_Update(t *testing.T) {
 
 		r := SetUpRouter()
 		r.PATCH(ENDPOINT+"/:id", controller.UpdateCurrentCapacity())
-		response := CreateRequestTest(r, "PATCH", ENDPOINT+"/1", requestBody)
+		response := CreateRequestTest(r, http.MethodPatch, ENDPOINT+"/1", requestBody)
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
-		assert.JSONEq(t, "{\"code\":404,\"message\":\"Section not found\"}", response.Body.String())
+		assert.JSONEq(t, "{\"code\":404,\"message\":\"section not found\"}", response.Body.String())
 	})
 
 	t.Run("update_invalid_id_parse_error: when section id is not parsed, should return code 400", func(t *testing.T) {
@@ -270,7 +270,7 @@ func TestSectionController_Update(t *testing.T) {
 
 		r := SetUpRouter()
 		r.PATCH(ENDPOINT+"/:id", controller.UpdateCurrentCapacity())
-		response := CreateRequestTest(r, "PATCH", ENDPOINT+"/idInvalid", []byte{})
+		response := CreateRequestTest(r, http.MethodPatch, ENDPOINT+"/idInvalid", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.JSONEq(t, "{\"code\":400,\"message\":\"strconv.ParseInt: parsing \\\"idInvalid\\\": invalid syntax\"}", response.Body.String())
@@ -283,7 +283,7 @@ func TestSectionController_Update(t *testing.T) {
 
 		r := SetUpRouter()
 		r.PATCH(ENDPOINT+"/:id", controller.UpdateCurrentCapacity())
-		response := CreateRequestTest(r, "PATCH", ENDPOINT+"/1", requestBody)
+		response := CreateRequestTest(r, http.MethodPatch, ENDPOINT+"/1", requestBody)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.JSONEq(t, "{\"code\":400,\"message\":\"The field CurrentCapacity invalid\"}", response.Body.String())
@@ -296,7 +296,7 @@ func TestSectionController_Update(t *testing.T) {
 
 		r := SetUpRouter()
 		r.PATCH(ENDPOINT+"/:id", controller.UpdateCurrentCapacity())
-		response := CreateRequestTest(r, "PATCH", ENDPOINT+"/1", requestBody)
+		response := CreateRequestTest(r, http.MethodPatch, ENDPOINT+"/1", requestBody)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.JSONEq(t, "{\"code\":400,\"message\":\"Key: 'requestSectionPatch.CurrentCapacity' Error:Field validation for 'CurrentCapacity' failed on the 'required' tag\"}", response.Body.String())
@@ -315,7 +315,7 @@ func TestSectionController_Delete(t *testing.T) {
 
 		r := SetUpRouter()
 		r.DELETE(ENDPOINT+"/:id", controller.Delete())
-		response := CreateRequestTest(r, "DELETE", ENDPOINT+"/1", []byte{})
+		response := CreateRequestTest(r, http.MethodDelete, ENDPOINT+"/1", []byte{})
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
@@ -323,17 +323,17 @@ func TestSectionController_Delete(t *testing.T) {
 	t.Run("delete_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService.
 			On("Delete", int64(1)).
-			Return(fmt.Errorf("Section not found")).
+			Return(fmt.Errorf("section not found")).
 			Once()
 
 		controller := controllers.NewSection(mockService)
 
 		r := SetUpRouter()
 		r.DELETE(ENDPOINT+"/:id", controller.Delete())
-		response := CreateRequestTest(r, "DELETE", ENDPOINT+"/1", []byte{})
+		response := CreateRequestTest(r, http.MethodDelete, ENDPOINT+"/1", []byte{})
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
-		assert.JSONEq(t, "{\"code\":404,\"message\":\"Section not found\"}", response.Body.String())
+		assert.JSONEq(t, "{\"code\":404,\"message\":\"section not found\"}", response.Body.String())
 	})
 
 	t.Run("delete_id_parse_error: when section id is not parsed, should return code 400", func(t *testing.T) {
@@ -341,7 +341,7 @@ func TestSectionController_Delete(t *testing.T) {
 
 		r := SetUpRouter()
 		r.DELETE(ENDPOINT+"/:id", controller.Delete())
-		response := CreateRequestTest(r, "DELETE", ENDPOINT+"/idInvalid", []byte{})
+		response := CreateRequestTest(r, http.MethodDelete, ENDPOINT+"/idInvalid", []byte{})
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.JSONEq(t, "{\"code\":400,\"message\":\"strconv.ParseInt: parsing \\\"idInvalid\\\": invalid syntax\"}", response.Body.String())
