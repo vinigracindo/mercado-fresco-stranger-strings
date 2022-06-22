@@ -1,4 +1,4 @@
-package warehouse_test
+package services_test
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/services"
 )
 
 var expectedWarehouse = warehouse.WarehouseModel{
@@ -45,7 +46,7 @@ func Test_Service_Create(t *testing.T) {
 
 		repo.On("Create", &expectedWarehouse).Return(expectedWarehouse, nil)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		result, _ := service.Create("Avenida Teste", "31 999999999", "30", 9, 10)
 
@@ -60,7 +61,7 @@ func Test_Service_Create(t *testing.T) {
 
 		repo.On("Create", &expectedWarehouse).Return(warehouse.WarehouseModel{}, errMsg)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		_, err := service.Create("Avenida Teste", "31 999999999", "30", 9, 10)
 
@@ -76,7 +77,7 @@ func Test_Service_GetAll(t *testing.T) {
 
 		repo.On("GetAll").Return(expectedWarehouseList, nil)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		resultList, _ := service.GetAll()
 
@@ -91,7 +92,7 @@ func Test_Service_GetAll(t *testing.T) {
 
 		repo.On("GetAll").Return([]warehouse.WarehouseModel{}, errMsg)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		_, err := service.GetAll()
 
@@ -106,7 +107,7 @@ func Test_Service_GetByID(t *testing.T) {
 
 		repo.On("GetById", int64(1)).Return(expectedWarehouseList[1], nil)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		result, _ := service.GetById(int64(1))
 
@@ -122,7 +123,7 @@ func Test_Service_GetByID(t *testing.T) {
 
 		repo.On("GetById", int64(Id)).Return(warehouse.WarehouseModel{}, errMsg)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		_, err := service.GetById(int64(Id))
 
@@ -142,7 +143,7 @@ func Test_Service_UpdateTempAndCap(t *testing.T) {
 
 		repo.On("Update", expectedWarehouse.Id, &updateWarehouse).Return(expectedWarehouse, nil)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		result, _ := service.UpdateTempAndCap(expectedWarehouse.Id, updateWarehouse.MinimunTemperature, updateWarehouse.MinimunCapacity)
 
@@ -157,7 +158,7 @@ func Test_Service_UpdateTempAndCap(t *testing.T) {
 
 		repo.On("Update", expectedWarehouse.Id, &updateWarehouse).Return(warehouse.WarehouseModel{}, errMsg)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		_, err := service.UpdateTempAndCap(expectedWarehouse.Id, updateWarehouse.MinimunTemperature, updateWarehouse.MinimunCapacity)
 
@@ -175,7 +176,7 @@ func Test_Service_Delete(t *testing.T) {
 
 		repo.On("Delete", id).Return(errMsg)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		err := service.Delete(id)
 
@@ -189,7 +190,7 @@ func Test_Service_Delete(t *testing.T) {
 
 		repo.On("Delete", id).Return(nil)
 
-		service := warehouse.NewService(repo)
+		service := services.NewService(repo)
 
 		err := service.Delete(id)
 
