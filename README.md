@@ -1,6 +1,8 @@
 # Mercado Fresco - ITBootcamp Go
 
 [![build](https://github.com/vinigracindo/mercado-fresco-stranger-strings/actions/workflows/build.yml/badge.svg)](https://github.com/vinigracindo/mercado-fresco-stranger-strings/actions/workflows/build.yml)
+[![dependency-review](
+https://github.com/vinigracindo/mercado-fresco-stranger-strings/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/vinigracindo/mercado-fresco-stranger-strings/actions/workflows/dependency-review.yml)
 
 Mercado Fresco é uma marketplace de produtos frescos. O objetivo é 
 adicionar em sua listagem (oferta) esse tipo de produto. 
