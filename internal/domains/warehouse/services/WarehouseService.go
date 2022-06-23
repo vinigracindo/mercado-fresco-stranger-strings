@@ -1,12 +1,12 @@
 package services
 
-import "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
+import warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
 
 type service struct {
-	repository warehouse.Repository
+	repository warehouse.WarehouseRepository
 }
 
-func NewService(r warehouse.Repository) warehouse.Service {
+func NewWarehouseService(r warehouse.WarehouseRepository) warehouse.WarehouseService {
 	return &service{
 		repository: r,
 	}

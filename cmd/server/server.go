@@ -14,7 +14,8 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/repository"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/services"
 )
 
 type APIServer struct{}
@@ -69,8 +70,8 @@ func (api *APIServer) Run(port int) {
 	productGroup.DELETE("/:id", productController.Delete())
 
 	//Warehouse routes
-	warehouseRepository := warehouse.NewRepository()
-	warehouseService := warehouse.NewService(warehouseRepository)
+	warehouseRepository := repository.NewWarehouseRepository()
+	warehouseService := services.NewWarehouseService(warehouseRepository)
 	warehouseController := controllers.NewWarehouse(warehouseService)
 
 	warehouseGroup := groupV1.Group("/warehouses")

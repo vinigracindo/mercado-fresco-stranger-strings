@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
+	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
 )
 
 var wh = []warehouse.WarehouseModel{}
@@ -11,7 +11,7 @@ var id int64 = 0
 
 type repository struct{}
 
-func NewRepository() warehouse.Repository {
+func NewWarehouseRepository() warehouse.WarehouseRepository {
 	return &repository{}
 }
 

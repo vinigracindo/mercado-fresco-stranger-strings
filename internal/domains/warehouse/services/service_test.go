@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/mocks"
+
+	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/services"
 )
 
@@ -42,11 +43,11 @@ func Test_Service_Create(t *testing.T) {
 
 	t.Run("create_ok: if all the fields are correct warehouse will be created", func(t *testing.T) {
 
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("Create", &expectedWarehouse).Return(expectedWarehouse, nil)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		result, _ := service.Create("Avenida Teste", "31 999999999", "30", 9, 10)
 
@@ -57,11 +58,11 @@ func Test_Service_Create(t *testing.T) {
 
 		errMsg := fmt.Errorf("the product with code %d has already been registered", expectedWarehouse.Id)
 
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("Create", &expectedWarehouse).Return(warehouse.WarehouseModel{}, errMsg)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		_, err := service.Create("Avenida Teste", "31 999999999", "30", 9, 10)
 
@@ -73,11 +74,11 @@ func Test_Service_Create(t *testing.T) {
 func Test_Service_GetAll(t *testing.T) {
 
 	t.Run("find_all: return list of warehouses", func(t *testing.T) {
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("GetAll").Return(expectedWarehouseList, nil)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		resultList, _ := service.GetAll()
 
@@ -88,11 +89,11 @@ func Test_Service_GetAll(t *testing.T) {
 
 		errMsg := fmt.Errorf("error: database não found")
 
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("GetAll").Return([]warehouse.WarehouseModel{}, errMsg)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		_, err := service.GetAll()
 
@@ -103,11 +104,11 @@ func Test_Service_GetAll(t *testing.T) {
 func Test_Service_GetByID(t *testing.T) {
 
 	t.Run("find_by_id_existent: search warehouses by id and return", func(t *testing.T) {
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("GetById", int64(1)).Return(expectedWarehouseList[1], nil)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		result, _ := service.GetById(int64(1))
 
@@ -119,11 +120,11 @@ func Test_Service_GetByID(t *testing.T) {
 		var Id int64 = 9999
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", Id)
 
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("GetById", int64(Id)).Return(warehouse.WarehouseModel{}, errMsg)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		_, err := service.GetById(int64(Id))
 
@@ -139,11 +140,11 @@ func Test_Service_UpdateTempAndCap(t *testing.T) {
 	}
 
 	t.Run("update_existent: Se os campos forem atualizados com sucesso retornará a informação do elemento atualizado", func(t *testing.T) {
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("Update", expectedWarehouse.Id, &updateWarehouse).Return(expectedWarehouse, nil)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		result, _ := service.UpdateTempAndCap(expectedWarehouse.Id, updateWarehouse.MinimunTemperature, updateWarehouse.MinimunCapacity)
 
@@ -154,11 +155,11 @@ func Test_Service_UpdateTempAndCap(t *testing.T) {
 
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", expectedWarehouse.Id)
 
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("Update", expectedWarehouse.Id, &updateWarehouse).Return(warehouse.WarehouseModel{}, errMsg)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		_, err := service.UpdateTempAndCap(expectedWarehouse.Id, updateWarehouse.MinimunTemperature, updateWarehouse.MinimunCapacity)
 
@@ -172,11 +173,11 @@ func Test_Service_Delete(t *testing.T) {
 		var id int64 = 1
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("Delete", id).Return(errMsg)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		err := service.Delete(id)
 
@@ -186,11 +187,11 @@ func Test_Service_Delete(t *testing.T) {
 	t.Run("delete_ok: if warehouse was successfully deleted, return empty struct", func(t *testing.T) {
 		var id int64 = 1
 
-		repo := mocks.NewRepository(t)
+		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("Delete", id).Return(nil)
 
-		service := services.NewService(repo)
+		service := services.NewWarehouseService(repo)
 
 		err := service.Delete(id)
 

@@ -5,7 +5,8 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
+
+	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
@@ -23,10 +24,10 @@ type RequestWarehousePatch struct {
 }
 
 type Warehouse struct {
-	service warehouse.Service
+	service warehouse.WarehouseService
 }
 
-func NewWarehouse(s warehouse.Service) *Warehouse {
+func NewWarehouse(s warehouse.WarehouseService) *Warehouse {
 	return &Warehouse{
 		service: s,
 	}
