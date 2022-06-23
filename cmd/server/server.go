@@ -40,7 +40,7 @@ func (api *APIServer) Run(port int) {
 	sectionGroup := groupV1.Group("/sections")
 	sectionGroup.DELETE("/:id", sectionController.Delete())
 	sectionGroup.PATCH("/:id", sectionController.UpdateCurrentCapacity())
-	sectionGroup.POST("/", sectionController.CreateSection())
+	sectionGroup.POST("/", sectionController.Create())
 	sectionGroup.GET("/:id", sectionController.GetById())
 	sectionGroup.GET("/", sectionController.GetAll())
 
@@ -52,7 +52,7 @@ func (api *APIServer) Run(port int) {
 	employeeGroup := groupV1.Group("/employees")
 	employeeGroup.GET("/", employeeController.GetAll())
 	employeeGroup.GET("/:id", employeeController.GetById())
-	employeeGroup.POST("/", employeeController.Store())
+	employeeGroup.POST("/", employeeController.Create())
 	employeeGroup.PATCH("/:id", employeeController.UpdateFullname())
 	employeeGroup.DELETE("/:id", employeeController.Delete())
 
@@ -88,9 +88,9 @@ func (api *APIServer) Run(port int) {
 	sellerGroup := groupV1.Group("/sellers")
 	sellerGroup.GET("/", sellerController.GetAll())
 	sellerGroup.GET("/:id", sellerController.GetById())
-	sellerGroup.POST("/", sellerController.CreateSeller())
-	sellerGroup.PATCH("/:id", sellerController.UpdateSellerAddresAndTel())
-	sellerGroup.DELETE("/:id", sellerController.DeleteSeller())
+	sellerGroup.POST("/", sellerController.Create())
+	sellerGroup.PATCH("/:id", sellerController.Update())
+	sellerGroup.DELETE("/:id", sellerController.Delete())
 
 	//Buyer routes
 	buyerRepository := buyer.NewRepository()
@@ -100,7 +100,7 @@ func (api *APIServer) Run(port int) {
 	buyerGroup := groupV1.Group("buyers")
 	buyerGroup.GET("/", buyerController.GetAll())
 	buyerGroup.GET("/:id", buyerController.GetId())
-	buyerGroup.POST("/", buyerController.Store())
+	buyerGroup.POST("/", buyerController.Create())
 	buyerGroup.PATCH("/:id", buyerController.UpdateCardNumberLastName())
 	buyerGroup.DELETE("/:id", buyerController.DeleteBuyer())
 

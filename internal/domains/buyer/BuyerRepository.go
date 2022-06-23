@@ -5,15 +5,6 @@ import "fmt"
 var buyers = []Buyer{}
 var id int64 = 0
 
-type Repository interface {
-	Store(cardNumberId int64, firstName string, lastName string) (Buyer, error)
-	GetAll() ([]Buyer, error)
-	GetId(id int64) (*Buyer, error)
-	Update(id int64, cardNumberId int64, lastName string) (Buyer, error)
-	Delete(id int64) error
-	CreateId() int64
-}
-
 type repository struct{}
 
 func (r *repository) CreateId() int64 {
@@ -21,11 +12,11 @@ func (r *repository) CreateId() int64 {
 	return id
 }
 
-func (r *repository) Store(cardNumberId int64, firstName string, lastName string) (Buyer, error) {
+func (r *repository) Create(cardNumberId int64, firstName string, lastName string) (*Buyer, error) {
 
 	for i := range buyers {
 		if buyers[i].CardNumberId == cardNumberId {
-			return Buyer{}, fmt.Errorf("buyer already registered: %d", cardNumberId)
+			return nil, fmt.Errorf("buyer already registered: %d", cardNumberId)
 		}
 	}
 	newBuyer := Buyer{
@@ -35,7 +26,7 @@ func (r *repository) Store(cardNumberId int64, firstName string, lastName string
 		LastName:     lastName,
 	}
 	buyers = append(buyers, newBuyer)
-	return newBuyer, nil
+	return &newBuyer, nil
 }
 
 func (r *repository) GetAll() ([]Buyer, error) {
@@ -51,15 +42,15 @@ func (r *repository) GetId(id int64) (*Buyer, error) {
 	return nil, fmt.Errorf("buyer with id %d not found", id)
 }
 
-func (r *repository) Update(id int64, cardNumberId int64, lastName string) (Buyer, error) {
+func (r *repository) Update(id int64, cardNumberId int64, lastName string) (*Buyer, error) {
 	for i, buyer := range buyers {
 		if buyer.Id == id {
 			buyers[i].CardNumberId = cardNumberId
 			buyers[i].LastName = lastName
-			return buyers[i], nil
+			return &buyers[i], nil
 		}
 	}
-	return Buyer{}, fmt.Errorf("buyer with id %d not found", id)
+	return nil, fmt.Errorf("buyer with id %d not found", id)
 }
 
 func (r *repository) Delete(id int64) error {

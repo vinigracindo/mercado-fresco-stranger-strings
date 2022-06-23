@@ -3,13 +3,6 @@ package warehouse
 type service struct {
 	repository Repository
 }
-type Service interface {
-	GetAll() ([]WarehouseModel, error)
-	GetById(id int64) (WarehouseModel, error)
-	Delete(id int64) error
-	UpdateTempAndCap(id int64, mintemp float64, mincap int64) (WarehouseModel, error)
-	Create(adress, tel, code string, mintemp float64, mincap int64) (WarehouseModel, error)
-}
 
 func NewService(r Repository) Service {
 	return &service{
@@ -26,7 +19,7 @@ func (s service) Create(adress, tel, code string, mintemp float64, mincap int64)
 		MinimunTemperature: mintemp,
 	}
 
-	wh, err := s.repository.Store(&new)
+	wh, err := s.repository.Create(&new)
 
 	if err != nil {
 		return WarehouseModel{}, err

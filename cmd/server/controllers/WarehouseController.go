@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -10,15 +9,15 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
-type requestWarehousePost struct {
-	Address            string  `json:"address"`
-	Telephone          string  `json:"telephone"`
-	WarehouseCode      string  `json:"warehouse_code"`
-	MinimunCapacity    int64   `json:"minimun_capacity"`
-	MinimunTemperature float64 `json:"minimun_temperature"`
+type RequestWarehousePost struct {
+	Address            string  `json:"address" binding:"required"`
+	Telephone          string  `json:"telephone" binding:"required"`
+	WarehouseCode      string  `json:"warehouse_code" binding:"required"`
+	MinimunCapacity    int64   `json:"minimun_capacity" binding:"required"`
+	MinimunTemperature float64 `json:"minimun_temperature" binding:"required"`
 }
 
-type requestWarehousePatch struct {
+type RequestWarehousePatch struct {
 	MinimunCapacity    int64   `json:"minimun_capacity"`
 	MinimunTemperature float64 `json:"minimun_temperature"`
 }
@@ -39,7 +38,7 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 // @Tags         Warehouse
 // @Accept       json
 // @Produce      json
-// @Param Warehouse body requestWarehousePost true "Create warehouse"
+// @Param Warehouse body RequestWarehousePost true "Create warehouse"
 // @Success      201  {object}  warehouse.WarehouseModel
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
@@ -47,21 +46,21 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		var wh requestWarehousePost
+		var wh RequestWarehousePost
 
-		if err := ctx.BindJSON(&wh); err != nil {
-			ctx.JSON(http.StatusUnprocessableEntity, err.Error())
+		if err := ctx.ShouldBindJSON(&wh); err != nil {
+			httputil.NewError(ctx, http.StatusUnprocessableEntity, err)
 			return
 		}
 
 		newWh, err := w.service.Create(wh.Address, wh.Telephone, wh.WarehouseCode, wh.MinimunTemperature, wh.MinimunCapacity)
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, err.Error())
+			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
 
-		ctx.JSON(http.StatusCreated, &newWh)
+		httputil.NewResponse(ctx, http.StatusCreated, newWh)
 	}
 }
 
@@ -79,7 +78,7 @@ func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 		shw, err := w.service.GetAll()
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, err.Error())
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
 
@@ -104,19 +103,19 @@ func (w Warehouse) GetWarehouseByID() gin.HandlerFunc {
 			id, err := strconv.Atoi(paramId)
 
 			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, "erro: internal error")
-				log.Println(err)
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 				return
 			}
 
 			wh, err := w.service.GetById(int64(id))
 
 			if err != nil {
-				ctx.JSON(http.StatusBadRequest, err.Error())
+				httputil.NewError(ctx, http.StatusNotFound, err)
 				return
 			}
 
-			ctx.JSON(http.StatusOK, wh)
+			httputil.NewResponse(ctx, http.StatusOK, wh)
+
 		}
 	}
 
@@ -139,19 +138,19 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 			id, err := strconv.Atoi(paramId)
 
 			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, "erro: internal error")
-				log.Println(err)
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 				return
 			}
 
 			err = w.service.Delete(int64(id))
 
 			if err != nil {
-				ctx.JSON(http.StatusBadRequest, err.Error())
+				httputil.NewError(ctx, http.StatusNotFound, err)
 				return
 			}
 
-			ctx.JSON(http.StatusNoContent, gin.H{})
+			httputil.NewResponse(ctx, http.StatusNoContent, gin.H{})
+
 		}
 	}
 
@@ -164,7 +163,7 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param id path int true "Warehouse ID"
-// @Param Warehouse body requestWarehousePatch true "Update warehouse"
+// @Param Warehouse body RequestWarehousePatch true "Update warehouse"
 // @Success      201  {object} warehouse.WarehouseModel
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
@@ -174,31 +173,27 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 		if paramId, check := ctx.Params.Get("id"); check {
 			id, err := strconv.Atoi(paramId)
 
-			var body requestWarehousePatch
-			var patchWh warehouse.WarehouseModel
-
-			if err := ctx.BindJSON(&body); err != nil {
-				ctx.JSON(http.StatusBadRequest, err.Error())
-				return
+			if err != nil {
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 			}
 
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, "erro: internal error")
-				log.Println(err)
+			var body RequestWarehousePatch
+			var patchWh warehouse.WarehouseModel
+
+			if err := ctx.ShouldBindJSON(&body); err != nil {
+				httputil.NewError(ctx, http.StatusBadRequest, err)
 				return
 			}
 
 			patchWh, err = w.service.UpdateTempAndCap(int64(id), body.MinimunTemperature, body.MinimunCapacity)
 
 			if err != nil {
-				ctx.JSON(http.StatusBadRequest, err.Error())
+				httputil.NewError(ctx, http.StatusNotFound, err)
 				return
 			}
 
-			ctx.JSON(http.StatusOK, patchWh)
+			httputil.NewResponse(ctx, http.StatusOK, patchWh)
 			return
 		}
-
-		ctx.JSON(http.StatusUnprocessableEntity, "error: id is mandatory")
 	}
 }

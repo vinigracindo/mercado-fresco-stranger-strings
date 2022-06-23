@@ -7,3 +7,20 @@ type Seller struct {
 	Address     string `json:"address"`
 	Telephone   string `json:"telephone"`
 }
+
+type Service interface {
+	GetAll() ([]Seller, error)
+	GetById(id int64) (Seller, error)
+	Create(cid int64, companyName, address, telephone string) (Seller, error)
+	Update(id int64, address, telephone string) (Seller, error)
+	Delete(id int64) error
+}
+
+type Repository interface {
+	GetAll() ([]Seller, error)
+	GetById(id int64) (Seller, error)
+	Create(cid int64, companyName, address, telephone string) (Seller, error)
+	Update(id int64, address, telephone string) (Seller, error)
+	CreatID() int64
+	Delete(id int64) error
+}

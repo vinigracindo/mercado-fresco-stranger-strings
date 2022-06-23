@@ -5,22 +5,12 @@ import (
 )
 
 var listProducts []Product
-var lastId int64 = 0
-
-type Repository interface {
-	GetAll() ([]Product, error)
-	GetById(id int64) (*Product, error)
-	Create(id int64, productCode string, description string, width float64, height float64, length float64, netWeight float64,
-		expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error)
-	LastId() int64
-	UpdateDescription(id int64, description string) (Product, error)
-	Delete(id int64) error
-}
+var lastId int64 = 1
 
 type repository struct {
 }
 
-func CreateRepository() Repository {
+func CreateRepository() ProductRepository {
 	listProducts = []Product{}
 
 	listProducts = append(listProducts)
@@ -41,27 +31,40 @@ func (r *repository) GetById(id int64) (*Product, error) {
 	return nil, fmt.Errorf("the product with the id %d was not found", id)
 }
 
-func (r *repository) Create(id int64, productCode string, description string, width float64, height float64, length float64, netWeight float64,
-	expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (Product, error) {
-	newProduct := Product{id, productCode, description, width, height, length, netWeight,
-		expirationRate, recommendedFreezingTemperature, freezingRate, productTypeId, sellerId}
+func (r *repository) Create(productCode string, description string, width float64, height float64, length float64, netWeight float64,
+	expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (*Product, error) {
+
+	nextId := lastId
+	newProduct := Product{
+		Id:                             nextId,
+		ProductCode:                    productCode,
+		Description:                    description,
+		Width:                          width,
+		Height:                         height,
+		Length:                         length,
+		NetWeight:                      netWeight,
+		ExpirationRate:                 expirationRate,
+		RecommendedFreezingTemperature: recommendedFreezingTemperature,
+		FreezingRate:                   freezingRate,
+		ProductTypeId:                  productTypeId,
+		SellerId:                       sellerId}
 
 	for _, product := range listProducts {
 		if product.ProductCode == productCode {
-			return product, fmt.Errorf("the product with code %s has already been registered", productCode)
+			return nil, fmt.Errorf("the product with code %s has already been registered", productCode)
 		}
 	}
 	listProducts = append(listProducts, newProduct)
-	lastId = newProduct.Id
+	lastId += 1
 
-	return newProduct, nil
+	return &newProduct, nil
 }
 
 func (r *repository) LastId() int64 {
 	return lastId
 }
 
-func (r *repository) UpdateDescription(id int64, description string) (Product, error) {
+func (r *repository) UpdateDescription(id int64, description string) (*Product, error) {
 	var product Product
 	update := false
 	for i := range listProducts {
@@ -74,9 +77,9 @@ func (r *repository) UpdateDescription(id int64, description string) (Product, e
 	}
 
 	if !update {
-		return Product{}, fmt.Errorf("the product with id %d was not found", id)
+		return nil, fmt.Errorf("the product with id %d was not found", id)
 	}
-	return product, nil
+	return &product, nil
 }
 
 func (r *repository) Delete(id int64) error {

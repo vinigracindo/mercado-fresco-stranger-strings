@@ -28,10 +28,10 @@ type requestProductPatch struct {
 }
 
 type ProductController struct {
-	service product.Service
+	service product.ProductService
 }
 
-func CreateProductController(prodService product.Service) *ProductController {
+func CreateProductController(prodService product.ProductService) *ProductController {
 	return &(ProductController{service: prodService})
 }
 
@@ -46,11 +46,14 @@ func CreateProductController(prodService product.Service) *ProductController {
 // @Router /products [get]
 func (c *ProductController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		products, err := c.service.GetAll()
+
 		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, err)
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
+
 		httputil.NewResponse(ctx, http.StatusOK, products)
 	}
 }
@@ -67,19 +70,22 @@ func (c *ProductController) GetAll() gin.HandlerFunc {
 // @Router /products/{id} [get]
 func (c *ProductController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
-		product, err := c.service.GetById(id)
+		productId, err := c.service.GetById(id)
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
 
-		httputil.NewResponse(ctx, http.StatusOK, product)
+		httputil.NewResponse(ctx, http.StatusOK, productId)
 	}
 }
 
@@ -96,21 +102,23 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 // @Router /products [post]
 func (c *ProductController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		var req requestProductPost
+
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.JSON(http.StatusUnprocessableEntity,
-				gin.H{
-					"message": "Invalid input. Check the data entered",
-				})
+			httputil.NewError(ctx, http.StatusUnprocessableEntity, errors.New("invalid input. Check the data entered"))
 			return
 		}
-		newProduct, err := c.service.Create(req.ProductCode, req.Description, req.Width, req.Height, req.Length, req.NetWeight,
-			req.ExpirationRate, req.RecommendedFreezingTemperature, req.FreezingRate, req.ProductTypeId, req.SellerId)
+
+		newProduct, err := c.service.
+			Create(req.ProductCode, req.Description, req.Width, req.Height, req.Length, req.NetWeight, req.ExpirationRate,
+				req.RecommendedFreezingTemperature, req.FreezingRate, req.ProductTypeId, req.SellerId)
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
+
 		httputil.NewResponse(ctx, http.StatusCreated, newProduct)
 	}
 }
@@ -129,26 +137,29 @@ func (c *ProductController) Create() gin.HandlerFunc {
 // @Router /products/{id} [patch]
 func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, errors.New("invalid id"))
 			return
 		}
+
 		var req requestProductPatch
+
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
-		if req.Description == "" {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("description field is required"))
-			return
-		}
-		product, err := c.service.UpdateDescription(id, req.Description)
+
+		productUpdate, err := c.service.UpdateDescription(id, req.Description)
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		httputil.NewResponse(ctx, http.StatusOK, product)
+
+		httputil.NewResponse(ctx, http.StatusOK, productUpdate)
 
 	}
 }
@@ -166,17 +177,21 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 // @Router /products/{id} [delete]
 func (c *ProductController) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 			return
 		}
 
 		err = c.service.Delete(id)
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
+
 		httputil.NewResponse(ctx, http.StatusNoContent, err)
 	}
 }

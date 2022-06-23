@@ -5,15 +5,6 @@ import "fmt"
 var listSection = []Section{}
 var id int64 = 0
 
-type Repository interface {
-	Delete(id int64) error
-	UpdateCurrentCapacity(id int64, currentCapacity int64) (Section, error)
-	GetById(id int64) (Section, error)
-	GetAll() ([]Section, error)
-	CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error)
-	CreateID() int64
-}
-
 type repository struct{}
 
 func NewRepository() Repository {
@@ -37,7 +28,7 @@ func (r *repository) Delete(id int64) error {
 	}
 
 	if !deleted {
-		return fmt.Errorf("Section %d not found", id)
+		return fmt.Errorf("section %d not found", id)
 	}
 
 	listSection = append(listSection[:index], listSection[index+1:]...)
@@ -57,15 +48,15 @@ func (r *repository) UpdateCurrentCapacity(id int64, currentCapacity int64) (Sec
 	}
 
 	if !updated {
-		return Section{}, fmt.Errorf("Section %d not found", id)
+		return Section{}, fmt.Errorf("section %d not found", id)
 	}
 	return section, nil
 }
 
-func (r *repository) CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
+func (r *repository) Create(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
 	for i := range listSection {
 		if listSection[i].SectionNumber == sectionNumber {
-			return Section{}, fmt.Errorf("Already a secton with the code: %d", sectionNumber)
+			return Section{}, fmt.Errorf("already a secton with the code: %d", sectionNumber)
 		}
 	}
 
@@ -97,7 +88,7 @@ func (r *repository) GetById(id int64) (Section, error) {
 	}
 
 	if !found {
-		return Section{}, fmt.Errorf("Section %d not found", id)
+		return Section{}, fmt.Errorf("section %d not found", id)
 	}
 
 	return section, nil

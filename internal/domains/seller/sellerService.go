@@ -1,13 +1,5 @@
 package seller
 
-type Service interface {
-	GetAll() ([]Seller, error)
-	GetById(id int64) (Seller, error)
-	CreateSeller(cid int64, companyName, address, telephone string) (Seller, error)
-	UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error)
-	DeleteSeller(id int64) error
-}
-
 type service struct {
 	repository Repository
 }
@@ -35,24 +27,24 @@ func (s *service) GetById(id int64) (Seller, error) {
 	return seller, nil
 }
 
-func (s *service) CreateSeller(cid int64, companyName, address, telephone string) (Seller, error) {
-	seller, err := s.repository.CreateSeller(cid, companyName, address, telephone)
+func (s *service) Create(cid int64, companyName, address, telephone string) (Seller, error) {
+	seller, err := s.repository.Create(cid, companyName, address, telephone)
 	if err != nil {
 		return Seller{}, err
 	}
 	return seller, nil
 }
 
-func (s *service) UpdateSellerAddresAndTel(id int64, address, telephone string) (Seller, error) {
-	seller, err := s.repository.UpdateSellerAddresAndTel(id, address, telephone)
+func (s *service) Update(id int64, address, telephone string) (Seller, error) {
+	seller, err := s.repository.Update(id, address, telephone)
 	if err != nil {
 		return Seller{}, err
 	}
 	return seller, nil
 }
 
-func (s *service) DeleteSeller(id int64) error {
-	err := s.repository.DeleteSeller(id)
+func (s *service) Delete(id int64) error {
+	err := s.repository.Delete(id)
 
 	if err != nil {
 		return err

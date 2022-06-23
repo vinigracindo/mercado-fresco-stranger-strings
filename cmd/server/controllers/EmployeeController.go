@@ -30,7 +30,7 @@ func (controller EmployeeController) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		employees, err := controller.service.GetAll()
 		if err != nil {
-			httputil.NewError(c, http.StatusNotFound, err)
+			httputil.NewError(c, http.StatusInternalServerError, err)
 			return
 		}
 		httputil.NewResponse(c, http.StatusOK, employees)
@@ -71,10 +71,10 @@ func (controller EmployeeController) GetById() gin.HandlerFunc {
 // @Produce      json
 // @Param Employee body requestEmployeePost true "Create employee"
 // @Success      201  {object} employees.Employee
-// @Failure      400  {object}  httputil.HTTPError
+// @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /employees [post]
-func (controller EmployeeController) Store() gin.HandlerFunc {
+func (controller EmployeeController) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req requestEmployeePost
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -82,12 +82,12 @@ func (controller EmployeeController) Store() gin.HandlerFunc {
 			return
 		}
 
-		employee, err := controller.service.Store(req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
+		employee, err := controller.service.Create(req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
 		if err != nil {
-			httputil.NewError(c, http.StatusBadRequest, err)
+			httputil.NewError(c, http.StatusConflict, err)
 			return
 		}
-		httputil.NewResponse(c, http.StatusOK, employee)
+		httputil.NewResponse(c, http.StatusCreated, employee)
 	}
 }
 

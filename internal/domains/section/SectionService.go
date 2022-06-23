@@ -1,13 +1,5 @@
 package section
 
-type Service interface {
-	Delete(id int64) error
-	UpdateCurrentCapacity(id int64, currentCapacity int64) (Section, error)
-	CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error)
-	GetById(id int64) (Section, error)
-	GetAll() ([]Section, error)
-}
-
 type service struct {
 	repository Repository
 }
@@ -26,8 +18,8 @@ func (s *service) UpdateCurrentCapacity(id int64, currentCapacity int64) (Sectio
 	return s.repository.UpdateCurrentCapacity(id, currentCapacity)
 }
 
-func (s *service) CreateSection(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
-	section, err := s.repository.CreateSection(
+func (s *service) Create(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
+	section, err := s.repository.Create(
 		sectionNumber,
 		currentTemperature,
 		minimumTemperature,
