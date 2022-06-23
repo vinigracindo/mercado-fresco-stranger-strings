@@ -1,4 +1,4 @@
-name: CI - GO Tests
+name: build
 on:
   push:
     branches: [ "develop", "main" ]
