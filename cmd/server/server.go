@@ -7,6 +7,7 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
+	warehouseControllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/warehouse"
 	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
@@ -14,8 +15,8 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/repository"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/services"
+	warehouseRespositorys "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/repository"
+	warehouseServices "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/services"
 )
 
 type APIServer struct{}
@@ -70,9 +71,9 @@ func (api *APIServer) Run(port int) {
 	productGroup.DELETE("/:id", productController.Delete())
 
 	//Warehouse routes
-	warehouseRepository := repository.NewWarehouseRepository()
-	warehouseService := services.NewWarehouseService(warehouseRepository)
-	warehouseController := controllers.NewWarehouse(warehouseService)
+	warehouseRepository := warehouseRespositorys.NewWarehouseRepository()
+	warehouseService := warehouseServices.NewWarehouseService(warehouseRepository)
+	warehouseController := warehouseControllers.NewWarehouse(warehouseService)
 
 	warehouseGroup := groupV1.Group("/warehouses")
 	warehouseGroup.GET("/", warehouseController.GetAllWarehouse())
