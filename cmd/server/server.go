@@ -14,7 +14,6 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section"
 )
 
 type APIServer struct{}
@@ -32,17 +31,8 @@ func (api *APIServer) Run(port int) {
 
 	apiV1 := router.Group("api/v1")
 
-	// Section routes
-	sectionRepository := section.NewRepository()
-	sectionService := section.NewService(sectionRepository)
-	sectionController := controllers.NewSection(sectionService)
-
-	sectionGroup := apiV1.Group("/sections")
-	sectionGroup.DELETE("/:id", sectionController.Delete())
-	sectionGroup.PATCH("/:id", sectionController.UpdateCurrentCapacity())
-	sectionGroup.POST("/", sectionController.Create())
-	sectionGroup.GET("/:id", sectionController.GetById())
-	sectionGroup.GET("/", sectionController.GetAll())
+	//Section routes
+	routes.SectionRoutes(apiV1.Group("/sections"))
 
 	// Employee routes
 	employeeRepository := employees.NewRepository()

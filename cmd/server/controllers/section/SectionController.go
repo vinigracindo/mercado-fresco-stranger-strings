@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section/domain"
 	httputil "github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
@@ -26,10 +26,10 @@ type requestSectionPatch struct {
 }
 
 type ControllerSection struct {
-	service section.Service
+	service domain.SectionService
 }
 
-func NewSection(s section.Service) *ControllerSection {
+func NewSection(s domain.SectionService) *ControllerSection {
 	return &ControllerSection{
 		service: s,
 	}

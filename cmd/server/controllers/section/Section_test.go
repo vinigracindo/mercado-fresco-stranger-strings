@@ -7,13 +7,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section/mocks"
+	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/section"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section/domain/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
 
-var bodySection = section.Section{
+var bodySection = domain.SectionModel{
 	SectionNumber:      int64(1),
 	CurrentTemperature: int64(1),
 	MinimumTemperature: int64(1),
@@ -24,7 +24,7 @@ var bodySection = section.Section{
 	ProductTypeId:      int64(1),
 }
 
-var bodyFailSection = section.Section{
+var bodyFailSection = domain.SectionModel{
 	SectionNumber:      0,
 	CurrentTemperature: 0,
 	MinimumTemperature: 0,
@@ -37,7 +37,7 @@ var bodyFailSection = section.Section{
 
 var EndpointSection = "/api/v1/sections"
 
-var expectedSection = section.Section{
+var expectedSection = domain.SectionModel{
 	Id:                 1,
 	SectionNumber:      1,
 	CurrentTemperature: 1,
@@ -50,7 +50,7 @@ var expectedSection = section.Section{
 }
 
 func TestSectionController_Create(t *testing.T) {
-	mockService := mocks.NewService(t)
+	mockService := mocks.NewSectionService(t)
 
 	t.Run("create_ok: when data entry is successful, should return code 201", func(t *testing.T) {
 		mockService.
@@ -106,7 +106,7 @@ func TestSectionController_Create(t *testing.T) {
 				expectedSection.WarehouseId,
 				expectedSection.ProductTypeId,
 			).
-			Return(section.Section{}, fmt.Errorf("already a section with this code")).
+			Return(domain.SectionModel{}, fmt.Errorf("already a section with this code")).
 			Once()
 
 		controller := controllers.NewSection(mockService)
@@ -125,12 +125,12 @@ func TestSectionController_Create(t *testing.T) {
 }
 
 func TestSectionController_GetAll(t *testing.T) {
-	mockService := mocks.NewService(t)
+	mockService := mocks.NewSectionService(t)
 
 	t.Run("find_all: when data entry is successful, should return code 200", func(t *testing.T) {
 		mockService.
 			On("GetAll").
-			Return([]section.Section{expectedSection}, nil).
+			Return([]domain.SectionModel{expectedSection}, nil).
 			Once()
 		controller := controllers.NewSection(mockService)
 
@@ -150,7 +150,7 @@ func TestSectionController_GetAll(t *testing.T) {
 	t.Run("get_all_fail: when GetAll fail, should return code 400", func(t *testing.T) {
 		mockService.
 			On("GetAll").
-			Return([]section.Section{}, fmt.Errorf("any error"))
+			Return([]domain.SectionModel{}, fmt.Errorf("any error"))
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(bodySection)
@@ -165,7 +165,7 @@ func TestSectionController_GetAll(t *testing.T) {
 }
 
 func TestSectionController_GetById(t *testing.T) {
-	mockService := mocks.NewService(t)
+	mockService := mocks.NewSectionService(t)
 
 	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 		mockService.
@@ -184,8 +184,8 @@ func TestSectionController_GetById(t *testing.T) {
 	})
 
 	t.Run("find_by_id_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
-		mockService := mocks.NewService(t)
-		mockService.On("GetById", int64(1)).Return(section.Section{}, fmt.Errorf("section not found"))
+		mockService := mocks.NewSectionService(t)
+		mockService.On("GetById", int64(1)).Return(domain.SectionModel{}, fmt.Errorf("section not found"))
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(bodySection)
@@ -214,13 +214,13 @@ func TestSectionController_GetById(t *testing.T) {
 }
 
 func TestSectionController_Update(t *testing.T) {
-	mockService := mocks.NewService(t)
+	mockService := mocks.NewSectionService(t)
 
-	var bodyUpdate = section.Section{
+	var bodyUpdate = domain.SectionModel{
 		CurrentCapacity: int64(1),
 	}
 
-	var bodyFailSectionUpdate = section.Section{
+	var bodyFailSectionUpdate = domain.SectionModel{
 		CurrentCapacity: -1,
 	}
 
@@ -244,7 +244,7 @@ func TestSectionController_Update(t *testing.T) {
 	t.Run("update_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService.
 			On("UpdateCurrentCapacity", int64(1), int64(1)).
-			Return(section.Section{}, fmt.Errorf("section not found")).
+			Return(domain.SectionModel{}, fmt.Errorf("section not found")).
 			Once()
 		controller := controllers.NewSection(mockService)
 
@@ -297,7 +297,7 @@ func TestSectionController_Update(t *testing.T) {
 }
 
 func TestSectionController_Delete(t *testing.T) {
-	mockService := mocks.NewService(t)
+	mockService := mocks.NewSectionService(t)
 
 	t.Run("delete_ok: when the request is successful, should return code 204", func(t *testing.T) {
 		mockService.
