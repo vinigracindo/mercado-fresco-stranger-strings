@@ -12,9 +12,9 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section"
 )
 
 type APIServer struct{}

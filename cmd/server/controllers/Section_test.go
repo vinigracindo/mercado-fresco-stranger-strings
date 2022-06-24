@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
+	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"

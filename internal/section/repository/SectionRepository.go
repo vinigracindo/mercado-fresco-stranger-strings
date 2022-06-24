@@ -1,13 +1,17 @@
-package section
+package repository
 
-import "fmt"
+import (
+	"fmt"
 
-var listSection = []Section{}
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section/domain"
+)
+
+var listSection = []domain.SectionModel{}
 var id int64 = 0
 
 type repository struct{}
 
-func NewRepository() Repository {
+func NewRepositorySection() domain.SectionRepository {
 	return &repository{}
 }
 
@@ -35,8 +39,8 @@ func (r *repository) Delete(id int64) error {
 	return nil
 }
 
-func (r *repository) UpdateCurrentCapacity(id int64, currentCapacity int64) (Section, error) {
-	var section Section
+func (r *repository) UpdateCurrentCapacity(id int64, currentCapacity int64) (domain.SectionModel, error) {
+	var section domain.SectionModel
 	updated := false
 
 	for i := range listSection {
@@ -48,19 +52,19 @@ func (r *repository) UpdateCurrentCapacity(id int64, currentCapacity int64) (Sec
 	}
 
 	if !updated {
-		return Section{}, fmt.Errorf("section %d not found", id)
+		return domain.SectionModel{}, fmt.Errorf("section %d not found", id)
 	}
 	return section, nil
 }
 
-func (r *repository) Create(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (Section, error) {
+func (r *repository) Create(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
 	for i := range listSection {
 		if listSection[i].SectionNumber == sectionNumber {
-			return Section{}, fmt.Errorf("already a secton with the code: %d", sectionNumber)
+			return domain.SectionModel{}, fmt.Errorf("already a secton with the code: %d", sectionNumber)
 		}
 	}
 
-	section := Section{
+	section := domain.SectionModel{
 		Id:                 r.CreateID(),
 		SectionNumber:      sectionNumber,
 		CurrentTemperature: currentTemperature,
@@ -76,8 +80,8 @@ func (r *repository) Create(sectionNumber int64, currentTemperature int64, minim
 	return section, nil
 }
 
-func (r *repository) GetById(id int64) (Section, error) {
-	section := Section{}
+func (r *repository) GetById(id int64) (domain.SectionModel, error) {
+	section := domain.SectionModel{}
 	found := false
 
 	for i := range listSection {
@@ -88,12 +92,12 @@ func (r *repository) GetById(id int64) (Section, error) {
 	}
 
 	if !found {
-		return Section{}, fmt.Errorf("section %d not found", id)
+		return domain.SectionModel{}, fmt.Errorf("section %d not found", id)
 	}
 
 	return section, nil
 }
 
-func (r *repository) GetAll() ([]Section, error) {
+func (r *repository) GetAll() ([]domain.SectionModel, error) {
 	return listSection, nil
 }
