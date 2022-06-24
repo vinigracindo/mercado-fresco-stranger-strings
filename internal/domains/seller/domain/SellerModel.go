@@ -1,4 +1,4 @@
-package seller
+package domain
 
 type Seller struct {
 	Id          int64  `json:"id"`
@@ -8,7 +8,7 @@ type Seller struct {
 	Telephone   string `json:"telephone"`
 }
 
-type Service interface {
+type ServiceSeller interface {
 	GetAll() ([]Seller, error)
 	GetById(id int64) (Seller, error)
 	Create(cid int64, companyName, address, telephone string) (Seller, error)
@@ -16,7 +16,7 @@ type Service interface {
 	Delete(id int64) error
 }
 
-type Repository interface {
+type RepositorySeller interface {
 	GetAll() ([]Seller, error)
 	GetById(id int64) (Seller, error)
 	Create(cid int64, companyName, address, telephone string) (Seller, error)

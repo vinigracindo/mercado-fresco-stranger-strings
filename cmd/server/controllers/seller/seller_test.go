@@ -7,29 +7,30 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/mocks"
+	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/seller"
+
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/domain/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
 
 const EndpointSeller = "/api/v1/sellers"
 
-var bodySeller = seller.Seller{
+var bodySeller = domain.Seller{
 	Cid:         123,
 	CompanyName: "Mercado Livre",
 	Address:     "Osasco, SP",
 	Telephone:   "11 99999999",
 }
 
-var bodySellerFail = seller.Seller{
+var bodySellerFail = domain.Seller{
 	Cid:         0,
 	CompanyName: "",
 	Address:     "",
 	Telephone:   "",
 }
 
-var expectedSeller = seller.Seller{
+var expectedSeller = domain.Seller{
 	Id:          1,
 	Cid:         123,
 	CompanyName: "Mercado Livre",
@@ -38,7 +39,7 @@ var expectedSeller = seller.Seller{
 }
 
 func TestSellerController_Create(t *testing.T) {
-	service := mocks.NewService(t)
+	service := mocks.NewServiceSeller(t)
 
 	t.Run("create_ok: when data entry is successful, should return code 201.", func(t *testing.T) {
 		service.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).
@@ -70,7 +71,7 @@ func TestSellerController_Create(t *testing.T) {
 
 	t.Run("create_conflict: when the cid already exists, should return code 409.", func(t *testing.T) {
 		service.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).
-			Return(seller.Seller{}, fmt.Errorf("Seller with this cid alredy exists")).
+			Return(domain.Seller{}, fmt.Errorf("Seller with this cid alredy exists")).
 			Once()
 
 		controller := controllers.NewSeller(service)
@@ -86,8 +87,8 @@ func TestSellerController_Create(t *testing.T) {
 }
 
 func TestSellerController_Get(t *testing.T) {
-	service := mocks.NewService(t)
-	expectedListSeller := []seller.Seller{
+	service := mocks.NewServiceSeller(t)
+	expectedListSeller := []domain.Seller{
 		{
 			Id:          1,
 			Cid:         123,
@@ -116,7 +117,7 @@ func TestSellerController_Get(t *testing.T) {
 	})
 
 	t.Run("find_by_id_non_exitent: when the seller does not exist, should return code 404.", func(t *testing.T) {
-		service.On("GetById", int64(9999)).Return(seller.Seller{}, fmt.Errorf("Seller not found")).Once()
+		service.On("GetById", int64(9999)).Return(domain.Seller{}, fmt.Errorf("Seller not found")).Once()
 
 		controller := controllers.NewSeller(service)
 		r := testutil.SetUpRouter()
@@ -143,8 +144,8 @@ func TestSellerController_Get(t *testing.T) {
 }
 
 func Test_Controller_Update(t *testing.T) {
-	service := mocks.NewService(t)
-	var bodySellerUpdate = seller.Seller{
+	service := mocks.NewServiceSeller(t)
+	var bodySellerUpdate = domain.Seller{
 		Address:   "Salvador, BA",
 		Telephone: "71 88888888",
 	}
@@ -166,7 +167,7 @@ func Test_Controller_Update(t *testing.T) {
 
 	t.Run("update_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
 		service.On("Update", int64(9999), "Salvador, BA", "71 88888888").
-			Return(seller.Seller{}, fmt.Errorf("Seller not found")).
+			Return(domain.Seller{}, fmt.Errorf("Seller not found")).
 			Once()
 
 		controller := controllers.NewSeller(service)
@@ -181,7 +182,7 @@ func Test_Controller_Update(t *testing.T) {
 }
 
 func TestSellerController_Delete(t *testing.T) {
-	service := mocks.NewService(t)
+	service := mocks.NewServiceSeller(t)
 
 	t.Run("delete_non_existent: when the seller does not exist, should return code 404.", func(t *testing.T) {
 		service.On("Delete", int64(9999)).

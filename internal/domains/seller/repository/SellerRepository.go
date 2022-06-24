@@ -1,28 +1,32 @@
-package seller
+package repository
 
-import "fmt"
+import (
+	"fmt"
 
-var listSeller = []Seller{}
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/domain"
+)
+
+var listSeller = []domain.Seller{}
 var id int64 = 0
 
 type repository struct{}
 
-func NewRepository() Repository {
+func NewSellerRepository() domain.RepositorySeller {
 	return &repository{}
 }
 
-func (r *repository) GetAll() ([]Seller, error) {
+func (r *repository) GetAll() ([]domain.Seller, error) {
 	return listSeller, nil
 }
 
-func (r *repository) GetById(id int64) (Seller, error) {
+func (r *repository) GetById(id int64) (domain.Seller, error) {
 	for _, seller := range listSeller {
 		if seller.Id == id {
 			return seller, nil
 		}
 	}
 
-	return Seller{}, fmt.Errorf("seller id %d not found", id)
+	return domain.Seller{}, fmt.Errorf("seller id %d not found", id)
 }
 
 func (r *repository) CreatID() int64 {
@@ -30,14 +34,14 @@ func (r *repository) CreatID() int64 {
 	return id
 }
 
-func (r *repository) Create(cid int64, companyName, address, telephone string) (Seller, error) {
+func (r *repository) Create(cid int64, companyName, address, telephone string) (domain.Seller, error) {
 	for i := range listSeller {
 		if listSeller[i].Cid == cid {
-			return Seller{}, fmt.Errorf("Alredy a company with id %d", cid)
+			return domain.Seller{}, fmt.Errorf("Alredy a company with id %d", cid)
 		}
 	}
 
-	seller := Seller{
+	seller := domain.Seller{
 		Id:          r.CreatID(),
 		Cid:         cid,
 		CompanyName: companyName,
@@ -50,7 +54,7 @@ func (r *repository) Create(cid int64, companyName, address, telephone string) (
 
 }
 
-func (r *repository) Update(id int64, address, telephone string) (Seller, error) {
+func (r *repository) Update(id int64, address, telephone string) (domain.Seller, error) {
 	for i, seller := range listSeller {
 		if seller.Id == id {
 			listSeller[i].Address = address
@@ -58,7 +62,7 @@ func (r *repository) Update(id int64, address, telephone string) (Seller, error)
 			return listSeller[i], nil
 		}
 	}
-	return Seller{}, fmt.Errorf("seller with id %d not found", id)
+	return domain.Seller{}, fmt.Errorf("seller with id %d not found", id)
 }
 
 func (r *repository) Delete(id int64) error {
