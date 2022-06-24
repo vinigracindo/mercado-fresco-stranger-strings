@@ -2,12 +2,12 @@ package controllers
 
 import (
 	"errors"
-	httputil "github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 )
 
 type requestProductPost struct {
@@ -28,10 +28,10 @@ type requestProductPatch struct {
 }
 
 type ProductController struct {
-	service product.ProductService
+	service domain.ProductService
 }
 
-func CreateProductController(prodService product.ProductService) *ProductController {
+func CreateProductController(prodService domain.ProductService) *ProductController {
 	return &(ProductController{service: prodService})
 }
 

@@ -4,19 +4,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/product"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain/mocks"
 	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
 
 const EndpointProduct = "/api/v1/products"
 
-var expectedProduct = product.Product{
+var expectedProduct = domain.Product{
 	Id:                             1,
 	ProductCode:                    "PROD02",
 	Description:                    "Yogurt",
@@ -31,7 +31,7 @@ var expectedProduct = product.Product{
 	SellerId:                       2,
 }
 
-var bodyProduct = product.Product{
+var bodyProduct = domain.Product{
 	ProductCode:                    "PROD02",
 	Description:                    "Yogurt",
 	Width:                          1.2,
@@ -117,9 +117,9 @@ func TestProductController_GetAll(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
-	expectedProductList := []product.Product{expectedProduct, expectedProduct}
+	expectedProductList := []domain.Product{expectedProduct, expectedProduct}
 
-	bodyList := []product.Product{bodyProduct, bodyProduct}
+	bodyList := []domain.Product{bodyProduct, bodyProduct}
 
 	t.Run("find_all_internal_server_error: when the request is not successful, should return code 500 ", func(t *testing.T) {
 
@@ -258,7 +258,7 @@ func TestProductController_UpdateDescription(t *testing.T) {
 
 	t.Run("update_invalid_field_value: when the field is empty,should return code 400", func(t *testing.T) {
 
-		body := product.Product{
+		body := domain.Product{
 			Description: "",
 		}
 
@@ -277,7 +277,7 @@ func TestProductController_UpdateDescription(t *testing.T) {
 
 	t.Run("update_non_existent: when the product does not exist, should return code 404", func(t *testing.T) {
 
-		body := product.Product{
+		body := domain.Product{
 			Description: "Yogurt",
 		}
 		expectedError := errors.New("the product id was not found")
@@ -301,7 +301,7 @@ func TestProductController_UpdateDescription(t *testing.T) {
 
 	t.Run("update_ok: when the request is successful, should return code 200", func(t *testing.T) {
 
-		expectedProduct := product.Product{
+		expectedProduct := domain.Product{
 			Id:                             1,
 			ProductCode:                    "PROD02",
 			Description:                    "Yogurt light",
@@ -316,7 +316,7 @@ func TestProductController_UpdateDescription(t *testing.T) {
 			SellerId:                       2,
 		}
 
-		body := product.Product{
+		body := domain.Product{
 			Description: "Yogurt light",
 		}
 

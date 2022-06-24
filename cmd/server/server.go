@@ -2,17 +2,15 @@ package server
 
 import (
 	"fmt"
-
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/routes"
-	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 )
@@ -57,16 +55,7 @@ func (api *APIServer) Run(port int) {
 	employeeGroup.DELETE("/:id", employeeController.Delete())
 
 	// Product routes
-	productRepository := product.CreateRepository()
-	productService := product.CreateService(productRepository)
-	productController := controllers.CreateProductController(productService)
-
-	productGroup := apiV1.Group("/products")
-	productGroup.GET("/", productController.GetAll())
-	productGroup.GET("/:id", productController.GetById())
-	productGroup.POST("/", productController.Create())
-	productGroup.PATCH("/:id", productController.UpdateDescription())
-	productGroup.DELETE("/:id", productController.Delete())
+	routes.ProductRoutes(apiV1.Group("/products"))
 
 	//Warehouse routes
 	routes.WarehouseRoutes(apiV1.Group("/warehouses"))
