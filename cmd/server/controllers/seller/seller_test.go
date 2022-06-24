@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/seller"
 
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/domain"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/domain/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
 

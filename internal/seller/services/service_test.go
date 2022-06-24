@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/domain"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/domain/mocks"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/services"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/services"
 )
 
 func Test_Service_Creat(t *testing.T) {

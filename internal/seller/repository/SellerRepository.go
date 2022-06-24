@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
 )
 
 var listSeller = []domain.Seller{}

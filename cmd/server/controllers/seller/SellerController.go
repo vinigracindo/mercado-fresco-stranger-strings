@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
 )
 
 type requestSellerPost struct {
