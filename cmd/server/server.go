@@ -11,7 +11,6 @@ import (
 	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
@@ -45,16 +44,7 @@ func (api *APIServer) Run(port int) {
 	sectionGroup.GET("/", sectionController.GetAll())
 
 	// Employee routes
-	employeeRepository := employees.NewRepository()
-	employeeService := employees.NewService(employeeRepository)
-	employeeController := controllers.NewEmployee(employeeService)
-
-	employeeGroup := apiV1.Group("/employees")
-	employeeGroup.GET("/", employeeController.GetAll())
-	employeeGroup.GET("/:id", employeeController.GetById())
-	employeeGroup.POST("/", employeeController.Create())
-	employeeGroup.PATCH("/:id", employeeController.UpdateFullname())
-	employeeGroup.DELETE("/:id", employeeController.Delete())
+	routes.WarehouseRoutes(apiV1.Group("/employees"))
 
 	// Product routes
 	productRepository := product.CreateRepository()

@@ -1,10 +1,12 @@
-package employees
+package service
+
+import "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
 
 type service struct {
-	repo Repository
+	repo domain.EmployeeRepository
 }
 
-func (s service) GetAll() ([]Employee, error) {
+func (s service) GetAll() ([]domain.Employee, error) {
 	employees, err := s.repo.GetAll()
 
 	if err != nil {
@@ -14,7 +16,7 @@ func (s service) GetAll() ([]Employee, error) {
 	return employees, nil
 }
 
-func (s service) GetById(id int64) (*Employee, error) {
+func (s service) GetById(id int64) (*domain.Employee, error) {
 	employee, err := s.repo.GetById(id)
 
 	if err != nil {
@@ -24,7 +26,7 @@ func (s service) GetById(id int64) (*Employee, error) {
 	return employee, nil
 }
 
-func (s service) UpdateFullname(id int64, firstName string, lastName string) (*Employee, error) {
+func (s service) UpdateFullname(id int64, firstName string, lastName string) (*domain.Employee, error) {
 	employee, err := s.repo.UpdateFullname(id, firstName, lastName)
 	if err != nil {
 		return nil, err
@@ -32,11 +34,11 @@ func (s service) UpdateFullname(id int64, firstName string, lastName string) (*E
 	return employee, nil
 }
 
-func (s service) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error) {
+func (s service) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
 	employee, err := s.repo.Create(cardNumberId, firstName, lastName, warehouseId)
 
 	if err != nil {
-		return Employee{}, err
+		return domain.Employee{}, err
 	}
 
 	return employee, nil
@@ -52,7 +54,7 @@ func (s service) Delete(id int64) error {
 	return nil
 }
 
-func NewService(r Repository) Service {
+func NewEmployeeService(r domain.EmployeeRepository) domain.EmployeeService {
 	return &service{
 		repo: r,
 	}

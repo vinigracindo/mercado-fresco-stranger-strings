@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees/mocks"
+	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/employees"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
 
@@ -19,8 +19,8 @@ var (
 	invalidJSON      = []byte(`{invalid json}`)
 )
 
-func makeEmployee() employees.Employee {
-	return employees.Employee{
+func makeEmployee() domain.Employee {
+	return domain.Employee{
 		Id:           1,
 		CardNumberId: "123456",
 		FirstName:    "John",
@@ -31,8 +31,8 @@ func makeEmployee() employees.Employee {
 
 func TestEmployeeController_Create(t *testing.T) {
 	expectedEmployee := makeEmployee()
-	mockService := mocks.NewService(t)
-	controller := controllers.NewEmployee(mockService)
+	mockService := mocks.NewEmployeeRepository(t)
+	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.POST(EndpointEmployee, controller.Create())
 
@@ -58,7 +58,7 @@ func TestEmployeeController_Create(t *testing.T) {
 	t.Run("create_conflict: when the card_number already exists, should return code 409.", func(t *testing.T) {
 		mockService.
 			On("Create", "123456", "John", "Doe", int64(1)).
-			Return(employees.Employee{}, employees.ErrCardNumberMustBeUnique).
+			Return(domain.Employee{}, domain.ErrCardNumberMustBeUnique).
 			Once()
 
 		reqBody, _ := json.Marshal(expectedEmployee)
@@ -70,12 +70,12 @@ func TestEmployeeController_Create(t *testing.T) {
 }
 
 func TestEmployeeController_GetAll(t *testing.T) {
-	mockService := mocks.NewService(t)
-	controller := controllers.NewEmployee(mockService)
+	mockService := mocks.NewEmployeeRepository(t)
+	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.GET(EndpointEmployee, controller.GetAll())
 
-	expectedEmployees := []employees.Employee{
+	expectedEmployees := []domain.Employee{
 		makeEmployee(),
 		makeEmployee(),
 	}
@@ -101,15 +101,15 @@ func TestEmployeeController_GetAll(t *testing.T) {
 	})
 
 	t.Run("find_all_err: when internal error occurs, should return code 500.", func(t *testing.T) {
-		mockService.On("GetAll").Return([]employees.Employee{}, errors.New("internal server error.")).Once()
+		mockService.On("GetAll").Return([]domain.Employee{}, errors.New("internal server error.")).Once()
 		response := testutil.ExecuteTestRequest(router, http.MethodGet, EndpointEmployee, nil)
 		assert.Equal(t, http.StatusInternalServerError, response.Code)
 	})
 }
 
 func TestEmployeeController_GetById(t *testing.T) {
-	mockService := mocks.NewService(t)
-	controller := controllers.NewEmployee(mockService)
+	mockService := mocks.NewEmployeeRepository(t)
+	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.GET(EndpointEmployee+"/:id", controller.GetById())
 	url := fmt.Sprintf("%s/%d", EndpointEmployee, 1)
@@ -117,7 +117,7 @@ func TestEmployeeController_GetById(t *testing.T) {
 	t.Run("find_by_id_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
 		mockService.
 			On("GetById", int64(1)).
-			Return(nil, employees.ErrEmployeeNotFound).
+			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
 		response := testutil.ExecuteTestRequest(router, http.MethodGet, url, nil)
@@ -153,8 +153,8 @@ func TestEmployeeController_GetById(t *testing.T) {
 }
 
 func TestEmployeeController_Update(t *testing.T) {
-	mockService := mocks.NewService(t)
-	controller := controllers.NewEmployee(mockService)
+	mockService := mocks.NewEmployeeRepository(t)
+	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.PATCH(EndpointEmployee+"/:id", controller.UpdateFullname())
 	url := fmt.Sprintf("%s/%d", EndpointEmployee, 1)
@@ -185,7 +185,7 @@ func TestEmployeeController_Update(t *testing.T) {
 	t.Run("update_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
 		mockService.
 			On("UpdateFullname", int64(1), "John", "Doe").
-			Return(nil, employees.ErrEmployeeNotFound).
+			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
 		reqBody, _ := json.Marshal(makeEmployee())
@@ -209,8 +209,8 @@ func TestEmployeeController_Update(t *testing.T) {
 }
 
 func TestEmployeeController_Delete(t *testing.T) {
-	mockService := mocks.NewService(t)
-	controller := controllers.NewEmployee(mockService)
+	mockService := mocks.NewEmployeeRepository(t)
+	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.DELETE(EndpointEmployee+"/:id", controller.Delete())
 	url := fmt.Sprintf("%s/%d", EndpointEmployee, 1)
@@ -218,7 +218,7 @@ func TestEmployeeController_Delete(t *testing.T) {
 	t.Run("delete_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
 		mockService.
 			On("Delete", int64(1)).
-			Return(employees.ErrEmployeeNotFound).
+			Return(domain.ErrEmployeeNotFound).
 			Once()
 
 		response := testutil.ExecuteTestRequest(router, http.MethodDelete, url, nil)
