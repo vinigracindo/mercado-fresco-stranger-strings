@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/warehouse"
-	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain/mocks"
+	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/warehouse"
+	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain/mocks"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
