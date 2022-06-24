@@ -9,7 +9,7 @@ type WarehouseModel struct {
 	MinimunTemperature float64 `json:"minimun_temperature"`
 }
 
-type Repository interface {
+type WarehouseRepository interface {
 	Create(wr *WarehouseModel) (WarehouseModel, error)
 	GetAll() ([]WarehouseModel, error)
 	GetById(id int64) (WarehouseModel, error)
@@ -18,7 +18,7 @@ type Repository interface {
 	CreateID() int64
 }
 
-type Service interface {
+type WarehouseService interface {
 	GetAll() ([]WarehouseModel, error)
 	GetById(id int64) (WarehouseModel, error)
 	Delete(id int64) error

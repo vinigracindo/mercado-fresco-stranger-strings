@@ -7,9 +7,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/warehouse"
+	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain/mocks"
+
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
 
@@ -46,7 +47,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 	t.Run("create_ok: if warehouses was successfully created", func(t *testing.T) {
 
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 
 		service.On("Create",
 			listPossiblesWarehouses[0].Address,
@@ -75,7 +76,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 	t.Run("create_fail: return 409, because the is already an warehouse with that code", func(t *testing.T) {
 
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 
 		errMsg := fmt.Errorf("error: already a warehouse with the code: %s", body.WarehouseCode)
 
@@ -116,7 +117,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 	t.Run("find_all: return a list with all warehouses storages", func(t *testing.T) {
 
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 
 		service.On("GetAll").Return(listPossiblesWarehouses, nil)
 
@@ -137,7 +138,7 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 	})
 
 	t.Run("find_all_error: when an error ocorrency in the server", func(t *testing.T) {
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 
 		service.On("GetAll").Return([]warehouse.WarehouseModel{}, fmt.Errorf("error: internal error"))
 
@@ -161,7 +162,7 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 		service.On("GetById", int64(id)).Return(warehouse.WarehouseModel{}, errMsg)
 		controller := controllers.NewWarehouse(service)
 
@@ -173,7 +174,7 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 	})
 
 	t.Run("find_by_id_existent: when request was sucessufuly return an warehouse", func(t *testing.T) {
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 		service.On("GetById", int64(1)).Return(listPossiblesWarehouses[1], nil)
 		controller := controllers.NewWarehouse(service)
 
@@ -214,7 +215,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		var id int64 = 1
 		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(listPossiblesWarehouses[0], nil)
 
 		controller := controllers.NewWarehouse(service)
@@ -240,7 +241,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(listPossiblesWarehouses[0], errMsg)
 
 		controller := controllers.NewWarehouse(service)
@@ -293,7 +294,7 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 		service.On("Delete", id).Return(errMsg)
 
 		controller := controllers.NewWarehouse(service)
@@ -324,7 +325,7 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 		var id int64 = 1
 		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 
-		service := mocks.NewService(t)
+		service := mocks.NewWarehouseService(t)
 		service.On("Delete", id).Return(nil)
 
 		controller := controllers.NewWarehouse(service)
