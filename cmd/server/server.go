@@ -7,7 +7,7 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	warehouseControllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/warehouse"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/routes"
 	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
@@ -15,8 +15,6 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
-	warehouseRespositorys "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/repository"
-	warehouseServices "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/services"
 )
 
 type APIServer struct{}
@@ -32,14 +30,14 @@ func (api *APIServer) Run(port int) {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	groupV1 := router.Group("api/v1")
+	apiV1 := router.Group("api/v1")
 
 	// Section routes
 	sectionRepository := section.NewRepository()
 	sectionService := section.NewService(sectionRepository)
 	sectionController := controllers.NewSection(sectionService)
 
-	sectionGroup := groupV1.Group("/sections")
+	sectionGroup := apiV1.Group("/sections")
 	sectionGroup.DELETE("/:id", sectionController.Delete())
 	sectionGroup.PATCH("/:id", sectionController.UpdateCurrentCapacity())
 	sectionGroup.POST("/", sectionController.Create())
@@ -51,7 +49,7 @@ func (api *APIServer) Run(port int) {
 	employeeService := employees.NewService(employeeRepository)
 	employeeController := controllers.NewEmployee(employeeService)
 
-	employeeGroup := groupV1.Group("/employees")
+	employeeGroup := apiV1.Group("/employees")
 	employeeGroup.GET("/", employeeController.GetAll())
 	employeeGroup.GET("/:id", employeeController.GetById())
 	employeeGroup.POST("/", employeeController.Create())
@@ -63,7 +61,7 @@ func (api *APIServer) Run(port int) {
 	productService := product.CreateService(productRepository)
 	productController := controllers.CreateProductController(productService)
 
-	productGroup := groupV1.Group("/products")
+	productGroup := apiV1.Group("/products")
 	productGroup.GET("/", productController.GetAll())
 	productGroup.GET("/:id", productController.GetById())
 	productGroup.POST("/", productController.Create())
@@ -71,23 +69,14 @@ func (api *APIServer) Run(port int) {
 	productGroup.DELETE("/:id", productController.Delete())
 
 	//Warehouse routes
-	warehouseRepository := warehouseRespositorys.NewWarehouseRepository()
-	warehouseService := warehouseServices.NewWarehouseService(warehouseRepository)
-	warehouseController := warehouseControllers.NewWarehouse(warehouseService)
-
-	warehouseGroup := groupV1.Group("/warehouses")
-	warehouseGroup.GET("/", warehouseController.GetAllWarehouse())
-	warehouseGroup.GET("/:id", warehouseController.GetWarehouseByID())
-	warehouseGroup.POST("/", warehouseController.CreateWarehouse())
-	warehouseGroup.DELETE("/:id", warehouseController.DeleteWarehouse())
-	warehouseGroup.PATCH("/:id", warehouseController.UpdateWarehouse())
+	routes.WarehouseRoutes(apiV1.Group("/warehouses"))
 
 	//Seller routes
 	sellerRepository := seller.NewRepository()
 	sellerService := seller.NewService(sellerRepository)
 	sellerController := controllers.NewSeller(sellerService)
 
-	sellerGroup := groupV1.Group("/sellers")
+	sellerGroup := apiV1.Group("/sellers")
 	sellerGroup.GET("/", sellerController.GetAll())
 	sellerGroup.GET("/:id", sellerController.GetById())
 	sellerGroup.POST("/", sellerController.Create())
@@ -99,7 +88,7 @@ func (api *APIServer) Run(port int) {
 	buyerService := buyer.NewService(buyerRepository)
 	buyerController := controllers.NewBuyer(buyerService)
 
-	buyerGroup := groupV1.Group("buyers")
+	buyerGroup := apiV1.Group("buyers")
 	buyerGroup.GET("/", buyerController.GetAll())
 	buyerGroup.GET("/:id", buyerController.GetId())
 	buyerGroup.POST("/", buyerController.Create())
