@@ -10,7 +10,6 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/routes"
 	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
 
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
@@ -84,16 +83,18 @@ func (api *APIServer) Run(port int) {
 	sellerGroup.DELETE("/:id", sellerController.Delete())
 
 	//Buyer routes
-	buyerRepository := buyer.NewRepository()
-	buyerService := buyer.NewService(buyerRepository)
-	buyerController := controllers.NewBuyer(buyerService)
+	routes.BuyerRoutes(apiV1.Group("/buyers"))
 
-	buyerGroup := apiV1.Group("buyers")
-	buyerGroup.GET("/", buyerController.GetAll())
-	buyerGroup.GET("/:id", buyerController.GetId())
-	buyerGroup.POST("/", buyerController.Create())
-	buyerGroup.PATCH("/:id", buyerController.UpdateCardNumberLastName())
-	buyerGroup.DELETE("/:id", buyerController.DeleteBuyer())
+	// buyerRepository := buyer.NewRepository()
+	// buyerService := buyer.NewService(buyerRepository)
+	// buyerController := controllers.NewBuyer(buyerService)
+
+	// buyerGroup := apiV1.Group("buyers")
+	// buyerGroup.GET("/", buyerController.GetAll())
+	// buyerGroup.GET("/:id", buyerController.GetId())
+	// buyerGroup.POST("/", buyerController.Create())
+	// buyerGroup.PATCH("/:id", buyerController.UpdateCardNumberLastName())
+	// buyerGroup.DELETE("/:id", buyerController.DeleteBuyer())
 
 	router.Run(fmt.Sprintf(":%d", port))
 }

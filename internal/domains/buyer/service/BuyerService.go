@@ -1,10 +1,12 @@
-package buyer
+package service
+
+import buyer "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/domain"
 
 type service struct {
-	repository Repository
+	repository buyer.BuyerRepository
 }
 
-func (s service) Create(cardNumberId int64, firstName string, lastName string) (*Buyer, error) {
+func (s service) Create(cardNumberId int64, firstName string, lastName string) (*buyer.Buyer, error) {
 	buyer, err := s.repository.Create(cardNumberId, firstName, lastName)
 	if err != nil {
 		return nil, err
@@ -12,7 +14,7 @@ func (s service) Create(cardNumberId int64, firstName string, lastName string) (
 	return buyer, nil
 }
 
-func (s service) GetAll() ([]Buyer, error) {
+func (s service) GetAll() ([]buyer.Buyer, error) {
 	buyers, err := s.repository.GetAll()
 	if err != nil {
 		return nil, err
@@ -20,7 +22,7 @@ func (s service) GetAll() ([]Buyer, error) {
 	return buyers, nil
 }
 
-func (s service) GetId(id int64) (*Buyer, error) {
+func (s service) GetId(id int64) (*buyer.Buyer, error) {
 	buyer, err := s.repository.GetId(id)
 	if err != nil {
 		return nil, err
@@ -28,7 +30,7 @@ func (s service) GetId(id int64) (*Buyer, error) {
 	return buyer, nil
 }
 
-func (s service) Update(id int64, cardNumberId int64, lastName string) (*Buyer, error) {
+func (s service) Update(id int64, cardNumberId int64, lastName string) (*buyer.Buyer, error) {
 	buyer, err := s.repository.Update(id, cardNumberId, lastName)
 	if err != nil {
 		return nil, err
@@ -44,7 +46,7 @@ func (s service) Delete(id int64) error {
 	return nil
 }
 
-func NewService(r Repository) Service {
+func NewBuyerService(r buyer.BuyerRepository) buyer.BuyerService {
 	return &service{
 		repository: r,
 	}

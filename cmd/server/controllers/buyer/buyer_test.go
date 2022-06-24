@@ -7,29 +7,29 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/mocks"
+	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/buyer"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/domain/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
 
 var EndpointBuyer = "/api/v1/buyers"
 
-var expectBuyer = &buyer.Buyer{
+var expectBuyer = &domain.Buyer{
 	Id:           0,
 	CardNumberId: 402323,
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
 }
 
-var bodyBuyer = &buyer.Buyer{
+var bodyBuyer = &domain.Buyer{
 	CardNumberId: 402323,
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
 }
 
 func TestBuyerController_Create(t *testing.T) {
-	service := mocks.NewService(t)
+	service := mocks.NewBuyerService(t)
 
 	t.Run("create_ok: when data entry is successful, should return code 201.", func(t *testing.T) {
 
@@ -54,7 +54,7 @@ func TestBuyerController_Create(t *testing.T) {
 
 	t.Run("create_fail: when the JSON does not contain the required fields, should return code 422", func(t *testing.T) {
 
-		service := mocks.NewService(t)
+		service := mocks.NewBuyerService(t)
 		controller := controllers.NewBuyer(service)
 
 		r := testutil.SetUpRouter()
@@ -87,13 +87,13 @@ func TestBuyerController_Create(t *testing.T) {
 }
 
 func TestBuyerController_GetAll(t *testing.T) {
-	service := mocks.NewService(t)
+	service := mocks.NewBuyerService(t)
 
 	t.Run("find_all: when data entry is successful, should return code 200.", func(t *testing.T) {
 
 		service.
 			On("GetAll").
-			Return([]buyer.Buyer{*expectBuyer}, nil).
+			Return([]domain.Buyer{*expectBuyer}, nil).
 			Once()
 
 		controller := controllers.NewBuyer(service)
@@ -112,7 +112,7 @@ func TestBuyerController_GetAll(t *testing.T) {
 
 		service.
 			On("GetAll").
-			Return([]buyer.Buyer{}, fmt.Errorf("error")).
+			Return([]domain.Buyer{}, fmt.Errorf("error")).
 			Once()
 
 		controller := controllers.NewBuyer(service)
@@ -128,7 +128,7 @@ func TestBuyerController_GetAll(t *testing.T) {
 }
 
 func TestBuyerController_GetById(t *testing.T) {
-	service := mocks.NewService(t)
+	service := mocks.NewBuyerService(t)
 
 	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 
@@ -175,9 +175,9 @@ func TestBuyerController_GetById(t *testing.T) {
 }
 
 func TestBuyerController_Update(t *testing.T) {
-	service := mocks.NewService(t)
+	service := mocks.NewBuyerService(t)
 
-	updateBody := &buyer.Buyer{
+	updateBody := &domain.Buyer{
 		Id:           1,
 		CardNumberId: 402324,
 		LastName:     "LastNameTest 2",
@@ -237,7 +237,7 @@ func TestBuyerController_Update(t *testing.T) {
 	})
 }
 func TestBuyerController_Delete(t *testing.T) {
-	service := mocks.NewService(t)
+	service := mocks.NewBuyerService(t)
 
 	t.Run("delete_non_existent: when the buyer does not exist, should return code 404", func(t *testing.T) {
 
