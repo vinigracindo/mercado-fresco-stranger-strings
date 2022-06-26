@@ -1,6 +1,6 @@
 package service
 
-import buyer "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/domain"
+import buyer "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
 
 type service struct {
 	repository buyer.BuyerRepository

@@ -3,8 +3,8 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/buyer"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/repository"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/service"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/repository"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/service"
 )
 
 func BuyerRoutes(routes *gin.RouterGroup) {

@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/domain"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/domain/mocks"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/service"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/service"
 )
 
 var expectBuyer = &domain.Buyer{

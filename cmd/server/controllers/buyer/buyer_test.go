@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/buyer"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/domain"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/domain/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/testutil"
 )
 

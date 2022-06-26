@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	buyer "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/domain"
+	buyer "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
