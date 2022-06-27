@@ -20,6 +20,7 @@ func NewMariaDBEmployeeRepository(db *sql.DB) domain.EmployeeRepository {
 
 func (repo *mariaDBEmployeerepository) cardNumberIsUnique(cardNumberId string) bool {
 	row := repo.db.QueryRow("select card_number_id from employees where card_number_id=?")
+
 	if err := row.Scan(&cardNumberId); err != nil {
 		return true
 	}
@@ -30,9 +31,11 @@ func (repo *mariaDBEmployeerepository) GetAll(ctx context.Context) ([]domain.Emp
 	employees := []domain.Employee{}
 
 	rows, err := repo.db.QueryContext(ctx, "select id, card_number_id, first_name, last_name, warehouse_id from employees")
+
 	if err != nil {
 		return employees, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var employee domain.Employee
@@ -45,14 +48,20 @@ func (repo *mariaDBEmployeerepository) GetAll(ctx context.Context) ([]domain.Emp
 	return employees, nil
 }
 
-func (mariaDBEmployeerepository) GetById(id int64) (*domain.Employee, error) {
-	for _, employee := range employees {
-		if employee.Id == id {
-			return &employee, nil
-		}
+func (repo *mariaDBEmployeerepository) GetById(id int64) (*domain.Employee, error) {
+	var employee domain.Employee
+
+	row := repo.db.QueryRowContext(
+		context.Background(),
+		"select id, card_number_id, first_name, last_name, warehouse_id from employees where id=?",
+		id,
+	)
+	err := row.Scan(&employee.Id, &employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WarehouseId)
+	if err != nil {
+		return nil, domain.ErrEmployeeNotFound
 	}
 
-	return nil, domain.ErrEmployeeNotFound
+	return &employee, nil
 }
 
 func (repo mariaDBEmployeerepository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
