@@ -1,15 +1,16 @@
-package section_test
+package service_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section/domain/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section/service"
 )
 
-var expectedSection = section.Section{
+var expectedSection = domain.SectionModel{
 	SectionNumber:      int64(1),
 	CurrentTemperature: int64(1),
 	MinimumTemperature: int64(1),
@@ -20,7 +21,7 @@ var expectedSection = section.Section{
 	ProductTypeId:      int64(1),
 }
 
-var expectedUpdatedSection = section.Section{
+var expectedUpdatedSection = domain.SectionModel{
 	Id:                 int64(1),
 	SectionNumber:      int64(1),
 	CurrentTemperature: int64(1),
@@ -33,7 +34,7 @@ var expectedUpdatedSection = section.Section{
 }
 
 func TestSectionService_Create(t *testing.T) {
-	mockRepository := mocks.NewRepository(t)
+	mockRepository := mocks.NewSectionRepository(t)
 
 	t.Run("create_ok: when it contains the mandatory fields, should create a section", func(t *testing.T) {
 		mockRepository.
@@ -50,7 +51,7 @@ func TestSectionService_Create(t *testing.T) {
 			Return(expectedSection, nil).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		result, err := service.Create(1, 1, 1, 1, 1, 1, 1, 1)
 
 		assert.Nil(t, err)
@@ -71,40 +72,40 @@ func TestSectionService_Create(t *testing.T) {
 				expectedSection.WarehouseId,
 				expectedSection.ProductTypeId,
 			).
-			Return(section.Section{}, errorConflict).
+			Return(domain.SectionModel{}, errorConflict).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		result, err := service.Create(1, 1, 1, 1, 1, 1, 1, 1)
 
-		assert.Equal(t, section.Section{}, result)
+		assert.Equal(t, domain.SectionModel{}, result)
 		assert.Equal(t, errorConflict, err)
 	})
 }
 
 func TestSectionService_GetAll(t *testing.T) {
 	t.Run("get_all: when exists sections, should return a list", func(t *testing.T) {
-		mockRepository := mocks.NewRepository(t)
+		mockRepository := mocks.NewSectionRepository(t)
 		mockRepository.
 			On("GetAll").
-			Return([]section.Section{expectedSection}, nil).
+			Return([]domain.SectionModel{expectedSection}, nil).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		result, err := service.GetAll()
 
 		assert.Nil(t, err)
-		assert.Equal(t, []section.Section{expectedSection}, result)
+		assert.Equal(t, []domain.SectionModel{expectedSection}, result)
 	})
 
 	t.Run("get_all_error: should return any error", func(t *testing.T) {
-		mockRepository := mocks.NewRepository(t)
+		mockRepository := mocks.NewSectionRepository(t)
 		mockRepository.
 			On("GetAll").
-			Return([]section.Section{}, fmt.Errorf("any error")).
+			Return([]domain.SectionModel{}, fmt.Errorf("any error")).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		_, err := service.GetAll()
 
 		assert.NotNil(t, err)
@@ -113,7 +114,7 @@ func TestSectionService_GetAll(t *testing.T) {
 }
 
 func TestSectionService_GetById(t *testing.T) {
-	mockRepository := mocks.NewRepository(t)
+	mockRepository := mocks.NewSectionRepository(t)
 
 	t.Run("find_by_id_existent: when element searched for by id exists, should return a section", func(t *testing.T) {
 		mockRepository.
@@ -121,7 +122,7 @@ func TestSectionService_GetById(t *testing.T) {
 			Return(expectedSection, nil).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		result, err := service.GetById(1)
 
 		assert.Nil(t, err)
@@ -135,19 +136,19 @@ func TestSectionService_GetById(t *testing.T) {
 
 		mockRepository.
 			On("GetById", id).
-			Return(section.Section{}, errorNotFound).
+			Return(domain.SectionModel{}, errorNotFound).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		result, err := service.GetById(id)
 
-		assert.Equal(t, section.Section{}, result)
+		assert.Equal(t, domain.SectionModel{}, result)
 		assert.Equal(t, errorNotFound, err)
 	})
 }
 
 func TestSectionService_Delete(t *testing.T) {
-	mockRepository := mocks.NewRepository(t)
+	mockRepository := mocks.NewSectionRepository(t)
 
 	t.Run("delete_ok: when the section exist, should delete a section", func(t *testing.T) {
 		mockRepository.
@@ -155,7 +156,7 @@ func TestSectionService_Delete(t *testing.T) {
 			Return(nil).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		err := service.Delete(1)
 
 		assert.Nil(t, err)
@@ -169,7 +170,7 @@ func TestSectionService_Delete(t *testing.T) {
 			Return(errorNotFound).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		err := service.Delete(id)
 
 		assert.Equal(t, errorNotFound, err)
@@ -177,7 +178,7 @@ func TestSectionService_Delete(t *testing.T) {
 }
 
 func TestSectionService_Update(t *testing.T) {
-	mockRepository := mocks.NewRepository(t)
+	mockRepository := mocks.NewSectionRepository(t)
 
 	t.Run("update_existent: when the data update is successful, should return the updated session", func(t *testing.T) {
 		mockRepository.
@@ -185,7 +186,7 @@ func TestSectionService_Update(t *testing.T) {
 			Return(expectedUpdatedSection, nil).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		result, err := service.UpdateCurrentCapacity(int64(1), int64(5))
 
 		assert.Nil(t, err)
@@ -197,14 +198,14 @@ func TestSectionService_Update(t *testing.T) {
 		errorNotFound := fmt.Errorf("section %d not found", id)
 		mockRepository.
 			On("UpdateCurrentCapacity", id, int64(5)).
-			Return(section.Section{}, errorNotFound).
+			Return(domain.SectionModel{}, errorNotFound).
 			Once()
 
-		service := section.NewService(mockRepository)
+		service := service.NewServiceSection(mockRepository)
 		result, err := service.UpdateCurrentCapacity(id, int64(5))
 
 		assert.Equal(t, errorNotFound, err)
-		assert.Equal(t, section.Section{}, result)
+		assert.Equal(t, domain.SectionModel{}, result)
 	})
 
 }
