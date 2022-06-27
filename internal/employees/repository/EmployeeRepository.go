@@ -7,13 +7,13 @@ import (
 var employees = []domain.Employee{}
 var lastId int64 = 1
 
-type repository struct{}
+type mariaDBEmployeerepository struct{}
 
-func NewEmployeeRepository() domain.EmployeeRepository {
-	return &repository{}
+func NewMariaDBEmployeeRepository() domain.EmployeeRepository {
+	return &mariaDBEmployeerepository{}
 }
 
-func (repository) cardNumberIsUnique(cardNumberId string) bool {
+func (mariaDBEmployeerepository) cardNumberIsUnique(cardNumberId string) bool {
 	for _, employee := range employees {
 		if employee.CardNumberId == cardNumberId {
 			return false
@@ -22,11 +22,11 @@ func (repository) cardNumberIsUnique(cardNumberId string) bool {
 	return true
 }
 
-func (repository) GetAll() ([]domain.Employee, error) {
+func (mariaDBEmployeerepository) GetAll() ([]domain.Employee, error) {
 	return employees, nil
 }
 
-func (repository) GetById(id int64) (*domain.Employee, error) {
+func (mariaDBEmployeerepository) GetById(id int64) (*domain.Employee, error) {
 	for _, employee := range employees {
 		if employee.Id == id {
 			return &employee, nil
@@ -36,7 +36,7 @@ func (repository) GetById(id int64) (*domain.Employee, error) {
 	return nil, domain.ErrEmployeeNotFound
 }
 
-func (repo repository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
+func (repo mariaDBEmployeerepository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
 	nextId := lastId
 	employee := domain.Employee{
 		Id:           nextId,
@@ -55,7 +55,7 @@ func (repo repository) Create(cardNumberId string, firstName string, lastName st
 	return employee, nil
 }
 
-func (repo repository) UpdateFullname(id int64, firstName string, lastName string) (*domain.Employee, error) {
+func (repo mariaDBEmployeerepository) UpdateFullname(id int64, firstName string, lastName string) (*domain.Employee, error) {
 	for i, employee := range employees {
 		if employee.Id == id {
 			employees[i].FirstName = firstName
@@ -66,7 +66,7 @@ func (repo repository) UpdateFullname(id int64, firstName string, lastName strin
 	return nil, domain.ErrEmployeeNotFound
 }
 
-func (repo repository) Delete(id int64) error {
+func (repo mariaDBEmployeerepository) Delete(id int64) error {
 	for i, employee := range employees {
 		if employee.Id == id {
 			employees = append(employees[:i], employees[i+1:]...)
