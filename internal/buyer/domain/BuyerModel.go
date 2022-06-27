@@ -1,4 +1,4 @@
-package buyer
+package domain
 
 type Buyer struct {
 	Id           int64  `json:"id"`
@@ -7,7 +7,7 @@ type Buyer struct {
 	LastName     string `json:"last_name"`
 }
 
-type Repository interface {
+type BuyerRepository interface {
 	Create(cardNumberId int64, firstName string, lastName string) (*Buyer, error)
 	GetAll() ([]Buyer, error)
 	GetId(id int64) (*Buyer, error)
@@ -16,7 +16,7 @@ type Repository interface {
 	CreateId() int64
 }
 
-type Service interface {
+type BuyerService interface {
 	Create(cardNumberId int64, firstName string, lastName string) (*Buyer, error)
 	GetAll() ([]Buyer, error)
 	GetId(id int64) (*Buyer, error)

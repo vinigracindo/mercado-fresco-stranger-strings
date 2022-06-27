@@ -1,8 +1,12 @@
-package buyer
+package repository
 
-import "fmt"
+import (
+	"fmt"
 
-var buyers = []Buyer{}
+	buyer "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
+)
+
+var buyers = []buyer.Buyer{}
 var id int64 = 0
 
 type repository struct{}
@@ -12,14 +16,14 @@ func (r *repository) CreateId() int64 {
 	return id
 }
 
-func (r *repository) Create(cardNumberId int64, firstName string, lastName string) (*Buyer, error) {
+func (r *repository) Create(cardNumberId int64, firstName string, lastName string) (*buyer.Buyer, error) {
 
 	for i := range buyers {
 		if buyers[i].CardNumberId == cardNumberId {
 			return nil, fmt.Errorf("buyer already registered: %d", cardNumberId)
 		}
 	}
-	newBuyer := Buyer{
+	newBuyer := buyer.Buyer{
 		Id:           r.CreateId(),
 		CardNumberId: cardNumberId,
 		FirstName:    firstName,
@@ -29,11 +33,11 @@ func (r *repository) Create(cardNumberId int64, firstName string, lastName strin
 	return &newBuyer, nil
 }
 
-func (r *repository) GetAll() ([]Buyer, error) {
+func (r *repository) GetAll() ([]buyer.Buyer, error) {
 	return buyers, nil
 }
 
-func (r *repository) GetId(id int64) (*Buyer, error) {
+func (r *repository) GetId(id int64) (*buyer.Buyer, error) {
 	for _, buyer := range buyers {
 		if buyer.Id == id {
 			return &buyer, nil
@@ -42,7 +46,7 @@ func (r *repository) GetId(id int64) (*Buyer, error) {
 	return nil, fmt.Errorf("buyer with id %d not found", id)
 }
 
-func (r *repository) Update(id int64, cardNumberId int64, lastName string) (*Buyer, error) {
+func (r *repository) Update(id int64, cardNumberId int64, lastName string) (*buyer.Buyer, error) {
 	for i, buyer := range buyers {
 		if buyer.Id == id {
 			buyers[i].CardNumberId = cardNumberId
@@ -69,6 +73,6 @@ func (r *repository) Delete(id int64) error {
 	return nil
 }
 
-func NewRepository() Repository {
+func NewBuyerRepository() buyer.BuyerRepository {
 	return &repository{}
 }

@@ -1,22 +1,23 @@
-package buyer_test
+package service_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/service"
 )
 
-var expectBuyer = &buyer.Buyer{
+var expectBuyer = &domain.Buyer{
 	Id:           1,
 	CardNumberId: 402323,
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
 }
 
-var expectBuyerList = []buyer.Buyer{
+var expectBuyerList = []domain.Buyer{
 	{
 		CardNumberId: 402323,
 		FirstName:    "FirstNameTest",
@@ -30,7 +31,7 @@ var expectBuyerList = []buyer.Buyer{
 }
 
 func TestService_Create(t *testing.T) {
-	repo := mocks.NewRepository(t)
+	repo := mocks.NewBuyerRepository(t)
 
 	t.Run("crete_ok: when it contains the mandatory fields, should create a buyer", func(t *testing.T) {
 
@@ -39,7 +40,7 @@ func TestService_Create(t *testing.T) {
 			Return(expectBuyer, nil).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		result, _ := service.Create(int64(402323), "FirstNameTest", "LastNameTest")
 
@@ -53,7 +54,7 @@ func TestService_Create(t *testing.T) {
 			Return(expectBuyer, fmt.Errorf("Card number id is not unique.")).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		buyer, err := service.Create(int64(402323), "FirstNameTest", "LastNameTest")
 
@@ -65,7 +66,7 @@ func TestService_Create(t *testing.T) {
 }
 
 func TestService_GetAll(t *testing.T) {
-	repo := mocks.NewRepository(t)
+	repo := mocks.NewBuyerRepository(t)
 	t.Run("find_all: when exists buyers, should return a list", func(t *testing.T) {
 
 		repo.
@@ -73,7 +74,7 @@ func TestService_GetAll(t *testing.T) {
 			Return(expectBuyerList, nil).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		buyerList, _ := service.GetAll()
 
@@ -85,7 +86,7 @@ func TestService_GetAll(t *testing.T) {
 			Return(expectBuyerList, fmt.Errorf("any error")).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		_, err := service.GetAll()
 
@@ -95,7 +96,7 @@ func TestService_GetAll(t *testing.T) {
 }
 
 func TestService_GetId(t *testing.T) {
-	repo := mocks.NewRepository(t)
+	repo := mocks.NewBuyerRepository(t)
 
 	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
@@ -104,7 +105,7 @@ func TestService_GetId(t *testing.T) {
 			Return(nil, fmt.Errorf("Buyer not found.")).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		buyer, err := service.GetId(int64(4))
 
@@ -119,7 +120,7 @@ func TestService_GetId(t *testing.T) {
 			Return(expectBuyer, nil).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		buyer, err := service.GetId(int64(1))
 
@@ -130,7 +131,7 @@ func TestService_GetId(t *testing.T) {
 }
 
 func TestService_Update(t *testing.T) {
-	repo := mocks.NewRepository(t)
+	repo := mocks.NewBuyerRepository(t)
 
 	t.Run("update_existent: when the data update is successful, should return the updated session", func(t *testing.T) {
 
@@ -139,7 +140,7 @@ func TestService_Update(t *testing.T) {
 			Return(expectBuyer, nil).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		buyer, err := service.Update(int64(1), int64(456), "LastNameTest 2")
 
@@ -155,7 +156,7 @@ func TestService_Update(t *testing.T) {
 			Return(nil, fmt.Errorf("Buyer not found.")).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		buyer, err := service.Update(int64(1), int64(456), "LastNameTest 2")
 		assert.Nil(t, buyer)
@@ -165,7 +166,7 @@ func TestService_Update(t *testing.T) {
 }
 
 func TestService_Delete(t *testing.T) {
-	repo := mocks.NewRepository(t)
+	repo := mocks.NewBuyerRepository(t)
 
 	t.Run("delete_non_existent: when the buyer does not exist, should return an error.", func(t *testing.T) {
 
@@ -174,7 +175,7 @@ func TestService_Delete(t *testing.T) {
 			Return(fmt.Errorf("buyer not found.")).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		err := service.Delete(int64(1))
 
@@ -188,7 +189,7 @@ func TestService_Delete(t *testing.T) {
 			Return(nil).
 			Once()
 
-		service := buyer.NewService(repo)
+		service := service.NewBuyerService(repo)
 
 		err := service.Delete(int64(1))
 

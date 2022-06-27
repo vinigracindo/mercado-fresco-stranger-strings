@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
+	buyer "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
@@ -21,10 +21,10 @@ type requestBuyerPatch struct {
 }
 
 type BuyerController struct {
-	service buyer.Service
+	service buyer.BuyerService
 }
 
-func NewBuyer(service buyer.Service) BuyerController {
+func NewBuyer(service buyer.BuyerService) BuyerController {
 	return BuyerController{service: service}
 }
 
