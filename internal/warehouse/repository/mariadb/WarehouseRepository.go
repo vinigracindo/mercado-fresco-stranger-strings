@@ -50,7 +50,39 @@ func (r *mariadbWarehouse) Create(ctx context.Context, wr *warehouse.WarehouseMo
 }
 
 func (r *mariadbWarehouse) GetAll(ctx context.Context) ([]warehouse.WarehouseModel, error) {
-	return []warehouse.WarehouseModel{}, nil
+	result, err := r.db.QueryContext(ctx, GetAllWarehouses)
+
+	defer result.Close()
+
+	if err != nil {
+		return []warehouse.WarehouseModel{}, err
+	}
+
+	var listOfWarehouse []warehouse.WarehouseModel
+
+	for result.Next() {
+		warehouseRow := warehouse.WarehouseModel{}
+
+		err = result.Scan(
+			&warehouseRow.Id,
+			&warehouseRow.Address,
+			&warehouseRow.Telephone,
+			&warehouseRow.WarehouseCode,
+			&warehouseRow.MinimunCapacity,
+			&warehouseRow.MinimunTemperature,
+			&warehouseRow.LocalityID,
+		)
+
+		if err != nil {
+			return []warehouse.WarehouseModel{}, err
+		}
+
+		listOfWarehouse = append(listOfWarehouse, warehouseRow)
+
+	}
+
+	return listOfWarehouse, nil
+
 }
 func (r *mariadbWarehouse) GetById(ctx context.Context, id int64) (warehouse.WarehouseModel, error) {
 	return warehouse.WarehouseModel{}, nil
