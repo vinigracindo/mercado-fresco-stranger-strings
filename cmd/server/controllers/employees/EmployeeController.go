@@ -5,15 +5,15 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
 type EmployeeController struct {
-	service employees.Service
+	service domain.EmployeeService
 }
 
-func NewEmployee(service employees.Service) EmployeeController {
+func NewEmployeeController(service domain.EmployeeService) EmployeeController {
 	return EmployeeController{service: service}
 }
 

@@ -1,4 +1,4 @@
-package employees
+package domain
 
 import "errors"
 

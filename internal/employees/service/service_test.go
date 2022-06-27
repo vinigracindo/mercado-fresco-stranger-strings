@@ -1,15 +1,16 @@
-package employees_test
+package service_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/service"
 )
 
-func makeEmployee() employees.Employee {
-	return employees.Employee{
+func makeEmployee() domain.Employee {
+	return domain.Employee{
 		CardNumberId: "123456",
 		FirstName:    "John",
 		LastName:     "Doe",
@@ -20,8 +21,8 @@ func makeEmployee() employees.Employee {
 func TestEmployeeService_Create(t *testing.T) {
 	expectedEmployee := makeEmployee()
 
-	repo := mocks.NewRepository(t)
-	service := employees.NewService(repo)
+	repo := mocks.NewEmployeeRepository(t)
+	service := service.NewEmployeeService(repo) // employees.NewService
 
 	t.Run("create_ok: when it contains the mandatory fields, should create a employee", func(t *testing.T) {
 		repo.
@@ -38,7 +39,7 @@ func TestEmployeeService_Create(t *testing.T) {
 	t.Run("create_conflict: when card_number already exists, should not create a employee", func(t *testing.T) {
 		repo.
 			On("Create", "123456", "First Name", "Last Name", int64(1)).
-			Return(employees.Employee{}, employees.ErrCardNumberMustBeUnique).
+			Return(domain.Employee{}, domain.ErrCardNumberMustBeUnique).
 			Once()
 
 		employee, err := service.Create("123456", "First Name", "Last Name", 1)
@@ -49,11 +50,11 @@ func TestEmployeeService_Create(t *testing.T) {
 }
 
 func TestEmployeeService_GetAll(t *testing.T) {
-	repo := mocks.NewRepository(t)
-	service := employees.NewService(repo)
+	repo := mocks.NewEmployeeRepository(t)
+	service := service.NewEmployeeService(repo)
 
 	t.Run("find_all: when exists employees, should return a list", func(t *testing.T) {
-		expectedEmployees := []employees.Employee{
+		expectedEmployees := []domain.Employee{
 			makeEmployee(),
 			makeEmployee(),
 		}
@@ -69,7 +70,7 @@ func TestEmployeeService_GetAll(t *testing.T) {
 	t.Run("find_all_err: should return error.", func(t *testing.T) {
 		repo.
 			On("GetAll").
-			Return(nil, employees.ErrEmployeeNotFound).
+			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
 		employees, err := service.GetAll()
@@ -80,13 +81,13 @@ func TestEmployeeService_GetAll(t *testing.T) {
 }
 
 func TestEmployeeService_GetById(t *testing.T) {
-	repo := mocks.NewRepository(t)
-	service := employees.NewService(repo)
+	repo := mocks.NewEmployeeRepository(t)
+	service := service.NewEmployeeService(repo)
 
 	t.Run("find_by_id_non_existent: when element searched for by id exists, should return a employee", func(t *testing.T) {
 		repo.
 			On("GetById", int64(1)).
-			Return(nil, employees.ErrEmployeeNotFound).
+			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
 		employee, err := service.GetById(int64(1))
@@ -111,8 +112,8 @@ func TestEmployeeService_GetById(t *testing.T) {
 }
 
 func TestEmployeeService_UpdateFullname(t *testing.T) {
-	repo := mocks.NewRepository(t)
-	service := employees.NewService(repo)
+	repo := mocks.NewEmployeeRepository(t)
+	service := service.NewEmployeeService(repo)
 
 	t.Run("update_existent: when the data update is successful, should return the updated employee", func(t *testing.T) {
 		updatedEmployee := makeEmployee()
@@ -133,7 +134,7 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 		repo.
 			On("UpdateFullname", int64(1), "John", "Doe").
-			Return(nil, employees.ErrEmployeeNotFound).
+			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
 		employee, err := service.UpdateFullname(int64(1), "John", "Doe")
@@ -144,13 +145,13 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 }
 
 func TestEmployeeService_Delete(t *testing.T) {
-	repo := mocks.NewRepository(t)
-	service := employees.NewService(repo)
+	repo := mocks.NewEmployeeRepository(t)
+	service := service.NewEmployeeService(repo)
 
 	t.Run("delete_non_existent: when the section does not exist, should return an error", func(t *testing.T) {
 		repo.
 			On("Delete", int64(1)).
-			Return(employees.ErrEmployeeNotFound).
+			Return(domain.ErrEmployeeNotFound).
 			Once()
 
 		err := service.Delete(int64(1))

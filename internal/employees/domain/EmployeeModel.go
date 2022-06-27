@@ -1,4 +1,4 @@
-package employees
+package domain
 
 type Employee struct {
 	Id           int64  `json:"id"`
@@ -8,7 +8,7 @@ type Employee struct {
 	WarehouseId  int64  `json:"warehouse_id"`
 }
 
-type Service interface {
+type EmployeeService interface {
 	GetAll() ([]Employee, error)
 	GetById(id int64) (*Employee, error)
 	Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
@@ -16,7 +16,7 @@ type Service interface {
 	Delete(id int64) error
 }
 
-type Repository interface {
+type EmployeeRepository interface {
 	GetAll() ([]Employee, error)
 	GetById(id int64) (*Employee, error)
 	Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
