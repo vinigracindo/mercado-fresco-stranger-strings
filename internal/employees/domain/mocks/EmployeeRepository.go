@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	context "context"
+
 	mock "github.com/stretchr/testify/mock"
 	domain "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
 )
@@ -47,13 +49,13 @@ func (_m *EmployeeRepository) Delete(id int64) error {
 	return r0
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *EmployeeRepository) GetAll() ([]domain.Employee, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx
+func (_m *EmployeeRepository) GetAll(ctx context.Context) ([]domain.Employee, error) {
+	ret := _m.Called(ctx)
 
 	var r0 []domain.Employee
-	if rf, ok := ret.Get(0).(func() []domain.Employee); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context) []domain.Employee); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.Employee)
@@ -61,8 +63,8 @@ func (_m *EmployeeRepository) GetAll() ([]domain.Employee, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}

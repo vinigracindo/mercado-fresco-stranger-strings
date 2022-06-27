@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/service"
@@ -59,7 +60,7 @@ func TestEmployeeService_GetAll(t *testing.T) {
 			makeEmployee(),
 		}
 
-		repo.On("GetAll").Return(expectedEmployees, nil).Once()
+		repo.On("GetAll", mock.Anything).Return(expectedEmployees, nil).Once()
 
 		employees, err := service.GetAll()
 
@@ -69,7 +70,7 @@ func TestEmployeeService_GetAll(t *testing.T) {
 
 	t.Run("find_all_err: should return error.", func(t *testing.T) {
 		repo.
-			On("GetAll").
+			On("GetAll", mock.Anything).
 			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 

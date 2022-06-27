@@ -1,13 +1,17 @@
 package service
 
-import "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
+import (
+	"context"
+
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
+)
 
 type service struct {
 	repo domain.EmployeeRepository
 }
 
 func (s service) GetAll() ([]domain.Employee, error) {
-	employees, err := s.repo.GetAll()
+	employees, err := s.repo.GetAll(context.Background())
 
 	if err != nil {
 		return nil, err

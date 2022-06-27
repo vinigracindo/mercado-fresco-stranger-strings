@@ -1,5 +1,7 @@
 package domain
 
+import "context"
+
 type Employee struct {
 	Id           int64  `json:"id"`
 	CardNumberId string `json:"card_number_id"`
@@ -17,7 +19,7 @@ type EmployeeService interface {
 }
 
 type EmployeeRepository interface {
-	GetAll() ([]Employee, error)
+	GetAll(ctx context.Context) ([]Employee, error)
 	GetById(id int64) (*Employee, error)
 	Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
 	UpdateFullname(id int64, firstName string, lastName string) (*Employee, error)

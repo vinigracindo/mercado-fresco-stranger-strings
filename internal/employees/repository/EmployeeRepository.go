@@ -1,28 +1,47 @@
 package repository
 
 import (
+	"context"
+	"database/sql"
+
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
 )
 
 var employees = []domain.Employee{}
 var lastId int64 = 1
 
-type mariaDBEmployeerepository struct{}
-
-func NewMariaDBEmployeeRepository() domain.EmployeeRepository {
-	return &mariaDBEmployeerepository{}
+type mariaDBEmployeerepository struct {
+	db *sql.DB
 }
 
-func (mariaDBEmployeerepository) cardNumberIsUnique(cardNumberId string) bool {
-	for _, employee := range employees {
-		if employee.CardNumberId == cardNumberId {
-			return false
-		}
+func NewMariaDBEmployeeRepository(db *sql.DB) domain.EmployeeRepository {
+	return &mariaDBEmployeerepository{db: db}
+}
+
+func (repo *mariaDBEmployeerepository) cardNumberIsUnique(cardNumberId string) bool {
+	row := repo.db.QueryRow("select card_number_id from employees where card_number_id=?")
+	if err := row.Scan(&cardNumberId); err != nil {
+		return true
 	}
-	return true
+	return false
 }
 
-func (mariaDBEmployeerepository) GetAll() ([]domain.Employee, error) {
+func (repo *mariaDBEmployeerepository) GetAll(ctx context.Context) ([]domain.Employee, error) {
+	employees := []domain.Employee{}
+
+	rows, err := repo.db.QueryContext(ctx, "select id, card_number_id, first_name, last_name, warehouse_id from employees")
+	if err != nil {
+		return employees, err
+	}
+
+	for rows.Next() {
+		var employee domain.Employee
+		if err := rows.Scan(&employee.Id, &employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WarehouseId); err != nil {
+			return employees, err
+		}
+		employees = append(employees, employee)
+	}
+
 	return employees, nil
 }
 
