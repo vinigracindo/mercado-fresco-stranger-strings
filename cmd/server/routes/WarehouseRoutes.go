@@ -3,8 +3,8 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/warehouse"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/repository"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/services"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/repository"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/services"
 )
 
 func WarehouseRoutes(routes *gin.RouterGroup) {

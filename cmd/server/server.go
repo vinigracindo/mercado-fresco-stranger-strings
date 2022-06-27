@@ -2,18 +2,16 @@ package server
 
 import (
 	"fmt"
-
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/routes"
-	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
-
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/buyer"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/section"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
 )
 
 type APIServer struct{}
@@ -31,59 +29,23 @@ func (api *APIServer) Run(port int) {
 
 	apiV1 := router.Group("api/v1")
 
-	// Section routes
-	sectionRepository := section.NewRepository()
-	sectionService := section.NewService(sectionRepository)
-	sectionController := controllers.NewSection(sectionService)
-
-	sectionGroup := apiV1.Group("/sections")
-	sectionGroup.DELETE("/:id", sectionController.Delete())
-	sectionGroup.PATCH("/:id", sectionController.UpdateCurrentCapacity())
-	sectionGroup.POST("/", sectionController.Create())
-	sectionGroup.GET("/:id", sectionController.GetById())
-	sectionGroup.GET("/", sectionController.GetAll())
+	//Section routes
+	routes.SectionRoutes(apiV1.Group("/sections"))
 
 	// Employee routes
 	routes.WarehouseRoutes(apiV1.Group("/employees"))
 
 	// Product routes
-	productRepository := product.CreateRepository()
-	productService := product.CreateService(productRepository)
-	productController := controllers.CreateProductController(productService)
-
-	productGroup := apiV1.Group("/products")
-	productGroup.GET("/", productController.GetAll())
-	productGroup.GET("/:id", productController.GetById())
-	productGroup.POST("/", productController.Create())
-	productGroup.PATCH("/:id", productController.UpdateDescription())
-	productGroup.DELETE("/:id", productController.Delete())
+	routes.ProductRoutes(apiV1.Group("/products"))
 
 	//Warehouse routes
 	routes.WarehouseRoutes(apiV1.Group("/warehouses"))
 
 	//Seller routes
-	sellerRepository := seller.NewRepository()
-	sellerService := seller.NewService(sellerRepository)
-	sellerController := controllers.NewSeller(sellerService)
-
-	sellerGroup := apiV1.Group("/sellers")
-	sellerGroup.GET("/", sellerController.GetAll())
-	sellerGroup.GET("/:id", sellerController.GetById())
-	sellerGroup.POST("/", sellerController.Create())
-	sellerGroup.PATCH("/:id", sellerController.Update())
-	sellerGroup.DELETE("/:id", sellerController.Delete())
+	routes.SellerRoutes(apiV1.Group("/sellers"))
 
 	//Buyer routes
-	buyerRepository := buyer.NewRepository()
-	buyerService := buyer.NewService(buyerRepository)
-	buyerController := controllers.NewBuyer(buyerService)
-
-	buyerGroup := apiV1.Group("buyers")
-	buyerGroup.GET("/", buyerController.GetAll())
-	buyerGroup.GET("/:id", buyerController.GetId())
-	buyerGroup.POST("/", buyerController.Create())
-	buyerGroup.PATCH("/:id", buyerController.UpdateCardNumberLastName())
-	buyerGroup.DELETE("/:id", buyerController.DeleteBuyer())
+	routes.BuyerRoutes(apiV1.Group("/buyers"))
 
 	router.Run(fmt.Sprintf(":%d", port))
 }
