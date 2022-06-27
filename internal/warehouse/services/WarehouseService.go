@@ -1,6 +1,6 @@
 package services
 
-import warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
+import warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
 
 type service struct {
 	repository warehouse.WarehouseRepository

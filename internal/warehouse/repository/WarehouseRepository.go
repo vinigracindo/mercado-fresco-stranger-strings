@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
+	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
 )
 
 var wh = []warehouse.WarehouseModel{}

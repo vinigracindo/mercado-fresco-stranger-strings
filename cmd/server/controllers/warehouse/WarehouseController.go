@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
+	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 

@@ -6,9 +6,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/domain/mocks"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/warehouse/services"
+	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/services"
 )
 
 var expectedWarehouse = warehouse.WarehouseModel{
