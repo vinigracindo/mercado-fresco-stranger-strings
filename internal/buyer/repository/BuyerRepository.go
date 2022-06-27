@@ -16,11 +16,11 @@ func (r *repository) CreateId() int64 {
 	return id
 }
 
-func (r *repository) Create(cardNumberId int64, firstName string, lastName string) (*buyer.Buyer, error) {
+func (r *repository) Create(cardNumberId, firstName, lastName string) (*buyer.Buyer, error) {
 
 	for i := range buyers {
 		if buyers[i].CardNumberId == cardNumberId {
-			return nil, fmt.Errorf("buyer already registered: %d", cardNumberId)
+			return nil, fmt.Errorf("buyer already registered: %s", cardNumberId)
 		}
 	}
 	newBuyer := buyer.Buyer{
@@ -46,7 +46,7 @@ func (r *repository) GetId(id int64) (*buyer.Buyer, error) {
 	return nil, fmt.Errorf("buyer with id %d not found", id)
 }
 
-func (r *repository) Update(id int64, cardNumberId int64, lastName string) (*buyer.Buyer, error) {
+func (r *repository) Update(id int64, cardNumberId, lastName string) (*buyer.Buyer, error) {
 	for i, buyer := range buyers {
 		if buyer.Id == id {
 			buyers[i].CardNumberId = cardNumberId
