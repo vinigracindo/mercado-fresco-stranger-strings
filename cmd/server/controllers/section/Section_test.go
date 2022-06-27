@@ -1,6 +1,7 @@
 package controllers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -49,12 +50,15 @@ var expectedSection = domain.SectionModel{
 	ProductTypeId:      1,
 }
 
+var ctx = context.Background()
+
 func TestSectionController_Create(t *testing.T) {
 	mockService := mocks.NewSectionService(t)
 
 	t.Run("create_ok: when data entry is successful, should return code 201", func(t *testing.T) {
 		mockService.
 			On("Create",
+				ctx,
 				expectedSection.SectionNumber,
 				expectedSection.CurrentTemperature,
 				expectedSection.MinimumTemperature,
@@ -87,9 +91,6 @@ func TestSectionController_Create(t *testing.T) {
 		r.POST(EndpointSection, controller.Create())
 		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointSection, []byte{})
 
-		print("TESTANDO")
-		print(response.Body.String())
-
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 		assert.JSONEq(t, "{\"code\":422,\"message\":\"EOF\"}", response.Body.String())
 	})
@@ -97,6 +98,7 @@ func TestSectionController_Create(t *testing.T) {
 	t.Run("create_conflict: when the section_number already exists, should return code 409", func(t *testing.T) {
 		mockService.
 			On("Create",
+				ctx,
 				expectedSection.SectionNumber,
 				expectedSection.CurrentTemperature,
 				expectedSection.MinimumTemperature,
@@ -129,7 +131,7 @@ func TestSectionController_GetAll(t *testing.T) {
 
 	t.Run("find_all: when data entry is successful, should return code 200", func(t *testing.T) {
 		mockService.
-			On("GetAll").
+			On("GetAll", ctx).
 			Return([]domain.SectionModel{expectedSection}, nil).
 			Once()
 		controller := controllers.NewSection(mockService)
@@ -140,16 +142,13 @@ func TestSectionController_GetAll(t *testing.T) {
 		r.GET(EndpointSection, controller.GetAll())
 		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointSection, requestBody)
 
-		print("TESTANDO")
-		print(response.Body.String())
-
 		assert.Equal(t, http.StatusOK, response.Code)
 		assert.JSONEq(t, "{\"data\":[{\"id\":1,\"section_number\":1,\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}]}", response.Body.String())
 	})
 
 	t.Run("get_all_fail: when GetAll fail, should return code 400", func(t *testing.T) {
 		mockService.
-			On("GetAll").
+			On("GetAll", ctx).
 			Return([]domain.SectionModel{}, fmt.Errorf("any error"))
 		controller := controllers.NewSection(mockService)
 
@@ -169,7 +168,7 @@ func TestSectionController_GetById(t *testing.T) {
 
 	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 		mockService.
-			On("GetById", int64(1)).
+			On("GetById", ctx, int64(1)).
 			Return(expectedSection, nil)
 		controller := controllers.NewSection(mockService)
 
@@ -185,7 +184,7 @@ func TestSectionController_GetById(t *testing.T) {
 
 	t.Run("find_by_id_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService := mocks.NewSectionService(t)
-		mockService.On("GetById", int64(1)).Return(domain.SectionModel{}, fmt.Errorf("section not found"))
+		mockService.On("GetById", ctx, int64(1)).Return(domain.SectionModel{}, fmt.Errorf("section not found"))
 		controller := controllers.NewSection(mockService)
 
 		requestBody, _ := json.Marshal(bodySection)
@@ -226,7 +225,7 @@ func TestSectionController_Update(t *testing.T) {
 
 	t.Run("update_ok: when the request is successful, should return code 200", func(t *testing.T) {
 		mockService.
-			On("UpdateCurrentCapacity", int64(1), int64(1)).
+			On("UpdateCurrentCapacity", ctx, int64(1), int64(1)).
 			Return(expectedSection, nil).
 			Once()
 		controller := controllers.NewSection(mockService)
@@ -243,7 +242,7 @@ func TestSectionController_Update(t *testing.T) {
 
 	t.Run("update_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService.
-			On("UpdateCurrentCapacity", int64(1), int64(1)).
+			On("UpdateCurrentCapacity", ctx, int64(1), int64(1)).
 			Return(domain.SectionModel{}, fmt.Errorf("section not found")).
 			Once()
 		controller := controllers.NewSection(mockService)
@@ -301,7 +300,7 @@ func TestSectionController_Delete(t *testing.T) {
 
 	t.Run("delete_ok: when the request is successful, should return code 204", func(t *testing.T) {
 		mockService.
-			On("Delete", int64(1)).
+			On("Delete", ctx, int64(1)).
 			Return(nil).
 			Once()
 		controller := controllers.NewSection(mockService)
@@ -315,7 +314,7 @@ func TestSectionController_Delete(t *testing.T) {
 
 	t.Run("delete_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService.
-			On("Delete", int64(1)).
+			On("Delete", ctx, int64(1)).
 			Return(fmt.Errorf("section not found")).
 			Once()
 

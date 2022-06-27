@@ -1,5 +1,7 @@
 package domain
 
+import "context"
+
 type SectionModel struct {
 	Id                 int64 `json:"id"`
 	SectionNumber      int64 `json:"section_number"`
@@ -13,11 +15,12 @@ type SectionModel struct {
 }
 
 type SectionRepository interface {
-	Delete(id int64) error
-	UpdateCurrentCapacity(id int64, currentCapacity int64) (SectionModel, error)
-	GetById(id int64) (SectionModel, error)
-	GetAll() ([]SectionModel, error)
+	Delete(ctx context.Context, id int64) error
+	UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (SectionModel, error)
+	GetById(ctx context.Context, id int64) (SectionModel, error)
+	GetAll(ctx context.Context) ([]SectionModel, error)
 	Create(
+		ctx context.Context,
 		sectionNumber int64,
 		currentTemperature int64,
 		minimumTemperature int64,
@@ -26,13 +29,13 @@ type SectionRepository interface {
 		maximumCapacity int64,
 		warehouseId int64,
 		productTypeId int64) (SectionModel, error)
-	CreateID() int64
 }
 
 type SectionService interface {
-	Delete(id int64) error
-	UpdateCurrentCapacity(id int64, currentCapacity int64) (SectionModel, error)
+	Delete(ctx context.Context, id int64) error
+	UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (SectionModel, error)
 	Create(
+		ctx context.Context,
 		sectionNumber int64,
 		currentTemperature int64,
 		minimumTemperature int64,
@@ -41,6 +44,6 @@ type SectionService interface {
 		maximumCapacity int64,
 		warehouseId int64,
 		productTypeId int64) (SectionModel, error)
-	GetById(id int64) (SectionModel, error)
-	GetAll() ([]SectionModel, error)
+	GetById(ctx context.Context, id int64) (SectionModel, error)
+	GetAll(ctx context.Context) ([]SectionModel, error)
 }

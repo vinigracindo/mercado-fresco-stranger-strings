@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	context "context"
+
 	mock "github.com/stretchr/testify/mock"
 	domain "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section/domain"
 )
@@ -12,20 +14,20 @@ type SectionRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId
-func (_m *SectionRepository) Create(sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
-	ret := _m.Called(sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId)
+// Create provides a mock function with given fields: ctx, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId
+func (_m *SectionRepository) Create(ctx context.Context, sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
+	ret := _m.Called(ctx, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId)
 
 	var r0 domain.SectionModel
-	if rf, ok := ret.Get(0).(func(int64, int64, int64, int64, int64, int64, int64, int64) domain.SectionModel); ok {
-		r0 = rf(sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId)
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int64, int64, int64, int64, int64, int64, int64) domain.SectionModel); ok {
+		r0 = rf(ctx, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId)
 	} else {
 		r0 = ret.Get(0).(domain.SectionModel)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, int64, int64, int64, int64, int64, int64, int64) error); ok {
-		r1 = rf(sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId)
+	if rf, ok := ret.Get(1).(func(context.Context, int64, int64, int64, int64, int64, int64, int64, int64) error); ok {
+		r1 = rf(ctx, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -33,27 +35,13 @@ func (_m *SectionRepository) Create(sectionNumber int64, currentTemperature int6
 	return r0, r1
 }
 
-// CreateID provides a mock function with given fields:
-func (_m *SectionRepository) CreateID() int64 {
-	ret := _m.Called()
-
-	var r0 int64
-	if rf, ok := ret.Get(0).(func() int64); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-
-	return r0
-}
-
-// Delete provides a mock function with given fields: id
-func (_m *SectionRepository) Delete(id int64) error {
-	ret := _m.Called(id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *SectionRepository) Delete(ctx context.Context, id int64) error {
+	ret := _m.Called(ctx, id)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -61,13 +49,13 @@ func (_m *SectionRepository) Delete(id int64) error {
 	return r0
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *SectionRepository) GetAll() ([]domain.SectionModel, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx
+func (_m *SectionRepository) GetAll(ctx context.Context) ([]domain.SectionModel, error) {
+	ret := _m.Called(ctx)
 
 	var r0 []domain.SectionModel
-	if rf, ok := ret.Get(0).(func() []domain.SectionModel); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context) []domain.SectionModel); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.SectionModel)
@@ -75,8 +63,8 @@ func (_m *SectionRepository) GetAll() ([]domain.SectionModel, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -84,20 +72,20 @@ func (_m *SectionRepository) GetAll() ([]domain.SectionModel, error) {
 	return r0, r1
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *SectionRepository) GetById(id int64) (domain.SectionModel, error) {
-	ret := _m.Called(id)
+// GetById provides a mock function with given fields: ctx, id
+func (_m *SectionRepository) GetById(ctx context.Context, id int64) (domain.SectionModel, error) {
+	ret := _m.Called(ctx, id)
 
 	var r0 domain.SectionModel
-	if rf, ok := ret.Get(0).(func(int64) domain.SectionModel); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) domain.SectionModel); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Get(0).(domain.SectionModel)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -105,20 +93,20 @@ func (_m *SectionRepository) GetById(id int64) (domain.SectionModel, error) {
 	return r0, r1
 }
 
-// UpdateCurrentCapacity provides a mock function with given fields: id, currentCapacity
-func (_m *SectionRepository) UpdateCurrentCapacity(id int64, currentCapacity int64) (domain.SectionModel, error) {
-	ret := _m.Called(id, currentCapacity)
+// UpdateCurrentCapacity provides a mock function with given fields: ctx, id, currentCapacity
+func (_m *SectionRepository) UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (domain.SectionModel, error) {
+	ret := _m.Called(ctx, id, currentCapacity)
 
 	var r0 domain.SectionModel
-	if rf, ok := ret.Get(0).(func(int64, int64) domain.SectionModel); ok {
-		r0 = rf(id, currentCapacity)
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int64) domain.SectionModel); ok {
+		r0 = rf(ctx, id, currentCapacity)
 	} else {
 		r0 = ret.Get(0).(domain.SectionModel)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, int64) error); ok {
-		r1 = rf(id, currentCapacity)
+	if rf, ok := ret.Get(1).(func(context.Context, int64, int64) error); ok {
+		r1 = rf(ctx, id, currentCapacity)
 	} else {
 		r1 = ret.Error(1)
 	}

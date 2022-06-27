@@ -54,7 +54,7 @@ func (c *ControllerSection) Delete() gin.HandlerFunc {
 			return
 		}
 
-		err = c.service.Delete(id)
+		err = c.service.Delete(ctx.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
@@ -94,7 +94,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 			return
 		}
 
-		section, err := c.service.UpdateCurrentCapacity(id, req.CurrentCapacity)
+		section, err := c.service.UpdateCurrentCapacity(ctx.Request.Context(), id, req.CurrentCapacity)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
@@ -124,6 +124,7 @@ func (c ControllerSection) Create() gin.HandlerFunc {
 		}
 
 		response, err := c.service.Create(
+			ctx.Request.Context(),
 			req.SectionNumber,
 			req.CurrentTemperature,
 			req.MinimumTemperature,
@@ -161,7 +162,7 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 			return
 		}
 
-		section, err := c.service.GetById(id)
+		section, err := c.service.GetById(ctx.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
@@ -182,7 +183,7 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 // @Router /sections [get]
 func (c *ControllerSection) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		section, err := c.service.GetAll()
+		section, err := c.service.GetAll(ctx.Request.Context())
 		if err != nil {
 			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
