@@ -1,6 +1,11 @@
 package main
 
-import "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server"
+import (
+	"database/sql"
+
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/config"
+)
 
 // @title   Swagger Mercado Fresco
 // @termsOfService https://developers.mercadolibre.com.ar/es_ar/terminos_y_condiciones
@@ -17,8 +22,15 @@ import "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server"
 // @host      localhost:8080
 // @BasePath  /api/v1
 
+var DB *sql.DB
+
+func init() {
+	DB = config.ConnectDb("mysql")
+
+}
+
 func main() {
 	port := 8080
-	server := server.NewAPIServer()
+	server := server.NewAPIServer(DB)
 	server.Run(port)
 }

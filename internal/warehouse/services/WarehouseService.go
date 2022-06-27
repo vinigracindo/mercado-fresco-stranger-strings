@@ -1,6 +1,10 @@
 package services
 
-import warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
+import (
+	"context"
+
+	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
+)
 
 type service struct {
 	repository warehouse.WarehouseRepository
@@ -12,16 +16,17 @@ func NewWarehouseService(r warehouse.WarehouseRepository) warehouse.WarehouseSer
 	}
 }
 
-func (s service) Create(adress, tel, code string, mintemp float64, mincap int64) (warehouse.WarehouseModel, error) {
+func (s service) Create(ctx context.Context, adress, tel, code string, mintemp float64, mincap int64, locality int64) (warehouse.WarehouseModel, error) {
 	new := warehouse.WarehouseModel{
 		Address:            adress,
 		Telephone:          tel,
 		WarehouseCode:      code,
 		MinimunCapacity:    mincap,
 		MinimunTemperature: mintemp,
+		LocalityID:         locality,
 	}
 
-	wh, err := s.repository.Create(&new)
+	wh, err := s.repository.Create(ctx, &new)
 
 	if err != nil {
 		return warehouse.WarehouseModel{}, err
@@ -30,8 +35,8 @@ func (s service) Create(adress, tel, code string, mintemp float64, mincap int64)
 	return wh, nil
 }
 
-func (s service) GetAll() ([]warehouse.WarehouseModel, error) {
-	swh, err := s.repository.GetAll()
+func (s service) GetAll(ctx context.Context) ([]warehouse.WarehouseModel, error) {
+	swh, err := s.repository.GetAll(ctx)
 
 	if err != nil {
 		return []warehouse.WarehouseModel{}, err
@@ -40,8 +45,8 @@ func (s service) GetAll() ([]warehouse.WarehouseModel, error) {
 	return swh, nil
 }
 
-func (s service) GetById(id int64) (warehouse.WarehouseModel, error) {
-	hw, err := s.repository.GetById(id)
+func (s service) GetById(ctx context.Context, id int64) (warehouse.WarehouseModel, error) {
+	hw, err := s.repository.GetById(ctx, id)
 
 	if err != nil {
 		return warehouse.WarehouseModel{}, err
@@ -50,8 +55,8 @@ func (s service) GetById(id int64) (warehouse.WarehouseModel, error) {
 	return hw, nil
 }
 
-func (s service) Delete(id int64) error {
-	err := s.repository.Delete(id)
+func (s service) Delete(ctx context.Context, id int64) error {
+	err := s.repository.Delete(ctx, id)
 
 	if err != nil {
 		return err
@@ -60,13 +65,13 @@ func (s service) Delete(id int64) error {
 	return nil
 }
 
-func (s service) UpdateTempAndCap(id int64, mintemp float64, mincap int64) (warehouse.WarehouseModel, error) {
+func (s service) UpdateTempAndCap(ctx context.Context, id int64, mintemp float64, mincap int64) (warehouse.WarehouseModel, error) {
 	wh := warehouse.WarehouseModel{
 		MinimunCapacity:    mincap,
 		MinimunTemperature: mintemp,
 	}
 
-	parchWh, err := s.repository.Update(id, &wh)
+	parchWh, err := s.repository.Update(ctx, id, &wh)
 
 	if err != nil {
 		return warehouse.WarehouseModel{}, err
