@@ -6,7 +6,7 @@ type service struct {
 	repository buyer.BuyerRepository
 }
 
-func (s service) Create(cardNumberId int64, firstName string, lastName string) (*buyer.Buyer, error) {
+func (s service) Create(cardNumberId, firstName, lastName string) (*buyer.Buyer, error) {
 	buyer, err := s.repository.Create(cardNumberId, firstName, lastName)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (s service) GetId(id int64) (*buyer.Buyer, error) {
 	return buyer, nil
 }
 
-func (s service) Update(id int64, cardNumberId int64, lastName string) (*buyer.Buyer, error) {
+func (s service) Update(id int64, cardNumberId, lastName string) (*buyer.Buyer, error) {
 	buyer, err := s.repository.Update(id, cardNumberId, lastName)
 	if err != nil {
 		return nil, err

@@ -17,13 +17,13 @@ var EndpointBuyer = "/api/v1/buyers"
 
 var expectBuyer = &domain.Buyer{
 	Id:           0,
-	CardNumberId: 402323,
+	CardNumberId: "402323",
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
 }
 
 var bodyBuyer = &domain.Buyer{
-	CardNumberId: 402323,
+	CardNumberId: "402323",
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
 }
@@ -71,7 +71,7 @@ func TestBuyerController_Create(t *testing.T) {
 				expectBuyer.CardNumberId,
 				expectBuyer.FirstName,
 				expectBuyer.LastName).
-			Return(nil, fmt.Errorf("buyer already registered %d", expectBuyer.CardNumberId)).
+			Return(nil, fmt.Errorf("buyer already registered %s", expectBuyer.CardNumberId)).
 			Once()
 
 		controller := controllers.NewBuyer(service)
@@ -105,7 +105,7 @@ func TestBuyerController_GetAll(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, response.Code)
 
-		assert.JSONEq(t, "{\"data\":[{\"id\":0,\"card_number_id\":402323,\"first_name\":\"FirstNameTest\",\"last_name\":\"LastNameTest\"}]}", response.Body.String())
+		assert.JSONEq(t, "{\"data\":[{\"id\":0,\"card_number_id\":\"402323\",\"first_name\":\"FirstNameTest\",\"last_name\":\"LastNameTest\"}]}", response.Body.String())
 	})
 
 	t.Run("find_all_fail: when GetAll fail, should return code 400.", func(t *testing.T) {
@@ -144,7 +144,7 @@ func TestBuyerController_GetById(t *testing.T) {
 		r.GET(EndpointBuyer+"/:id", controller.GetId())
 		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointBuyer+"/1", requestBody)
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, "{\"data\":{\"id\":0,\"card_number_id\":402323,\"first_name\":\"FirstNameTest\",\"last_name\":\"LastNameTest\"}}", response.Body.String())
+		assert.JSONEq(t, "{\"data\":{\"id\":0,\"card_number_id\":\"402323\",\"first_name\":\"FirstNameTest\",\"last_name\":\"LastNameTest\"}}", response.Body.String())
 
 	})
 
@@ -179,7 +179,7 @@ func TestBuyerController_Update(t *testing.T) {
 
 	updateBody := &domain.Buyer{
 		Id:           1,
-		CardNumberId: 402324,
+		CardNumberId: "402324",
 		LastName:     "LastNameTest 2",
 	}
 
@@ -198,7 +198,7 @@ func TestBuyerController_Update(t *testing.T) {
 		response := testutil.ExecuteTestRequest(r, http.MethodPatch, EndpointBuyer+"/1", requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, "{\"data\":{\"id\":1,\"card_number_id\":402324,\"first_name\":\"\",\"last_name\":\"LastNameTest 2\"}}", response.Body.String())
+		assert.JSONEq(t, "{\"data\":{\"id\":1,\"card_number_id\":\"402324\",\"first_name\":\"\",\"last_name\":\"LastNameTest 2\"}}", response.Body.String())
 	})
 
 	t.Run("update_non_existent: when the buyer does not exist, should return code 404.", func(t *testing.T) {

@@ -13,11 +13,11 @@ type BuyerRepository struct {
 }
 
 // Create provides a mock function with given fields: cardNumberId, firstName, lastName
-func (_m *BuyerRepository) Create(cardNumberId int64, firstName string, lastName string) (*domain.Buyer, error) {
+func (_m *BuyerRepository) Create(cardNumberId string, firstName string, lastName string) (*domain.Buyer, error) {
 	ret := _m.Called(cardNumberId, firstName, lastName)
 
 	var r0 *domain.Buyer
-	if rf, ok := ret.Get(0).(func(int64, string, string) *domain.Buyer); ok {
+	if rf, ok := ret.Get(0).(func(string, string, string) *domain.Buyer); ok {
 		r0 = rf(cardNumberId, firstName, lastName)
 	} else {
 		if ret.Get(0) != nil {
@@ -26,7 +26,7 @@ func (_m *BuyerRepository) Create(cardNumberId int64, firstName string, lastName
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, string, string) error); ok {
+	if rf, ok := ret.Get(1).(func(string, string, string) error); ok {
 		r1 = rf(cardNumberId, firstName, lastName)
 	} else {
 		r1 = ret.Error(1)
@@ -110,11 +110,11 @@ func (_m *BuyerRepository) GetId(id int64) (*domain.Buyer, error) {
 }
 
 // Update provides a mock function with given fields: id, cardNumberId, lastName
-func (_m *BuyerRepository) Update(id int64, cardNumberId int64, lastName string) (*domain.Buyer, error) {
+func (_m *BuyerRepository) Update(id int64, cardNumberId string, lastName string) (*domain.Buyer, error) {
 	ret := _m.Called(id, cardNumberId, lastName)
 
 	var r0 *domain.Buyer
-	if rf, ok := ret.Get(0).(func(int64, int64, string) *domain.Buyer); ok {
+	if rf, ok := ret.Get(0).(func(int64, string, string) *domain.Buyer); ok {
 		r0 = rf(id, cardNumberId, lastName)
 	} else {
 		if ret.Get(0) != nil {
@@ -123,7 +123,7 @@ func (_m *BuyerRepository) Update(id int64, cardNumberId int64, lastName string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, int64, string) error); ok {
+	if rf, ok := ret.Get(1).(func(int64, string, string) error); ok {
 		r1 = rf(id, cardNumberId, lastName)
 	} else {
 		r1 = ret.Error(1)
