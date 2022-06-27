@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	context "context"
+
 	mock "github.com/stretchr/testify/mock"
 	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
 )
@@ -12,20 +14,20 @@ type WarehouseRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: wr
-func (_m *WarehouseRepository) Create(wr *warehouse.WarehouseModel) (warehouse.WarehouseModel, error) {
-	ret := _m.Called(wr)
+// Create provides a mock function with given fields: ctx, wr
+func (_m *WarehouseRepository) Create(ctx context.Context, wr *warehouse.WarehouseModel) (warehouse.WarehouseModel, error) {
+	ret := _m.Called(ctx, wr)
 
 	var r0 warehouse.WarehouseModel
-	if rf, ok := ret.Get(0).(func(*warehouse.WarehouseModel) warehouse.WarehouseModel); ok {
-		r0 = rf(wr)
+	if rf, ok := ret.Get(0).(func(context.Context, *warehouse.WarehouseModel) warehouse.WarehouseModel); ok {
+		r0 = rf(ctx, wr)
 	} else {
 		r0 = ret.Get(0).(warehouse.WarehouseModel)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*warehouse.WarehouseModel) error); ok {
-		r1 = rf(wr)
+	if rf, ok := ret.Get(1).(func(context.Context, *warehouse.WarehouseModel) error); ok {
+		r1 = rf(ctx, wr)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -33,27 +35,13 @@ func (_m *WarehouseRepository) Create(wr *warehouse.WarehouseModel) (warehouse.W
 	return r0, r1
 }
 
-// CreateID provides a mock function with given fields:
-func (_m *WarehouseRepository) CreateID() int64 {
-	ret := _m.Called()
-
-	var r0 int64
-	if rf, ok := ret.Get(0).(func() int64); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-
-	return r0
-}
-
-// Delete provides a mock function with given fields: id
-func (_m *WarehouseRepository) Delete(id int64) error {
-	ret := _m.Called(id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *WarehouseRepository) Delete(ctx context.Context, id int64) error {
+	ret := _m.Called(ctx, id)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -61,13 +49,13 @@ func (_m *WarehouseRepository) Delete(id int64) error {
 	return r0
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *WarehouseRepository) GetAll() ([]warehouse.WarehouseModel, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx
+func (_m *WarehouseRepository) GetAll(ctx context.Context) ([]warehouse.WarehouseModel, error) {
+	ret := _m.Called(ctx)
 
 	var r0 []warehouse.WarehouseModel
-	if rf, ok := ret.Get(0).(func() []warehouse.WarehouseModel); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context) []warehouse.WarehouseModel); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]warehouse.WarehouseModel)
@@ -75,8 +63,8 @@ func (_m *WarehouseRepository) GetAll() ([]warehouse.WarehouseModel, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -84,20 +72,20 @@ func (_m *WarehouseRepository) GetAll() ([]warehouse.WarehouseModel, error) {
 	return r0, r1
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *WarehouseRepository) GetById(id int64) (warehouse.WarehouseModel, error) {
-	ret := _m.Called(id)
+// GetById provides a mock function with given fields: ctx, id
+func (_m *WarehouseRepository) GetById(ctx context.Context, id int64) (warehouse.WarehouseModel, error) {
+	ret := _m.Called(ctx, id)
 
 	var r0 warehouse.WarehouseModel
-	if rf, ok := ret.Get(0).(func(int64) warehouse.WarehouseModel); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) warehouse.WarehouseModel); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Get(0).(warehouse.WarehouseModel)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -105,20 +93,20 @@ func (_m *WarehouseRepository) GetById(id int64) (warehouse.WarehouseModel, erro
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: id, wh
-func (_m *WarehouseRepository) Update(id int64, wh *warehouse.WarehouseModel) (warehouse.WarehouseModel, error) {
-	ret := _m.Called(id, wh)
+// Update provides a mock function with given fields: ctx, id, wh
+func (_m *WarehouseRepository) Update(ctx context.Context, id int64, wh *warehouse.WarehouseModel) (warehouse.WarehouseModel, error) {
+	ret := _m.Called(ctx, id, wh)
 
 	var r0 warehouse.WarehouseModel
-	if rf, ok := ret.Get(0).(func(int64, *warehouse.WarehouseModel) warehouse.WarehouseModel); ok {
-		r0 = rf(id, wh)
+	if rf, ok := ret.Get(0).(func(context.Context, int64, *warehouse.WarehouseModel) warehouse.WarehouseModel); ok {
+		r0 = rf(ctx, id, wh)
 	} else {
 		r0 = ret.Get(0).(warehouse.WarehouseModel)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, *warehouse.WarehouseModel) error); ok {
-		r1 = rf(id, wh)
+	if rf, ok := ret.Get(1).(func(context.Context, int64, *warehouse.WarehouseModel) error); ok {
+		r1 = rf(ctx, id, wh)
 	} else {
 		r1 = ret.Error(1)
 	}
