@@ -85,16 +85,5 @@ func (api *APIServer) Run(port int) {
 	//Buyer routes
 	routes.BuyerRoutes(apiV1.Group("/buyers"))
 
-	// buyerRepository := buyer.NewRepository()
-	// buyerService := buyer.NewService(buyerRepository)
-	// buyerController := controllers.NewBuyer(buyerService)
-
-	// buyerGroup := apiV1.Group("buyers")
-	// buyerGroup.GET("/", buyerController.GetAll())
-	// buyerGroup.GET("/:id", buyerController.GetId())
-	// buyerGroup.POST("/", buyerController.Create())
-	// buyerGroup.PATCH("/:id", buyerController.UpdateCardNumberLastName())
-	// buyerGroup.DELETE("/:id", buyerController.DeleteBuyer())
-
 	router.Run(fmt.Sprintf(":%d", port))
 }
