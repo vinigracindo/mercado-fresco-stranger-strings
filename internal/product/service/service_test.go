@@ -1,14 +1,15 @@
-package product_test
+package service_test
 
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/product/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain/mocks"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/service"
 	"testing"
 )
 
-var expectedProduct = product.Product{
+var expectedProduct = domain.Product{
 	Id:                             1,
 	ProductCode:                    "PROD02",
 	Description:                    "Yogurt",
@@ -32,7 +33,7 @@ func TestProductService_Create(t *testing.T) {
 			Return(&expectedProduct, nil).
 			Once()
 
-		service := product.CreateService(mockRepository)
+		service := service.CreateProductService(mockRepository)
 
 		prod, err := service.Create("PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2)
 
@@ -47,7 +48,7 @@ func TestProductService_Create(t *testing.T) {
 			Return(nil, fmt.Errorf("the product code has already been registered")).
 			Once()
 
-		service := product.CreateService(mockRepository)
+		service := service.CreateProductService(mockRepository)
 
 		expectedProduct, err := service.Create("PROD02", "Yogurt", 1.2, 6.4, 4.5,
 			3.4, 1.5, 1.3, 2, 2, 2)
@@ -62,13 +63,13 @@ func TestProductService_GetAll(t *testing.T) {
 	mockRepository := mocks.NewProductRepository(t)
 
 	t.Run("get_all: when exists products, should return a list", func(t *testing.T) {
-		expectedProductList := []product.Product{expectedProduct, expectedProduct}
+		expectedProductList := []domain.Product{expectedProduct, expectedProduct}
 
 		mockRepository.
 			On("GetAll").
 			Return(expectedProductList, nil).
 			Once()
-		service := product.CreateService(mockRepository)
+		service := service.CreateProductService(mockRepository)
 
 		productList, err := service.GetAll()
 
@@ -81,10 +82,10 @@ func TestProductService_GetAll(t *testing.T) {
 
 		mockRepository.
 			On("GetAll").
-			Return([]product.Product{}, fmt.Errorf("error: products not found")).
+			Return([]domain.Product{}, fmt.Errorf("error: products not found")).
 			Once()
 
-		service := product.CreateService(mockRepository)
+		service := service.CreateProductService(mockRepository)
 
 		_, err := service.GetAll()
 
@@ -102,7 +103,7 @@ func TestProductService_GetById(t *testing.T) {
 			Return(nil, fmt.Errorf("the product id was not found")).
 			Once()
 
-		service := product.CreateService(mockRepository)
+		service := service.CreateProductService(mockRepository)
 
 		prod, err := service.GetById(int64(1))
 
@@ -116,7 +117,7 @@ func TestProductService_GetById(t *testing.T) {
 			Return(&expectedProduct, nil).
 			Once()
 
-		service := product.CreateService(mockRepository)
+		service := service.CreateProductService(mockRepository)
 		resultProduct, err := service.GetById(1)
 
 		assert.Nil(t, err)
@@ -129,7 +130,7 @@ func TestProductService_UpdateDescription(t *testing.T) {
 	mockRepo := mocks.NewProductRepository(t)
 
 	t.Run("update_existent: when the data update is successful, should return the updated product", func(t *testing.T) {
-		expectedProduct := &product.Product{
+		expectedProduct := &domain.Product{
 			Id:                             1,
 			ProductCode:                    "PROD02",
 			Description:                    "Strawberry yogurt",
@@ -149,7 +150,7 @@ func TestProductService_UpdateDescription(t *testing.T) {
 			Return(expectedProduct, nil).
 			Once()
 
-		service := product.CreateService(mockRepo)
+		service := service.CreateProductService(mockRepo)
 
 		prod, err := service.UpdateDescription(int64(1), "Strawberry yogurt")
 
@@ -164,7 +165,7 @@ func TestProductService_UpdateDescription(t *testing.T) {
 			Return(nil, fmt.Errorf("product was not found")).
 			Once()
 
-		service := product.CreateService(mockRepo)
+		service := service.CreateProductService(mockRepo)
 
 		prod, err := service.UpdateDescription(int64(1), "Strawberry yogurt")
 
@@ -183,7 +184,7 @@ func TestProductService_Delete(t *testing.T) {
 			Return(fmt.Errorf("product was not found")).
 			Once()
 
-		service := product.CreateService(mockRepo)
+		service := service.CreateProductService(mockRepo)
 
 		err := service.Delete(int64(1))
 
@@ -197,7 +198,7 @@ func TestProductService_Delete(t *testing.T) {
 			Return(nil).
 			Once()
 
-		service := product.CreateService(mockRepo)
+		service := service.CreateProductService(mockRepo)
 
 		err := service.Delete(int64(1))
 

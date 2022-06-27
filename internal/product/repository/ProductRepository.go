@@ -1,28 +1,29 @@
-package product
+package repository
 
 import (
 	"fmt"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
 )
 
-var listProducts []Product
+var listProducts []domain.Product
 var lastId int64 = 1
 
 type repository struct {
 }
 
-func CreateRepository() ProductRepository {
-	listProducts = []Product{}
+func CreateProductRepository() domain.ProductRepository {
+	listProducts = []domain.Product{}
 
 	listProducts = append(listProducts)
 
 	return &repository{}
 }
 
-func (r *repository) GetAll() ([]Product, error) {
+func (r *repository) GetAll() ([]domain.Product, error) {
 	return listProducts, nil
 }
 
-func (r *repository) GetById(id int64) (*Product, error) {
+func (r *repository) GetById(id int64) (*domain.Product, error) {
 	for _, product := range listProducts {
 		if product.Id == id {
 			return &product, nil
@@ -32,10 +33,10 @@ func (r *repository) GetById(id int64) (*Product, error) {
 }
 
 func (r *repository) Create(productCode string, description string, width float64, height float64, length float64, netWeight float64,
-	expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (*Product, error) {
+	expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (*domain.Product, error) {
 
 	nextId := lastId
-	newProduct := Product{
+	newProduct := domain.Product{
 		Id:                             nextId,
 		ProductCode:                    productCode,
 		Description:                    description,
@@ -64,8 +65,8 @@ func (r *repository) LastId() int64 {
 	return lastId
 }
 
-func (r *repository) UpdateDescription(id int64, description string) (*Product, error) {
-	var product Product
+func (r *repository) UpdateDescription(id int64, description string) (*domain.Product, error) {
+	var product domain.Product
 	update := false
 	for i := range listProducts {
 		if listProducts[i].Id == id {
