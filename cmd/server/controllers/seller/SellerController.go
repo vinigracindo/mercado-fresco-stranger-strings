@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/domains/seller"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
 )
 
 type requestSellerPost struct {
@@ -22,10 +22,10 @@ type requestSellerPatch struct {
 }
 
 type SellerController struct {
-	service seller.Service
+	service domain.ServiceSeller
 }
 
-func NewSeller(s seller.Service) SellerController {
+func NewSeller(s domain.ServiceSeller) SellerController {
 	return SellerController{
 		service: s,
 	}
