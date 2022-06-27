@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/config"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -17,6 +18,10 @@ func NewAPIServer() APIServer {
 }
 
 func (api *APIServer) Run(port int) {
+
+	db := config.ConnectDb()
+	defer db.Close()
+
 	router := gin.Default()
 
 	// Swagger
