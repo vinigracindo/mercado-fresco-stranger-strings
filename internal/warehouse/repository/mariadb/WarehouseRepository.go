@@ -85,7 +85,23 @@ func (r *mariadbWarehouse) GetAll(ctx context.Context) ([]warehouse.WarehouseMod
 
 }
 func (r *mariadbWarehouse) GetById(ctx context.Context, id int64) (warehouse.WarehouseModel, error) {
-	return warehouse.WarehouseModel{}, nil
+	result := r.db.QueryRowContext(ctx, GetWarehouseById, id)
+
+	var warehouseRow warehouse.WarehouseModel
+
+	if err := result.Scan(
+		&warehouseRow.Id,
+		&warehouseRow.Address,
+		&warehouseRow.Telephone,
+		&warehouseRow.WarehouseCode,
+		&warehouseRow.MinimunCapacity,
+		&warehouseRow.MinimunTemperature,
+		&warehouseRow.LocalityID,
+	); err != nil {
+		return warehouse.WarehouseModel{}, err
+	}
+
+	return warehouseRow, nil
 }
 func (r *mariadbWarehouse) Delete(ctx context.Context, id int64) error {
 	return nil
