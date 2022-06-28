@@ -60,9 +60,47 @@ func (m mariaDBProductRepository) GetById(ctx context.Context, id int64) (*domai
 	return &product, nil
 }
 
-func (m mariaDBProductRepository) Create(ctx context.Context, productCode string, description string, width float64, height float64, length float64, netWeight float64, expirationRate float64, recommendedFreezingTemperature float64, freezingRate float64, productTypeId int, sellerId int) (*domain.Product, error) {
-	//TODO implement me
-	panic("implement me")
+func (m mariaDBProductRepository) Create(ctx context.Context, productCode string, description string, width float64, height float64, length float64,
+	netWeight float64, expirationRate float64, recommendedFreezingTemperature float64, freezingRate float64, productTypeId int, sellerId int) (*domain.Product, error) {
+	product, err := m.db.ExecContext(
+		ctx,
+		sqlCreate,
+		productCode,
+		description,
+		width,
+		height,
+		length,
+		netWeight,
+		expirationRate,
+		recommendedFreezingTemperature,
+		freezingRate,
+		productTypeId,
+		sellerId,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	newProductId, err := product.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	return &domain.Product{
+		Id:                             newProductId,
+		ProductCode:                    productCode,
+		Description:                    description,
+		Width:                          width,
+		Height:                         height,
+		Length:                         length,
+		NetWeight:                      netWeight,
+		ExpirationRate:                 expirationRate,
+		RecommendedFreezingTemperature: recommendedFreezingTemperature,
+		FreezingRate:                   freezingRate,
+		ProductTypeId:                  productTypeId,
+		SellerId:                       sellerId,
+	}, nil
 }
 
 func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, id int64, description string) (*domain.Product, error) {
