@@ -21,7 +21,7 @@ type EmployeeService interface {
 type EmployeeRepository interface {
 	GetAll(ctx context.Context) ([]Employee, error)
 	GetById(ctx context.Context, id int64) (*Employee, error)
-	Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
-	UpdateFullname(id int64, firstName string, lastName string) (*Employee, error)
-	Delete(id int64) error
+	Create(ctx context.Context, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
+	UpdateFullname(ctx context.Context, id int64, firstName string, lastName string) (*Employee, error)
+	Delete(ctx context.Context, id int64) error
 }

@@ -14,20 +14,20 @@ type EmployeeRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: cardNumberId, firstName, lastName, warehouseId
-func (_m *EmployeeRepository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
-	ret := _m.Called(cardNumberId, firstName, lastName, warehouseId)
+// Create provides a mock function with given fields: ctx, cardNumberId, firstName, lastName, warehouseId
+func (_m *EmployeeRepository) Create(ctx context.Context, cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
+	ret := _m.Called(ctx, cardNumberId, firstName, lastName, warehouseId)
 
 	var r0 domain.Employee
-	if rf, ok := ret.Get(0).(func(string, string, string, int64) domain.Employee); ok {
-		r0 = rf(cardNumberId, firstName, lastName, warehouseId)
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, string, int64) domain.Employee); ok {
+		r0 = rf(ctx, cardNumberId, firstName, lastName, warehouseId)
 	} else {
 		r0 = ret.Get(0).(domain.Employee)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, string, string, int64) error); ok {
-		r1 = rf(cardNumberId, firstName, lastName, warehouseId)
+	if rf, ok := ret.Get(1).(func(context.Context, string, string, string, int64) error); ok {
+		r1 = rf(ctx, cardNumberId, firstName, lastName, warehouseId)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -35,13 +35,13 @@ func (_m *EmployeeRepository) Create(cardNumberId string, firstName string, last
 	return r0, r1
 }
 
-// Delete provides a mock function with given fields: id
-func (_m *EmployeeRepository) Delete(id int64) error {
-	ret := _m.Called(id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *EmployeeRepository) Delete(ctx context.Context, id int64) error {
+	ret := _m.Called(ctx, id)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -95,13 +95,13 @@ func (_m *EmployeeRepository) GetById(ctx context.Context, id int64) (*domain.Em
 	return r0, r1
 }
 
-// UpdateFullname provides a mock function with given fields: id, firstName, lastName
-func (_m *EmployeeRepository) UpdateFullname(id int64, firstName string, lastName string) (*domain.Employee, error) {
-	ret := _m.Called(id, firstName, lastName)
+// UpdateFullname provides a mock function with given fields: ctx, id, firstName, lastName
+func (_m *EmployeeRepository) UpdateFullname(ctx context.Context, id int64, firstName string, lastName string) (*domain.Employee, error) {
+	ret := _m.Called(ctx, id, firstName, lastName)
 
 	var r0 *domain.Employee
-	if rf, ok := ret.Get(0).(func(int64, string, string) *domain.Employee); ok {
-		r0 = rf(id, firstName, lastName)
+	if rf, ok := ret.Get(0).(func(context.Context, int64, string, string) *domain.Employee); ok {
+		r0 = rf(ctx, id, firstName, lastName)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Employee)
@@ -109,8 +109,8 @@ func (_m *EmployeeRepository) UpdateFullname(id int64, firstName string, lastNam
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, string, string) error); ok {
-		r1 = rf(id, firstName, lastName)
+	if rf, ok := ret.Get(1).(func(context.Context, int64, string, string) error); ok {
+		r1 = rf(ctx, id, firstName, lastName)
 	} else {
 		r1 = ret.Error(1)
 	}
