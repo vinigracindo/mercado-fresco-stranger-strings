@@ -27,7 +27,7 @@ func TestEmployeeService_Create(t *testing.T) {
 
 	t.Run("create_ok: when it contains the mandatory fields, should create a employee", func(t *testing.T) {
 		repo.
-			On("Create", "123456", "John", "Doe", int64(1)).
+			On("Create", mock.Anything, "123456", "John", "Doe", int64(1)).
 			Return(expectedEmployee, nil).
 			Once()
 
@@ -39,7 +39,7 @@ func TestEmployeeService_Create(t *testing.T) {
 
 	t.Run("create_conflict: when card_number already exists, should not create a employee", func(t *testing.T) {
 		repo.
-			On("Create", "123456", "First Name", "Last Name", int64(1)).
+			On("Create", mock.Anything, "123456", "First Name", "Last Name", int64(1)).
 			Return(domain.Employee{}, domain.ErrCardNumberMustBeUnique).
 			Once()
 
@@ -87,7 +87,7 @@ func TestEmployeeService_GetById(t *testing.T) {
 
 	t.Run("find_by_id_non_existent: when element searched for by id exists, should return a employee", func(t *testing.T) {
 		repo.
-			On("GetById", int64(1)).
+			On("GetById", mock.Anything, int64(1)).
 			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
@@ -101,7 +101,7 @@ func TestEmployeeService_GetById(t *testing.T) {
 		expectedEmployee := makeEmployee()
 
 		repo.
-			On("GetById", int64(1)).
+			On("GetById", mock.Anything, int64(1)).
 			Return(&expectedEmployee, nil).
 			Once()
 
@@ -122,7 +122,7 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 		updatedEmployee.LastName = "Doe"
 
 		repo.
-			On("UpdateFullname", int64(1), "Jane", "Doe").
+			On("UpdateFullname", mock.Anything, int64(1), "Jane", "Doe").
 			Return(&updatedEmployee, nil).
 			Once()
 
@@ -134,7 +134,7 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 		repo.
-			On("UpdateFullname", int64(1), "John", "Doe").
+			On("UpdateFullname", mock.Anything, int64(1), "John", "Doe").
 			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
@@ -151,7 +151,7 @@ func TestEmployeeService_Delete(t *testing.T) {
 
 	t.Run("delete_non_existent: when the section does not exist, should return an error", func(t *testing.T) {
 		repo.
-			On("Delete", int64(1)).
+			On("Delete", mock.Anything, int64(1)).
 			Return(domain.ErrEmployeeNotFound).
 			Once()
 
@@ -162,7 +162,7 @@ func TestEmployeeService_Delete(t *testing.T) {
 
 	t.Run("delete_ok: when the section exists, should delete a employee", func(t *testing.T) {
 		repo.
-			On("Delete", int64(1)).
+			On("Delete", mock.Anything, int64(1)).
 			Return(nil).
 			Once()
 

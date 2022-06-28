@@ -7,9 +7,6 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
 )
 
-var employees = []domain.Employee{}
-var lastId int64 = 1
-
 type mariaDBEmployeerepository struct {
 	db *sql.DB
 }
@@ -51,7 +48,7 @@ func (repo *mariaDBEmployeerepository) GetById(ctx context.Context, id int64) (*
 	return &employee, nil
 }
 
-func (repo *mariaDBEmployeerepository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
+func (repo *mariaDBEmployeerepository) Create(ctx context.Context, cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
 	employee := domain.Employee{
 		CardNumberId: cardNumberId,
 		FirstName:    firstName,
@@ -59,7 +56,7 @@ func (repo *mariaDBEmployeerepository) Create(cardNumberId string, firstName str
 		WarehouseId:  warehouseId,
 	}
 	res, err := repo.db.ExecContext(
-		context.Background(),
+		ctx,
 		SQLCreateEmployee,
 		&employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WarehouseId,
 	)
@@ -75,23 +72,32 @@ func (repo *mariaDBEmployeerepository) Create(cardNumberId string, firstName str
 	return employee, nil
 }
 
-func (repo mariaDBEmployeerepository) UpdateFullname(id int64, firstName string, lastName string) (*domain.Employee, error) {
-	for i, employee := range employees {
-		if employee.Id == id {
-			employees[i].FirstName = firstName
-			employees[i].LastName = lastName
-			return &employees[i], nil
-		}
+func (repo mariaDBEmployeerepository) UpdateFullname(ctx context.Context, id int64, firstName string, lastName string) (*domain.Employee, error) {
+	employee, err := repo.GetById(context.Background(), id)
+	if err != nil {
+		return nil, domain.ErrEmployeeNotFound
 	}
-	return nil, domain.ErrEmployeeNotFound
+
+	employee.FirstName = firstName
+	employee.LastName = lastName
+
+	_, err = repo.db.ExecContext(
+		ctx,
+		SQLUpdateEmployeeFullname,
+		&employee.FirstName, &employee.LastName, &employee.Id,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return employee, nil
 }
 
-func (repo mariaDBEmployeerepository) Delete(id int64) error {
-	for i, employee := range employees {
-		if employee.Id == id {
-			employees = append(employees[:i], employees[i+1:]...)
-			return nil
-		}
+func (repo mariaDBEmployeerepository) Delete(ctx context.Context, id int64) error {
+	_, err := repo.db.ExecContext(ctx, SQLDeleteEmployee, id)
+	if err != nil {
+		return domain.ErrEmployeeNotFound
 	}
-	return domain.ErrEmployeeNotFound
+	return nil
 }

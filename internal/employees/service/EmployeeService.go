@@ -31,7 +31,7 @@ func (s service) GetById(id int64) (*domain.Employee, error) {
 }
 
 func (s service) UpdateFullname(id int64, firstName string, lastName string) (*domain.Employee, error) {
-	employee, err := s.repo.UpdateFullname(id, firstName, lastName)
+	employee, err := s.repo.UpdateFullname(context.Background(), id, firstName, lastName)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (s service) UpdateFullname(id int64, firstName string, lastName string) (*d
 }
 
 func (s service) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
-	employee, err := s.repo.Create(cardNumberId, firstName, lastName, warehouseId)
+	employee, err := s.repo.Create(context.Background(), cardNumberId, firstName, lastName, warehouseId)
 
 	if err != nil {
 		return domain.Employee{}, err
@@ -49,7 +49,7 @@ func (s service) Create(cardNumberId string, firstName string, lastName string, 
 }
 
 func (s service) Delete(id int64) error {
-	err := s.repo.Delete(id)
+	err := s.repo.Delete(context.Background(), id)
 
 	if err != nil {
 		return err
