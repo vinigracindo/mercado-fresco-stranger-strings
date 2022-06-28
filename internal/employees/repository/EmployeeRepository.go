@@ -28,7 +28,7 @@ func (repo *mariaDBEmployeerepository) GetAll(ctx context.Context) ([]domain.Emp
 	for rows.Next() {
 		var employee domain.Employee
 		if err := rows.Scan(&employee.Id, &employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WarehouseId); err != nil {
-			return employees, err
+			return nil, err
 		}
 		employees = append(employees, employee)
 	}
