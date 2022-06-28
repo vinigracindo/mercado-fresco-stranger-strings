@@ -20,8 +20,8 @@ type RequestWarehousePost struct {
 }
 
 type RequestWarehousePatch struct {
-	MinimunCapacity    int64   `json:"minimun_capacity"`
-	MinimunTemperature float64 `json:"minimun_temperature"`
+	MinimunCapacity    int64   `json:"minimun_capacity" binding:"required"`
+	MinimunTemperature float64 `json:"minimun_temperature" binding:"required"`
 }
 
 type Warehouse struct {
