@@ -11,14 +11,14 @@ import (
 )
 
 type requestSectionPost struct {
-	SectionNumber      int64 `json:"section_number" binding:"required"`
-	CurrentTemperature int64 `json:"current_temperature" binding:"required"`
-	MinimumTemperature int64 `json:"minimum_temperature" binding:"required"`
-	CurrentCapacity    int64 `json:"current_capacity" binding:"required"`
-	MinimumCapacity    int64 `json:"minimum_capacity" binding:"required"`
-	MaximumCapacity    int64 `json:"maximum_capacity" binding:"required"`
-	WarehouseId        int64 `json:"warehouse_id" binding:"required"`
-	ProductTypeId      int64 `json:"product_type_id" binding:"required"`
+	SectionNumber      string  `json:"section_number" binding:"required"`
+	CurrentTemperature float64 `json:"current_temperature" binding:"required"`
+	MinimumTemperature float64 `json:"minimum_temperature" binding:"required"`
+	CurrentCapacity    int64   `json:"current_capacity" binding:"required"`
+	MinimumCapacity    int64   `json:"minimum_capacity" binding:"required"`
+	MaximumCapacity    int64   `json:"maximum_capacity" binding:"required"`
+	WarehouseId        int64   `json:"warehouse_id" binding:"required"`
+	ProductTypeId      int64   `json:"product_type_id" binding:"required"`
 }
 
 type requestSectionPatch struct {
@@ -90,7 +90,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 		}
 
 		if req.CurrentCapacity < 0 {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("The field CurrentCapacity invalid"))
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("the field CurrentCapacity invalid"))
 			return
 		}
 

@@ -15,18 +15,18 @@ type SectionService struct {
 }
 
 // Create provides a mock function with given fields: ctx, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId
-func (_m *SectionService) Create(ctx context.Context, sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
+func (_m *SectionService) Create(ctx context.Context, sectionNumber string, currentTemperature float64, minimumTemperature float64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
 	ret := _m.Called(ctx, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId)
 
 	var r0 domain.SectionModel
-	if rf, ok := ret.Get(0).(func(context.Context, int64, int64, int64, int64, int64, int64, int64, int64) domain.SectionModel); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, float64, float64, int64, int64, int64, int64, int64) domain.SectionModel); ok {
 		r0 = rf(ctx, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId)
 	} else {
 		r0 = ret.Get(0).(domain.SectionModel)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, int64, int64, int64, int64, int64, int64, int64, int64) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, string, float64, float64, int64, int64, int64, int64, int64) error); ok {
 		r1 = rf(ctx, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity, warehouseId, productTypeId)
 	} else {
 		r1 = ret.Error(1)

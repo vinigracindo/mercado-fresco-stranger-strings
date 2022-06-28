@@ -17,9 +17,23 @@ func NewMariadbSectionRepository(db *sql.DB) domain.SectionRepository {
 }
 
 func (m *mariaDbSectionRepository) Delete(ctx context.Context, id int64) error {
-	_, err := m.db.ExecContext(ctx, sqlDeleteSection, id)
+	result, err := m.db.ExecContext(
+		ctx,
+		sqlDeleteSection,
+		id,
+	)
+
 	if err != nil {
 		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return errors.New("section not found")
 	}
 
 	return nil
@@ -45,7 +59,7 @@ func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, id
 	return sectionUpdated, nil
 }
 
-func (m *mariaDbSectionRepository) Create(ctx context.Context, sectionNumber int64, currentTemperature int64, minimumTemperature int64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
+func (m *mariaDbSectionRepository) Create(ctx context.Context, sectionNumber string, currentTemperature float64, minimumTemperature float64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
 	section, err := m.db.ExecContext(
 		ctx,
 		sqlCreateSection,
@@ -90,7 +104,7 @@ func (m *mariaDbSectionRepository) GetById(ctx context.Context, id int64) (domai
 		return domain.SectionModel{}, err
 	}
 
-	if row.Next() != true {
+	if !row.Next() {
 		return domain.SectionModel{}, errors.New("section not found")
 	}
 
