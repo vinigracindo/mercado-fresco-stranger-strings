@@ -21,7 +21,7 @@ func (s service) GetAll() ([]domain.Employee, error) {
 }
 
 func (s service) GetById(id int64) (*domain.Employee, error) {
-	employee, err := s.repo.GetById(id)
+	employee, err := s.repo.GetById(context.Background(), id)
 
 	if err != nil {
 		return nil, err

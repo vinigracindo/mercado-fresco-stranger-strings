@@ -72,13 +72,13 @@ func (_m *EmployeeRepository) GetAll(ctx context.Context) ([]domain.Employee, er
 	return r0, r1
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *EmployeeRepository) GetById(id int64) (*domain.Employee, error) {
-	ret := _m.Called(id)
+// GetById provides a mock function with given fields: ctx, id
+func (_m *EmployeeRepository) GetById(ctx context.Context, id int64) (*domain.Employee, error) {
+	ret := _m.Called(ctx, id)
 
 	var r0 *domain.Employee
-	if rf, ok := ret.Get(0).(func(int64) *domain.Employee); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) *domain.Employee); ok {
+		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Employee)
@@ -86,8 +86,8 @@ func (_m *EmployeeRepository) GetById(id int64) (*domain.Employee, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}

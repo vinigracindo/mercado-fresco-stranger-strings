@@ -18,19 +18,10 @@ func NewMariaDBEmployeeRepository(db *sql.DB) domain.EmployeeRepository {
 	return &mariaDBEmployeerepository{db: db}
 }
 
-func (repo *mariaDBEmployeerepository) cardNumberIsUnique(cardNumberId string) bool {
-	row := repo.db.QueryRow("select card_number_id from employees where card_number_id=?")
-
-	if err := row.Scan(&cardNumberId); err != nil {
-		return true
-	}
-	return false
-}
-
 func (repo *mariaDBEmployeerepository) GetAll(ctx context.Context) ([]domain.Employee, error) {
 	employees := []domain.Employee{}
 
-	rows, err := repo.db.QueryContext(ctx, "select id, card_number_id, first_name, last_name, warehouse_id from employees")
+	rows, err := repo.db.QueryContext(ctx, SQLFindAllEmployees)
 
 	if err != nil {
 		return employees, err
@@ -48,14 +39,10 @@ func (repo *mariaDBEmployeerepository) GetAll(ctx context.Context) ([]domain.Emp
 	return employees, nil
 }
 
-func (repo *mariaDBEmployeerepository) GetById(id int64) (*domain.Employee, error) {
+func (repo *mariaDBEmployeerepository) GetById(ctx context.Context, id int64) (*domain.Employee, error) {
 	var employee domain.Employee
 
-	row := repo.db.QueryRowContext(
-		context.Background(),
-		"select id, card_number_id, first_name, last_name, warehouse_id from employees where id=?",
-		id,
-	)
+	row := repo.db.QueryRowContext(ctx, SQLFindEmployeeByID, id)
 	err := row.Scan(&employee.Id, &employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WarehouseId)
 	if err != nil {
 		return nil, domain.ErrEmployeeNotFound
@@ -64,22 +51,27 @@ func (repo *mariaDBEmployeerepository) GetById(id int64) (*domain.Employee, erro
 	return &employee, nil
 }
 
-func (repo mariaDBEmployeerepository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
-	nextId := lastId
+func (repo *mariaDBEmployeerepository) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
 	employee := domain.Employee{
-		Id:           nextId,
 		CardNumberId: cardNumberId,
 		FirstName:    firstName,
 		LastName:     lastName,
 		WarehouseId:  warehouseId,
 	}
-
-	if !repo.cardNumberIsUnique(cardNumberId) {
-		return domain.Employee{}, domain.ErrCardNumberMustBeUnique
+	res, err := repo.db.ExecContext(
+		context.Background(),
+		SQLCreateEmployee,
+		&employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WarehouseId,
+	)
+	if err != nil {
+		return employee, err
 	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return employee, err
+	}
+	employee.Id = int64(id)
 
-	employees = append(employees, employee)
-	lastId += 1
 	return employee, nil
 }
 
