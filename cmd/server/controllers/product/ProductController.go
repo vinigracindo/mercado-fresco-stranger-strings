@@ -19,7 +19,7 @@ type requestProductPost struct {
 	NetWeight                      float64 `json:"net_weight" binding:"required"`
 	ExpirationRate                 float64 `json:"expiration_rate" binding:"required"`
 	RecommendedFreezingTemperature float64 `json:"recommended_freezing_temperature" binding:"required"`
-	FreezingRate                   int     `json:"freezing_rate" binding:"required"`
+	FreezingRate                   float64 `json:"freezing_rate" binding:"required"`
 	ProductTypeId                  int     `json:"product_type_id" binding:"required"`
 	SellerId                       int     `json:"seller_id" binding:"required"`
 }
@@ -47,7 +47,7 @@ func CreateProductController(prodService domain.ProductService) *ProductControll
 func (c *ProductController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		products, err := c.service.GetAll()
+		products, err := c.service.GetAll(ctx.Request.Context())
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusInternalServerError, err)
@@ -78,7 +78,7 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 			return
 		}
 
-		productId, err := c.service.GetById(id)
+		productId, err := c.service.GetById(ctx.Request.Context(), id)
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
@@ -111,7 +111,7 @@ func (c *ProductController) Create() gin.HandlerFunc {
 		}
 
 		newProduct, err := c.service.
-			Create(req.ProductCode, req.Description, req.Width, req.Height, req.Length, req.NetWeight, req.ExpirationRate,
+			Create(ctx.Request.Context(), req.ProductCode, req.Description, req.Width, req.Height, req.Length, req.NetWeight, req.ExpirationRate,
 				req.RecommendedFreezingTemperature, req.FreezingRate, req.ProductTypeId, req.SellerId)
 
 		if err != nil {
@@ -152,7 +152,7 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 			return
 		}
 
-		productUpdate, err := c.service.UpdateDescription(id, req.Description)
+		productUpdate, err := c.service.UpdateDescription(ctx.Request.Context(), id, req.Description)
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
@@ -185,7 +185,7 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 			return
 		}
 
-		err = c.service.Delete(id)
+		err = c.service.Delete(ctx.Request.Context(), id)
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)

@@ -1,5 +1,6 @@
-package repository
+package inmemory
 
+/*
 import (
 	"fmt"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
@@ -99,4 +100,7 @@ func (r *repository) Delete(id int64) error {
 	listProducts = append(listProducts[:index], listProducts[index+1:]...)
 
 	return nil
-}
+//
+
+
+*/
