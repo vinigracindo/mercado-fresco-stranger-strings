@@ -12,10 +12,6 @@ import (
 )
 
 func TestEmployeeRepository_GetAll(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
-	defer db.Close()
-
 	ctx := context.Background()
 
 	expectedEmployees := []domain.Employee{
@@ -35,14 +31,18 @@ func TestEmployeeRepository_GetAll(t *testing.T) {
 		},
 	}
 
-	rows := sqlmock.NewRows([]string{"id", "card_number_id", "first_name", "last_name", "warehouse_id"})
-	for _, employee := range expectedEmployees {
-		rows = rows.AddRow(employee.Id, employee.CardNumberId, employee.FirstName, employee.LastName, employee.WarehouseId)
-	}
-
-	employeeRepository := repository.NewMariaDBEmployeeRepository(db)
-
 	t.Run("should return all employees", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		rows := sqlmock.NewRows([]string{"id", "card_number_id", "first_name", "last_name", "warehouse_id"})
+		for _, employee := range expectedEmployees {
+			rows = rows.AddRow(employee.Id, employee.CardNumberId, employee.FirstName, employee.LastName, employee.WarehouseId)
+		}
+
+		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
+
 		mock.ExpectQuery(repository.SQLFindAllEmployees).WillReturnRows(rows)
 
 		result, err := employeeRepository.GetAll(ctx)
@@ -52,6 +52,12 @@ func TestEmployeeRepository_GetAll(t *testing.T) {
 	})
 
 	t.Run("should return error when query fails", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
+
 		mock.ExpectQuery(repository.SQLFindAllEmployees).WillReturnError(fmt.Errorf("query error"))
 
 		result, err := employeeRepository.GetAll(ctx)
@@ -60,10 +66,20 @@ func TestEmployeeRepository_GetAll(t *testing.T) {
 	})
 
 	t.Run("should return error when scan fails", func(t *testing.T) {
-		rows = rows.AddRow("invalid_id_format", "123456", "John", "Doe", 1)
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
+
+		rows := sqlmock.NewRows(
+			[]string{"id", "card_number_id", "first_name", "last_name", "warehouse_id"},
+		).AddRow("", "", "", "", "")
+
 		mock.ExpectQuery(repository.SQLFindAllEmployees).WillReturnRows(rows)
 
 		result, err := employeeRepository.GetAll(ctx)
+
 		assert.Error(t, err)
 		assert.Empty(t, result)
 	})
