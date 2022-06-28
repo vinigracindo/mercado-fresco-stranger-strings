@@ -4,7 +4,7 @@ import "context"
 
 type SectionModel struct {
 	Id                 int64   `json:"id"`
-	SectionNumber      string  `json:"section_number"`
+	SectionNumber      int64   `json:"section_number"`
 	CurrentTemperature float64 `json:"current_temperature"`
 	MinimumTemperature float64 `json:"minimum_temperature"`
 	CurrentCapacity    int64   `json:"current_capacity"`
@@ -21,7 +21,7 @@ type SectionRepository interface {
 	GetAll(ctx context.Context) ([]SectionModel, error)
 	Create(
 		ctx context.Context,
-		sectionNumber string,
+		sectionNumber int64,
 		currentTemperature float64,
 		minimumTemperature float64,
 		currentCapacity int64,
@@ -36,7 +36,7 @@ type SectionService interface {
 	UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (SectionModel, error)
 	Create(
 		ctx context.Context,
-		sectionNumber string,
+		sectionNumber int64,
 		currentTemperature float64,
 		minimumTemperature float64,
 		currentCapacity int64,

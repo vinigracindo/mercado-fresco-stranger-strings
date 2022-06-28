@@ -17,35 +17,33 @@ func NewMariadbSectionRepository(db *sql.DB) domain.SectionRepository {
 }
 
 func (m *mariaDbSectionRepository) Delete(ctx context.Context, id int64) error {
-	result, err := m.db.ExecContext(
-		ctx,
-		sqlDeleteSection,
-		id,
-	)
-
+	result, err := m.db.ExecContext(ctx, sqlDeleteSection, id)
 	if err != nil {
 		return err
 	}
 
 	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-
 	if rowsAffected == 0 {
 		return errors.New("section not found")
+	}
+
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
 func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (domain.SectionModel, error) {
-	_, err := m.db.ExecContext(
-		ctx,
-		sqlUpdateCurrentCapacitySection,
-		currentCapacity,
-		id,
-	)
+	result, err := m.db.ExecContext(ctx, sqlUpdateCurrentCapacitySection, currentCapacity, id)
+	if err != nil {
+		return domain.SectionModel{}, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if rowsAffected == 0 {
+		return domain.SectionModel{}, errors.New("section not found")
+	}
 
 	if err != nil {
 		return domain.SectionModel{}, err
@@ -59,7 +57,7 @@ func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, id
 	return sectionUpdated, nil
 }
 
-func (m *mariaDbSectionRepository) Create(ctx context.Context, sectionNumber string, currentTemperature float64, minimumTemperature float64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
+func (m *mariaDbSectionRepository) Create(ctx context.Context, sectionNumber int64, currentTemperature float64, minimumTemperature float64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
 	section, err := m.db.ExecContext(
 		ctx,
 		sqlCreateSection,
@@ -96,19 +94,12 @@ func (m *mariaDbSectionRepository) Create(ctx context.Context, sectionNumber str
 }
 
 func (m *mariaDbSectionRepository) GetById(ctx context.Context, id int64) (domain.SectionModel, error) {
+
+	row := m.db.QueryRowContext(ctx, sqlGetByIdSection, id)
+
 	var section domain.SectionModel
 
-	row, err := m.db.QueryContext(ctx, sqlGetByIdSection, id)
-
-	if err != nil {
-		return domain.SectionModel{}, err
-	}
-
-	if !row.Next() {
-		return domain.SectionModel{}, errors.New("section not found")
-	}
-
-	err = row.Scan(
+	err := row.Scan(
 		&section.Id,
 		&section.SectionNumber,
 		&section.CurrentTemperature,
@@ -119,11 +110,15 @@ func (m *mariaDbSectionRepository) GetById(ctx context.Context, id int64) (domai
 		&section.WarehouseId,
 		&section.ProductTypeId,
 	)
-	if err != nil {
-		return domain.SectionModel{}, err
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return section, errors.New("section not found")
+
 	}
 
-	defer row.Close()
+	if err != nil {
+		return section, err
+	}
 
 	return section, nil
 }

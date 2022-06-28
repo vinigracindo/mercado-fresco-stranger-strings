@@ -15,7 +15,7 @@ import (
 )
 
 var bodySection = domain.SectionModel{
-	SectionNumber:      "1",
+	SectionNumber:      1,
 	CurrentTemperature: 1,
 	MinimumTemperature: 1,
 	CurrentCapacity:    int64(1),
@@ -26,7 +26,7 @@ var bodySection = domain.SectionModel{
 }
 
 var bodyFailSection = domain.SectionModel{
-	SectionNumber:      "",
+	SectionNumber:      0,
 	CurrentTemperature: 0,
 	MinimumTemperature: 0,
 	CurrentCapacity:    0,
@@ -40,7 +40,7 @@ var EndpointSection = "/api/v1/sections"
 
 var expectedSection = domain.SectionModel{
 	Id:                 1,
-	SectionNumber:      "1",
+	SectionNumber:      1,
 	CurrentTemperature: 1,
 	MinimumTemperature: 1,
 	CurrentCapacity:    1,
@@ -81,7 +81,7 @@ func TestSectionController_Create(t *testing.T) {
 		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointSection, requestBody)
 
 		assert.Equal(t, http.StatusCreated, response.Code)
-		assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":\"1\",\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
+		assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":1,\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
 	})
 
 	t.Run("create_fail: when the JSON does not contain the required fields, should return code 422", func(t *testing.T) {
@@ -143,7 +143,7 @@ func TestSectionController_GetAll(t *testing.T) {
 		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointSection, requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, "{\"data\":[{\"id\":1,\"section_number\":\"1\",\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}]}", response.Body.String())
+		assert.JSONEq(t, "{\"data\":[{\"id\":1,\"section_number\":1,\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}]}", response.Body.String())
 	})
 
 	t.Run("get_all_fail: when GetAll fail, should return code 400", func(t *testing.T) {
@@ -179,7 +179,7 @@ func TestSectionController_GetById(t *testing.T) {
 		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointSection+"/1", requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":\"1\",\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
+		assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":1,\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
 	})
 
 	t.Run("find_by_id_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
@@ -234,7 +234,7 @@ func TestSectionController_Update(t *testing.T) {
 		response := testutil.ExecuteTestRequest(r, http.MethodPatch, EndpointSection+"/1", requestBody)
 
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":\"1\",\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
+		assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":1,\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
 	})
 
 	t.Run("update_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {

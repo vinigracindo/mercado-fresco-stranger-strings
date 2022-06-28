@@ -12,7 +12,7 @@ import (
 )
 
 var expectedSection = domain.SectionModel{
-	SectionNumber:      "1",
+	SectionNumber:      int64(1),
 	CurrentTemperature: 28.0,
 	MinimumTemperature: 30.5,
 	CurrentCapacity:    int64(1),
@@ -24,7 +24,7 @@ var expectedSection = domain.SectionModel{
 
 var expectedUpdatedSection = domain.SectionModel{
 	Id:                 int64(1),
-	SectionNumber:      "1",
+	SectionNumber:      int64(1),
 	CurrentTemperature: 28,
 	MinimumTemperature: 30.5,
 	CurrentCapacity:    int64(5),
@@ -56,14 +56,14 @@ func TestSectionService_Create(t *testing.T) {
 			Once()
 
 		service := service.NewServiceSection(mockRepository)
-		result, err := service.Create(ctx, "1", 28.0, 30.5, 1, 1, 1, 1, 1)
+		result, err := service.Create(ctx, 1, 28.0, 30.5, 1, 1, 1, 1, 1)
 
 		assert.Nil(t, err)
 		assert.Equal(t, result, expectedSection)
 	})
 
 	t.Run("create_conflict: when section_number already exists, should not create a section", func(t *testing.T) {
-		errorConflict := fmt.Errorf("already a section with the code: %s", expectedSection.SectionNumber)
+		errorConflict := fmt.Errorf("already a section with the code: %d", expectedSection.SectionNumber)
 
 		mockRepository.
 			On("Create",
@@ -81,7 +81,7 @@ func TestSectionService_Create(t *testing.T) {
 			Once()
 
 		service := service.NewServiceSection(mockRepository)
-		result, err := service.Create(ctx, "1", 28.0, 30.5, 1, 1, 1, 1, 1)
+		result, err := service.Create(ctx, 1, 28.0, 30.5, 1, 1, 1, 1, 1)
 
 		assert.Equal(t, domain.SectionModel{}, result)
 		assert.Equal(t, errorConflict, err)

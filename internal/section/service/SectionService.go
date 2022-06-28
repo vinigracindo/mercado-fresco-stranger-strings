@@ -26,7 +26,7 @@ func (s *service) UpdateCurrentCapacity(ctx context.Context, id int64, currentCa
 
 func (s *service) Create(
 	ctx context.Context,
-	sectionNumber string,
+	sectionNumber int64,
 	currentTemperature float64,
 	minimumTemperature float64,
 	currentCapacity int64,

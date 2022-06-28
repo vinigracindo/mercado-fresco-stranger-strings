@@ -11,7 +11,7 @@ import (
 )
 
 type requestSectionPost struct {
-	SectionNumber      string  `json:"section_number" binding:"required"`
+	SectionNumber      int64   `json:"section_number" binding:"required"`
 	CurrentTemperature float64 `json:"current_temperature" binding:"required"`
 	MinimumTemperature float64 `json:"minimum_temperature" binding:"required"`
 	CurrentCapacity    int64   `json:"current_capacity" binding:"required"`
