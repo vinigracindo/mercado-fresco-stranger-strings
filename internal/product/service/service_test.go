@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
@@ -27,6 +28,9 @@ var expectedProduct = domain.Product{
 func TestProductService_Create(t *testing.T) {
 	mockRepository := mocks.NewProductRepository(t)
 
+	ctx, _ := context.WithCancel(context.Background())
+
+
 	t.Run("create_ok: when it contains the mandatory fields, should create a product", func(t *testing.T) {
 		mockRepository.
 			On("Create", "PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2).
@@ -35,7 +39,7 @@ func TestProductService_Create(t *testing.T) {
 
 		service := service.CreateProductService(mockRepository)
 
-		prod, err := service.Create("PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2)
+		prod, err := service.Create(ctx, "PROD02", "Yogurt", , 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2, 2)
 
 		assert.Nil(t, err)
 		assert.Equal(t, prod, &expectedProduct)
@@ -50,7 +54,7 @@ func TestProductService_Create(t *testing.T) {
 
 		service := service.CreateProductService(mockRepository)
 
-		expectedProduct, err := service.Create("PROD02", "Yogurt", 1.2, 6.4, 4.5,
+		expectedProduct, err := service.Create(ctx, "PROD02", "Yogurt", 1.2, 6.4, 4.5,
 			3.4, 1.5, 1.3, 2, 2, 2)
 
 		assert.NotNil(t, err)
@@ -62,6 +66,8 @@ func TestProductService_Create(t *testing.T) {
 func TestProductService_GetAll(t *testing.T) {
 	mockRepository := mocks.NewProductRepository(t)
 
+	ctx, _ := context.WithCancel(context.Background())
+
 	t.Run("get_all: when exists products, should return a list", func(t *testing.T) {
 		expectedProductList := []domain.Product{expectedProduct, expectedProduct}
 
@@ -71,7 +77,7 @@ func TestProductService_GetAll(t *testing.T) {
 			Once()
 		service := service.CreateProductService(mockRepository)
 
-		productList, err := service.GetAll()
+		productList, err := service.GetAll(ctx)
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedProductList, productList)
@@ -87,7 +93,7 @@ func TestProductService_GetAll(t *testing.T) {
 
 		service := service.CreateProductService(mockRepository)
 
-		_, err := service.GetAll()
+		_, err := service.GetAll(ctx)
 
 		assert.NotNil(t, err)
 	})
@@ -95,6 +101,7 @@ func TestProductService_GetAll(t *testing.T) {
 
 func TestProductService_GetById(t *testing.T) {
 	mockRepository := mocks.NewProductRepository(t)
+	ctx, _ := context.WithCancel(context.Background())
 
 	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
@@ -105,7 +112,7 @@ func TestProductService_GetById(t *testing.T) {
 
 		service := service.CreateProductService(mockRepository)
 
-		prod, err := service.GetById(int64(1))
+		prod, err := service.GetById(ctx, int64(1))
 
 		assert.Nil(t, prod)
 		assert.NotNil(t, err)
@@ -118,7 +125,7 @@ func TestProductService_GetById(t *testing.T) {
 			Once()
 
 		service := service.CreateProductService(mockRepository)
-		resultProduct, err := service.GetById(1)
+		resultProduct, err := service.GetById(ctx, 1)
 
 		assert.Nil(t, err)
 		assert.Equal(t, &expectedProduct, resultProduct)
@@ -128,6 +135,8 @@ func TestProductService_GetById(t *testing.T) {
 
 func TestProductService_UpdateDescription(t *testing.T) {
 	mockRepo := mocks.NewProductRepository(t)
+
+	ctx, _ := context.WithCancel(context.Background())
 
 	t.Run("update_existent: when the data update is successful, should return the updated product", func(t *testing.T) {
 		expectedProduct := &domain.Product{
@@ -152,7 +161,7 @@ func TestProductService_UpdateDescription(t *testing.T) {
 
 		service := service.CreateProductService(mockRepo)
 
-		prod, err := service.UpdateDescription(int64(1), "Strawberry yogurt")
+		prod, err := service.UpdateDescription(ctx, int64(1), "Strawberry yogurt")
 
 		assert.Nil(t, err)
 		assert.Equal(t, prod, expectedProduct)
@@ -167,7 +176,7 @@ func TestProductService_UpdateDescription(t *testing.T) {
 
 		service := service.CreateProductService(mockRepo)
 
-		prod, err := service.UpdateDescription(int64(1), "Strawberry yogurt")
+		prod, err := service.UpdateDescription(ctx, int64(1), "Strawberry yogurt")
 
 		assert.Nil(t, prod)
 		assert.NotNil(t, err)
@@ -176,6 +185,8 @@ func TestProductService_UpdateDescription(t *testing.T) {
 
 func TestProductService_Delete(t *testing.T) {
 	mockRepo := mocks.NewProductRepository(t)
+
+	ctx, _ := context.WithCancel(context.Background())
 
 	t.Run("delete_non_existent: when the product does not exist, should return an error", func(t *testing.T) {
 
@@ -186,7 +197,7 @@ func TestProductService_Delete(t *testing.T) {
 
 		service := service.CreateProductService(mockRepo)
 
-		err := service.Delete(int64(1))
+		err := service.Delete(ctx, int64(1))
 
 		assert.NotNil(t, err)
 	})
@@ -200,7 +211,7 @@ func TestProductService_Delete(t *testing.T) {
 
 		service := service.CreateProductService(mockRepo)
 
-		err := service.Delete(int64(1))
+		err := service.Delete(ctx, int64(1))
 
 		assert.Nil(t, err)
 	})

@@ -36,8 +36,28 @@ func (m mariaDBProductRepository) GetAll(ctx context.Context) ([]domain.Product,
 }
 
 func (m mariaDBProductRepository) GetById(ctx context.Context, id int64) (*domain.Product, error) {
-	//TODO implement me
-	panic("implement me")
+	var product domain.Product
+
+	rows, err := m.db.QueryContext(ctx, sqlGetById, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if rows.Next() != true {
+		return nil, err
+	}
+
+	err = rows.Scan(&product.Id, &product.ProductCode, &product.Description, &product.Width, &product.Height,
+		&product.Length, &product.NetWeight, &product.ExpirationRate, &product.RecommendedFreezingTemperature,
+		&product.FreezingRate, &product.ProductTypeId, &product.SellerId)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	return &product, nil
 }
 
 func (m mariaDBProductRepository) Create(ctx context.Context, productCode string, description string, width float64, height float64, length float64, netWeight float64, expirationRate float64, recommendedFreezingTemperature float64, freezingRate float64, productTypeId int, sellerId int) (*domain.Product, error) {
