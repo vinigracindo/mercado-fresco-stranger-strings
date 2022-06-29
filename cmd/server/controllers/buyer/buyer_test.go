@@ -17,7 +17,7 @@ import (
 var EndpointBuyer = "/api/v1/buyers"
 
 var expectBuyer = &domain.Buyer{
-	//Id:           0,
+	Id:           0,
 	CardNumberId: "402323",
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
@@ -98,7 +98,7 @@ func TestBuyerController_GetAll(t *testing.T) {
 
 		service.
 			On("GetAll", ctx).
-			Return([]domain.Buyer{*expectBuyer}, nil).
+			Return(&[]domain.Buyer{*expectBuyer}, nil).
 			Once()
 
 		controller := controllers.NewBuyerController(service)
@@ -117,7 +117,7 @@ func TestBuyerController_GetAll(t *testing.T) {
 
 		service.
 			On("GetAll", ctx).
-			Return([]domain.Buyer{}, fmt.Errorf("error")).
+			Return(&[]domain.Buyer{}, fmt.Errorf("error")).
 			Once()
 
 		controller := controllers.NewBuyerController(service)

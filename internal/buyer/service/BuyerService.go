@@ -30,7 +30,7 @@ func (s service) GetAll(ctx context.Context) (*[]domain.Buyer, error) {
 func (s service) GetId(ctx context.Context, id int64) (*domain.Buyer, error) {
 	buyer, err := s.repository.GetId(ctx, id)
 	if err != nil {
-		return &domain.Buyer{}, err
+		return nil, err
 	}
 	return buyer, nil
 }
@@ -38,7 +38,7 @@ func (s service) GetId(ctx context.Context, id int64) (*domain.Buyer, error) {
 func (s service) Update(ctx context.Context, id int64, cardNumberId, lastName string) (*domain.Buyer, error) {
 	buyer, err := s.repository.Update(ctx, id, cardNumberId, lastName)
 	if err != nil {
-		return &domain.Buyer{}, err
+		return nil, err
 	}
 	return buyer, nil
 }
