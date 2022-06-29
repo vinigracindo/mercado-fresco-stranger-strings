@@ -3,11 +3,16 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
 )
 
 type mariaDBProductRepository struct {
 	db *sql.DB
+}
+
+func CreateProductRepository(db *sql.DB) domain.ProductRepository {
+	return &mariaDBProductRepository{db: db}
 }
 
 func (m mariaDBProductRepository) GetAll(ctx context.Context) ([]domain.Product, error) {
@@ -36,26 +41,21 @@ func (m mariaDBProductRepository) GetAll(ctx context.Context) ([]domain.Product,
 }
 
 func (m mariaDBProductRepository) GetById(ctx context.Context, id int64) (*domain.Product, error) {
+	row := m.db.QueryRowContext(ctx, sqlGetById, id)
+
 	var product domain.Product
 
-	rows, err := m.db.QueryContext(ctx, sqlGetById, id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if rows.Next() != true {
-		return nil, err
-	}
-
-	err = rows.Scan(&product.Id, &product.ProductCode, &product.Description, &product.Width, &product.Height,
+	err := row.Scan(&product.Id, &product.ProductCode, &product.Description, &product.Width, &product.Height,
 		&product.Length, &product.NetWeight, &product.ExpirationRate, &product.RecommendedFreezingTemperature,
 		&product.FreezingRate, &product.ProductTypeId, &product.SellerId)
-	if err != nil {
-		return nil, err
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return &product, domain.ErrIDNotFound
 	}
 
-	defer rows.Close()
+	if err != nil {
+		return &product, err
+	}
 
 	return &product, nil
 }
@@ -104,15 +104,43 @@ func (m mariaDBProductRepository) Create(ctx context.Context, productCode string
 }
 
 func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, id int64, description string) (*domain.Product, error) {
-	//TODO implement me
-	panic("implement me")
+	product := domain.Product{
+		Id:          id,
+		Description: description,
+	}
+	_, err := m.db.ExecContext(
+		ctx,
+		sqlUpdateDescription,
+		&product.Description,
+		&product.Id,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	productUpdate, err := m.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return productUpdate, nil
+
 }
 
 func (m mariaDBProductRepository) Delete(ctx context.Context, id int64) error {
-	//TODO implement me
-	panic("implement me")
-}
+	result, err := m.db.ExecContext(ctx, sqlDelete, id)
+	if err != nil {
+		return err
+	}
 
-func CreateProductRepository(db *sql.DB) domain.ProductRepository {
-	return &mariaDBProductRepository{db: db}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return domain.ErrIDNotFound
+	}
+
+	return nil
 }

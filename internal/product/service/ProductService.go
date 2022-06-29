@@ -54,6 +54,7 @@ func (s *service) UpdateDescription(ctx context.Context, id int64, description s
 }
 
 func (s *service) Delete(ctx context.Context, id int64) error {
+
 	err := s.repository.Delete(ctx, id)
 
 	if err != nil {
