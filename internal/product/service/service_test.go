@@ -28,9 +28,10 @@ var expectedProduct = domain.Product{
 func TestProductService_Create(t *testing.T) {
 	mockRepository := mocks.NewProductRepository(t)
 
-	ctx, _ := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	t.Run("create_ok: when it contains the mandatory fields, should create a product", func(t *testing.T) {
+
 		mockRepository.
 			On("Create", ctx, &expectedProduct).
 			Return(&expectedProduct, nil).
@@ -64,9 +65,10 @@ func TestProductService_Create(t *testing.T) {
 func TestProductService_GetAll(t *testing.T) {
 	mockRepository := mocks.NewProductRepository(t)
 
-	ctx, _ := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	t.Run("get_all: when exists products, should return a list", func(t *testing.T) {
+
 		expectedProductList := &[]domain.Product{expectedProduct, expectedProduct}
 
 		mockRepository.
@@ -100,7 +102,7 @@ func TestProductService_GetAll(t *testing.T) {
 func TestProductService_GetById(t *testing.T) {
 	mockRepository := mocks.NewProductRepository(t)
 
-	ctx, _ := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
@@ -118,6 +120,7 @@ func TestProductService_GetById(t *testing.T) {
 	})
 
 	t.Run("find_by_id_existent: when element searched for by id exists, should return a product", func(t *testing.T) {
+
 		mockRepository.
 			On("GetById", ctx, int64(1)).
 			Return(&expectedProduct, nil).
@@ -141,7 +144,7 @@ func TestProductService_UpdateDescription(t *testing.T) {
 
 	mockRepository := mocks.NewProductRepository(t)
 
-	ctx, _ := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	t.Run("update_existent: when the data update is successful, should return the updated product", func(t *testing.T) {
 
@@ -177,7 +180,7 @@ func TestProductService_UpdateDescription(t *testing.T) {
 func TestProductService_Delete(t *testing.T) {
 	mockRepository := mocks.NewProductRepository(t)
 
-	ctx, _ := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	t.Run("delete_non_existent: when the product does not exist, should return an error", func(t *testing.T) {
 

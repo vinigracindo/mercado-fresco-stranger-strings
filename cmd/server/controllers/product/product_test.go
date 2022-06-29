@@ -1,6 +1,7 @@
 package controllers_test
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -49,12 +50,12 @@ func TestProductController_Create(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
+	ctx := context.Background()
+
 	t.Run("create_ok: when data entry is successful, should return code 201", func(t *testing.T) {
 
 		mockService.
-			On("Create", expectedProduct.ProductCode, expectedProduct.Description, expectedProduct.Width, expectedProduct.Height,
-				expectedProduct.Length, expectedProduct.NetWeight, expectedProduct.ExpirationRate, expectedProduct.RecommendedFreezingTemperature,
-				expectedProduct.FreezingRate, expectedProduct.ProductTypeId, expectedProduct.SellerId).
+			On("Create", ctx, &bodyProduct).
 			Return(&expectedProduct, nil).
 			Once()
 
@@ -63,6 +64,7 @@ func TestProductController_Create(t *testing.T) {
 		requestBody, _ := json.Marshal(bodyProduct)
 
 		router := testutil.SetUpRouter()
+
 		router.POST(EndpointProduct, controller.Create())
 
 		response := testutil.ExecuteTestRequest(router, http.MethodPost, EndpointProduct, requestBody)
@@ -91,11 +93,9 @@ func TestProductController_Create(t *testing.T) {
 	t.Run("create_conflict: when the product_code already exists, should return code 409", func(t *testing.T) {
 
 		expectedError := errors.New("the product code has already been registered")
+
 		mockService.
-			On("Create", expectedProduct.ProductCode, expectedProduct.Description, expectedProduct.Width,
-				expectedProduct.Height, expectedProduct.Length, expectedProduct.NetWeight, expectedProduct.ExpirationRate,
-				expectedProduct.RecommendedFreezingTemperature, expectedProduct.FreezingRate, expectedProduct.ProductTypeId,
-				expectedProduct.SellerId).
+			On("Create", ctx, &bodyProduct).
 			Return(nil, expectedError).
 			Once()
 
@@ -117,7 +117,9 @@ func TestProductController_GetAll(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
-	expectedProductList := []domain.Product{expectedProduct, expectedProduct}
+	ctx := context.Background()
+
+	expectedProductList := &[]domain.Product{expectedProduct, expectedProduct}
 
 	bodyList := []domain.Product{bodyProduct, bodyProduct}
 
@@ -125,7 +127,7 @@ func TestProductController_GetAll(t *testing.T) {
 
 		expectedError := errors.New("the request sent to the server is invalid or corrupted")
 		mockService.
-			On("GetAll").
+			On("GetAll", ctx).
 			Return(nil, expectedError).
 			Once()
 
@@ -145,7 +147,7 @@ func TestProductController_GetAll(t *testing.T) {
 	t.Run("find_all: when data entry is successful, should return code 200", func(t *testing.T) {
 
 		mockService.
-			On("GetAll").
+			On("GetAll", ctx).
 			Return(expectedProductList, nil).
 			Once()
 
@@ -171,6 +173,8 @@ func TestProductController_GetById(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
+	ctx := context.Background()
+
 	t.Run("find_by_id_parse_error: when product id is not parsed, should return code 400", func(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
@@ -188,7 +192,7 @@ func TestProductController_GetById(t *testing.T) {
 
 		expectedError := errors.New("the product id was not found")
 		mockService.
-			On("GetById", int64(5)).
+			On("GetById", ctx, int64(5)).
 			Return(nil, expectedError).
 			Once()
 
@@ -206,7 +210,7 @@ func TestProductController_GetById(t *testing.T) {
 	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 
 		mockService.
-			On("GetById", int64(1)).
+			On("GetById", ctx, int64(1)).
 			Return(&expectedProduct, nil).
 			Once()
 
@@ -229,6 +233,8 @@ func TestProductController_GetById(t *testing.T) {
 func TestProductController_UpdateDescription(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
+
+	ctx := context.Background()
 
 	t.Run("update_invalid_id_parse_error: when product id is not parsed, should return code 400", func(t *testing.T) {
 
@@ -272,7 +278,7 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		response := testutil.ExecuteTestRequest(router, http.MethodPatch, EndpointProduct+"/1", requestBody)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
-		assert.Equal(t, "{\"code\":400,\"message\":\"Key: 'requestProductPatch.Description' Error:Field validation for 'Description' failed on the 'required' tag\"}", response.Body.String())
+		assert.Equal(t, "{\"code\":400,\"message\":\"Key: 'RequestProductPatch.Description' Error:Field validation for 'Description' failed on the 'required' tag\"}", response.Body.String())
 	})
 
 	t.Run("update_non_existent: when the product does not exist, should return code 404", func(t *testing.T) {
@@ -280,9 +286,11 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		body := domain.Product{
 			Description: "Yogurt",
 		}
+
 		expectedError := errors.New("the product id was not found")
+
 		mockService.
-			On("UpdateDescription", int64(8), body.Description).
+			On("UpdateDescription", ctx, int64(8), body.Description).
 			Return(nil, expectedError).
 			Once()
 
@@ -321,7 +329,7 @@ func TestProductController_UpdateDescription(t *testing.T) {
 		}
 
 		mockService.
-			On("UpdateDescription", expectedProduct.Id, expectedProduct.Description).
+			On("UpdateDescription", ctx, expectedProduct.Id, expectedProduct.Description).
 			Return(&expectedProduct, nil).
 			Once()
 
@@ -348,6 +356,8 @@ func TestProductController_Delete(t *testing.T) {
 
 	mockService := mocks.NewProductService(t)
 
+	ctx := context.Background()
+
 	t.Run("delete_id_parse_error: when product id is not parsed, should return code 400", func(t *testing.T) {
 
 		controller := controllers.CreateProductController(mockService)
@@ -364,8 +374,9 @@ func TestProductController_Delete(t *testing.T) {
 	t.Run("delete_non_existent: when the product does not exist, should return code 404", func(t *testing.T) {
 
 		expectedError := errors.New("the product id was not found")
+
 		mockService.
-			On("Delete", int64(1)).
+			On("Delete", ctx, int64(1)).
 			Return(expectedError).
 			Once()
 
@@ -384,7 +395,7 @@ func TestProductController_Delete(t *testing.T) {
 	t.Run("delete_ok: when the request is successful, should return code 204", func(t *testing.T) {
 
 		mockService.
-			On("Delete", int64(1)).
+			On("Delete", ctx, int64(1)).
 			Return(nil).
 			Once()
 
