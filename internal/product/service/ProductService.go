@@ -10,31 +10,33 @@ type service struct {
 }
 
 func CreateProductService(r domain.ProductRepository) domain.ProductService {
-	return &service{repository: r}
+	return &service{
+		repository: r}
 }
 
-func (s *service) GetAll(ctx context.Context) ([]domain.Product, error) {
+func (s *service) GetAll(ctx context.Context) (*[]domain.Product, error) {
 	products, err := s.repository.GetAll(ctx)
+
 	if err != nil {
 		return nil, err
 	}
+
 	return products, nil
 }
 
 func (s *service) GetById(ctx context.Context, id int64) (*domain.Product, error) {
 	product, err := s.repository.GetById(ctx, id)
+
 	if err != nil {
 		return nil, err
 	}
+
 	return product, nil
 }
 
-func (s *service) Create(ctx context.Context, productCode string, description string, width float64, height float64, length float64, netWeight float64,
-	expirationRate float64, recommendedFreezingTemperature float64, freezingRate float64, productTypeId int, sellerId int) (*domain.Product, error) {
+func (s *service) Create(ctx context.Context, product *domain.Product) (*domain.Product, error) {
 
-	newProduct, err := s.repository.
-		Create(ctx, productCode, description, width, height, length, netWeight, expirationRate,
-			recommendedFreezingTemperature, freezingRate, productTypeId, sellerId)
+	newProduct, err := s.repository.Create(ctx, product)
 
 	if err != nil {
 		return nil, err
@@ -44,8 +46,12 @@ func (s *service) Create(ctx context.Context, productCode string, description st
 }
 
 func (s *service) UpdateDescription(ctx context.Context, id int64, description string) (*domain.Product, error) {
-	productUpdate, err := s.repository.UpdateDescription(ctx, id, description)
+	product := domain.Product{
+		Id:          id,
+		Description: description,
+	}
 
+	productUpdate, err := s.repository.UpdateDescription(ctx, &product)
 	if err != nil {
 		return nil, err
 	}

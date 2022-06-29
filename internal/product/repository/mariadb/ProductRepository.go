@@ -15,13 +15,13 @@ func CreateProductRepository(db *sql.DB) domain.ProductRepository {
 	return &mariaDBProductRepository{db: db}
 }
 
-func (m mariaDBProductRepository) GetAll(ctx context.Context) ([]domain.Product, error) {
-	products := []domain.Product{}
+func (m mariaDBProductRepository) GetAll(ctx context.Context) (*[]domain.Product, error) {
+	var products []domain.Product
 
 	rows, err := m.db.QueryContext(ctx, sqlGetAll)
 
 	if err != nil {
-		return products, err
+		return &products, err
 	}
 
 	defer rows.Close()
@@ -29,15 +29,26 @@ func (m mariaDBProductRepository) GetAll(ctx context.Context) ([]domain.Product,
 	for rows.Next() {
 		var product domain.Product
 
-		err := rows.Scan(&product.Id, &product.ProductCode, &product.Description, &product.Width, &product.Height,
-			&product.Length, &product.NetWeight, &product.ExpirationRate, &product.RecommendedFreezingTemperature,
-			&product.FreezingRate, &product.ProductTypeId, &product.SellerId)
+		err := rows.Scan(
+			&product.Id,
+			&product.ProductCode,
+			&product.Description,
+			&product.Width,
+			&product.Height,
+			&product.Length,
+			&product.NetWeight,
+			&product.ExpirationRate,
+			&product.RecommendedFreezingTemperature,
+			&product.FreezingRate,
+			&product.ProductTypeId,
+			&product.SellerId)
 		if err != nil {
-			return products, err
+			return nil, err
 		}
+
 		products = append(products, product)
 	}
-	return products, nil
+	return &products, nil
 }
 
 func (m mariaDBProductRepository) GetById(ctx context.Context, id int64) (*domain.Product, error) {
@@ -45,70 +56,66 @@ func (m mariaDBProductRepository) GetById(ctx context.Context, id int64) (*domai
 
 	var product domain.Product
 
-	err := row.Scan(&product.Id, &product.ProductCode, &product.Description, &product.Width, &product.Height,
-		&product.Length, &product.NetWeight, &product.ExpirationRate, &product.RecommendedFreezingTemperature,
-		&product.FreezingRate, &product.ProductTypeId, &product.SellerId)
+	err := row.Scan(
+		&product.Id,
+		&product.ProductCode,
+		&product.Description,
+		&product.Width,
+		&product.Height,
+		&product.Length,
+		&product.NetWeight,
+		&product.ExpirationRate,
+		&product.RecommendedFreezingTemperature,
+		&product.FreezingRate,
+		&product.ProductTypeId,
+		&product.SellerId)
 
 	if errors.Is(err, sql.ErrNoRows) {
-		return &product, domain.ErrIDNotFound
+		return nil, domain.ErrIDNotFound
 	}
 
 	if err != nil {
-		return &product, err
+		return nil, err
 	}
 
 	return &product, nil
 }
 
-func (m mariaDBProductRepository) Create(ctx context.Context, productCode string, description string, width float64, height float64, length float64,
-	netWeight float64, expirationRate float64, recommendedFreezingTemperature float64, freezingRate float64, productTypeId int, sellerId int) (*domain.Product, error) {
-	product, err := m.db.ExecContext(
+func (m mariaDBProductRepository) Create(ctx context.Context, product *domain.Product) (*domain.Product, error) {
+
+	productResult, err := m.db.ExecContext(
 		ctx,
 		sqlCreate,
-		productCode,
-		description,
-		width,
-		height,
-		length,
-		netWeight,
-		expirationRate,
-		recommendedFreezingTemperature,
-		freezingRate,
-		productTypeId,
-		sellerId,
+		&product.ProductCode,
+		&product.Description,
+		&product.Width,
+		&product.Height,
+		&product.Length,
+		&product.NetWeight,
+		&product.ExpirationRate,
+		&product.RecommendedFreezingTemperature,
+		&product.FreezingRate,
+		&product.ProductTypeId,
+		&product.SellerId,
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	newProductId, err := product.LastInsertId()
+	lastId, err := productResult.LastInsertId()
 	if err != nil {
 		return nil, err
 	}
 
-	return &domain.Product{
-		Id:                             newProductId,
-		ProductCode:                    productCode,
-		Description:                    description,
-		Width:                          width,
-		Height:                         height,
-		Length:                         length,
-		NetWeight:                      netWeight,
-		ExpirationRate:                 expirationRate,
-		RecommendedFreezingTemperature: recommendedFreezingTemperature,
-		FreezingRate:                   freezingRate,
-		ProductTypeId:                  productTypeId,
-		SellerId:                       sellerId,
-	}, nil
+	product.Id = lastId
+
+	return product, nil
 }
 
-func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, id int64, description string) (*domain.Product, error) {
-	product := domain.Product{
-		Id:          id,
-		Description: description,
-	}
-	_, err := m.db.ExecContext(
+func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, product *domain.Product) (*domain.Product, error) {
+
+	productResult, err := m.db.ExecContext(
 		ctx,
 		sqlUpdateDescription,
 		&product.Description,
@@ -118,13 +125,22 @@ func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, id int6
 		return nil, err
 	}
 
-	productUpdate, err := m.GetById(ctx, id)
+	affectedRows, err := productResult.RowsAffected()
+	if affectedRows == 0 {
+		return nil, domain.ErrIDNotFound
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	productUpdate, err := m.GetById(ctx, product.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	return productUpdate, nil
-
+	
 }
 
 func (m mariaDBProductRepository) Delete(ctx context.Context, id int64) error {

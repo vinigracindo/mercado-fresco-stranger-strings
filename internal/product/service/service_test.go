@@ -30,16 +30,15 @@ func TestProductService_Create(t *testing.T) {
 
 	ctx, _ := context.WithCancel(context.Background())
 
-
 	t.Run("create_ok: when it contains the mandatory fields, should create a product", func(t *testing.T) {
 		mockRepository.
-			On("Create", "PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2).
+			On("Create", ctx, &expectedProduct).
 			Return(&expectedProduct, nil).
 			Once()
 
 		service := service.CreateProductService(mockRepository)
 
-		prod, err := service.Create(ctx, "PROD02", "Yogurt", , 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2, 2)
+		prod, err := service.Create(ctx, &expectedProduct)
 
 		assert.Nil(t, err)
 		assert.Equal(t, prod, &expectedProduct)
@@ -48,14 +47,13 @@ func TestProductService_Create(t *testing.T) {
 	t.Run("create_conflict: when product_code already exists, should not create a product", func(t *testing.T) {
 
 		mockRepository.
-			On("Create", "PROD02", "Yogurt", 1.2, 6.4, 4.5, 3.4, 1.5, 1.3, 2, 2, 2).
+			On("Create", ctx, &expectedProduct).
 			Return(nil, fmt.Errorf("the product code has already been registered")).
 			Once()
 
 		service := service.CreateProductService(mockRepository)
 
-		expectedProduct, err := service.Create(ctx, "PROD02", "Yogurt", 1.2, 6.4, 4.5,
-			3.4, 1.5, 1.3, 2, 2, 2)
+		expectedProduct, err := service.Create(ctx, &expectedProduct)
 
 		assert.NotNil(t, err)
 		assert.Nil(t, expectedProduct)
@@ -69,10 +67,10 @@ func TestProductService_GetAll(t *testing.T) {
 	ctx, _ := context.WithCancel(context.Background())
 
 	t.Run("get_all: when exists products, should return a list", func(t *testing.T) {
-		expectedProductList := []domain.Product{expectedProduct, expectedProduct}
+		expectedProductList := &[]domain.Product{expectedProduct, expectedProduct}
 
 		mockRepository.
-			On("GetAll").
+			On("GetAll", ctx).
 			Return(expectedProductList, nil).
 			Once()
 		service := service.CreateProductService(mockRepository)
@@ -87,8 +85,8 @@ func TestProductService_GetAll(t *testing.T) {
 	t.Run("get_all_error: should return any error", func(t *testing.T) {
 
 		mockRepository.
-			On("GetAll").
-			Return([]domain.Product{}, fmt.Errorf("error: products not found")).
+			On("GetAll", ctx).
+			Return(&[]domain.Product{}, fmt.Errorf("error: products not found")).
 			Once()
 
 		service := service.CreateProductService(mockRepository)
@@ -106,7 +104,7 @@ func TestProductService_GetById(t *testing.T) {
 	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
 		mockRepository.
-			On("GetById", int64(1)).
+			On("GetById", ctx, int64(1)).
 			Return(nil, fmt.Errorf("the product id was not found")).
 			Once()
 
@@ -120,7 +118,7 @@ func TestProductService_GetById(t *testing.T) {
 
 	t.Run("find_by_id_existent: when element searched for by id exists, should return a product", func(t *testing.T) {
 		mockRepository.
-			On("GetById", int64(1)).
+			On("GetById", ctx, int64(1)).
 			Return(&expectedProduct, nil).
 			Once()
 
@@ -134,49 +132,40 @@ func TestProductService_GetById(t *testing.T) {
 }
 
 func TestProductService_UpdateDescription(t *testing.T) {
-	mockRepo := mocks.NewProductRepository(t)
+
+	updateProduct := &domain.Product{
+		Description: "Strawberry yogurt",
+	}
+
+	mockRepository := mocks.NewProductRepository(t)
 
 	ctx, _ := context.WithCancel(context.Background())
 
 	t.Run("update_existent: when the data update is successful, should return the updated product", func(t *testing.T) {
-		expectedProduct := &domain.Product{
-			Id:                             1,
-			ProductCode:                    "PROD02",
-			Description:                    "Strawberry yogurt",
-			Width:                          1.2,
-			Height:                         6.4,
-			Length:                         4.5,
-			NetWeight:                      3.4,
-			ExpirationRate:                 1.5,
-			RecommendedFreezingTemperature: 1.3,
-			FreezingRate:                   2,
-			ProductTypeId:                  2,
-			SellerId:                       2,
-		}
 
-		mockRepo.
-			On("UpdateDescription", int64(1), "Strawberry yogurt").
+		mockRepository.
+			On("UpdateDescription", ctx, expectedProduct.Id, &updateProduct).
 			Return(expectedProduct, nil).
 			Once()
 
-		service := service.CreateProductService(mockRepo)
+		service := service.CreateProductService(mockRepository)
 
-		prod, err := service.UpdateDescription(ctx, int64(1), "Strawberry yogurt")
+		prod, err := service.UpdateDescription(ctx, expectedProduct.Id, updateProduct.Description)
 
 		assert.Nil(t, err)
-		assert.Equal(t, prod, expectedProduct)
+		assert.Equal(t, expectedProduct, prod)
 	})
 
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
-		mockRepo.
-			On("UpdateDescription", int64(1), "Strawberry yogurt").
+		mockRepository.
+			On("UpdateDescription", ctx, expectedProduct.Id, &updateProduct).
 			Return(nil, fmt.Errorf("product was not found")).
 			Once()
 
-		service := service.CreateProductService(mockRepo)
+		service := service.CreateProductService(mockRepository)
 
-		prod, err := service.UpdateDescription(ctx, int64(1), "Strawberry yogurt")
+		prod, err := service.UpdateDescription(ctx, expectedProduct.Id, updateProduct.Description)
 
 		assert.Nil(t, prod)
 		assert.NotNil(t, err)
@@ -184,18 +173,18 @@ func TestProductService_UpdateDescription(t *testing.T) {
 }
 
 func TestProductService_Delete(t *testing.T) {
-	mockRepo := mocks.NewProductRepository(t)
+	mockRepository := mocks.NewProductRepository(t)
 
 	ctx, _ := context.WithCancel(context.Background())
 
 	t.Run("delete_non_existent: when the product does not exist, should return an error", func(t *testing.T) {
 
-		mockRepo.
-			On("Delete", int64(1)).
+		mockRepository.
+			On("Delete", ctx, int64(1)).
 			Return(fmt.Errorf("product was not found")).
 			Once()
 
-		service := service.CreateProductService(mockRepo)
+		service := service.CreateProductService(mockRepository)
 
 		err := service.Delete(ctx, int64(1))
 
@@ -204,12 +193,12 @@ func TestProductService_Delete(t *testing.T) {
 
 	t.Run("delete_ok: when the section exist, should delete a product", func(t *testing.T) {
 
-		mockRepo.
-			On("Delete", int64(1)).
+		mockRepository.
+			On("Delete", ctx, int64(1)).
 			Return(nil).
 			Once()
 
-		service := service.CreateProductService(mockRepo)
+		service := service.CreateProductService(mockRepository)
 
 		err := service.Delete(ctx, int64(1))
 

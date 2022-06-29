@@ -18,19 +18,17 @@ type Product struct {
 }
 
 type ProductRepository interface {
-	GetAll(ctx context.Context) ([]Product, error)
+	GetAll(ctx context.Context) (*[]Product, error)
 	GetById(ctx context.Context, id int64) (*Product, error)
-	Create(ctx context.Context, productCode string, description string, width float64, height float64, length float64, netWeight float64,
-		expirationRate float64, recommendedFreezingTemperature float64, freezingRate float64, productTypeId int, sellerId int) (*Product, error)
-	UpdateDescription(ctx context.Context, id int64, description string) (*Product, error)
+	Create(ctx context.Context, product *Product) (*Product, error)
+	UpdateDescription(ctx context.Context, product *Product) (*Product, error)
 	Delete(ctx context.Context, id int64) error
 }
 
 type ProductService interface {
-	GetAll(ctx context.Context) ([]Product, error)
+	GetAll(ctx context.Context) (*[]Product, error)
 	GetById(ctx context.Context, id int64) (*Product, error)
-	Create(ctx context.Context, productCode string, description string, width float64, height float64, length float64, netWeight float64,
-		expirationRate float64, recommendedFreezingTemperature float64, freezingRate float64, productTypeId int, sellerId int) (*Product, error)
+	Create(ctx context.Context, product *Product) (*Product, error)
 	UpdateDescription(ctx context.Context, id int64, description string) (*Product, error)
 	Delete(ctx context.Context, id int64) error
 }

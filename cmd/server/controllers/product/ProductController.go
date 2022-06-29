@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type requestProductPost struct {
+type RequestProductPost struct {
 	ProductCode                    string  `json:"product_code" binding:"required"`
 	Description                    string  `json:"description" binding:"required"`
 	Width                          float64 `json:"width" binding:"required"`
@@ -23,7 +23,8 @@ type requestProductPost struct {
 	ProductTypeId                  int     `json:"product_type_id" binding:"required"`
 	SellerId                       int     `json:"seller_id" binding:"required"`
 }
-type requestProductPatch struct {
+
+type RequestProductPatch struct {
 	Description string `json:"description" binding:"required"`
 }
 
@@ -32,7 +33,8 @@ type ProductController struct {
 }
 
 func CreateProductController(prodService domain.ProductService) *ProductController {
-	return &(ProductController{service: prodService})
+	return &(ProductController{
+		service: prodService})
 }
 
 // GetAll godoc
@@ -103,16 +105,28 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 func (c *ProductController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		var req requestProductPost
+		var productDTO RequestProductPost
 
-		if err := ctx.ShouldBindJSON(&req); err != nil {
+		if err := ctx.ShouldBindJSON(&productDTO); err != nil {
 			httputil.NewError(ctx, http.StatusUnprocessableEntity, errors.New("invalid input. Check the data entered"))
 			return
 		}
 
-		newProduct, err := c.service.
-			Create(ctx.Request.Context(), req.ProductCode, req.Description, req.Width, req.Height, req.Length, req.NetWeight, req.ExpirationRate,
-				req.RecommendedFreezingTemperature, req.FreezingRate, req.ProductTypeId, req.SellerId)
+		model := domain.Product{
+			ProductCode:                    productDTO.ProductCode,
+			Description:                    productDTO.Description,
+			Width:                          productDTO.Width,
+			Height:                         productDTO.Height,
+			Length:                         productDTO.Length,
+			NetWeight:                      productDTO.NetWeight,
+			ExpirationRate:                 productDTO.ExpirationRate,
+			RecommendedFreezingTemperature: productDTO.RecommendedFreezingTemperature,
+			FreezingRate:                   productDTO.FreezingRate,
+			ProductTypeId:                  productDTO.ProductTypeId,
+			SellerId:                       productDTO.SellerId,
+		}
+
+		newProduct, err := c.service.Create(ctx.Request.Context(), &model)
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusConflict, err)
@@ -145,14 +159,14 @@ func (c *ProductController) UpdateDescription() gin.HandlerFunc {
 			return
 		}
 
-		var req requestProductPatch
+		var productDTO RequestProductPatch
 
-		if err := ctx.ShouldBindJSON(&req); err != nil {
+		if err := ctx.ShouldBindJSON(&productDTO); err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
-		productUpdate, err := c.service.UpdateDescription(ctx.Request.Context(), id, req.Description)
+		productUpdate, err := c.service.UpdateDescription(ctx.Request.Context(), id, productDTO.Description)
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
