@@ -1,5 +1,9 @@
 package domain
 
+import "context"
+
+//passar o context dentro dos metodos
+
 type Buyer struct {
 	Id           int64  `json:"id"`
 	CardNumberId string `json:"card_number_id"`
@@ -8,18 +12,17 @@ type Buyer struct {
 }
 
 type BuyerRepository interface {
-	Create(cardNumberId, firstName, lastName string) (*Buyer, error)
-	GetAll() ([]Buyer, error)
-	GetId(id int64) (*Buyer, error)
-	Update(id int64, cardNumberId, lastName string) (*Buyer, error)
-	Delete(id int64) error
-	CreateId() int64
+	Create(ctx context.Context, cardNumberId, firstName, lastName string) (*Buyer, error)
+	GetAll(ctx context.Context) (*[]Buyer, error)
+	GetId(ctx context.Context, id int64) (*Buyer, error)
+	Update(ctx context.Context, id int64, cardNumberId, lastName string) (*Buyer, error)
+	Delete(ctx context.Context, id int64) error
 }
 
 type BuyerService interface {
-	Create(cardNumberId, firstName string, lastName string) (*Buyer, error)
-	GetAll() ([]Buyer, error)
-	GetId(id int64) (*Buyer, error)
-	Update(id int64, cardNumberId, lastName string) (*Buyer, error)
-	Delete(id int64) error
+	Create(ctx context.Context, cardNumberId, firstName string, lastName string) (*Buyer, error)
+	GetAll(ctx context.Context) (*[]Buyer, error)
+	GetId(ctx context.Context, id int64) (*Buyer, error)
+	Update(ctx context.Context, id int64, cardNumberId, lastName string) (*Buyer, error)
+	Delete(ctx context.Context, id int64) error
 }
