@@ -1,6 +1,7 @@
 package controllers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -16,7 +17,7 @@ import (
 var EndpointBuyer = "/api/v1/buyers"
 
 var expectBuyer = &domain.Buyer{
-	Id:           0,
+	//Id:           0,
 	CardNumberId: "402323",
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
@@ -28,6 +29,8 @@ var bodyBuyer = &domain.Buyer{
 	LastName:     "LastNameTest",
 }
 
+var ctx = context.Background()
+
 func TestBuyerController_Create(t *testing.T) {
 	service := mocks.NewBuyerService(t)
 
@@ -35,6 +38,7 @@ func TestBuyerController_Create(t *testing.T) {
 
 		service.
 			On("Create",
+				ctx,
 				expectBuyer.CardNumberId,
 				expectBuyer.FirstName,
 				expectBuyer.LastName).
@@ -68,6 +72,7 @@ func TestBuyerController_Create(t *testing.T) {
 
 		service.
 			On("Create",
+				ctx,
 				expectBuyer.CardNumberId,
 				expectBuyer.FirstName,
 				expectBuyer.LastName).
@@ -92,7 +97,7 @@ func TestBuyerController_GetAll(t *testing.T) {
 	t.Run("find_all: when data entry is successful, should return code 200.", func(t *testing.T) {
 
 		service.
-			On("GetAll").
+			On("GetAll", ctx).
 			Return([]domain.Buyer{*expectBuyer}, nil).
 			Once()
 
@@ -111,7 +116,7 @@ func TestBuyerController_GetAll(t *testing.T) {
 	t.Run("find_all_fail: when GetAll fail, should return code 400.", func(t *testing.T) {
 
 		service.
-			On("GetAll").
+			On("GetAll", ctx).
 			Return([]domain.Buyer{}, fmt.Errorf("error")).
 			Once()
 
@@ -133,7 +138,7 @@ func TestBuyerController_GetById(t *testing.T) {
 	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 
 		service.
-			On("GetId", int64(1)).
+			On("GetId", ctx, int64(1)).
 			Return(bodyBuyer, nil).
 			Once()
 
@@ -151,7 +156,7 @@ func TestBuyerController_GetById(t *testing.T) {
 	t.Run("find_by_id_inexistent: when the buyer does not exist, should return code 404", func(t *testing.T) {
 
 		service.
-			On("GetId", int64(1)).
+			On("GetId", ctx, int64(1)).
 			Return(nil, fmt.Errorf("buyer not found")).
 			Once()
 		controller := controllers.NewBuyerController(service)
@@ -186,7 +191,7 @@ func TestBuyerController_Update(t *testing.T) {
 	t.Run("update_ok: when the request is successful, should return code 200", func(t *testing.T) {
 
 		service.
-			On("Update", int64(1), updateBody.CardNumberId, updateBody.LastName).
+			On("Update", ctx, int64(1), updateBody.CardNumberId, updateBody.LastName).
 			Return(updateBody, nil).
 			Once()
 
@@ -203,7 +208,7 @@ func TestBuyerController_Update(t *testing.T) {
 
 	t.Run("update_non_existent: when the buyer does not exist, should return code 404.", func(t *testing.T) {
 		service.
-			On("Update", int64(1), updateBody.CardNumberId, updateBody.LastName).
+			On("Update", ctx, int64(1), updateBody.CardNumberId, updateBody.LastName).
 			Return(nil, fmt.Errorf("buyer with id %d not found", int64(1))).
 			Once()
 
@@ -242,7 +247,7 @@ func TestBuyerController_Delete(t *testing.T) {
 	t.Run("delete_non_existent: when the buyer does not exist, should return code 404", func(t *testing.T) {
 
 		service.
-			On("Delete", int64(1)).
+			On("Delete", ctx, int64(1)).
 			Return(fmt.Errorf("buyer with id not found")).
 			Once()
 
@@ -259,7 +264,7 @@ func TestBuyerController_Delete(t *testing.T) {
 	t.Run("delete_ok: when the request is successful, should return code 204.", func(t *testing.T) {
 
 		service.
-			On("Delete", int64(1)).
+			On("Delete", ctx, int64(1)).
 			Return(nil).
 			Once()
 
