@@ -99,6 +99,7 @@ func TestProductService_GetAll(t *testing.T) {
 
 func TestProductService_GetById(t *testing.T) {
 	mockRepository := mocks.NewProductRepository(t)
+
 	ctx, _ := context.WithCancel(context.Background())
 
 	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
@@ -133,7 +134,8 @@ func TestProductService_GetById(t *testing.T) {
 
 func TestProductService_UpdateDescription(t *testing.T) {
 
-	updateProduct := &domain.Product{
+	dummyUpdatedProduct := domain.Product{
+		Id:          expectedProduct.Id,
 		Description: "Strawberry yogurt",
 	}
 
@@ -144,28 +146,28 @@ func TestProductService_UpdateDescription(t *testing.T) {
 	t.Run("update_existent: when the data update is successful, should return the updated product", func(t *testing.T) {
 
 		mockRepository.
-			On("UpdateDescription", ctx, expectedProduct.Id, &updateProduct).
-			Return(expectedProduct, nil).
+			On("UpdateDescription", ctx, &dummyUpdatedProduct).
+			Return(&expectedProduct, nil).
 			Once()
 
 		service := service.CreateProductService(mockRepository)
 
-		prod, err := service.UpdateDescription(ctx, expectedProduct.Id, updateProduct.Description)
+		prod, err := service.UpdateDescription(ctx, expectedProduct.Id, dummyUpdatedProduct.Description)
 
 		assert.Nil(t, err)
-		assert.Equal(t, expectedProduct, prod)
+		assert.Equal(t, &expectedProduct, prod)
 	})
 
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
 		mockRepository.
-			On("UpdateDescription", ctx, expectedProduct.Id, &updateProduct).
+			On("UpdateDescription", ctx, &dummyUpdatedProduct).
 			Return(nil, fmt.Errorf("product was not found")).
 			Once()
 
 		service := service.CreateProductService(mockRepository)
 
-		prod, err := service.UpdateDescription(ctx, expectedProduct.Id, updateProduct.Description)
+		prod, err := service.UpdateDescription(ctx, expectedProduct.Id, dummyUpdatedProduct.Description)
 
 		assert.Nil(t, prod)
 		assert.NotNil(t, err)
