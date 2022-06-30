@@ -3,6 +3,8 @@ package repository_test
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"regexp"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -75,9 +77,7 @@ func TestSectionRepository_GetAll(t *testing.T) {
 			mockSections[1].ProductTypeId,
 		)
 
-		query := "SELECT \\* FROM sections"
-
-		mock.ExpectQuery(query).WillReturnRows(rows)
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetAllSection)).WillReturnRows(rows)
 
 		sectionRepository := repository.NewMariadbSectionRepository(db)
 
@@ -105,9 +105,7 @@ func TestSectionRepository_GetAll(t *testing.T) {
 			"productTypeId",
 		}).AddRow("", "", "", "", "", "", "", "", "")
 
-		query := "SELECT \\* FROM sections"
-
-		mock.ExpectQuery(query).WillReturnRows(rows)
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetAllSection)).WillReturnRows(rows)
 
 		sectionRepository := repository.NewMariadbSectionRepository(db)
 
@@ -121,9 +119,7 @@ func TestSectionRepository_GetAll(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		query := "SELECT \\* FROM sections"
-
-		mock.ExpectQuery(query).WillReturnError(sql.ErrNoRows)
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetAllSection)).WillReturnError(sql.ErrNoRows)
 
 		sectionRepository := repository.NewMariadbSectionRepository(db)
 
@@ -131,7 +127,6 @@ func TestSectionRepository_GetAll(t *testing.T) {
 		assert.Error(t, err)
 
 	})
-
 }
 
 func TestSectionRepository_GetById(t *testing.T) {
@@ -175,9 +170,7 @@ func TestSectionRepository_GetById(t *testing.T) {
 			mockSection.ProductTypeId,
 		)
 
-		query := "SELECT \\* FROM sections WHERE id=?"
-
-		mock.ExpectQuery(query).WillReturnRows(row)
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetByIdSection)).WillReturnRows(row)
 
 		sectionRepository := repository.NewMariadbSectionRepository(db)
 
@@ -204,9 +197,7 @@ func TestSectionRepository_GetById(t *testing.T) {
 			"productTypeId",
 		}).AddRow("", "", "", "", "", "", "", "", "")
 
-		query := "SELECT \\* FROM sections WHERE id=?"
-
-		mock.ExpectQuery(query).WillReturnRows(row)
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetByIdSection)).WillReturnRows(row)
 
 		sectionRepository := repository.NewMariadbSectionRepository(db)
 
@@ -214,14 +205,12 @@ func TestSectionRepository_GetById(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("get_by_id_select_err: ", func(t *testing.T) {
+	t.Run("get_by_id_not_found: ", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
 
-		query := "SELECT \\* FROM sections WHERE id=?"
-
-		mock.ExpectQuery(query).WillReturnError(sql.ErrNoRows)
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetByIdSection)).WillReturnError(sql.ErrNoRows)
 
 		sectionRepository := repository.NewMariadbSectionRepository(db)
 
@@ -229,21 +218,147 @@ func TestSectionRepository_GetById(t *testing.T) {
 		assert.Error(t, err)
 
 	})
+}
 
-	//VER COMO FAZER
-	// t.Run("get_by_id_not_found: ", func(t *testing.T) {
-	// 	db, mock, err := sqlmock.New()
-	// 	assert.NoError(t, err)
-	// 	defer db.Close()
+func TestSectionRepository_Create(t *testing.T) {
 
-	// 	query := "SELECT \\* FROM sections WHERE id=?"
+	mockSection := domain.SectionModel{
+		Id:                 1,
+		SectionNumber:      1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    1,
+		MinimumCapacity:    1,
+		MaximumCapacity:    1,
+		WarehouseId:        1,
+		ProductTypeId:      1,
+	}
 
-	// 	mock.ExpectQuery(query).WillReturnError(?)
+	t.Run("create_ok: ", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
 
-	// 	sectionRepository := repository.NewMariadbSectionRepository(db)
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLCreateSection)).
+			WithArgs(
+				mockSection.SectionNumber,
+				mockSection.CurrentTemperature,
+				mockSection.MinimumTemperature,
+				mockSection.CurrentCapacity,
+				mockSection.MinimumCapacity,
+				mockSection.MaximumCapacity,
+				mockSection.WarehouseId,
+				mockSection.ProductTypeId,
+			).WillReturnResult(sqlmock.NewResult(1, 1))
 
-	// 	_, err = sectionRepository.GetById(context.Background(), 3)
-	// 	assert.Error(t, err)
+		sectionRepository := repository.NewMariadbSectionRepository(db)
 
-	// })
+		result, err := sectionRepository.Create(context.Background(),
+			mockSection.SectionNumber,
+			mockSection.CurrentTemperature,
+			mockSection.MinimumTemperature,
+			mockSection.CurrentCapacity,
+			mockSection.MinimumCapacity,
+			mockSection.MaximumCapacity,
+			mockSection.WarehouseId,
+			mockSection.ProductTypeId,
+		)
+
+		assert.NoError(t, err)
+		assert.Equal(t, result.SectionNumber, int64(1))
+	})
+
+	t.Run("create_fail_exec: ", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLCreateSection)).
+			WithArgs(0, 0, 0, 0, 0, 0, 0, 0).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+		_, err = sectionRepository.Create(context.TODO(),
+			mockSection.SectionNumber,
+			mockSection.CurrentTemperature,
+			mockSection.MinimumTemperature,
+			mockSection.CurrentCapacity,
+			mockSection.MinimumCapacity,
+			mockSection.MaximumCapacity,
+			mockSection.WarehouseId,
+			mockSection.ProductTypeId,
+		)
+
+		assert.Error(t, err)
+	})
+
+}
+
+func TestSectionRepository_Delete(t *testing.T) {
+	id := int64(1)
+
+	t.Run("delete_ok: ", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLDeleteSection)).
+			WithArgs(id).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		err = sectionRepository.Delete(context.Background(), id)
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("delete_affect_rows_0: ", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLDeleteSection)).
+			WithArgs(id).
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		err = sectionRepository.Delete(context.Background(), id)
+
+		assert.Error(t, err)
+	})
+
+	t.Run("delete_not_found: ", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLDeleteSection)).
+			WithArgs(id).
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		err = sectionRepository.Delete(context.Background(), id)
+
+		assert.Error(t, err)
+	})
+
+	t.Run("delete_fail: ", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLDeleteSection)).
+			WithArgs(id).
+			WillReturnError(errors.New("any error"))
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		err = sectionRepository.Delete(context.Background(), id)
+
+		assert.Error(t, err)
+	})
+
 }

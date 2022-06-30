@@ -17,7 +17,7 @@ func NewMariadbSectionRepository(db *sql.DB) domain.SectionRepository {
 }
 
 func (m *mariaDbSectionRepository) Delete(ctx context.Context, id int64) error {
-	result, err := m.db.ExecContext(ctx, sqlDeleteSection, id)
+	result, err := m.db.ExecContext(ctx, SQLDeleteSection, id)
 	if err != nil {
 		return err
 	}
@@ -27,6 +27,7 @@ func (m *mariaDbSectionRepository) Delete(ctx context.Context, id int64) error {
 		return errors.New("section not found")
 	}
 
+	//realmente preciso disso?
 	if err != nil {
 		return err
 	}
@@ -35,7 +36,7 @@ func (m *mariaDbSectionRepository) Delete(ctx context.Context, id int64) error {
 }
 
 func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (domain.SectionModel, error) {
-	result, err := m.db.ExecContext(ctx, sqlUpdateCurrentCapacitySection, currentCapacity, id)
+	result, err := m.db.ExecContext(ctx, SQLUpdateCurrentCapacitySection, currentCapacity, id)
 	if err != nil {
 		return domain.SectionModel{}, err
 	}
@@ -60,7 +61,7 @@ func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, id
 func (m *mariaDbSectionRepository) Create(ctx context.Context, sectionNumber int64, currentTemperature float64, minimumTemperature float64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {
 	section, err := m.db.ExecContext(
 		ctx,
-		sqlCreateSection,
+		SQLCreateSection,
 		sectionNumber,
 		currentTemperature,
 		minimumTemperature,
@@ -95,7 +96,7 @@ func (m *mariaDbSectionRepository) Create(ctx context.Context, sectionNumber int
 
 func (m *mariaDbSectionRepository) GetById(ctx context.Context, id int64) (domain.SectionModel, error) {
 
-	row := m.db.QueryRowContext(ctx, sqlGetByIdSection, id)
+	row := m.db.QueryRowContext(ctx, SQLGetByIdSection, id)
 
 	var section domain.SectionModel
 
@@ -126,7 +127,7 @@ func (m *mariaDbSectionRepository) GetById(ctx context.Context, id int64) (domai
 func (m *mariaDbSectionRepository) GetAll(ctx context.Context) ([]domain.SectionModel, error) {
 	sections := []domain.SectionModel{}
 
-	rows, err := m.db.QueryContext(ctx, sqlGetAllSection)
+	rows, err := m.db.QueryContext(ctx, SQLGetAllSection)
 	if err != nil {
 		return sections, err
 	}

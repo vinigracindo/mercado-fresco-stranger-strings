@@ -1,11 +1,11 @@
 package repository
 
 const (
-	sqlGetAllSection = "SELECT  * FROM sections"
+	SQLGetAllSection = "SELECT  * FROM sections"
 
-	sqlGetByIdSection = "SELECT * FROM sections WHERE id=?"
+	SQLGetByIdSection = "SELECT * FROM sections WHERE id=?"
 
-	sqlCreateSection = `
+	SQLCreateSection = `
     INSERT INTO
     sections (
         section_number,
@@ -19,10 +19,10 @@ const (
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `
-	sqlUpdateCurrentCapacitySection = `
+	SQLUpdateCurrentCapacitySection = `
     UPDATE sections
     SET current_capacity=?
     WHERE id=?
     `
-	sqlDeleteSection = "DELETE FROM sections WHERE id=?"
+	SQLDeleteSection = "DELETE FROM sections WHERE id=?"
 )
