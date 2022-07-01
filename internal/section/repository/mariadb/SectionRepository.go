@@ -22,14 +22,9 @@ func (m *mariaDbSectionRepository) Delete(ctx context.Context, id int64) error {
 		return err
 	}
 
-	rowsAffected, err := result.RowsAffected()
+	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
 		return errors.New("section not found")
-	}
-
-	//realmente preciso disso?
-	if err != nil {
-		return err
 	}
 
 	return nil
@@ -41,14 +36,9 @@ func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, id
 		return domain.SectionModel{}, err
 	}
 
-	rowsAffected, err := result.RowsAffected()
+	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
 		return domain.SectionModel{}, errors.New("section not found")
-	}
-
-	// realmente precisa disso?
-	if err != nil {
-		return domain.SectionModel{}, err
 	}
 
 	sectionUpdated, err := m.GetById(ctx, id)
@@ -77,10 +67,7 @@ func (m *mariaDbSectionRepository) Create(ctx context.Context, sectionNumber int
 		return domain.SectionModel{}, err
 	}
 
-	newSectionId, err := section.LastInsertId()
-	if err != nil {
-		return domain.SectionModel{}, err
-	}
+	newSectionId, _ := section.LastInsertId()
 
 	return domain.SectionModel{
 		Id:                 newSectionId,
