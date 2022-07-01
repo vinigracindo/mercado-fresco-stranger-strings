@@ -1,7 +1,18 @@
 package repository
 
 const (
-	SQLGetAllSection = "SELECT  * FROM sections"
+	SQLGetAllSection = `
+    SELECT   
+    id,       
+    section_number,
+    current_temperature,
+    minimum_temperature,
+    current_capacity,
+    minimum_capacity,
+    maximum_capacity,
+    warehouse_id,
+    product_type_id FROM section
+    `
 
 	SQLGetByIdSection = "SELECT * FROM sections WHERE id=?"
 

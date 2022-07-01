@@ -97,7 +97,6 @@ func (m *mariaDbSectionRepository) GetById(ctx context.Context, id int64) (domai
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return section, errors.New("section not found")
-
 	}
 
 	if err != nil {
