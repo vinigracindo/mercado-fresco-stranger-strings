@@ -13,8 +13,7 @@ const (
 
 	UpdateWarehouse = `
     UPDATE warehouse
-    SET minimun_capacity = ?,
-        minimun_temperature  = ?
+    SET minimun_capacity = ?, minimun_temperature  = ?
     WHERE id=?
     `
 	DeleteWarehouse = "DELETE FROM warehouse WHERE id=?"
