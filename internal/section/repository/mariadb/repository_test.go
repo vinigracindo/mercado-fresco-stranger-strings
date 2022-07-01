@@ -362,3 +362,59 @@ func TestSectionRepository_Delete(t *testing.T) {
 	})
 
 }
+
+func TestSectionRepository_Update(t *testing.T) {
+	id := int64(1)
+	newCurrentCapacity := int64(1)
+
+	t.Run("update_not_found:", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLUpdateCurrentCapacitySection)).
+			WithArgs(id, newCurrentCapacity).
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		_, err = sectionRepository.UpdateCurrentCapacity(context.Background(), id, newCurrentCapacity)
+
+		assert.Error(t, err)
+	})
+
+	t.Run("update_fail: ", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLDeleteSection)).
+			WithArgs(id).
+			WillReturnError(errors.New("any error"))
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		_, err = sectionRepository.UpdateCurrentCapacity(context.Background(), id, newCurrentCapacity)
+
+		assert.Error(t, err)
+	})
+
+	// t.Run("update_ok:", func(t *testing.T) {
+	// 	db, mock, err := sqlmock.New()
+	// 	assert.NoError(t, err)
+	// 	defer db.Close()
+
+	// 	mock.ExpectQuery(regexp.QuoteMeta(repository.SQLUpdateCurrentCapacitySection)).
+	// 		WithArgs(id, newCurrentCapacity).
+	// 		WillReturnRows(row)
+
+	// 	sectionRepository := repository.NewMariadbSectionRepository(db)
+
+	// 	result, err := sectionRepository.UpdateCurrentCapacity(context.Background(), id, newCurrentCapacity)
+	// 	// result, err := sectionRepository.GetById(context.Background(), id)
+
+	// 	assert.NoError(t, err)
+	// 	assert.Equal(t, result, mockSection)
+
+	// })
+}

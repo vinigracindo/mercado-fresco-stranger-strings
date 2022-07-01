@@ -46,6 +46,7 @@ func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, id
 		return domain.SectionModel{}, errors.New("section not found")
 	}
 
+	// realmente precisa disso?
 	if err != nil {
 		return domain.SectionModel{}, err
 	}
