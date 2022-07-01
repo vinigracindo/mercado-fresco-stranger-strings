@@ -20,8 +20,22 @@ func (s *service) Delete(ctx context.Context, id int64) error {
 	return s.repository.Delete(ctx, id)
 }
 
-func (s *service) UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (domain.SectionModel, error) {
-	return s.repository.UpdateCurrentCapacity(ctx, id, currentCapacity)
+func (s *service) UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (*domain.SectionModel, error) {
+	sectionCurrent, err := s.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if currentCapacity > 0 {
+		sectionCurrent.CurrentCapacity = currentCapacity
+	}
+
+	section, err := s.repository.UpdateCurrentCapacity(ctx, &sectionCurrent)
+	if err != nil {
+		return nil, err
+	}
+
+	return section, nil
 }
 
 func (s *service) Create(

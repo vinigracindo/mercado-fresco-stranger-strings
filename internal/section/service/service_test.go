@@ -12,6 +12,7 @@ import (
 )
 
 var expectedSection = domain.SectionModel{
+	Id:                 int64(1),
 	SectionNumber:      int64(1),
 	CurrentTemperature: 28.0,
 	MinimumTemperature: 30.5,
@@ -183,16 +184,24 @@ func TestSectionService_Delete(t *testing.T) {
 }
 
 func TestSectionService_Update(t *testing.T) {
-	mockRepository := mocks.NewSectionRepository(t)
+	id := int64(1)
+	newCurrentCapacity := int64(5)
 
 	t.Run("update_existent: when the data update is successful, should return the updated session", func(t *testing.T) {
+		mockRepository := mocks.NewSectionRepository(t)
+
 		mockRepository.
-			On("UpdateCurrentCapacity", ctx, int64(1), int64(5)).
-			Return(expectedUpdatedSection, nil).
+			On("GetById", context.TODO(), int64(1)).
+			Return(expectedSection, nil).
+			Once()
+
+		mockRepository.
+			On("UpdateCurrentCapacity", context.TODO(), &expectedUpdatedSection).
+			Return(&expectedUpdatedSection, nil).
 			Once()
 
 		service := service.NewServiceSection(mockRepository)
-		result, err := service.UpdateCurrentCapacity(ctx, int64(1), int64(5))
+		result, err := service.UpdateCurrentCapacity(context.TODO(), id, newCurrentCapacity)
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedUpdatedSection.CurrentCapacity, result.CurrentCapacity)
@@ -200,17 +209,39 @@ func TestSectionService_Update(t *testing.T) {
 
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 		id := int64(3)
-		errorNotFound := fmt.Errorf("section %d not found", id)
+		errorNotFound := fmt.Errorf("section not found")
+		mockRepository := mocks.NewSectionRepository(t)
+
 		mockRepository.
-			On("UpdateCurrentCapacity", ctx, id, int64(5)).
-			Return(domain.SectionModel{}, errorNotFound).
-			Once()
+			On("GetById", context.TODO(), id).
+			Return(domain.SectionModel{}, errorNotFound)
 
 		service := service.NewServiceSection(mockRepository)
 		result, err := service.UpdateCurrentCapacity(ctx, id, int64(5))
 
 		assert.Equal(t, errorNotFound, err)
-		assert.Equal(t, domain.SectionModel{}, result)
+		assert.Nil(t, result)
+	})
+
+	t.Run("update_existent: when the data update is successful, should return the updated session", func(t *testing.T) {
+		mockRepository := mocks.NewSectionRepository(t)
+		anyError := fmt.Errorf("any error")
+
+		mockRepository.
+			On("GetById", context.TODO(), int64(1)).
+			Return(expectedSection, nil).
+			Once()
+
+		mockRepository.
+			On("UpdateCurrentCapacity", context.TODO(), &expectedUpdatedSection).
+			Return(nil, anyError).
+			Once()
+
+		service := service.NewServiceSection(mockRepository)
+		result, err := service.UpdateCurrentCapacity(context.TODO(), id, newCurrentCapacity)
+
+		assert.Equal(t, anyError, err)
+		assert.Nil(t, result)
 	})
 
 }

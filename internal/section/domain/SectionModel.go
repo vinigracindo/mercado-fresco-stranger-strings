@@ -16,7 +16,7 @@ type SectionModel struct {
 
 type SectionRepository interface {
 	Delete(ctx context.Context, id int64) error
-	UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (SectionModel, error)
+	UpdateCurrentCapacity(ctx context.Context, section *SectionModel) (*SectionModel, error)
 	GetById(ctx context.Context, id int64) (SectionModel, error)
 	GetAll(ctx context.Context) ([]SectionModel, error)
 	Create(
@@ -33,7 +33,7 @@ type SectionRepository interface {
 
 type SectionService interface {
 	Delete(ctx context.Context, id int64) error
-	UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (SectionModel, error)
+	UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (*SectionModel, error)
 	Create(
 		ctx context.Context,
 		sectionNumber int64,

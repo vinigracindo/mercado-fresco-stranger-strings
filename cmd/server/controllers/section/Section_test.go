@@ -223,7 +223,7 @@ func TestSectionController_Update(t *testing.T) {
 	t.Run("update_ok: when the request is successful, should return code 200", func(t *testing.T) {
 		mockService.
 			On("UpdateCurrentCapacity", ctx, int64(1), int64(1)).
-			Return(expectedSection, nil).
+			Return(&expectedSection, nil).
 			Once()
 		controller := controllers.NewSection(mockService)
 
@@ -240,7 +240,7 @@ func TestSectionController_Update(t *testing.T) {
 	t.Run("update_non_existent: when the section does not exist, should return code 404", func(t *testing.T) {
 		mockService.
 			On("UpdateCurrentCapacity", ctx, int64(1), int64(1)).
-			Return(domain.SectionModel{}, fmt.Errorf("section not found")).
+			Return(nil, fmt.Errorf("section not found")).
 			Once()
 		controller := controllers.NewSection(mockService)
 

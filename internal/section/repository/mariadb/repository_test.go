@@ -265,7 +265,7 @@ func TestSectionRepository_Create(t *testing.T) {
 		)
 
 		assert.NoError(t, err)
-		assert.Equal(t, result.SectionNumber, int64(1))
+		assert.Equal(t, result, mockSection)
 	})
 
 	t.Run("create_fail_exec: ", func(t *testing.T) {
@@ -367,6 +367,18 @@ func TestSectionRepository_Update(t *testing.T) {
 	id := int64(1)
 	newCurrentCapacity := int64(1)
 
+	mockSection := domain.SectionModel{
+		Id:                 1,
+		SectionNumber:      1,
+		CurrentTemperature: 1,
+		MinimumTemperature: 1,
+		CurrentCapacity:    1,
+		MinimumCapacity:    1,
+		MaximumCapacity:    1,
+		WarehouseId:        1,
+		ProductTypeId:      1,
+	}
+
 	t.Run("update_not_found:", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
@@ -378,7 +390,7 @@ func TestSectionRepository_Update(t *testing.T) {
 
 		sectionRepository := repository.NewMariadbSectionRepository(db)
 
-		_, err = sectionRepository.UpdateCurrentCapacity(context.Background(), id, newCurrentCapacity)
+		_, err = sectionRepository.UpdateCurrentCapacity(context.Background(), &mockSection)
 
 		assert.Error(t, err)
 	})
@@ -394,27 +406,24 @@ func TestSectionRepository_Update(t *testing.T) {
 
 		sectionRepository := repository.NewMariadbSectionRepository(db)
 
-		_, err = sectionRepository.UpdateCurrentCapacity(context.Background(), id, newCurrentCapacity)
+		_, err = sectionRepository.UpdateCurrentCapacity(context.Background(), &mockSection)
 
 		assert.Error(t, err)
 	})
 
-	// t.Run("update_ok:", func(t *testing.T) {
-	// 	db, mock, err := sqlmock.New()
-	// 	assert.NoError(t, err)
-	// 	defer db.Close()
+	t.Run("update_ok:", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
 
-	// 	mock.ExpectQuery(regexp.QuoteMeta(repository.SQLUpdateCurrentCapacitySection)).
-	// 		WithArgs(id, newCurrentCapacity).
-	// 		WillReturnRows(row)
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLUpdateCurrentCapacitySection)).
+			WithArgs(id, newCurrentCapacity).
+			WillReturnResult(sqlmock.NewResult(0, 1))
 
-	// 	sectionRepository := repository.NewMariadbSectionRepository(db)
+		sectionRepository := repository.NewMariadbSectionRepository(db)
 
-	// 	result, err := sectionRepository.UpdateCurrentCapacity(context.Background(), id, newCurrentCapacity)
-	// 	// result, err := sectionRepository.GetById(context.Background(), id)
+		_, err = sectionRepository.UpdateCurrentCapacity(context.Background(), &mockSection)
 
-	// 	assert.NoError(t, err)
-	// 	assert.Equal(t, result, mockSection)
-
-	// })
+		assert.NoError(t, err)
+	})
 }

@@ -94,14 +94,16 @@ func (_m *SectionService) GetById(ctx context.Context, id int64) (domain.Section
 }
 
 // UpdateCurrentCapacity provides a mock function with given fields: ctx, id, currentCapacity
-func (_m *SectionService) UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (domain.SectionModel, error) {
+func (_m *SectionService) UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (*domain.SectionModel, error) {
 	ret := _m.Called(ctx, id, currentCapacity)
 
-	var r0 domain.SectionModel
-	if rf, ok := ret.Get(0).(func(context.Context, int64, int64) domain.SectionModel); ok {
+	var r0 *domain.SectionModel
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int64) *domain.SectionModel); ok {
 		r0 = rf(ctx, id, currentCapacity)
 	} else {
-		r0 = ret.Get(0).(domain.SectionModel)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.SectionModel)
+		}
 	}
 
 	var r1 error

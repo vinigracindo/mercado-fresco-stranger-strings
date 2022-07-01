@@ -30,23 +30,18 @@ func (m *mariaDbSectionRepository) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (domain.SectionModel, error) {
-	result, err := m.db.ExecContext(ctx, SQLUpdateCurrentCapacitySection, currentCapacity, id)
+func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, section *domain.SectionModel) (*domain.SectionModel, error) {
+	result, err := m.db.ExecContext(ctx, SQLUpdateCurrentCapacitySection, &section.CurrentCapacity, &section.Id)
 	if err != nil {
-		return domain.SectionModel{}, err
+		return nil, err
 	}
 
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
-		return domain.SectionModel{}, errors.New("section not found")
+		return nil, errors.New("section not found")
 	}
 
-	sectionUpdated, err := m.GetById(ctx, id)
-	if err != nil {
-		return domain.SectionModel{}, err
-	}
-
-	return sectionUpdated, nil
+	return section, nil
 }
 
 func (m *mariaDbSectionRepository) Create(ctx context.Context, sectionNumber int64, currentTemperature float64, minimumTemperature float64, currentCapacity int64, minimumCapacity int64, maximumCapacity int64, warehouseId int64, productTypeId int64) (domain.SectionModel, error) {

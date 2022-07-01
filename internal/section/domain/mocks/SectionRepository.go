@@ -93,20 +93,22 @@ func (_m *SectionRepository) GetById(ctx context.Context, id int64) (domain.Sect
 	return r0, r1
 }
 
-// UpdateCurrentCapacity provides a mock function with given fields: ctx, id, currentCapacity
-func (_m *SectionRepository) UpdateCurrentCapacity(ctx context.Context, id int64, currentCapacity int64) (domain.SectionModel, error) {
-	ret := _m.Called(ctx, id, currentCapacity)
+// UpdateCurrentCapacity provides a mock function with given fields: ctx, section
+func (_m *SectionRepository) UpdateCurrentCapacity(ctx context.Context, section *domain.SectionModel) (*domain.SectionModel, error) {
+	ret := _m.Called(ctx, section)
 
-	var r0 domain.SectionModel
-	if rf, ok := ret.Get(0).(func(context.Context, int64, int64) domain.SectionModel); ok {
-		r0 = rf(ctx, id, currentCapacity)
+	var r0 *domain.SectionModel
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.SectionModel) *domain.SectionModel); ok {
+		r0 = rf(ctx, section)
 	} else {
-		r0 = ret.Get(0).(domain.SectionModel)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.SectionModel)
+		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, int64, int64) error); ok {
-		r1 = rf(ctx, id, currentCapacity)
+	if rf, ok := ret.Get(1).(func(context.Context, *domain.SectionModel) error); ok {
+		r1 = rf(ctx, section)
 	} else {
 		r1 = ret.Error(1)
 	}
