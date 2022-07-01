@@ -116,8 +116,6 @@ func (m mariaDBProductRepository) Create(ctx context.Context, product *domain.Pr
 
 func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, product *domain.Product) (*domain.Product, error) {
 
-	newProduct := domain.Product{}
-
 	productResult, err := m.db.ExecContext(
 		ctx,
 		SqlUpdateDescription,
@@ -126,17 +124,17 @@ func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, product
 	)
 
 	if err != nil {
-		return &newProduct, err
+		return nil, err
 	}
 
 	affectedRows, err := productResult.RowsAffected()
 
 	if affectedRows == 0 {
-		return &newProduct, domain.ErrIDNotFound
+		return nil, domain.ErrIDNotFound
 	}
 
 	if err != nil {
-		return &newProduct, err
+		return nil, err
 	}
 
 	return product, nil

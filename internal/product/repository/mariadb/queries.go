@@ -1,7 +1,7 @@
 package mariadb
 
 const (
-	SqlGetAll = "SELECT  * FROM products"
+	SqlGetAll = "SELECT * FROM products"
 
 	SqlGetById = "SELECT * FROM products WHERE id=?"
 

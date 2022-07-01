@@ -149,7 +149,12 @@ func TestProductService_UpdateDescription(t *testing.T) {
 	t.Run("update_existent: when the data update is successful, should return the updated product", func(t *testing.T) {
 
 		mockRepository.
-			On("UpdateDescription", ctx, &dummyUpdatedProduct).
+			On("GetById", ctx, int64(1)).
+			Return(&expectedProduct, nil).
+			Once()
+
+		mockRepository.
+			On("UpdateDescription", ctx, &expectedProduct).
 			Return(&expectedProduct, nil).
 			Once()
 
@@ -164,8 +169,8 @@ func TestProductService_UpdateDescription(t *testing.T) {
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
 		mockRepository.
-			On("UpdateDescription", ctx, &dummyUpdatedProduct).
-			Return(nil, fmt.Errorf("product was not found")).
+			On("GetById", ctx, int64(1)).
+			Return(nil, fmt.Errorf("the product id was not found")).
 			Once()
 
 		service := service.CreateProductService(mockRepository)
