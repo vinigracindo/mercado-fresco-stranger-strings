@@ -3,6 +3,7 @@ package respository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
 )
@@ -105,10 +106,16 @@ func (r *mariadbWarehouse) GetById(ctx context.Context, id int64) (warehouse.War
 }
 
 func (r *mariadbWarehouse) Delete(ctx context.Context, id int64) error {
-	result := r.db.QueryRowContext(ctx, GetWarehouseById, id)
+	result, err := r.db.ExecContext(ctx, DeleteWarehouse, id)
 
-	if err := result.Scan(); err != nil {
+	if err != nil {
 		return err
+	}
+
+	numRow, _ := result.RowsAffected()
+
+	if numRow == 0 {
+		return fmt.Errorf("no warehouse was found with id %d", id)
 	}
 
 	return nil
@@ -123,28 +130,15 @@ func (r *mariadbWarehouse) Update(ctx context.Context, id int64, wh *warehouse.W
 		id,
 	)
 
-	defer result.Close()
-
 	if err != nil {
 		return warehouse.WarehouseModel{}, err
 	}
 
-	updated := r.db.QueryRowContext(ctx, GetWarehouseById, id)
+	defer result.Close()
 
-	var warehouseRow warehouse.WarehouseModel
-
-	if err := updated.Scan(
-		&warehouseRow.Id,
-		&warehouseRow.Address,
-		&warehouseRow.Telephone,
-		&warehouseRow.WarehouseCode,
-		&warehouseRow.MinimunCapacity,
-		&warehouseRow.MinimunTemperature,
-		&warehouseRow.LocalityID,
-	); err != nil {
-		return warehouse.WarehouseModel{}, err
-	}
-
-	return warehouseRow, nil
+	return warehouse.WarehouseModel{
+		MinimunTemperature: wh.MinimunTemperature,
+		MinimunCapacity:    wh.MinimunCapacity,
+	}, nil
 
 }

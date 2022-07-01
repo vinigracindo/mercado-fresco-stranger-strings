@@ -66,16 +66,22 @@ func (s service) Delete(ctx context.Context, id int64) error {
 }
 
 func (s service) UpdateTempAndCap(ctx context.Context, id int64, mintemp float64, mincap int64) (warehouse.WarehouseModel, error) {
-	wh := warehouse.WarehouseModel{
+	requestWarehouse := warehouse.WarehouseModel{
 		MinimunCapacity:    mincap,
 		MinimunTemperature: mintemp,
 	}
 
-	parchWh, err := s.repository.Update(ctx, id, &wh)
+	_, err := s.repository.Update(ctx, id, &requestWarehouse)
 
 	if err != nil {
 		return warehouse.WarehouseModel{}, err
 	}
 
-	return parchWh, nil
+	warehouseUpdated, err := s.repository.GetById(ctx, id)
+
+	if err != nil {
+		return warehouse.WarehouseModel{}, err
+	}
+
+	return warehouseUpdated, nil
 }

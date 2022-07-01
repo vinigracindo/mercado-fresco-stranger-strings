@@ -26,10 +26,10 @@ var DB *sql.DB
 
 func init() {
 	DB = config.ConnectDb("mysql")
-
 }
 
 func main() {
+	defer DB.Close()
 	port := 8080
 	server := server.NewAPIServer(DB)
 	server.Run(port)
