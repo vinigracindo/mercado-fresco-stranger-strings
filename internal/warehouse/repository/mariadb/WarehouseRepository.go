@@ -34,11 +34,7 @@ func (r *mariadbWarehouse) Create(ctx context.Context, wr *warehouse.WarehouseMo
 		return warehouse.WarehouseModel{}, err
 	}
 
-	newWarehouseId, err := result.LastInsertId()
-
-	if err != nil {
-		return warehouse.WarehouseModel{}, err
-	}
+	newWarehouseId, _ := result.LastInsertId()
 
 	return warehouse.WarehouseModel{
 		Id:                 newWarehouseId,
@@ -47,6 +43,7 @@ func (r *mariadbWarehouse) Create(ctx context.Context, wr *warehouse.WarehouseMo
 		WarehouseCode:      wr.WarehouseCode,
 		MinimunCapacity:    wr.MinimunCapacity,
 		MinimunTemperature: wr.MinimunTemperature,
+		LocalityID:         wr.LocalityID,
 	}, nil
 }
 
