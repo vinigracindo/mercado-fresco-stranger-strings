@@ -129,7 +129,26 @@ func Test_repository_update(t *testing.T) {
 
 	})
 
-	t.Run("update_sucess", func(t *testing.T) {
+	t.Run("update_err_exec_query", func(t *testing.T) {
+
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+
+		defer db.Close()
+
+		errMsg := fmt.Errorf("error: error on query")
+
+		mock.ExpectExec(regexp.QuoteMeta(UpdateWarehouse)).WillReturnError(errMsg)
+
+		mariadbWarehouse := NewMariadbWarehouseRepository(db)
+
+		_, err = mariadbWarehouse.Update(context.TODO(), expectedWarehouse.Id, &updateWarehouse)
+
+		assert.Error(t, err)
+
+	})
+
+	t.Run("update_success", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -150,7 +169,7 @@ func Test_repository_update(t *testing.T) {
 }
 
 func Test_repository_getall(t *testing.T) {
-	t.Run("sucess: sucess on get all", func(t *testing.T) {
+	t.Run("success: success on get all", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -231,5 +250,55 @@ func Test_repository_getall(t *testing.T) {
 
 		assert.Empty(t, expectReturn)
 		assert.Error(t, err)
+	})
+}
+
+func Test_repository_getById(t *testing.T) {
+	t.Run("success_get_by_id", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		rows := sqlmock.NewRows([]string{
+			"id",
+			"adress",
+			"telephone",
+			"warehouse_code",
+			"mininum_capacity",
+			"minimum_temperature",
+			"locality_id",
+		}).AddRow(
+			expectedWarehouse.Id,
+			expectedWarehouse.Address,
+			expectedWarehouse.Telephone,
+			expectedWarehouse.WarehouseCode,
+			expectedWarehouse.MinimunCapacity,
+			expectedWarehouse.MinimunTemperature,
+			expectedWarehouse.LocalityID,
+		)
+
+		mock.ExpectQuery(regexp.QuoteMeta(GetWarehouseById)).WithArgs(expectedWarehouse.Id).WillReturnRows(rows)
+
+		mariadbWarehouse := NewMariadbWarehouseRepository(db)
+
+		expectReturn, err := mariadbWarehouse.GetById(context.TODO(), expectedWarehouse.Id)
+
+		assert.NoError(t, err)
+		assert.Equal(t, expectedWarehouse, expectReturn)
+	})
+
+	t.Run("error_invalid_id", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectQuery(regexp.QuoteMeta(GetWarehouseById)).WithArgs("aaa").WillReturnError(fmt.Errorf("aaa is not a valid id"))
+
+		mariadbWarehouse := NewMariadbWarehouseRepository(db)
+
+		expectReturn, err := mariadbWarehouse.GetById(context.TODO(), expectedWarehouse.Id)
+
+		assert.Error(t, err)
+		assert.Empty(t, expectReturn)
 	})
 }
