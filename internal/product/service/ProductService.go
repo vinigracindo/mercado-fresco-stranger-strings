@@ -46,14 +46,17 @@ func (s *service) Create(ctx context.Context, product *domain.Product) (*domain.
 }
 
 func (s *service) UpdateDescription(ctx context.Context, id int64, description string) (*domain.Product, error) {
-	product := domain.Product{
-		Id:          id,
-		Description: description,
-	}
 
-	productUpdate, err := s.repository.UpdateDescription(ctx, &product)
+	productCurrent, err := s.GetById(ctx, id)
 	if err != nil {
 		return nil, err
+	}
+
+	productCurrent.Description = description
+
+	productUpdate, err := s.repository.UpdateDescription(ctx, productCurrent)
+	if err != nil {
+		return productUpdate, err
 	}
 
 	return productUpdate, nil

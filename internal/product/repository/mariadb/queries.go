@@ -1,20 +1,20 @@
-package repository
+package mariadb
 
 const (
-	sqlGetAll = "SELECT  * FROM products"
+	SqlGetAll = "SELECT  * FROM products"
 
-	sqlGetById = "SELECT * FROM products WHERE id=?"
+	SqlGetById = "SELECT * FROM products WHERE id=?"
 
-	sqlCreate = `
+	SqlCreate = `
     INSERT INTO
     products (product_code, description, width, height, length, net_weight, 
 	expiration_rate, recommended_freezing_temperature, freezing_rate, product_type_id, seller_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
-	sqlUpdateDescription = `
+	SqlUpdateDescription = `
     UPDATE products
     SET description=?
     WHERE id=?
     `
-	sqlDelete = "DELETE FROM products WHERE id=?"
+	SqlDelete = "DELETE FROM products WHERE id=?"
 )

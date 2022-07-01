@@ -1,4 +1,4 @@
-package repository
+package mariadb
 
 import (
 	"context"
@@ -18,10 +18,10 @@ func CreateProductRepository(db *sql.DB) domain.ProductRepository {
 func (m mariaDBProductRepository) GetAll(ctx context.Context) (*[]domain.Product, error) {
 	var products []domain.Product
 
-	rows, err := m.db.QueryContext(ctx, sqlGetAll)
+	rows, err := m.db.QueryContext(ctx, SqlGetAll)
 
 	if err != nil {
-		return &products, err
+		return nil, err
 	}
 
 	defer rows.Close()
@@ -42,6 +42,7 @@ func (m mariaDBProductRepository) GetAll(ctx context.Context) (*[]domain.Product
 			&product.FreezingRate,
 			&product.ProductTypeId,
 			&product.SellerId)
+
 		if err != nil {
 			return nil, err
 		}
@@ -52,7 +53,7 @@ func (m mariaDBProductRepository) GetAll(ctx context.Context) (*[]domain.Product
 }
 
 func (m mariaDBProductRepository) GetById(ctx context.Context, id int64) (*domain.Product, error) {
-	row := m.db.QueryRowContext(ctx, sqlGetById, id)
+	row := m.db.QueryRowContext(ctx, SqlGetById, id)
 
 	var product domain.Product
 
@@ -85,7 +86,7 @@ func (m mariaDBProductRepository) Create(ctx context.Context, product *domain.Pr
 
 	productResult, err := m.db.ExecContext(
 		ctx,
-		sqlCreate,
+		SqlCreate,
 		&product.ProductCode,
 		&product.Description,
 		&product.Width,
@@ -115,36 +116,35 @@ func (m mariaDBProductRepository) Create(ctx context.Context, product *domain.Pr
 
 func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, product *domain.Product) (*domain.Product, error) {
 
+	newProduct := domain.Product{}
+
 	productResult, err := m.db.ExecContext(
 		ctx,
-		sqlUpdateDescription,
+		SqlUpdateDescription,
 		&product.Description,
 		&product.Id,
 	)
+
 	if err != nil {
-		return nil, err
+		return &newProduct, err
 	}
 
 	affectedRows, err := productResult.RowsAffected()
+
 	if affectedRows == 0 {
-		return nil, domain.ErrIDNotFound
+		return &newProduct, domain.ErrIDNotFound
 	}
 
 	if err != nil {
-		return nil, err
+		return &newProduct, err
 	}
 
-	productUpdate, err := m.GetById(ctx, product.Id)
-	if err != nil {
-		return nil, err
-	}
+	return product, nil
 
-	return productUpdate, nil
-	
 }
 
 func (m mariaDBProductRepository) Delete(ctx context.Context, id int64) error {
-	result, err := m.db.ExecContext(ctx, sqlDelete, id)
+	result, err := m.db.ExecContext(ctx, SqlDelete, id)
 	if err != nil {
 		return err
 	}
