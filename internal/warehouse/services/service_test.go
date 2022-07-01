@@ -157,6 +157,7 @@ func Test_Service_UpdateTempAndCap(t *testing.T) {
 		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("Update", ctx, expectedWarehouse.Id, &updateWarehouse).Return(expectedWarehouse, nil)
+		repo.On("GetById", ctx, expectedWarehouse.Id).Return(expectedWarehouse, nil)
 
 		service := services.NewWarehouseService(repo)
 
@@ -173,6 +174,23 @@ func Test_Service_UpdateTempAndCap(t *testing.T) {
 		repo := mocks.NewWarehouseRepository(t)
 
 		repo.On("Update", ctx, expectedWarehouse.Id, &updateWarehouse).Return(warehouse.WarehouseModel{}, errMsg)
+
+		service := services.NewWarehouseService(repo)
+
+		_, err := service.UpdateTempAndCap(ctx, expectedWarehouse.Id, updateWarehouse.MinimunTemperature, updateWarehouse.MinimunCapacity)
+
+		assert.Error(t, err)
+	})
+
+	t.Run("get_by_non_existent: Se não for encontrado um warehouse com o ID retornar um error informando", func(t *testing.T) {
+		ctx := context.Background()
+
+		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", expectedWarehouse.Id)
+
+		repo := mocks.NewWarehouseRepository(t)
+
+		repo.On("Update", ctx, expectedWarehouse.Id, &updateWarehouse).Return(expectedWarehouse, nil)
+		repo.On("GetById", ctx, expectedWarehouse.Id).Return(warehouse.WarehouseModel{}, errMsg)
 
 		service := services.NewWarehouseService(repo)
 
