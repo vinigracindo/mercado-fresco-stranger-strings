@@ -50,11 +50,11 @@ func (r *mariadbWarehouse) Create(ctx context.Context, wr *warehouse.WarehouseMo
 func (r *mariadbWarehouse) GetAll(ctx context.Context) ([]warehouse.WarehouseModel, error) {
 	result, err := r.db.QueryContext(ctx, GetAllWarehouses)
 
-	defer result.Close()
-
 	if err != nil {
 		return []warehouse.WarehouseModel{}, err
 	}
+
+	defer result.Close()
 
 	var listOfWarehouse []warehouse.WarehouseModel
 

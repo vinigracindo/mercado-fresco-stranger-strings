@@ -11,6 +11,27 @@ import (
 	warehouse "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/domain"
 )
 
+var listExpectedWarehouse []warehouse.WarehouseModel = []warehouse.WarehouseModel{
+	{
+		Id:                 1,
+		Address:            "Avenida Teste",
+		Telephone:          "31 999999999",
+		WarehouseCode:      "30",
+		MinimunCapacity:    10,
+		MinimunTemperature: 9,
+		LocalityID:         1,
+	},
+	{
+		Id:                 2,
+		Address:            "Avenida Teste 2",
+		Telephone:          "31 888888888",
+		WarehouseCode:      "30",
+		MinimunCapacity:    77777,
+		MinimunTemperature: 33333,
+		LocalityID:         2,
+	},
+}
+
 var expectedWarehouse warehouse.WarehouseModel = warehouse.WarehouseModel{
 	Id:                 1,
 	Address:            "Avenida Teste",
@@ -125,5 +146,90 @@ func Test_repository_update(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectReturn, updateWarehouse)
+	})
+}
+
+func Test_repository_getall(t *testing.T) {
+	t.Run("sucess: sucess on get all", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		rows := sqlmock.NewRows([]string{
+			"id",
+			"adress",
+			"telephone",
+			"warehouse_code",
+			"mininum_capacity",
+			"minimum_temperature",
+			"locality_id",
+		}).AddRow(
+			listExpectedWarehouse[0].Id,
+			listExpectedWarehouse[0].Address,
+			listExpectedWarehouse[0].Telephone,
+			listExpectedWarehouse[0].WarehouseCode,
+			listExpectedWarehouse[0].MinimunCapacity,
+			listExpectedWarehouse[0].MinimunTemperature,
+			listExpectedWarehouse[0].LocalityID,
+		).AddRow(
+			listExpectedWarehouse[1].Id,
+			listExpectedWarehouse[1].Address,
+			listExpectedWarehouse[1].Telephone,
+			listExpectedWarehouse[1].WarehouseCode,
+			listExpectedWarehouse[1].MinimunCapacity,
+			listExpectedWarehouse[1].MinimunTemperature,
+			listExpectedWarehouse[1].LocalityID,
+		)
+
+		mock.ExpectQuery(regexp.QuoteMeta(GetAllWarehouses)).WillReturnRows(rows)
+
+		mariadbWarehouse := NewMariadbWarehouseRepository(db)
+
+		expectReturn, err := mariadbWarehouse.GetAll(context.TODO())
+
+		assert.NoError(t, err)
+		assert.Equal(t, listExpectedWarehouse, expectReturn)
+	})
+
+	t.Run("error: return error when try exec the query", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		errMsg := fmt.Errorf("error: invalid query")
+
+		mock.ExpectQuery(regexp.QuoteMeta(GetAllWarehouses)).WillReturnError(errMsg)
+
+		mariadbWarehouse := NewMariadbWarehouseRepository(db)
+
+		expectReturn, err := mariadbWarehouse.GetAll(context.TODO())
+
+		assert.Empty(t, expectReturn)
+		assert.Error(t, err)
+	})
+
+	t.Run("error: return error when try to scan the query", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		rows := sqlmock.NewRows([]string{
+			"id",
+			"adress",
+			"telephone",
+			"warehouse_code",
+			"mininum_capacity",
+			"minimum_temperature",
+			"locality_id",
+		}).AddRow(nil, nil, nil, nil, nil, nil, nil)
+
+		mock.ExpectQuery(regexp.QuoteMeta(GetAllWarehouses)).WillReturnRows(rows)
+
+		mariadbWarehouse := NewMariadbWarehouseRepository(db)
+
+		expectReturn, err := mariadbWarehouse.GetAll(context.TODO())
+
+		assert.Empty(t, expectReturn)
+		assert.Error(t, err)
 	})
 }
