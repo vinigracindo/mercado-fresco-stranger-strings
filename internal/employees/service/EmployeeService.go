@@ -31,7 +31,14 @@ func (s service) GetById(id int64) (*domain.Employee, error) {
 }
 
 func (s service) UpdateFullname(id int64, firstName string, lastName string) (*domain.Employee, error) {
-	employee, err := s.repo.UpdateFullname(context.Background(), id, firstName, lastName)
+	employee, err := s.repo.GetById(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
+
+	employee.SetFullname(firstName, lastName)
+
+	err = s.repo.Update(context.Background(), id, *employee)
 	if err != nil {
 		return nil, err
 	}

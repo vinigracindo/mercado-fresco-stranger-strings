@@ -61,43 +61,39 @@ func (repo *mariaDBEmployeerepository) Create(ctx context.Context, cardNumberId 
 		&employee.CardNumberId, &employee.FirstName, &employee.LastName, &employee.WarehouseId,
 	)
 	if err != nil {
-		return employee, err
+		return domain.Employee{}, err
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return employee, err
-	}
+
+	id, _ := res.LastInsertId()
 	employee.Id = int64(id)
 
 	return employee, nil
 }
 
-func (repo mariaDBEmployeerepository) UpdateFullname(ctx context.Context, id int64, firstName string, lastName string) (*domain.Employee, error) {
-	employee, err := repo.GetById(context.Background(), id)
-	if err != nil {
-		return nil, domain.ErrEmployeeNotFound
-	}
-
-	employee.FirstName = firstName
-	employee.LastName = lastName
-
-	_, err = repo.db.ExecContext(
+func (repo mariaDBEmployeerepository) Update(ctx context.Context, employeeID int64, updatedEmployee domain.Employee) error {
+	_, err := repo.db.ExecContext(
 		ctx,
 		SQLUpdateEmployeeFullname,
-		&employee.FirstName, &employee.LastName, &employee.Id,
+		updatedEmployee.FirstName, updatedEmployee.LastName, employeeID,
 	)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return employee, nil
+	return nil
 }
 
 func (repo mariaDBEmployeerepository) Delete(ctx context.Context, id int64) error {
-	_, err := repo.db.ExecContext(ctx, SQLDeleteEmployee, id)
+	result, err := repo.db.ExecContext(ctx, SQLDeleteEmployee, id)
 	if err != nil {
+		return err
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
 		return domain.ErrEmployeeNotFound
 	}
+
 	return nil
 }

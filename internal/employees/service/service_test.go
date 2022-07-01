@@ -1,6 +1,8 @@
 package service_test
 
 import (
+	"context"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -116,31 +118,38 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 	repo := mocks.NewEmployeeRepository(t)
 	service := service.NewEmployeeService(repo)
 
+	employee := makeEmployee()
+
 	t.Run("update_existent: when the data update is successful, should return the updated employee", func(t *testing.T) {
-		updatedEmployee := makeEmployee()
-		updatedEmployee.FirstName = "Jane"
-		updatedEmployee.LastName = "Doe"
+		idWillBeUpdated := int64(1)
 
 		repo.
-			On("UpdateFullname", mock.Anything, int64(1), "Jane", "Doe").
-			Return(&updatedEmployee, nil).
-			Once()
+			On("GetById", context.TODO(), int64(1)).
+			Return(&employee, nil).Once()
 
-		employee, err := service.UpdateFullname(int64(1), "Jane", "Doe")
+		updatedEmployee := employee
+		updatedEmployee.SetFullname("Jane", "Doe")
 
-		assert.Equal(t, employee, &updatedEmployee)
+		repo.
+			On("Update", context.TODO(), idWillBeUpdated, updatedEmployee).
+			Return(nil).Once()
+
+		emp, err := service.UpdateFullname(idWillBeUpdated, "Jane", "Doe")
+
+		assert.Equal(t, emp, &updatedEmployee)
 		assert.Nil(t, err)
 	})
 
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 		repo.
-			On("UpdateFullname", mock.Anything, int64(1), "John", "Doe").
-			Return(nil, domain.ErrEmployeeNotFound).
+			On("GetById", context.TODO(), int64(32)).
+			Return(nil, fmt.Errorf("Employee not found.")).
 			Once()
 
-		employee, err := service.UpdateFullname(int64(1), "John", "Doe")
-		assert.Nil(t, employee)
-		assert.NotNil(t, err)
+		res, err := service.UpdateFullname(32, "Jane", "Doe")
+
+		assert.Nil(t, res)
+		assert.Error(t, err)
 	})
 
 }
