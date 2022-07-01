@@ -302,3 +302,47 @@ func Test_repository_getById(t *testing.T) {
 		assert.Empty(t, expectReturn)
 	})
 }
+
+func Test_repository_delete(t *testing.T) {
+	t.Run("success_delete", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(DeleteWarehouse)).WithArgs(expectedWarehouse.Id).WillReturnResult(sqlmock.NewResult(0, 1))
+
+		mariadbWarehouse := NewMariadbWarehouseRepository(db)
+
+		err = mariadbWarehouse.Delete(context.TODO(), expectedWarehouse.Id)
+
+		assert.Empty(t, err)
+	})
+
+	t.Run("error_when_exec_query", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(DeleteWarehouse)).WithArgs(expectedWarehouse.Id).WillReturnError(fmt.Errorf("error: invalid query"))
+
+		mariadbWarehouse := NewMariadbWarehouseRepository(db)
+
+		err = mariadbWarehouse.Delete(context.TODO(), expectedWarehouse.Id)
+
+		assert.Error(t, err)
+	})
+
+	t.Run("error_no_id_was_found", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(DeleteWarehouse)).WillReturnResult(sqlmock.NewResult(0, 0))
+
+		mariadbWarehouse := NewMariadbWarehouseRepository(db)
+
+		err = mariadbWarehouse.Delete(context.TODO(), expectedWarehouse.Id)
+
+		assert.Error(t, err)
+	})
+}
