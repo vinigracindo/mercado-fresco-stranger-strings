@@ -400,7 +400,7 @@ func TestSectionRepository_Update(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(repository.SQLDeleteSection)).
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLUpdateCurrentCapacitySection)).
 			WithArgs(id).
 			WillReturnError(errors.New("any error"))
 
