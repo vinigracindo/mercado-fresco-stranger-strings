@@ -33,7 +33,7 @@ func TestEmployeeService_Create(t *testing.T) {
 			Return(expectedEmployee, nil).
 			Once()
 
-		employee, err := service.Create("123456", "John", "Doe", int64(1))
+		employee, err := service.Create(context.TODO(), "123456", "John", "Doe", int64(1))
 
 		assert.Nil(t, err)
 		assert.Equal(t, employee, expectedEmployee)
@@ -45,7 +45,7 @@ func TestEmployeeService_Create(t *testing.T) {
 			Return(domain.Employee{}, domain.ErrCardNumberMustBeUnique).
 			Once()
 
-		employee, err := service.Create("123456", "First Name", "Last Name", 1)
+		employee, err := service.Create(context.TODO(), "123456", "First Name", "Last Name", 1)
 
 		assert.NotNil(t, err)
 		assert.Empty(t, employee)
@@ -64,7 +64,7 @@ func TestEmployeeService_GetAll(t *testing.T) {
 
 		repo.On("GetAll", mock.Anything).Return(expectedEmployees, nil).Once()
 
-		employees, err := service.GetAll()
+		employees, err := service.GetAll(context.TODO())
 
 		assert.Equal(t, employees, expectedEmployees)
 		assert.Nil(t, err)
@@ -76,7 +76,7 @@ func TestEmployeeService_GetAll(t *testing.T) {
 			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
-		employees, err := service.GetAll()
+		employees, err := service.GetAll(context.TODO())
 
 		assert.Nil(t, employees)
 		assert.NotNil(t, err)
@@ -93,7 +93,7 @@ func TestEmployeeService_GetById(t *testing.T) {
 			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
-		employee, err := service.GetById(int64(1))
+		employee, err := service.GetById(context.TODO(), int64(1))
 
 		assert.Nil(t, employee)
 		assert.NotNil(t, err)
@@ -107,7 +107,7 @@ func TestEmployeeService_GetById(t *testing.T) {
 			Return(&expectedEmployee, nil).
 			Once()
 
-		employee, err := service.GetById(int64(1))
+		employee, err := service.GetById(context.TODO(), int64(1))
 
 		assert.Nil(t, err)
 		assert.Equal(t, employee, &expectedEmployee)
@@ -134,7 +134,7 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 			On("Update", context.TODO(), idWillBeUpdated, updatedEmployee).
 			Return(nil).Once()
 
-		emp, err := service.UpdateFullname(idWillBeUpdated, "Jane", "Doe")
+		emp, err := service.UpdateFullname(context.TODO(), idWillBeUpdated, "Jane", "Doe")
 
 		assert.Equal(t, emp, &updatedEmployee)
 		assert.Nil(t, err)
@@ -146,7 +146,7 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 			Return(nil, fmt.Errorf("Employee not found.")).
 			Once()
 
-		res, err := service.UpdateFullname(32, "Jane", "Doe")
+		res, err := service.UpdateFullname(context.TODO(), 32, "Jane", "Doe")
 
 		assert.Nil(t, res)
 		assert.Error(t, err)
@@ -164,7 +164,7 @@ func TestEmployeeService_Delete(t *testing.T) {
 			Return(domain.ErrEmployeeNotFound).
 			Once()
 
-		err := service.Delete(int64(1))
+		err := service.Delete(context.TODO(), int64(1))
 
 		assert.NotNil(t, err)
 	})
@@ -175,7 +175,7 @@ func TestEmployeeService_Delete(t *testing.T) {
 			Return(nil).
 			Once()
 
-		err := service.Delete(int64(1))
+		err := service.Delete(context.TODO(), int64(1))
 
 		assert.Nil(t, err)
 	})

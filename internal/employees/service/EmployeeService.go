@@ -10,8 +10,8 @@ type service struct {
 	repo domain.EmployeeRepository
 }
 
-func (s service) GetAll() ([]domain.Employee, error) {
-	employees, err := s.repo.GetAll(context.Background())
+func (s service) GetAll(ctx context.Context) ([]domain.Employee, error) {
+	employees, err := s.repo.GetAll(ctx)
 
 	if err != nil {
 		return nil, err
@@ -20,8 +20,8 @@ func (s service) GetAll() ([]domain.Employee, error) {
 	return employees, nil
 }
 
-func (s service) GetById(id int64) (*domain.Employee, error) {
-	employee, err := s.repo.GetById(context.Background(), id)
+func (s service) GetById(ctx context.Context, id int64) (*domain.Employee, error) {
+	employee, err := s.repo.GetById(ctx, id)
 
 	if err != nil {
 		return nil, err
@@ -30,23 +30,23 @@ func (s service) GetById(id int64) (*domain.Employee, error) {
 	return employee, nil
 }
 
-func (s service) UpdateFullname(id int64, firstName string, lastName string) (*domain.Employee, error) {
-	employee, err := s.repo.GetById(context.Background(), id)
+func (s service) UpdateFullname(ctx context.Context, id int64, firstName string, lastName string) (*domain.Employee, error) {
+	employee, err := s.repo.GetById(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
 	employee.SetFullname(firstName, lastName)
 
-	err = s.repo.Update(context.Background(), id, *employee)
+	err = s.repo.Update(ctx, id, *employee)
 	if err != nil {
 		return nil, err
 	}
 	return employee, nil
 }
 
-func (s service) Create(cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
-	employee, err := s.repo.Create(context.Background(), cardNumberId, firstName, lastName, warehouseId)
+func (s service) Create(ctx context.Context, cardNumberId string, firstName string, lastName string, warehouseId int64) (domain.Employee, error) {
+	employee, err := s.repo.Create(ctx, cardNumberId, firstName, lastName, warehouseId)
 
 	if err != nil {
 		return domain.Employee{}, err
@@ -55,8 +55,8 @@ func (s service) Create(cardNumberId string, firstName string, lastName string, 
 	return employee, nil
 }
 
-func (s service) Delete(id int64) error {
-	err := s.repo.Delete(context.Background(), id)
+func (s service) Delete(ctx context.Context, id int64) error {
+	err := s.repo.Delete(ctx, id)
 
 	if err != nil {
 		return err
