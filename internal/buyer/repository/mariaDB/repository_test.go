@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"regexp"
 	"testing"
@@ -25,6 +26,13 @@ var expectedBuyerList = []domain.Buyer{
 		FirstName:    "First Name Teste 2",
 		LastName:     "Last Name Teste 2",
 	},
+}
+
+var expectedBuyer = domain.Buyer{
+	Id:           1,
+	CardNumberId: "402323",
+	FirstName:    "FirstNameTest",
+	LastName:     "LastNameTest",
 }
 
 func TestBuyerRepository_GetAll(t *testing.T) {
@@ -95,6 +103,68 @@ func TestBuyerRepository_GetAll(t *testing.T) {
 
 		assert.Empty(t, result)
 		assert.Error(t, err)
+
+	})
+}
+
+func TestBuyerRepository_GetId(t *testing.T) {
+	t.Run("getId_ok: should return section by id", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		rows := sqlmock.NewRows([]string{
+			"id", "cardNumberId", "FirstName", "LastName",
+		}).AddRow(
+			expectedBuyer.Id,
+			expectedBuyer.CardNumberId,
+			expectedBuyer.FirstName,
+			expectedBuyer.LastName,
+		)
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetByIdBuyer)).WithArgs(expectedBuyer.Id).WillReturnRows(rows)
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		result, err := buyerRepository.GetId(context.TODO(), expectedBuyer.Id)
+
+		assert.NoError(t, err)
+		assert.Equal(t, &expectedBuyer, result)
+	})
+
+	t.Run("getId_error: should return error when scan fail", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		row := sqlmock.NewRows([]string{
+			"id", "cardNumberId", "FirstName", "LastName",
+		}).AddRow(nil, nil, nil, nil)
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetByIdBuyer)).WillReturnRows(row)
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		result, err := buyerRepository.GetId(context.TODO(), expectedBuyer.Id)
+
+		assert.Empty(t, result)
+		assert.Error(t, err)
+
+	})
+
+	t.Run("getId_error: should return error when id not found", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetByIdBuyer)).WillReturnError(sql.ErrNoRows)
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		result, err := buyerRepository.GetId(context.TODO(), expectedBuyer.Id)
+
+		assert.Error(t, err)
+		assert.Empty(t, result)
 
 	})
 }
