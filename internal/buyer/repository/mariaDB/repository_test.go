@@ -263,7 +263,7 @@ func TestBuyerRepository_Update(t *testing.T) {
 		defer db.Close()
 
 		mock.ExpectExec(regexp.QuoteMeta(repository.SQLUpdateBuyer)).
-			WithArgs(updateBuyer.Id, updateBuyer.CardNumberId, updateBuyer.LastName).
+			WithArgs(updateBuyer.CardNumberId, updateBuyer.LastName, updateBuyer.Id).
 			WillReturnResult(sqlmock.NewResult(0, 0))
 
 		buyerRepository := repository.NewmariadbBuyerRepository(db)
@@ -294,4 +294,51 @@ func TestBuyerRepository_Update(t *testing.T) {
 		assert.Error(t, err, result)
 
 	})
+}
+
+func TestBuyerRepository_Delete(t *testing.T) {
+	t.Run("delete_ok: should delete buyer", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLDeleteBuyer)).WithArgs(expectedBuyer.Id).WillReturnResult(sqlmock.NewResult(0, 1))
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		err = buyerRepository.Delete(context.TODO(), expectedBuyer.Id)
+
+		assert.Empty(t, err)
+	})
+
+	t.Run("delete_error: ", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLDeleteBuyer)).WithArgs(expectedBuyer.Id).WillReturnError(fmt.Errorf("error"))
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		err = buyerRepository.Delete(context.TODO(), expectedBuyer.Id)
+
+		assert.Error(t, err)
+
+	})
+
+	t.Run("delete_error: ", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLDeleteBuyer)).WillReturnResult(sqlmock.NewResult(0, 0))
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		err = buyerRepository.Delete(context.TODO(), expectedBuyer.Id)
+
+		assert.Error(t, err)
+
+	})
+
 }

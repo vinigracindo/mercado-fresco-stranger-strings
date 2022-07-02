@@ -4,13 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
 )
-
-//var buyers = []domain.Buyer{}
-//var lastId int64 = 0
 
 type mariadbBuyerRepository struct {
 	db *sql.DB
@@ -108,15 +104,11 @@ func (repo *mariadbBuyerRepository) Update(ctx context.Context, id int64, cardNu
 	if err != nil {
 		return &domain.Buyer{}, err
 	}
-	// buyerUpdated, err := repo.GetId(ctx, id)
-	// if err != nil {
-	// 	return &domain.Buyer{}, err
-	// }
 
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {
-		return &domain.Buyer{}, fmt.Errorf("buyer not found with id %d", id)
+		return nil, domain.ErrBuyerNotFound
 	}
 
 	return &domain.Buyer{
@@ -132,14 +124,10 @@ func (repo *mariadbBuyerRepository) Delete(ctx context.Context, id int64) error 
 		return err
 	}
 
-	affectRows, err := result.RowsAffected()
+	affectRows, _ := result.RowsAffected()
 
 	if affectRows == 0 {
 		return domain.ErrBuyerNotFound
-	}
-
-	if err != nil {
-		return err
 	}
 	return nil
 }
