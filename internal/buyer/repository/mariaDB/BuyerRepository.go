@@ -24,7 +24,7 @@ func (repo *mariadbBuyerRepository) Create(ctx context.Context, cardNumberId, fi
 
 	result, err := repo.db.ExecContext(
 		ctx,
-		sqlCreateBuyer,
+		SQLCreateBuyer,
 		cardNumberId,
 		firstName,
 		lastName,
@@ -48,7 +48,7 @@ func (repo *mariadbBuyerRepository) GetAll(ctx context.Context) (*[]domain.Buyer
 
 	buyers := []domain.Buyer{}
 
-	rows, err := repo.db.QueryContext(ctx, sqlGetAllBuyer)
+	rows, err := repo.db.QueryContext(ctx, SQLGetAllBuyer)
 
 	if err != nil {
 		return &buyers, err
@@ -72,7 +72,7 @@ func (repo *mariadbBuyerRepository) GetAll(ctx context.Context) (*[]domain.Buyer
 
 func (repo *mariadbBuyerRepository) GetId(ctx context.Context, id int64) (*domain.Buyer, error) {
 
-	row := repo.db.QueryRowContext(ctx, sqlGetByIdBuyer, id)
+	row := repo.db.QueryRowContext(ctx, SQLGetByIdBuyer, id)
 
 	var buyer domain.Buyer
 
@@ -96,7 +96,7 @@ func (repo *mariadbBuyerRepository) Update(ctx context.Context, id int64, cardNu
 
 	_, err := repo.db.ExecContext(
 		ctx,
-		sqlUpdateAwardBuyer,
+		SQLUpdateAwardBuyer,
 		cardNumberId,
 		lastName,
 		id,
@@ -115,7 +115,7 @@ func (repo *mariadbBuyerRepository) Update(ctx context.Context, id int64, cardNu
 }
 
 func (repo *mariadbBuyerRepository) Delete(ctx context.Context, id int64) error {
-	result, err := repo.db.ExecContext(ctx, sqlDeleteBuyer, id)
+	result, err := repo.db.ExecContext(ctx, SQLDeleteBuyer, id)
 	if err != nil {
 		return err
 	}

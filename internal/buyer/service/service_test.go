@@ -11,14 +11,14 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/service"
 )
 
-var expectBuyer = &domain.Buyer{
+var expectedBuyer = &domain.Buyer{
 	Id:           1,
 	CardNumberId: "402323",
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
 }
 
-var expectBuyerList = &[]domain.Buyer{
+var expectedBuyerList = &[]domain.Buyer{
 	{
 		CardNumberId: "402323",
 		FirstName:    "FirstNameTest",
@@ -42,17 +42,17 @@ func TestService_Create(t *testing.T) {
 		repo.
 			On("Create",
 				ctx,
-				expectBuyer.CardNumberId,
-				expectBuyer.FirstName,
-				expectBuyer.LastName,
+				expectedBuyer.CardNumberId,
+				expectedBuyer.FirstName,
+				expectedBuyer.LastName,
 			).
-			Return(expectBuyer, nil).
+			Return(expectedBuyer, nil).
 			Once()
 
 		result, err := service.Create(ctx, "402323", "FirstNameTest", "LastNameTest")
 
 		assert.Nil(t, err)
-		assert.Equal(t, expectBuyer, result)
+		assert.Equal(t, expectedBuyer, result)
 	})
 
 	t.Run("create_conflict: when card_number_id already exists, should not create a buyer", func(t *testing.T) {
@@ -61,9 +61,9 @@ func TestService_Create(t *testing.T) {
 		repo.
 			On("Create",
 				ctx,
-				expectBuyer.CardNumberId,
-				expectBuyer.FirstName,
-				expectBuyer.LastName,
+				expectedBuyer.CardNumberId,
+				expectedBuyer.FirstName,
+				expectedBuyer.LastName,
 			).
 			Return(&domain.Buyer{}, errorConflict).
 			Once()
@@ -83,17 +83,17 @@ func TestService_GetAll(t *testing.T) {
 
 		repo.
 			On("GetAll", ctx).
-			Return(expectBuyerList, nil).
+			Return(expectedBuyerList, nil).
 			Once()
 
 		buyerList, _ := service.GetAll(ctx)
 
-		assert.Equal(t, expectBuyerList, buyerList)
+		assert.Equal(t, expectedBuyerList, buyerList)
 	})
 
 	t.Run("get_all_error: should return any error", func(t *testing.T) {
 		repo.On("GetAll", ctx).
-			Return(expectBuyerList, fmt.Errorf("any error")).
+			Return(expectedBuyerList, fmt.Errorf("any error")).
 			Once()
 
 		_, err := service.GetAll(ctx)
@@ -124,13 +124,13 @@ func TestService_GetId(t *testing.T) {
 
 		repo.
 			On("GetId", ctx, int64(1)).
-			Return(expectBuyer, nil).
+			Return(expectedBuyer, nil).
 			Once()
 
 		buyer, err := service.GetId(ctx, int64(1))
 
 		assert.Nil(t, err)
-		assert.Equal(t, buyer, expectBuyer)
+		assert.Equal(t, buyer, expectedBuyer)
 
 	})
 }
@@ -143,12 +143,12 @@ func TestService_Update(t *testing.T) {
 
 		repo.
 			On("Update", ctx, int64(1), "402300", "LastNameTest 2").
-			Return(expectBuyer, nil).
+			Return(expectedBuyer, nil).
 			Once()
 
 		buyer, err := service.Update(ctx, int64(1), "402300", "LastNameTest 2")
 
-		assert.Equal(t, expectBuyer, buyer)
+		assert.Equal(t, expectedBuyer, buyer)
 		assert.Nil(t, err)
 
 	})

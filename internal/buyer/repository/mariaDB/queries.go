@@ -1,11 +1,11 @@
 package repository
 
 const (
-	sqlGetAllBuyer = "SELECT * FROM buyers"
+	SQLGetAllBuyer = "SELECT * FROM buyers"
 
-	sqlGetByIdBuyer = "SELECT * FROM buyers WHERE id=?"
+	SQLGetByIdBuyer = "SELECT * FROM buyers WHERE id=?"
 
-	sqlCreateBuyer = `
+	SQLCreateBuyer = `
     INSERT INTO
     buyer (
         card_number_id,
@@ -15,11 +15,11 @@ const (
     VALUES (?, ?, ?)
     `
 
-	sqlUpdateAwardBuyer = `
+	SQLUpdateAwardBuyer = `
     UPDATE buyers
     SET card_number_id=?, last_name=?
     WHERE id=?
     `
 
-	sqlDeleteBuyer = "DELETE FROM buyers WHERE id=?"
+	SQLDeleteBuyer = "DELETE FROM buyers WHERE id=?"
 )
