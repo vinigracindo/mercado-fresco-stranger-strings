@@ -36,9 +36,16 @@ var expectedBuyer = domain.Buyer{
 }
 
 var mockBuyer = &domain.Buyer{
+	Id:           1,
 	CardNumberId: "402323",
 	FirstName:    "FirstNameTest",
 	LastName:     "LastNameTest",
+}
+
+var updateBuyer = &domain.Buyer{
+	Id:           2,
+	CardNumberId: "402324",
+	LastName:     "LastNameTest 2",
 }
 
 func TestBuyerRepository_GetAll(t *testing.T) {
@@ -57,7 +64,7 @@ func TestBuyerRepository_GetAll(t *testing.T) {
 		expectedBuyerList[1].LastName,
 	)
 
-	t.Run("get_all_ok: should return all sections", func(t *testing.T) {
+	t.Run("get_all_ok: should return all buyers", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -114,7 +121,7 @@ func TestBuyerRepository_GetAll(t *testing.T) {
 }
 
 func TestBuyerRepository_GetId(t *testing.T) {
-	t.Run("getId_ok: should return section by id", func(t *testing.T) {
+	t.Run("getId_ok: should return buyer by id", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -176,7 +183,7 @@ func TestBuyerRepository_GetId(t *testing.T) {
 }
 
 func TestBuyerRepository_Create(t *testing.T) {
-	t.Run("create_ok: should create section", func(t *testing.T) {
+	t.Run("create_ok: should create buyer", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -185,7 +192,7 @@ func TestBuyerRepository_Create(t *testing.T) {
 			mockBuyer.CardNumberId,
 			mockBuyer.FirstName,
 			mockBuyer.LastName,
-		).WillReturnResult(sqlmock.NewResult(0, 0))
+		).WillReturnResult(sqlmock.NewResult(1, 1))
 
 		buyerRepository := repository.NewmariadbBuyerRepository(db)
 
@@ -220,6 +227,71 @@ func TestBuyerRepository_Create(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Empty(t, newBuyer)
+
+	})
+}
+
+func TestBuyerRepository_Update(t *testing.T) {
+	t.Run("update_ok: should update buyer", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLUpdateBuyer)).WithArgs(
+			updateBuyer.CardNumberId,
+			updateBuyer.LastName,
+			updateBuyer.Id,
+		).WillReturnResult(sqlmock.NewResult(0, 1))
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		result, err := buyerRepository.Update(context.Background(),
+			updateBuyer.Id,
+			updateBuyer.CardNumberId,
+			updateBuyer.LastName,
+		)
+
+		assert.NoError(t, err)
+		assert.Equal(t, result, updateBuyer)
+		fmt.Println(result)
+		fmt.Println(updateBuyer)
+	})
+
+	t.Run("update_error: should return error when buyer not found", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLUpdateBuyer)).
+			WithArgs(updateBuyer.Id, updateBuyer.CardNumberId, updateBuyer.LastName).
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		result, err := buyerRepository.Update(context.Background(), updateBuyer.Id,
+			updateBuyer.CardNumberId,
+			updateBuyer.LastName)
+
+		assert.Error(t, err, result)
+
+	})
+
+	t.Run("update_error: should return error when query execution fails", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		errMsg := fmt.Errorf("error: query fails")
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLUpdateBuyer)).
+			WillReturnError(errMsg)
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		result, err := buyerRepository.Update(context.Background(), updateBuyer.Id,
+			updateBuyer.CardNumberId,
+			updateBuyer.LastName)
+
+		assert.Error(t, err, result)
 
 	})
 }

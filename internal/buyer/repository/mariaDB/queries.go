@@ -15,7 +15,7 @@ const (
     VALUES (?, ?, ?)
     `
 
-	SQLUpdateAwardBuyer = `
+	SQLUpdateBuyer = `
     UPDATE buyers
     SET card_number_id=?, last_name=?
     WHERE id=?

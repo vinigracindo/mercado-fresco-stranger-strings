@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
 )
@@ -31,13 +32,10 @@ func (repo *mariadbBuyerRepository) Create(ctx context.Context, cardNumberId, fi
 	)
 
 	if err != nil {
-		return &domain.Buyer{}, err
+		return nil, err
 	}
 
-	lastId, err := result.LastInsertId()
-	if err != nil {
-		return &newBuyer, err
-	}
+	lastId, _ := result.LastInsertId()
 
 	newBuyer.Id = lastId
 
@@ -99,24 +97,33 @@ func (repo *mariadbBuyerRepository) GetId(ctx context.Context, id int64) (*domai
 
 func (repo *mariadbBuyerRepository) Update(ctx context.Context, id int64, cardNumberId, lastName string) (*domain.Buyer, error) {
 
-	_, err := repo.db.ExecContext(
+	result, err := repo.db.ExecContext(
 		ctx,
-		SQLUpdateAwardBuyer,
+		SQLUpdateBuyer,
 		cardNumberId,
 		lastName,
 		id,
 	)
+
 	if err != nil {
 		return &domain.Buyer{}, err
 	}
+	// buyerUpdated, err := repo.GetId(ctx, id)
+	// if err != nil {
+	// 	return &domain.Buyer{}, err
+	// }
 
-	buyerUpdated, err := repo.GetId(ctx, id)
-	if err != nil {
-		return &domain.Buyer{}, err
+	rowsAffected, _ := result.RowsAffected()
 
+	if rowsAffected == 0 {
+		return &domain.Buyer{}, fmt.Errorf("buyer not found with id %d", id)
 	}
 
-	return buyerUpdated, nil
+	return &domain.Buyer{
+		Id:           id,
+		CardNumberId: cardNumberId,
+		LastName:     lastName,
+	}, nil
 }
 
 func (repo *mariadbBuyerRepository) Delete(ctx context.Context, id int64) error {
