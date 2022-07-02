@@ -31,7 +31,7 @@ func (repo *mariadbBuyerRepository) Create(ctx context.Context, cardNumberId, fi
 	)
 
 	if err != nil {
-		return &newBuyer, err
+		return &domain.Buyer{}, err
 	}
 
 	lastId, err := result.LastInsertId()
@@ -41,7 +41,12 @@ func (repo *mariadbBuyerRepository) Create(ctx context.Context, cardNumberId, fi
 
 	newBuyer.Id = lastId
 
-	return &newBuyer, nil
+	return &domain.Buyer{
+		Id:           newBuyer.Id,
+		CardNumberId: cardNumberId,
+		FirstName:    firstName,
+		LastName:     lastName,
+	}, nil
 }
 
 func (repo *mariadbBuyerRepository) GetAll(ctx context.Context) (*[]domain.Buyer, error) {

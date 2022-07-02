@@ -35,6 +35,12 @@ var expectedBuyer = domain.Buyer{
 	LastName:     "LastNameTest",
 }
 
+var mockBuyer = &domain.Buyer{
+	CardNumberId: "402323",
+	FirstName:    "FirstNameTest",
+	LastName:     "LastNameTest",
+}
+
 func TestBuyerRepository_GetAll(t *testing.T) {
 
 	rows := sqlmock.NewRows([]string{
@@ -165,6 +171,55 @@ func TestBuyerRepository_GetId(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Empty(t, result)
+
+	})
+}
+
+func TestBuyerRepository_Create(t *testing.T) {
+	t.Run("create_ok: should create section", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLCreateBuyer)).WithArgs(
+			mockBuyer.CardNumberId,
+			mockBuyer.FirstName,
+			mockBuyer.LastName,
+		).WillReturnResult(sqlmock.NewResult(0, 0))
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		newBuyer, err := buyerRepository.Create(context.Background(),
+			mockBuyer.CardNumberId,
+			mockBuyer.FirstName,
+			mockBuyer.LastName,
+		)
+
+		assert.NoError(t, err)
+		assert.Equal(t, newBuyer, mockBuyer)
+	})
+
+	t.Run("create_error: should return error when query execution fails", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectExec(regexp.QuoteMeta(repository.SQLCreateBuyer)).WithArgs(
+			mockBuyer.CardNumberId,
+			mockBuyer.FirstName,
+			mockBuyer.LastName,
+		).WillReturnError(fmt.Errorf("erro"))
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		newBuyer, err := buyerRepository.Create(context.Background(),
+			mockBuyer.CardNumberId,
+			mockBuyer.FirstName,
+			mockBuyer.LastName,
+		)
+
+		assert.Error(t, err)
+		assert.Empty(t, newBuyer)
 
 	})
 }
