@@ -104,10 +104,7 @@ func (m mariaDBProductRepository) Create(ctx context.Context, product *domain.Pr
 		return nil, err
 	}
 
-	lastId, err := productResult.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
+	lastId, _ := productResult.LastInsertId()
 
 	product.Id = lastId
 
@@ -127,14 +124,10 @@ func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, product
 		return nil, err
 	}
 
-	affectedRows, err := productResult.RowsAffected()
+	affectedRows, _ := productResult.RowsAffected()
 
 	if affectedRows == 0 {
 		return nil, domain.ErrIDNotFound
-	}
-
-	if err != nil {
-		return nil, err
 	}
 
 	return product, nil
@@ -147,10 +140,7 @@ func (m mariaDBProductRepository) Delete(ctx context.Context, id int64) error {
 		return err
 	}
 
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
+	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {
 		return domain.ErrIDNotFound
