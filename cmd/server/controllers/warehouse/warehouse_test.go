@@ -1,6 +1,7 @@
 package controllers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -24,6 +25,7 @@ var listPossiblesWarehouses = []warehouse.WarehouseModel{
 		WarehouseCode:      "AZADAS30",
 		MinimunCapacity:    10,
 		MinimunTemperature: 9,
+		LocalityID:         1,
 	},
 	{
 		Id:                 1,
@@ -32,6 +34,7 @@ var listPossiblesWarehouses = []warehouse.WarehouseModel{
 		WarehouseCode:      "od78",
 		MinimunCapacity:    5555555,
 		MinimunTemperature: 444444,
+		LocalityID:         2,
 	},
 }
 
@@ -43,6 +46,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 		WarehouseCode:      "AZADAS30",
 		MinimunCapacity:    10,
 		MinimunTemperature: 9,
+		LocalityID:         1,
 	}
 
 	t.Run("create_ok: if warehouses was successfully created", func(t *testing.T) {
@@ -50,11 +54,13 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 		service := mocks.NewWarehouseService(t)
 
 		service.On("Create",
-			listPossiblesWarehouses[0].Address,
-			listPossiblesWarehouses[0].Telephone,
-			listPossiblesWarehouses[0].WarehouseCode,
-			listPossiblesWarehouses[0].MinimunTemperature,
-			listPossiblesWarehouses[0].MinimunCapacity).Return(listPossiblesWarehouses[0], nil)
+			context.TODO(),
+			body.Address,
+			body.Telephone,
+			body.WarehouseCode,
+			body.MinimunTemperature,
+			body.MinimunCapacity,
+			body.LocalityID).Return(listPossiblesWarehouses[0], nil)
 
 		controller := controllers.NewWarehouse(service)
 
@@ -81,11 +87,13 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 		errMsg := fmt.Errorf("error: already a warehouse with the code: %s", body.WarehouseCode)
 
 		service.On("Create",
-			listPossiblesWarehouses[0].Address,
-			listPossiblesWarehouses[0].Telephone,
-			listPossiblesWarehouses[0].WarehouseCode,
-			listPossiblesWarehouses[0].MinimunTemperature,
-			listPossiblesWarehouses[0].MinimunCapacity).Return(warehouse.WarehouseModel{}, errMsg)
+			context.TODO(),
+			body.Address,
+			body.Telephone,
+			body.WarehouseCode,
+			body.MinimunTemperature,
+			body.MinimunCapacity,
+			body.LocalityID).Return(warehouse.WarehouseModel{}, errMsg)
 
 		controller := controllers.NewWarehouse(service)
 
@@ -119,7 +127,7 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 
 		service := mocks.NewWarehouseService(t)
 
-		service.On("GetAll").Return(listPossiblesWarehouses, nil)
+		service.On("GetAll", context.TODO()).Return(listPossiblesWarehouses, nil)
 
 		controller := controllers.NewWarehouse(service)
 
@@ -140,7 +148,7 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 	t.Run("find_all_error: when an error ocorrency in the server", func(t *testing.T) {
 		service := mocks.NewWarehouseService(t)
 
-		service.On("GetAll").Return([]warehouse.WarehouseModel{}, fmt.Errorf("error: internal error"))
+		service.On("GetAll", context.TODO()).Return([]warehouse.WarehouseModel{}, fmt.Errorf("error: internal error"))
 
 		controller := controllers.NewWarehouse(service)
 
@@ -163,7 +171,7 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
 		service := mocks.NewWarehouseService(t)
-		service.On("GetById", int64(id)).Return(warehouse.WarehouseModel{}, errMsg)
+		service.On("GetById", context.TODO(), int64(id)).Return(warehouse.WarehouseModel{}, errMsg)
 		controller := controllers.NewWarehouse(service)
 
 		r := testutil.SetUpRouter()
@@ -175,7 +183,7 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 
 	t.Run("find_by_id_existent: when request was sucessufuly return an warehouse", func(t *testing.T) {
 		service := mocks.NewWarehouseService(t)
-		service.On("GetById", int64(1)).Return(listPossiblesWarehouses[1], nil)
+		service.On("GetById", context.TODO(), int64(1)).Return(listPossiblesWarehouses[1], nil)
 		controller := controllers.NewWarehouse(service)
 
 		r := testutil.SetUpRouter()
@@ -216,7 +224,11 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 
 		service := mocks.NewWarehouseService(t)
-		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(listPossiblesWarehouses[0], nil)
+		service.On("UpdateTempAndCap",
+			context.TODO(),
+			int64(id),
+			999.0,
+			int64(66)).Return(listPossiblesWarehouses[0], nil)
 
 		controller := controllers.NewWarehouse(service)
 
@@ -242,7 +254,11 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
 		service := mocks.NewWarehouseService(t)
-		service.On("UpdateTempAndCap", int64(id), 999.0, int64(66)).Return(listPossiblesWarehouses[0], errMsg)
+		service.On("UpdateTempAndCap",
+			context.TODO(),
+			int64(id),
+			999.0,
+			int64(66)).Return(listPossiblesWarehouses[0], errMsg)
 
 		controller := controllers.NewWarehouse(service)
 
@@ -295,7 +311,7 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 		errMsg := fmt.Errorf("erros: no warehouse was found with id %d", id)
 
 		service := mocks.NewWarehouseService(t)
-		service.On("Delete", id).Return(errMsg)
+		service.On("Delete", context.TODO(), id).Return(errMsg)
 
 		controller := controllers.NewWarehouse(service)
 
@@ -326,7 +342,7 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 		url := fmt.Sprintf("%s/%d", EndpointWarehouse, id)
 
 		service := mocks.NewWarehouseService(t)
-		service.On("Delete", id).Return(nil)
+		service.On("Delete", context.TODO(), id).Return(nil)
 
 		controller := controllers.NewWarehouse(service)
 
