@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
+	httputil "github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
 type requestSellerPost struct {
@@ -25,8 +26,8 @@ type SellerController struct {
 	service domain.ServiceSeller
 }
 
-func NewSeller(s domain.ServiceSeller) SellerController {
-	return SellerController{
+func NewSeller(s domain.ServiceSeller) *SellerController {
+	return &SellerController{
 		service: s,
 	}
 }
@@ -37,22 +38,17 @@ func NewSeller(s domain.ServiceSeller) SellerController {
 // @Tags         Seller
 // @Accept       json
 // @Produce      json
-// @Success      200  {object} []seller.Seller
+// @Success      200  {object} []domain.Seller
 // @Failure      400  {object}  httputil.HTTPError
 // @Router /sellers [get]
 func (c SellerController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		seller, err := c.service.GetAll()
+		seller, err := c.service.GetAll(ctx.Request.Context())
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
-
-		ctx.JSON(http.StatusOK, gin.H{
-			"data": seller,
-		})
+		httputil.NewResponse(ctx, http.StatusOK, seller)
 	}
 }
 
@@ -63,7 +59,7 @@ func (c SellerController) GetAll() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param id path int true "Seller ID"
-// @Success      200  {object} seller.Seller
+// @Success      200  {object} 	domain.Seller
 // @Failure      500  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /sellers/{id} [get]
@@ -71,21 +67,15 @@ func (c SellerController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
-		seller, err := c.service.GetById(id)
+		seller, err := c.service.GetById(ctx.Request.Context(), id)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"data": seller,
-		})
+		httputil.NewResponse(ctx, http.StatusOK, seller)
 	}
 }
 
@@ -96,7 +86,7 @@ func (c SellerController) GetById() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param Seller body requestSellerPost true "Create seller"
-// @Success      201  {object}  seller.Seller
+// @Success      201  {object}  domain.Seller
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /sellers [post]
@@ -104,22 +94,23 @@ func (c SellerController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req requestSellerPost
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
-				"error":   err.Error(),
-				"message": "invalid request",
-			})
+			httputil.NewError(ctx, http.StatusUnprocessableEntity, err)
 			return
 		}
-		seller, err := c.service.Create(req.Cid, req.CompanyName, req.Address, req.Telephone)
+
+		seller := domain.Seller{
+			Cid:         req.Cid,
+			CompanyName: req.CompanyName,
+			Address:     req.Address,
+			Telephone:   req.Telephone,
+		}
+
+		newSeller, err := c.service.Create(ctx.Request.Context(), &seller)
 		if err != nil {
-			ctx.JSON(http.StatusConflict, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
-		ctx.JSON(http.StatusCreated, gin.H{
-			"data": seller,
-		})
+		httputil.NewResponse(ctx, http.StatusCreated, newSeller)
 	}
 }
 
@@ -131,7 +122,7 @@ func (c SellerController) Create() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Seller ID"
 // @Param Warehouse body requestSellerPatch true "Update seller"
-// @Success      200  {object} seller.Seller
+// @Success      200  {object}  domain.Seller
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
@@ -141,29 +132,25 @@ func (c SellerController) Update() gin.HandlerFunc {
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
+
 		var req requestSellerPatch
+
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
-				"error":   err.Error(),
-				"message": "invalid request",
-			})
+			httputil.NewError(ctx, http.StatusUnprocessableEntity, err)
 			return
 		}
-		seller, err := c.service.Update(id, req.Address, req.Telephone)
+
+		sellerUpdate, err := c.service.Update(ctx.Request.Context(), id, req.Address, req.Telephone)
+
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"data": seller,
-		})
+
+		httputil.NewResponse(ctx, http.StatusOK, sellerUpdate)
 	}
 }
 
@@ -180,19 +167,20 @@ func (c SellerController) Update() gin.HandlerFunc {
 // @Router /sellers/{id} [delete]
 func (c SellerController) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
 		}
-		err = c.service.Delete(id)
+
+		err = c.service.Delete(ctx.Request.Context(), id)
 		if err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
+			httputil.NewError(ctx, http.StatusNotFound, err)
+			return
 		}
-		ctx.JSON(http.StatusNoContent, gin.H{})
+
+		httputil.NewResponse(ctx, http.StatusNoContent, err)
 	}
 }
