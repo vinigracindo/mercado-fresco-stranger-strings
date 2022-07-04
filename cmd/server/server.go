@@ -1,8 +1,8 @@
 package server
 
 import (
-	"database/sql"
 	"fmt"
+
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/config"
 
 	"github.com/gin-gonic/gin"
@@ -12,19 +12,16 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
 )
 
-type APIServer struct {
-	dbconnection *sql.DB
-}
+type APIServer struct{}
 
-func NewAPIServer(dbconnection *sql.DB) APIServer {
-	return APIServer{
-		dbconnection: dbconnection,
-	}
+func NewAPIServer() APIServer {
+	return APIServer{}
 }
 
 func (api *APIServer) Run(port int) {
 
-	defer api.dbconnection.Close()
+	db := config.ConnectDb("mysql")
+	defer db.Close()
 
 	router := gin.Default()
 
@@ -44,7 +41,7 @@ func (api *APIServer) Run(port int) {
 	routes.ProductRoutes(apiV1.Group("/products"), db)
 
 	//Warehouse routes
-	routes.WarehouseRoutes(api.dbconnection, apiV1.Group("/warehouses"))
+	routes.WarehouseRoutes(apiV1.Group("/warehouses"), db)
 
 	//Seller routes
 	routes.SellerRoutes(apiV1.Group("/sellers"))

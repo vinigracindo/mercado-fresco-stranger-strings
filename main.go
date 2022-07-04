@@ -1,10 +1,7 @@
 package main
 
 import (
-	"database/sql"
-
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/config"
 )
 
 // @title   Swagger Mercado Fresco
@@ -22,15 +19,8 @@ import (
 // @host      localhost:8080
 // @BasePath  /api/v1
 
-var DB *sql.DB
-
-func init() {
-	DB = config.ConnectDb("mysql")
-}
-
 func main() {
-	defer DB.Close()
 	port := 8080
-	server := server.NewAPIServer(DB)
+	server := server.NewAPIServer()
 	server.Run(port)
 }

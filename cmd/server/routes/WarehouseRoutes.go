@@ -9,7 +9,7 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/warehouse/services"
 )
 
-func WarehouseRoutes(db *sql.DB, routes *gin.RouterGroup) {
+func WarehouseRoutes(routes *gin.RouterGroup, db *sql.DB) {
 	warehouseRepository := repository.NewMariadbWarehouseRepository(db)
 	warehouseService := services.NewWarehouseService(warehouseRepository)
 	warehouseController := controllers.NewWarehouse(warehouseService)
