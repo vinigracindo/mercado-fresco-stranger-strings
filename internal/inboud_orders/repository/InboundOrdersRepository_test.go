@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"fmt"
 	"regexp"
 	"testing"
 	"time"
@@ -49,5 +50,28 @@ func TestInboundOrdersRepository_Create(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedInboundOrders, result)
+	})
+
+	t.Run("should return error when query fails", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.
+			ExpectExec(regexp.QuoteMeta(repository.SQLCreateInboundOrder)).
+			WillReturnError(fmt.Errorf("query error"))
+
+		inboundOrdersRepository := repository.NewMariaDBInboundRepositoryRepository(db)
+
+		_, err = inboundOrdersRepository.Create(
+			ctx,
+			now,
+			"order#1",
+			int64(1),
+			int64(1),
+			int64(1),
+		)
+
+		assert.Error(t, err)
 	})
 }
