@@ -32,7 +32,7 @@ func (api *APIServer) Run(port int) {
 	apiV1 := router.Group("api/v1")
 
 	//Section routes
-	routes.SectionRoutes(apiV1.Group("/sections"))
+	routes.SectionRoutes(apiV1.Group("/sections"), db)
 
 	// Employee routes
 	routes.EmployeeRoutes(apiV1.Group("/employees"), db)

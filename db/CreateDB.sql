@@ -154,7 +154,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mercadofresco`.`sections` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `section_number` VARCHAR(255) NOT NULL,
+  `section_number` INT NOT NULL,
   `current_temperature` DECIMAL(19,2) NOT NULL,
   `minimum_temperature` DECIMAL(19,2) NOT NULL,
   `current_capacity` INT NOT NULL,
