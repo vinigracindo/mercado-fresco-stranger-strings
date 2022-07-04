@@ -4,7 +4,7 @@ import "context"
 
 type CarryModel struct {
 	Id          int64  `json:"id"`
-	Cid         string `json:"cid" binding:"required"`
+	Cid         int64  `json:"cid" binding:"required"`
 	CompanyName string `json:"company_name" binding:"required"`
 	Address     string `json:"address" binding:"required"`
 	Telephone   string `json:"telephone" binding:"required"`

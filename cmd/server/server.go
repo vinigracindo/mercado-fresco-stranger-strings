@@ -49,5 +49,8 @@ func (api *APIServer) Run(port int) {
 	//Buyer routes
 	routes.BuyerRoutes(apiV1.Group("/buyers"))
 
+	// Carry routes
+	routes.CarryRoutes(apiV1.Group("/carries"), db)
+
 	router.Run(fmt.Sprintf(":%d", port))
 }

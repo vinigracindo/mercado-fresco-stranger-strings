@@ -14,7 +14,7 @@ import (
 
 var mockCarry *domain.CarryModel = &domain.CarryModel{
 	Id:          1,
-	Cid:         "Belo Horizonte",
+	Cid:         1,
 	CompanyName: "Mercado Livre",
 	Address:     "Avenida Teste",
 	Telephone:   "31 999999999",
