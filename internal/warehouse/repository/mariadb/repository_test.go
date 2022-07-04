@@ -58,7 +58,7 @@ var updateWarehouse warehouse.WarehouseModel = warehouse.WarehouseModel{
 
 func Test_repository_create(t *testing.T) {
 
-	t.Run("sucess: if all the fields are correct database will create new warehouse and return it", func(t *testing.T) {
+	t.Run("create_sucess: if all the fields are correct database will create new warehouse and return it", func(t *testing.T) {
 
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
@@ -82,7 +82,7 @@ func Test_repository_create(t *testing.T) {
 		assert.Equal(t, expectedWarehouse, newWarehouse)
 	})
 
-	t.Run("error: when ExecContext return an error", func(t *testing.T) {
+	t.Run("create_error: when ExecContext return an error", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 
@@ -108,7 +108,7 @@ func Test_repository_create(t *testing.T) {
 }
 
 func Test_repository_update(t *testing.T) {
-	t.Run("update_not_found", func(t *testing.T) {
+	t.Run("update_not_found: return error because no warehouse was found", func(t *testing.T) {
 
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
@@ -129,7 +129,7 @@ func Test_repository_update(t *testing.T) {
 
 	})
 
-	t.Run("update_err_exec_query", func(t *testing.T) {
+	t.Run("update_err_exec_query: return err because of invalid query", func(t *testing.T) {
 
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
@@ -148,7 +148,7 @@ func Test_repository_update(t *testing.T) {
 
 	})
 
-	t.Run("update_success", func(t *testing.T) {
+	t.Run("update_success: return the entity with the fields updated", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -169,7 +169,7 @@ func Test_repository_update(t *testing.T) {
 }
 
 func Test_repository_getall(t *testing.T) {
-	t.Run("success: success on get all", func(t *testing.T) {
+	t.Run("success_get_all: success on get all", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -210,7 +210,7 @@ func Test_repository_getall(t *testing.T) {
 		assert.Equal(t, listExpectedWarehouse, expectReturn)
 	})
 
-	t.Run("error: return error when try exec the query", func(t *testing.T) {
+	t.Run("error_query_get_all: return error when try exec the query", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -227,7 +227,7 @@ func Test_repository_getall(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("error: return error when try to scan the query", func(t *testing.T) {
+	t.Run("error_scan_get_all: return error when try to scan the query", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -254,7 +254,7 @@ func Test_repository_getall(t *testing.T) {
 }
 
 func Test_repository_getById(t *testing.T) {
-	t.Run("success_get_by_id", func(t *testing.T) {
+	t.Run("success_get_by_id: return the entity", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -287,7 +287,7 @@ func Test_repository_getById(t *testing.T) {
 		assert.Equal(t, expectedWarehouse, expectReturn)
 	})
 
-	t.Run("error_invalid_id", func(t *testing.T) {
+	t.Run("error_invalid_id: return error because of invalid id", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -304,7 +304,7 @@ func Test_repository_getById(t *testing.T) {
 }
 
 func Test_repository_delete(t *testing.T) {
-	t.Run("success_delete", func(t *testing.T) {
+	t.Run("success_delete: return no error", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -318,7 +318,7 @@ func Test_repository_delete(t *testing.T) {
 		assert.Empty(t, err)
 	})
 
-	t.Run("error_when_exec_query", func(t *testing.T) {
+	t.Run("error_when_exec_query: return error because of an invalid query", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -332,7 +332,7 @@ func Test_repository_delete(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("error_no_id_was_found", func(t *testing.T) {
+	t.Run("error_no_id_was_found: return error because no entity was found", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()

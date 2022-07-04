@@ -1,9 +1,9 @@
 package respository
 
 const (
-	GetAllWarehouses = "SELECT * FROM warehouse"
+	GetAllWarehouses = "SELECT id, address, telephone, warehouse_code, minimun_capacity, minimun_temperature, locality_id FROM warehouse"
 
-	GetWarehouseById = "SELECT * FROM warehouse WHERE id=?"
+	GetWarehouseById = "SELECT id, address, telephone, warehouse_code, minimun_capacity, minimun_temperature, locality_id FROM warehouse WHERE id=?"
 
 	CreateWarehouse = `
     INSERT INTO
