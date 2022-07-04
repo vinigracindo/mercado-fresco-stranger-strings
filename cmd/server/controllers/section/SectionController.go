@@ -90,7 +90,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 		}
 
 		if req.CurrentCapacity < 0 {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("the field CurrentCapacity invalid"))
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("The field CurrentCapacity invalid"))
 			return
 		}
 
