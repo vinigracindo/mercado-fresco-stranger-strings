@@ -35,7 +35,7 @@ func NewBuyerController(service domain.BuyerService) BuyerController {
 // @Accept       json
 // @Produce      json
 // @Param Buyer body requestBuyerPost true "Create buyer"
-// @Success      201  {object} buyer.Buyer
+// @Success      201  {object} domain.Buyer
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /buyers [post]
@@ -62,7 +62,7 @@ func (c *BuyerController) Create() gin.HandlerFunc {
 // @Tags         Buyers
 // @Accept       json
 // @Produce      json
-// @Success      200  {object} []buyer.Buyer
+// @Success      200  {object} []domain.Buyer
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /buyers [get]
 func (c *BuyerController) GetAll() gin.HandlerFunc {
@@ -84,7 +84,7 @@ func (c *BuyerController) GetAll() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param id path int true "Buyer ID"
-// @Success      200  {object} buyer.Buyer
+// @Success      200  {object} domain.Buyer
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /buyers/{id} [get]
@@ -112,7 +112,7 @@ func (c *BuyerController) GetId() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Buyers ID"
 // @Param Buyer body requestBuyerPatch true "Update field"
-// @Success      200  {object} buyer.Buyer
+// @Success      200  {object} domain.Buyer
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /buyers/{id} [patch]

@@ -71,7 +71,7 @@ func (c *ControllerSection) Delete() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Section ID"
 // @Param Section body requestSectionPatch true "Update field"
-// @Success      200  {object} section.Section
+// @Success      200  {object} domain.SectionModel
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /sections/{id} [patch]
@@ -90,7 +90,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 		}
 
 		if req.CurrentCapacity < 0 {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("The field CurrentCapacity invalid"))
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("the field CurrentCapacity invalid"))
 			return
 		}
 
@@ -110,7 +110,7 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param Section body requestSectionPost true "Create section"
-// @Success      201  {object} section.Section
+// @Success      201  {object} domain.SectionModel
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /sections [post]
@@ -149,7 +149,7 @@ func (c ControllerSection) Create() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param id path int true "Section ID"
-// @Success      200  {object} section.Section
+// @Success      200  {object} domain.SectionModel
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /sections/{id} [get]
@@ -177,7 +177,7 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 // @Tags         Sections
 // @Accept       json
 // @Produce      json
-// @Success      200  {object} []section.Section
+// @Success      200  {object} []domain.SectionModel
 // @Failure      400  {object}  httputil.HTTPError
 // @Router /sections [get]
 func (c *ControllerSection) GetAll() gin.HandlerFunc {

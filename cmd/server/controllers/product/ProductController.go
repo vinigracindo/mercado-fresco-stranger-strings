@@ -2,10 +2,11 @@ package controllers
 
 import (
 	"errors"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 	"net/http"
 	"strconv"
+
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,7 +42,7 @@ func CreateProductController(prodService domain.ProductService) *ProductControll
 // @Tags         Products
 // @Accept       json
 // @Produce      json
-// @Success      200  {array} product.Product
+// @Success      200  {array} domain.Product
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /products [get]
 func (c *ProductController) GetAll() gin.HandlerFunc {
@@ -64,7 +65,7 @@ func (c *ProductController) GetAll() gin.HandlerFunc {
 // @Description Get product by ID
 // @Produce json
 // @Param id path int true "Product ID"
-// @Success 200 {object} product.Product
+// @Success 200 {object} domain.Product
 // @Failure 400  {object}  httputil.HTTPError
 // @Failure 404  {object}  httputil.HTTPError
 // @Router /products/{id} [get]
@@ -96,7 +97,7 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param Product body requestProductPost true "Create product"
-// @Success      201  {object} product.Product
+// @Success      201  {object} domain.Product
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /products [post]
@@ -131,7 +132,7 @@ func (c *ProductController) Create() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Product ID"
 // @Param Product body requestProductPatch true "Update field"
-// @Success      200  {object} product.Product
+// @Success      200  {object} domain.Product
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /products/{id} [patch]
