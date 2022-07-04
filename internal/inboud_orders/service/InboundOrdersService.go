@@ -8,10 +8,10 @@ import (
 )
 
 type service struct {
-	repo domain.InboundOrderRepository
+	repo domain.InboundOrdersRepository
 }
 
-func NewInboundOrderService(repo domain.InboundOrderRepository) domain.InboundOrderService {
+func NewInboundOrderService(repo domain.InboundOrdersRepository) domain.InboundOrdersService {
 	return &service{
 		repo: repo,
 	}
@@ -24,11 +24,11 @@ func (s service) Create(
 	employeeId int64,
 	productBatchId int64,
 	warehouseId int64,
-) (domain.InboundOrder, error) {
+) (domain.InboundOrders, error) {
 	inboundOrder, err := s.repo.Create(ctx, orderDate, orderType, employeeId, productBatchId, warehouseId)
 
 	if err != nil {
-		return domain.InboundOrder{}, err
+		return domain.InboundOrders{}, err
 	}
 
 	return inboundOrder, nil
