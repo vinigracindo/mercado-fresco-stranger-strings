@@ -36,11 +36,21 @@ func (s service) GetId(ctx context.Context, id int64) (*domain.Buyer, error) {
 }
 
 func (s service) Update(ctx context.Context, id int64, cardNumberId, lastName string) (*domain.Buyer, error) {
-	buyer, err := s.repository.Update(ctx, id, cardNumberId, lastName)
+
+	_, err := s.repository.Update(ctx, id, cardNumberId, lastName)
+
 	if err != nil {
-		return nil, err
+		return &domain.Buyer{}, err
 	}
-	return buyer, nil
+
+	buyerUpdate, err := s.repository.GetId(ctx, id)
+
+	if err != nil {
+		return &domain.Buyer{}, err
+	}
+
+	return buyerUpdate, nil
+
 }
 
 func (s service) Delete(ctx context.Context, id int64) error {

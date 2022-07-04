@@ -139,30 +139,55 @@ func TestService_Update(t *testing.T) {
 	repo := mocks.NewBuyerRepository(t)
 	service := service.NewBuyerService(repo)
 
+	buyerUpdated := domain.Buyer{
+		CardNumberId: "402300",
+		LastName:     "LastNameTest 2",
+	}
+
 	t.Run("update_existent: when the data update is successful, should return the updated session", func(t *testing.T) {
 
 		repo.
-			On("Update", ctx, int64(1), "402300", "LastNameTest 2").
+			On("Update", ctx, expectedBuyer.Id, buyerUpdated.CardNumberId, buyerUpdated.LastName).
 			Return(expectedBuyer, nil).
 			Once()
 
-		buyer, err := service.Update(ctx, int64(1), "402300", "LastNameTest 2")
+		repo.
+			On("GetId", ctx, expectedBuyer.Id).
+			Return(expectedBuyer, nil).
+			Once()
 
-		assert.Equal(t, expectedBuyer, buyer)
+		result, err := service.Update(ctx, expectedBuyer.Id, buyerUpdated.CardNumberId, buyerUpdated.LastName)
+
+		assert.Equal(t, expectedBuyer, result)
 		assert.Nil(t, err)
 
 	})
 
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error.", func(t *testing.T) {
 
+		repo.On("Update", ctx, expectedBuyer.Id, buyerUpdated.CardNumberId, buyerUpdated.LastName).
+			Return(expectedBuyer, nil).
+			Once()
+
 		repo.
-			On("Update", ctx, int64(1), "402300", "LastNameTest 2").
+			On("GetId", ctx, expectedBuyer.Id).
 			Return(nil, fmt.Errorf("Buyer not found.")).
 			Once()
 
-		buyer, err := service.Update(ctx, int64(1), "402300", "LastNameTest 2")
-		assert.Nil(t, buyer)
-		assert.NotNil(t, err)
+		_, err := service.Update(ctx, expectedBuyer.Id, buyerUpdated.CardNumberId, buyerUpdated.LastName)
+
+		assert.Error(t, err)
+	})
+
+	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error.", func(t *testing.T) {
+
+		repo.On("Update", ctx, expectedBuyer.Id, buyerUpdated.CardNumberId, buyerUpdated.LastName).
+			Return(nil, fmt.Errorf("Buyer not found.")).
+			Once()
+
+		_, err := service.Update(ctx, expectedBuyer.Id, buyerUpdated.CardNumberId, buyerUpdated.LastName)
+
+		assert.Error(t, err)
 	})
 
 }

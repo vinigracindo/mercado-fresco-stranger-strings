@@ -102,7 +102,7 @@ func (repo *mariadbBuyerRepository) Update(ctx context.Context, id int64, cardNu
 	)
 
 	if err != nil {
-		return &domain.Buyer{}, err
+		return nil, err
 	}
 
 	rowsAffected, _ := result.RowsAffected()
@@ -110,7 +110,6 @@ func (repo *mariadbBuyerRepository) Update(ctx context.Context, id int64, cardNu
 	if rowsAffected == 0 {
 		return nil, domain.ErrBuyerNotFound
 	}
-
 	return &domain.Buyer{
 		Id:           id,
 		CardNumberId: cardNumberId,
