@@ -4,16 +4,19 @@ import (
 	"context"
 	"time"
 
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/inboud_orders/domain"
+	EmployeesDomain "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
+	InboundOrdersDomain "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/inboud_orders/domain"
 )
 
 type service struct {
-	repo domain.InboundOrdersRepository
+	repoInbound  InboundOrdersDomain.InboundOrdersRepository
+	repoEmployee EmployeesDomain.EmployeeRepository
 }
 
-func NewInboundOrderService(repo domain.InboundOrdersRepository) domain.InboundOrdersService {
+func NewInboundOrderService(repoInbound InboundOrdersDomain.InboundOrdersRepository, repoEmployee EmployeesDomain.EmployeeRepository) InboundOrdersDomain.InboundOrdersService {
 	return &service{
-		repo: repo,
+		repoInbound:  repoInbound,
+		repoEmployee: repoEmployee,
 	}
 }
 
@@ -24,11 +27,16 @@ func (s service) Create(
 	employeeId int64,
 	productBatchId int64,
 	warehouseId int64,
-) (domain.InboundOrders, error) {
-	inboundOrder, err := s.repo.Create(ctx, orderDate, orderType, employeeId, productBatchId, warehouseId)
+) (InboundOrdersDomain.InboundOrders, error) {
+	_, err := s.repoEmployee.GetById(ctx, employeeId)
+	if err != nil {
+		return InboundOrdersDomain.InboundOrders{}, EmployeesDomain.ErrEmployeeNotFound
+	}
+
+	inboundOrder, err := s.repoInbound.Create(ctx, orderDate, orderType, employeeId, productBatchId, warehouseId)
 
 	if err != nil {
-		return domain.InboundOrders{}, err
+		return InboundOrdersDomain.InboundOrders{}, err
 	}
 
 	return inboundOrder, nil
