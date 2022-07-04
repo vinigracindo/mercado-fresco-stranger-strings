@@ -72,7 +72,7 @@ func TestSectionRepository_GetAll(t *testing.T) {
 		mockSections[1].ProductTypeId,
 	)
 
-	t.Run("should return all sections", func(t *testing.T) {
+	t.Run("get_all_ok: should return all sections", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -88,7 +88,7 @@ func TestSectionRepository_GetAll(t *testing.T) {
 		assert.Equal(t, result[1].SectionNumber, int64(2))
 	})
 
-	t.Run("should return error when scan fail", func(t *testing.T) {
+	t.Run("get_all_scan_error: should return error when scan fail", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -114,7 +114,7 @@ func TestSectionRepository_GetAll(t *testing.T) {
 
 	})
 
-	t.Run("should return error when query fails", func(t *testing.T) {
+	t.Run("get_all_query_error: should return error when query fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -131,7 +131,7 @@ func TestSectionRepository_GetAll(t *testing.T) {
 
 func TestSectionRepository_GetById(t *testing.T) {
 
-	t.Run("should return section by id", func(t *testing.T) {
+	t.Run("get_by_id_ok: should return section by id", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -180,7 +180,7 @@ func TestSectionRepository_GetById(t *testing.T) {
 		assert.Equal(t, result.SectionNumber, int64(1))
 	})
 
-	t.Run("should return error when scan fail", func(t *testing.T) {
+	t.Run("get_by_id_scan_error: should return error when scan fail", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -205,7 +205,7 @@ func TestSectionRepository_GetById(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("should return error when section not found", func(t *testing.T) {
+	t.Run("get_by_id_not_found: should return error when section not found", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -221,7 +221,6 @@ func TestSectionRepository_GetById(t *testing.T) {
 }
 
 func TestSectionRepository_Create(t *testing.T) {
-
 	mockSection := domain.SectionModel{
 		Id:                 1,
 		SectionNumber:      1,
@@ -234,7 +233,7 @@ func TestSectionRepository_Create(t *testing.T) {
 		ProductTypeId:      1,
 	}
 
-	t.Run("should create section", func(t *testing.T) {
+	t.Run("create_ok: should create section", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -268,7 +267,7 @@ func TestSectionRepository_Create(t *testing.T) {
 		assert.Equal(t, result, mockSection)
 	})
 
-	t.Run("should return error when query execution fails", func(t *testing.T) {
+	t.Run("create_query_error: should return error when query execution fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -297,7 +296,7 @@ func TestSectionRepository_Create(t *testing.T) {
 func TestSectionRepository_Delete(t *testing.T) {
 	id := int64(1)
 
-	t.Run("should delete section ", func(t *testing.T) {
+	t.Run("delete_ok: should delete section", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -313,7 +312,7 @@ func TestSectionRepository_Delete(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("should return error when section not found", func(t *testing.T) {
+	t.Run("delete_not_found: should return error when section not found", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -329,7 +328,7 @@ func TestSectionRepository_Delete(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("should return error when query execution fails", func(t *testing.T) {
+	t.Run("delete_query_error: should return error when query execution fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -363,7 +362,7 @@ func TestSectionRepository_Update(t *testing.T) {
 		ProductTypeId:      1,
 	}
 
-	t.Run("should return error when section not found", func(t *testing.T) {
+	t.Run("update_not_found: should return error when section not found", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -379,7 +378,7 @@ func TestSectionRepository_Update(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("should return error when query execution fails ", func(t *testing.T) {
+	t.Run("update_query_error: should return error when query execution fails ", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -395,7 +394,7 @@ func TestSectionRepository_Update(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("should update section current capacity", func(t *testing.T) {
+	t.Run("update_ok: should update section current capacity", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
