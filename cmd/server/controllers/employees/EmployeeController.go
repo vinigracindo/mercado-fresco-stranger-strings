@@ -28,7 +28,7 @@ func NewEmployeeController(service domain.EmployeeService) EmployeeController {
 // @Router /employees [get]
 func (controller EmployeeController) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		employees, err := controller.service.GetAll()
+		employees, err := controller.service.GetAll(c.Request.Context())
 		if err != nil {
 			httputil.NewError(c, http.StatusInternalServerError, err)
 			return
@@ -54,7 +54,7 @@ func (controller EmployeeController) GetById() gin.HandlerFunc {
 			httputil.NewError(c, http.StatusBadRequest, err)
 			return
 		}
-		employee, err := controller.service.GetById(id)
+		employee, err := controller.service.GetById(c.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(c, http.StatusNotFound, err)
 			return
@@ -82,7 +82,7 @@ func (controller EmployeeController) Create() gin.HandlerFunc {
 			return
 		}
 
-		employee, err := controller.service.Create(req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
+		employee, err := controller.service.Create(c.Request.Context(), req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
 		if err != nil {
 			httputil.NewError(c, http.StatusConflict, err)
 			return
@@ -116,7 +116,7 @@ func (controller EmployeeController) UpdateFullname() gin.HandlerFunc {
 			httputil.NewError(c, http.StatusBadRequest, err)
 			return
 		}
-		employee, err := controller.service.UpdateFullname(id, req.FirstName, req.LastName)
+		employee, err := controller.service.UpdateFullname(c.Request.Context(), id, req.FirstName, req.LastName)
 		if err != nil {
 			httputil.NewError(c, http.StatusNotFound, err)
 			return
@@ -143,7 +143,7 @@ func (controller EmployeeController) Delete() gin.HandlerFunc {
 			httputil.NewError(c, http.StatusBadRequest, err)
 			return
 		}
-		err = controller.service.Delete(id)
+		err = controller.service.Delete(c.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(c, http.StatusNotFound, err)
 			return

@@ -20,7 +20,7 @@ func NewAPIServer() APIServer {
 
 func (api *APIServer) Run(port int) {
 
-	db := config.ConnectDb()
+	db := config.ConnectDb("mysql")
 	defer db.Close()
 
 	router := gin.Default()
@@ -32,16 +32,16 @@ func (api *APIServer) Run(port int) {
 	apiV1 := router.Group("api/v1")
 
 	//Section routes
-	routes.SectionRoutes(apiV1.Group("/sections"))
+	routes.SectionRoutes(apiV1.Group("/sections"), db)
 
 	// Employee routes
-	routes.WarehouseRoutes(apiV1.Group("/employees"))
+	routes.EmployeeRoutes(apiV1.Group("/employees"), db)
 
 	// Product routes
-	routes.ProductRoutes(apiV1.Group("/products"))
+	routes.ProductRoutes(apiV1.Group("/products"), db)
 
 	//Warehouse routes
-	routes.WarehouseRoutes(apiV1.Group("/warehouses"))
+	routes.WarehouseRoutes(apiV1.Group("/warehouses"), db)
 
 	//Seller routes
 	routes.SellerRoutes(apiV1.Group("/sellers"))

@@ -1,6 +1,7 @@
 package controllers_test
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -31,14 +32,14 @@ func makeEmployee() domain.Employee {
 
 func TestEmployeeController_Create(t *testing.T) {
 	expectedEmployee := makeEmployee()
-	mockService := mocks.NewEmployeeRepository(t)
+	mockService := mocks.NewEmployeeService(t)
 	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.POST(EndpointEmployee, controller.Create())
 
 	t.Run("create_ok: when data entry is successful, should return code 201. The object must be returned.", func(t *testing.T) {
 		mockService.
-			On("Create", "123456", "John", "Doe", int64(1)).
+			On("Create", context.TODO(), "123456", "John", "Doe", int64(1)).
 			Return(expectedEmployee, nil).
 			Once()
 
@@ -57,7 +58,7 @@ func TestEmployeeController_Create(t *testing.T) {
 
 	t.Run("create_conflict: when the card_number already exists, should return code 409.", func(t *testing.T) {
 		mockService.
-			On("Create", "123456", "John", "Doe", int64(1)).
+			On("Create", context.TODO(), "123456", "John", "Doe", int64(1)).
 			Return(domain.Employee{}, domain.ErrCardNumberMustBeUnique).
 			Once()
 
@@ -70,7 +71,7 @@ func TestEmployeeController_Create(t *testing.T) {
 }
 
 func TestEmployeeController_GetAll(t *testing.T) {
-	mockService := mocks.NewEmployeeRepository(t)
+	mockService := mocks.NewEmployeeService(t)
 	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.GET(EndpointEmployee, controller.GetAll())
@@ -82,7 +83,7 @@ func TestEmployeeController_GetAll(t *testing.T) {
 
 	t.Run("find_all: when data entry is successful, should return code 200.", func(t *testing.T) {
 		mockService.
-			On("GetAll").
+			On("GetAll", context.TODO()).
 			Return(expectedEmployees, nil).
 			Once()
 
@@ -101,14 +102,14 @@ func TestEmployeeController_GetAll(t *testing.T) {
 	})
 
 	t.Run("find_all_err: when internal error occurs, should return code 500.", func(t *testing.T) {
-		mockService.On("GetAll").Return([]domain.Employee{}, errors.New("internal server error.")).Once()
+		mockService.On("GetAll", context.TODO()).Return([]domain.Employee{}, errors.New("internal server error.")).Once()
 		response := testutil.ExecuteTestRequest(router, http.MethodGet, EndpointEmployee, nil)
 		assert.Equal(t, http.StatusInternalServerError, response.Code)
 	})
 }
 
 func TestEmployeeController_GetById(t *testing.T) {
-	mockService := mocks.NewEmployeeRepository(t)
+	mockService := mocks.NewEmployeeService(t)
 	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.GET(EndpointEmployee+"/:id", controller.GetById())
@@ -116,7 +117,7 @@ func TestEmployeeController_GetById(t *testing.T) {
 
 	t.Run("find_by_id_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
 		mockService.
-			On("GetById", int64(1)).
+			On("GetById", context.TODO(), int64(1)).
 			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
@@ -129,7 +130,7 @@ func TestEmployeeController_GetById(t *testing.T) {
 		expectedEmployee := makeEmployee()
 
 		mockService.
-			On("GetById", int64(1)).
+			On("GetById", context.TODO(), int64(1)).
 			Return(&expectedEmployee, nil).
 			Once()
 
@@ -153,7 +154,7 @@ func TestEmployeeController_GetById(t *testing.T) {
 }
 
 func TestEmployeeController_Update(t *testing.T) {
-	mockService := mocks.NewEmployeeRepository(t)
+	mockService := mocks.NewEmployeeService(t)
 	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.PATCH(EndpointEmployee+"/:id", controller.UpdateFullname())
@@ -165,7 +166,7 @@ func TestEmployeeController_Update(t *testing.T) {
 		expectedEmployee.LastName = "Doe"
 
 		mockService.
-			On("UpdateFullname", int64(1), "Jane", "Doe").
+			On("UpdateFullname", context.TODO(), int64(1), "Jane", "Doe").
 			Return(&expectedEmployee, nil).
 			Once()
 
@@ -184,7 +185,7 @@ func TestEmployeeController_Update(t *testing.T) {
 
 	t.Run("update_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
 		mockService.
-			On("UpdateFullname", int64(1), "John", "Doe").
+			On("UpdateFullname", context.TODO(), int64(1), "John", "Doe").
 			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
@@ -209,7 +210,7 @@ func TestEmployeeController_Update(t *testing.T) {
 }
 
 func TestEmployeeController_Delete(t *testing.T) {
-	mockService := mocks.NewEmployeeRepository(t)
+	mockService := mocks.NewEmployeeService(t)
 	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
 	router.DELETE(EndpointEmployee+"/:id", controller.Delete())
@@ -217,7 +218,7 @@ func TestEmployeeController_Delete(t *testing.T) {
 
 	t.Run("delete_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
 		mockService.
-			On("Delete", int64(1)).
+			On("Delete", context.TODO(), int64(1)).
 			Return(domain.ErrEmployeeNotFound).
 			Once()
 
@@ -228,7 +229,7 @@ func TestEmployeeController_Delete(t *testing.T) {
 
 	t.Run("delete_ok: when the request is successful, should return code 204.", func(t *testing.T) {
 		mockService.
-			On("Delete", int64(1)).
+			On("Delete", context.TODO(), int64(1)).
 			Return(nil).
 			Once()
 

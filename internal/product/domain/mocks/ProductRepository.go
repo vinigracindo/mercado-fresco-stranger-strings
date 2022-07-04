@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	context "context"
+
 	mock "github.com/stretchr/testify/mock"
 	domain "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
 )
@@ -12,13 +14,13 @@ type ProductRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: productCode, description, width, height, length, netWeight, expirationRate, recommendedFreezingTemperature, freezingRate, productTypeId, sellerId
-func (_m *ProductRepository) Create(productCode string, description string, width float64, height float64, length float64, netWeight float64, expirationRate float64, recommendedFreezingTemperature float64, freezingRate int, productTypeId int, sellerId int) (*domain.Product, error) {
-	ret := _m.Called(productCode, description, width, height, length, netWeight, expirationRate, recommendedFreezingTemperature, freezingRate, productTypeId, sellerId)
+// Create provides a mock function with given fields: ctx, product
+func (_m *ProductRepository) Create(ctx context.Context, product *domain.Product) (*domain.Product, error) {
+	ret := _m.Called(ctx, product)
 
 	var r0 *domain.Product
-	if rf, ok := ret.Get(0).(func(string, string, float64, float64, float64, float64, float64, float64, int, int, int) *domain.Product); ok {
-		r0 = rf(productCode, description, width, height, length, netWeight, expirationRate, recommendedFreezingTemperature, freezingRate, productTypeId, sellerId)
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.Product) *domain.Product); ok {
+		r0 = rf(ctx, product)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Product)
@@ -26,8 +28,8 @@ func (_m *ProductRepository) Create(productCode string, description string, widt
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, string, float64, float64, float64, float64, float64, float64, int, int, int) error); ok {
-		r1 = rf(productCode, description, width, height, length, netWeight, expirationRate, recommendedFreezingTemperature, freezingRate, productTypeId, sellerId)
+	if rf, ok := ret.Get(1).(func(context.Context, *domain.Product) error); ok {
+		r1 = rf(ctx, product)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -35,13 +37,13 @@ func (_m *ProductRepository) Create(productCode string, description string, widt
 	return r0, r1
 }
 
-// Delete provides a mock function with given fields: id
-func (_m *ProductRepository) Delete(id int64) error {
-	ret := _m.Called(id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *ProductRepository) Delete(ctx context.Context, id int64) error {
+	ret := _m.Called(ctx, id)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -49,22 +51,22 @@ func (_m *ProductRepository) Delete(id int64) error {
 	return r0
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *ProductRepository) GetAll() ([]domain.Product, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx
+func (_m *ProductRepository) GetAll(ctx context.Context) (*[]domain.Product, error) {
+	ret := _m.Called(ctx)
 
-	var r0 []domain.Product
-	if rf, ok := ret.Get(0).(func() []domain.Product); ok {
-		r0 = rf()
+	var r0 *[]domain.Product
+	if rf, ok := ret.Get(0).(func(context.Context) *[]domain.Product); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]domain.Product)
+			r0 = ret.Get(0).(*[]domain.Product)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -72,13 +74,13 @@ func (_m *ProductRepository) GetAll() ([]domain.Product, error) {
 	return r0, r1
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *ProductRepository) GetById(id int64) (*domain.Product, error) {
-	ret := _m.Called(id)
+// GetById provides a mock function with given fields: ctx, id
+func (_m *ProductRepository) GetById(ctx context.Context, id int64) (*domain.Product, error) {
+	ret := _m.Called(ctx, id)
 
 	var r0 *domain.Product
-	if rf, ok := ret.Get(0).(func(int64) *domain.Product); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) *domain.Product); ok {
+		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Product)
@@ -86,8 +88,8 @@ func (_m *ProductRepository) GetById(id int64) (*domain.Product, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -95,13 +97,13 @@ func (_m *ProductRepository) GetById(id int64) (*domain.Product, error) {
 	return r0, r1
 }
 
-// UpdateDescription provides a mock function with given fields: id, description
-func (_m *ProductRepository) UpdateDescription(id int64, description string) (*domain.Product, error) {
-	ret := _m.Called(id, description)
+// UpdateDescription provides a mock function with given fields: ctx, product
+func (_m *ProductRepository) UpdateDescription(ctx context.Context, product *domain.Product) (*domain.Product, error) {
+	ret := _m.Called(ctx, product)
 
 	var r0 *domain.Product
-	if rf, ok := ret.Get(0).(func(int64, string) *domain.Product); ok {
-		r0 = rf(id, description)
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.Product) *domain.Product); ok {
+		r0 = rf(ctx, product)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Product)
@@ -109,8 +111,8 @@ func (_m *ProductRepository) UpdateDescription(id int64, description string) (*d
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, string) error); ok {
-		r1 = rf(id, description)
+	if rf, ok := ret.Get(1).(func(context.Context, *domain.Product) error); ok {
+		r1 = rf(ctx, product)
 	} else {
 		r1 = ret.Error(1)
 	}

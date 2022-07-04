@@ -1,14 +1,16 @@
 package routes
 
 import (
+	"database/sql"
+
 	"github.com/gin-gonic/gin"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/employees"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/repository"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/service"
 )
 
-func EmployeeRoutes(routes *gin.RouterGroup) {
-	employeeRepository := repository.NewEmployeeRepository()
+func EmployeeRoutes(routes *gin.RouterGroup, db *sql.DB) {
+	employeeRepository := repository.NewMariaDBEmployeeRepository(db)
 	employeeService := service.NewEmployeeService(employeeRepository)
 	employeeController := controllers.NewEmployeeController(employeeService)
 

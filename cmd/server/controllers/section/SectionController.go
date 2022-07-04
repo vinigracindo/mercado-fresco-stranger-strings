@@ -11,14 +11,14 @@ import (
 )
 
 type requestSectionPost struct {
-	SectionNumber      int64 `json:"section_number" binding:"required"`
-	CurrentTemperature int64 `json:"current_temperature" binding:"required"`
-	MinimumTemperature int64 `json:"minimum_temperature" binding:"required"`
-	CurrentCapacity    int64 `json:"current_capacity" binding:"required"`
-	MinimumCapacity    int64 `json:"minimum_capacity" binding:"required"`
-	MaximumCapacity    int64 `json:"maximum_capacity" binding:"required"`
-	WarehouseId        int64 `json:"warehouse_id" binding:"required"`
-	ProductTypeId      int64 `json:"product_type_id" binding:"required"`
+	SectionNumber      int64   `json:"section_number" binding:"required"`
+	CurrentTemperature float64 `json:"current_temperature" binding:"required"`
+	MinimumTemperature float64 `json:"minimum_temperature" binding:"required"`
+	CurrentCapacity    int64   `json:"current_capacity" binding:"required"`
+	MinimumCapacity    int64   `json:"minimum_capacity" binding:"required"`
+	MaximumCapacity    int64   `json:"maximum_capacity" binding:"required"`
+	WarehouseId        int64   `json:"warehouse_id" binding:"required"`
+	ProductTypeId      int64   `json:"product_type_id" binding:"required"`
 }
 
 type requestSectionPatch struct {
@@ -54,7 +54,7 @@ func (c *ControllerSection) Delete() gin.HandlerFunc {
 			return
 		}
 
-		err = c.service.Delete(id)
+		err = c.service.Delete(ctx.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
@@ -90,11 +90,11 @@ func (c *ControllerSection) UpdateCurrentCapacity() gin.HandlerFunc {
 		}
 
 		if req.CurrentCapacity < 0 {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("The field CurrentCapacity invalid"))
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("the field CurrentCapacity invalid"))
 			return
 		}
 
-		section, err := c.service.UpdateCurrentCapacity(id, req.CurrentCapacity)
+		section, err := c.service.UpdateCurrentCapacity(ctx.Request.Context(), id, req.CurrentCapacity)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
@@ -124,6 +124,7 @@ func (c ControllerSection) Create() gin.HandlerFunc {
 		}
 
 		response, err := c.service.Create(
+			ctx.Request.Context(),
 			req.SectionNumber,
 			req.CurrentTemperature,
 			req.MinimumTemperature,
@@ -161,7 +162,7 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 			return
 		}
 
-		section, err := c.service.GetById(id)
+		section, err := c.service.GetById(ctx.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
@@ -182,7 +183,7 @@ func (c *ControllerSection) GetById() gin.HandlerFunc {
 // @Router /sections [get]
 func (c *ControllerSection) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		section, err := c.service.GetAll()
+		section, err := c.service.GetAll(ctx.Request.Context())
 		if err != nil {
 			httputil.NewError(ctx, http.StatusInternalServerError, err)
 			return
