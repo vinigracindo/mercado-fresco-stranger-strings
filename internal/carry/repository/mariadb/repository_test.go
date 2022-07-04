@@ -1,4 +1,4 @@
-package respository
+package respository_test
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/carry/domain"
+	respository "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/carry/repository/mariadb"
 )
 
 var mockCarry *domain.CarryModel = &domain.CarryModel{
@@ -28,7 +29,7 @@ func Test_repository_create(t *testing.T) {
 
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(QueryCreateCarry)).WithArgs(
+		mock.ExpectExec(regexp.QuoteMeta(respository.QueryCreateCarry)).WithArgs(
 			mockCarry.Cid,
 			mockCarry.CompanyName,
 			mockCarry.Address,
@@ -36,7 +37,7 @@ func Test_repository_create(t *testing.T) {
 			mockCarry.LocalityID,
 		).WillReturnResult(sqlmock.NewResult(1, 1))
 
-		repository := NewMariadbCarryRepository(db)
+		repository := respository.NewMariadbCarryRepository(db)
 
 		expect, err := repository.Create(context.TODO(), mockCarry)
 
@@ -51,9 +52,9 @@ func Test_repository_create(t *testing.T) {
 
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(QueryCreateCarry)).WillReturnError(fmt.Errorf("error: invalid query"))
+		mock.ExpectExec(regexp.QuoteMeta(respository.QueryCreateCarry)).WillReturnError(fmt.Errorf("error: invalid query"))
 
-		repository := NewMariadbCarryRepository(db)
+		repository := respository.NewMariadbCarryRepository(db)
 
 		expect, err := repository.Create(context.TODO(), mockCarry)
 
@@ -86,9 +87,9 @@ func Test_repository_get_by_id(t *testing.T) {
 			mockCarry.LocalityID,
 		)
 
-		mock.ExpectQuery(QueryGetCarry).WithArgs(mockCarry.Id).WillReturnRows(rows)
+		mock.ExpectQuery(respository.QueryGetCarry).WithArgs(mockCarry.Id).WillReturnRows(rows)
 
-		repository := NewMariadbCarryRepository(db)
+		repository := respository.NewMariadbCarryRepository(db)
 
 		expect, err := repository.GetById(context.TODO(), mockCarry.Id)
 
@@ -103,9 +104,9 @@ func Test_repository_get_by_id(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectQuery(regexp.QuoteMeta(QueryGetCarry)).WithArgs("BB").WillReturnError(fmt.Errorf("BB is not a valid id"))
+		mock.ExpectQuery(regexp.QuoteMeta(respository.QueryGetCarry)).WithArgs("BB").WillReturnError(fmt.Errorf("BB is not a valid id"))
 
-		repository := NewMariadbCarryRepository(db)
+		repository := respository.NewMariadbCarryRepository(db)
 
 		expect, err := repository.GetById(context.TODO(), mockCarry.Id)
 
