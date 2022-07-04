@@ -66,7 +66,7 @@ func (m *mariadbRepository) GetById(ctx context.Context, id int64) (domain.Selle
 	return seller, nil
 }
 
-func (m *mariadbRepository) Create(ctx context.Context, seller *domain.Seller) (domain.Seller, error) {
+func (m *mariadbRepository) Create(ctx context.Context, seller *domain.Seller) (*domain.Seller, error) {
 	sellerResult, err := m.db.ExecContext(
 		ctx,
 		SqlCreateSeller,
@@ -77,40 +77,38 @@ func (m *mariadbRepository) Create(ctx context.Context, seller *domain.Seller) (
 	)
 
 	if err != nil {
-		return domain.Seller{}, err
+		return nil, err
 	}
 
 	lastId, _ := sellerResult.LastInsertId()
 
 	seller.Id = lastId
 
-	return *seller, nil
+	return seller, nil
 }
 
-func (m *mariadbRepository) Update(ctx context.Context, id int64, address, telephone string) (domain.Seller, error) {
+func (m *mariadbRepository) Update(ctx context.Context, seller *domain.Seller) (*domain.Seller, error) {
 	sellerResult, err := m.db.ExecContext(
 		ctx,
 		SqlUpdateSeller,
-		address,
-		telephone,
-		id,
+		&seller.Address,
+		&seller.Telephone,
+		&seller.Id,
 	)
 
 	if err != nil {
-		return domain.Seller{}, err
+		return nil, err
 	}
 
 	affectedRows, err := sellerResult.RowsAffected()
 
 	if affectedRows == 0 {
-		return domain.Seller{}, fmt.Errorf("seller with id %d not found", id)
+		return nil, domain.ErrIDNotFound
 	}
 
 	if err != nil {
-		return domain.Seller{}, err
+		return nil, err
 	}
-
-	seller, _ := m.GetById(ctx, id)
 
 	return seller, nil
 
@@ -123,14 +121,10 @@ func (m *mariadbRepository) Delete(ctx context.Context, id int64) error {
 		return err
 	}
 
-	affectedRows, err := sellerResult.RowsAffected()
+	affectedRows, _ := sellerResult.RowsAffected()
 
 	if affectedRows == 0 {
 		return fmt.Errorf("seller with id %d not found", id)
-	}
-
-	if err != nil {
-		return err
 	}
 
 	return nil
