@@ -2,8 +2,6 @@ package domain
 
 import "context"
 
-//passar o context dentro dos metodos
-
 type Buyer struct {
 	Id           int64  `json:"id"`
 	CardNumberId string `json:"card_number_id"`
