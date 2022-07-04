@@ -1,15 +1,16 @@
 package routes
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/product"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/repository"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/repository/mariadb"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/service"
 )
 
-func ProductRoutes(routes *gin.RouterGroup) {
+func ProductRoutes(routes *gin.RouterGroup, db *sql.DB) {
 
-	productRepository := repository.CreateProductRepository()
+	productRepository := mariadb.CreateProductRepository(db)
 	productService := service.CreateProductService(productRepository)
 	productController := controllers.CreateProductController(productService)
 

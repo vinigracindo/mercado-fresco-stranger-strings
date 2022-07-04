@@ -3,6 +3,7 @@ package server
 import (
 	"database/sql"
 	"fmt"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/config"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -34,13 +35,13 @@ func (api *APIServer) Run(port int) {
 	apiV1 := router.Group("api/v1")
 
 	//Section routes
-	routes.SectionRoutes(apiV1.Group("/sections"))
+	routes.SectionRoutes(apiV1.Group("/sections"), db)
 
 	// Employee routes
-	routes.WarehouseRoutes(api.dbconnection, apiV1.Group("/employees"))
+	routes.EmployeeRoutes(apiV1.Group("/employees"), db)
 
 	// Product routes
-	routes.ProductRoutes(apiV1.Group("/products"))
+	routes.ProductRoutes(apiV1.Group("/products"), db)
 
 	//Warehouse routes
 	routes.WarehouseRoutes(api.dbconnection, apiV1.Group("/warehouses"))

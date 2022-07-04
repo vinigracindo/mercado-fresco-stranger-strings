@@ -1,9 +1,12 @@
 package service_test
 
 import (
+	"context"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain/mocks"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/service"
@@ -26,11 +29,11 @@ func TestEmployeeService_Create(t *testing.T) {
 
 	t.Run("create_ok: when it contains the mandatory fields, should create a employee", func(t *testing.T) {
 		repo.
-			On("Create", "123456", "John", "Doe", int64(1)).
+			On("Create", mock.Anything, "123456", "John", "Doe", int64(1)).
 			Return(expectedEmployee, nil).
 			Once()
 
-		employee, err := service.Create("123456", "John", "Doe", int64(1))
+		employee, err := service.Create(context.TODO(), "123456", "John", "Doe", int64(1))
 
 		assert.Nil(t, err)
 		assert.Equal(t, employee, expectedEmployee)
@@ -38,11 +41,11 @@ func TestEmployeeService_Create(t *testing.T) {
 
 	t.Run("create_conflict: when card_number already exists, should not create a employee", func(t *testing.T) {
 		repo.
-			On("Create", "123456", "First Name", "Last Name", int64(1)).
+			On("Create", mock.Anything, "123456", "First Name", "Last Name", int64(1)).
 			Return(domain.Employee{}, domain.ErrCardNumberMustBeUnique).
 			Once()
 
-		employee, err := service.Create("123456", "First Name", "Last Name", 1)
+		employee, err := service.Create(context.TODO(), "123456", "First Name", "Last Name", 1)
 
 		assert.NotNil(t, err)
 		assert.Empty(t, employee)
@@ -59,9 +62,9 @@ func TestEmployeeService_GetAll(t *testing.T) {
 			makeEmployee(),
 		}
 
-		repo.On("GetAll").Return(expectedEmployees, nil).Once()
+		repo.On("GetAll", mock.Anything).Return(expectedEmployees, nil).Once()
 
-		employees, err := service.GetAll()
+		employees, err := service.GetAll(context.TODO())
 
 		assert.Equal(t, employees, expectedEmployees)
 		assert.Nil(t, err)
@@ -69,11 +72,11 @@ func TestEmployeeService_GetAll(t *testing.T) {
 
 	t.Run("find_all_err: should return error.", func(t *testing.T) {
 		repo.
-			On("GetAll").
+			On("GetAll", mock.Anything).
 			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
-		employees, err := service.GetAll()
+		employees, err := service.GetAll(context.TODO())
 
 		assert.Nil(t, employees)
 		assert.NotNil(t, err)
@@ -86,11 +89,11 @@ func TestEmployeeService_GetById(t *testing.T) {
 
 	t.Run("find_by_id_non_existent: when element searched for by id exists, should return a employee", func(t *testing.T) {
 		repo.
-			On("GetById", int64(1)).
+			On("GetById", mock.Anything, int64(1)).
 			Return(nil, domain.ErrEmployeeNotFound).
 			Once()
 
-		employee, err := service.GetById(int64(1))
+		employee, err := service.GetById(context.TODO(), int64(1))
 
 		assert.Nil(t, employee)
 		assert.NotNil(t, err)
@@ -100,11 +103,11 @@ func TestEmployeeService_GetById(t *testing.T) {
 		expectedEmployee := makeEmployee()
 
 		repo.
-			On("GetById", int64(1)).
+			On("GetById", mock.Anything, int64(1)).
 			Return(&expectedEmployee, nil).
 			Once()
 
-		employee, err := service.GetById(int64(1))
+		employee, err := service.GetById(context.TODO(), int64(1))
 
 		assert.Nil(t, err)
 		assert.Equal(t, employee, &expectedEmployee)
@@ -115,31 +118,38 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 	repo := mocks.NewEmployeeRepository(t)
 	service := service.NewEmployeeService(repo)
 
+	employee := makeEmployee()
+
 	t.Run("update_existent: when the data update is successful, should return the updated employee", func(t *testing.T) {
-		updatedEmployee := makeEmployee()
-		updatedEmployee.FirstName = "Jane"
-		updatedEmployee.LastName = "Doe"
+		idWillBeUpdated := int64(1)
 
 		repo.
-			On("UpdateFullname", int64(1), "Jane", "Doe").
-			Return(&updatedEmployee, nil).
-			Once()
+			On("GetById", context.TODO(), int64(1)).
+			Return(&employee, nil).Once()
 
-		employee, err := service.UpdateFullname(int64(1), "Jane", "Doe")
+		updatedEmployee := employee
+		updatedEmployee.SetFullname("Jane", "Doe")
 
-		assert.Equal(t, employee, &updatedEmployee)
+		repo.
+			On("Update", context.TODO(), idWillBeUpdated, updatedEmployee).
+			Return(nil).Once()
+
+		emp, err := service.UpdateFullname(context.TODO(), idWillBeUpdated, "Jane", "Doe")
+
+		assert.Equal(t, emp, &updatedEmployee)
 		assert.Nil(t, err)
 	})
 
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 		repo.
-			On("UpdateFullname", int64(1), "John", "Doe").
-			Return(nil, domain.ErrEmployeeNotFound).
+			On("GetById", context.TODO(), int64(32)).
+			Return(nil, fmt.Errorf("Employee not found.")).
 			Once()
 
-		employee, err := service.UpdateFullname(int64(1), "John", "Doe")
-		assert.Nil(t, employee)
-		assert.NotNil(t, err)
+		res, err := service.UpdateFullname(context.TODO(), 32, "Jane", "Doe")
+
+		assert.Nil(t, res)
+		assert.Error(t, err)
 	})
 
 }
@@ -150,22 +160,22 @@ func TestEmployeeService_Delete(t *testing.T) {
 
 	t.Run("delete_non_existent: when the section does not exist, should return an error", func(t *testing.T) {
 		repo.
-			On("Delete", int64(1)).
+			On("Delete", mock.Anything, int64(1)).
 			Return(domain.ErrEmployeeNotFound).
 			Once()
 
-		err := service.Delete(int64(1))
+		err := service.Delete(context.TODO(), int64(1))
 
 		assert.NotNil(t, err)
 	})
 
 	t.Run("delete_ok: when the section exists, should delete a employee", func(t *testing.T) {
 		repo.
-			On("Delete", int64(1)).
+			On("Delete", mock.Anything, int64(1)).
 			Return(nil).
 			Once()
 
-		err := service.Delete(int64(1))
+		err := service.Delete(context.TODO(), int64(1))
 
 		assert.Nil(t, err)
 	})
