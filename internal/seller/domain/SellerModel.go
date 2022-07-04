@@ -11,16 +11,16 @@ type Seller struct {
 }
 
 type ServiceSeller interface {
-	GetAll(ctx context.Context) ([]Seller, error)
-	GetById(ctx context.Context, id int64) (Seller, error)
+	GetAll(ctx context.Context) (*[]Seller, error)
+	GetById(ctx context.Context, id int64) (*Seller, error)
 	Create(ctx context.Context, seller *Seller) (*Seller, error)
-	Update(ctx context.Context, seller *Seller) (*Seller, error)
+	Update(ctx context.Context, id int64, adress, telephone string) (*Seller, error)
 	Delete(ctx context.Context, id int64) error
 }
 
 type RepositorySeller interface {
-	GetAll(ctx context.Context) ([]Seller, error)
-	GetById(ctx context.Context, id int64) (Seller, error)
+	GetAll(ctx context.Context) (*[]Seller, error)
+	GetById(ctx context.Context, id int64) (*Seller, error)
 	Create(ctx context.Context, seller *Seller) (*Seller, error)
 	Update(ctx context.Context, seller *Seller) (*Seller, error)
 	CreatID() int64

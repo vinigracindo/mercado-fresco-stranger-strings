@@ -17,12 +17,12 @@ func NewMariaDBRepository(db *sql.DB) domain.RepositorySeller {
 	return mariadbRepository{db: db}
 }
 
-func (m *mariadbRepository) GetAll(ctx context.Context) ([]domain.Seller, error) {
+func (m *mariadbRepository) GetAll(ctx context.Context) (*[]domain.Seller, error) {
 	listSeller := []domain.Seller{}
 
 	rows, err := m.db.QueryContext(ctx, SqlGetAllSeller)
 	if err != nil {
-		return []domain.Seller{}, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -35,35 +35,35 @@ func (m *mariadbRepository) GetAll(ctx context.Context) ([]domain.Seller, error)
 			seller.Address,
 			seller.Telephone,
 		); err != nil {
-			return []domain.Seller{}, err
+			return nil, err
 		}
 
 		listSeller = append(listSeller, seller)
 	}
 
-	return listSeller, nil
+	return &listSeller, nil
 }
 
-func (m *mariadbRepository) GetById(ctx context.Context, id int64) (domain.Seller, error) {
+func (m *mariadbRepository) GetById(ctx context.Context, id int64) (*domain.Seller, error) {
 	row := m.db.QueryRowContext(ctx, SqlGetByIdSeller)
 
-	seller := domain.Seller{}
+	var seller domain.Seller
 
 	err := row.Scan(
-		seller.Id,
-		seller.Cid,
-		seller.Address,
-		seller.Telephone,
+		&seller.Id,
+		&seller.Cid,
+		&seller.Address,
+		&seller.Telephone,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
-		return domain.Seller{}, err
+		return nil, err
 	}
 
 	if err != nil {
-		return seller, err
+		return nil, err
 	}
 
-	return seller, nil
+	return &seller, nil
 }
 
 func (m *mariadbRepository) Create(ctx context.Context, seller *domain.Seller) (*domain.Seller, error) {
