@@ -11,7 +11,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func ConnectDb() *sql.DB {
+func ConnectDb(database string) *sql.DB {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -32,11 +32,11 @@ func ConnectDb() *sql.DB {
 	)
 
 	// create a database object which can be used to communicate with database
-	db, err := sql.Open("mysql", databaseURL)
+	db, err := sql.Open(database, databaseURL)
 
 	// handle error, if any
 	if err != nil {
-		log.Fatal("mysql failed to start", err)
+		log.Fatal(database+"failed to start", err)
 	}
 
 	// test database connection

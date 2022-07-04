@@ -16,11 +16,12 @@ type RequestWarehousePost struct {
 	WarehouseCode      string  `json:"warehouse_code" binding:"required"`
 	MinimunCapacity    int64   `json:"minimun_capacity" binding:"required"`
 	MinimunTemperature float64 `json:"minimun_temperature" binding:"required"`
+	LocalityID         int64   `json:"locality_id" binding:"required"`
 }
 
 type RequestWarehousePatch struct {
-	MinimunCapacity    int64   `json:"minimun_capacity"`
-	MinimunTemperature float64 `json:"minimun_temperature"`
+	MinimunCapacity    int64   `json:"minimun_capacity" binding:"required"`
+	MinimunTemperature float64 `json:"minimun_temperature" binding:"required"`
 }
 
 type Warehouse struct {
@@ -54,7 +55,7 @@ func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 			return
 		}
 
-		newWh, err := w.service.Create(wh.Address, wh.Telephone, wh.WarehouseCode, wh.MinimunTemperature, wh.MinimunCapacity)
+		newWh, err := w.service.Create(ctx.Request.Context(), wh.Address, wh.Telephone, wh.WarehouseCode, wh.MinimunTemperature, wh.MinimunCapacity, wh.LocalityID)
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusConflict, err)
@@ -76,7 +77,7 @@ func (w Warehouse) CreateWarehouse() gin.HandlerFunc {
 // @Router /warehouses [get]
 func (w Warehouse) GetAllWarehouse() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		shw, err := w.service.GetAll()
+		shw, err := w.service.GetAll(ctx.Request.Context())
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusInternalServerError, err)
@@ -108,7 +109,7 @@ func (w Warehouse) GetWarehouseByID() gin.HandlerFunc {
 				return
 			}
 
-			wh, err := w.service.GetById(int64(id))
+			wh, err := w.service.GetById(ctx.Request.Context(), int64(id))
 
 			if err != nil {
 				httputil.NewError(ctx, http.StatusNotFound, err)
@@ -143,7 +144,7 @@ func (w Warehouse) DeleteWarehouse() gin.HandlerFunc {
 				return
 			}
 
-			err = w.service.Delete(int64(id))
+			err = w.service.Delete(ctx.Request.Context(), int64(id))
 
 			if err != nil {
 				httputil.NewError(ctx, http.StatusNotFound, err)
@@ -186,7 +187,7 @@ func (w Warehouse) UpdateWarehouse() gin.HandlerFunc {
 				return
 			}
 
-			patchWh, err = w.service.UpdateTempAndCap(int64(id), body.MinimunTemperature, body.MinimunCapacity)
+			patchWh, err = w.service.UpdateTempAndCap(ctx.Request.Context(), int64(id), body.MinimunTemperature, body.MinimunCapacity)
 
 			if err != nil {
 				httputil.NewError(ctx, http.StatusNotFound, err)
