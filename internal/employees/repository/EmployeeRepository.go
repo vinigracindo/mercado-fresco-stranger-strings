@@ -65,13 +65,13 @@ func (repo *mariaDBEmployeerepository) Create(ctx context.Context, cardNumberId 
 	}
 
 	id, _ := res.LastInsertId()
-	employee.Id = int64(id)
+	employee.Id = id
 
 	return employee, nil
 }
 
 func (repo mariaDBEmployeerepository) Update(ctx context.Context, employeeID int64, updatedEmployee domain.Employee) error {
-	_, err := repo.db.ExecContext(
+	res, err := repo.db.ExecContext(
 		ctx,
 		SQLUpdateEmployeeFullname,
 		updatedEmployee.FirstName, updatedEmployee.LastName, employeeID,
@@ -79,6 +79,11 @@ func (repo mariaDBEmployeerepository) Update(ctx context.Context, employeeID int
 
 	if err != nil {
 		return err
+	}
+
+	rowsAffected, _ := res.RowsAffected()
+	if rowsAffected == 0 {
+		return domain.ErrEmployeeNotFound
 	}
 
 	return nil
