@@ -55,7 +55,7 @@ func (c Carry) CreateCarry() gin.HandlerFunc {
 			LocalityID:  body.LocalityID,
 		}
 
-		newCarry, err := c.service.Create(ctx, model)
+		newCarry, err := c.service.Create(ctx.Request.Context(), model)
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusConflict, err)
