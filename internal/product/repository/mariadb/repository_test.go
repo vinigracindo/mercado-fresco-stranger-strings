@@ -61,8 +61,6 @@ var expectedProductList = []domain.Product{
 
 func TestMariaDBProductRepository_GetAll(t *testing.T) {
 
-	ctx := context.Background()
-
 	t.Run("get_all_ok: should return all products", func(t *testing.T) {
 
 		db, mock, err := sqlmock.New()
@@ -70,8 +68,19 @@ func TestMariaDBProductRepository_GetAll(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		rows := sqlmock.NewRows([]string{"id", "product_code", "description", "width", "height", "length", "net_weight",
-			"expiration_rate", "recommended_freezing_temperature", "freezing_rate", "product_type_id", "seller_id"})
+		rows := sqlmock.NewRows([]string{
+			"id",
+			"product_code",
+			"description",
+			"width",
+			"height",
+			"length",
+			"net_weight",
+			"expiration_rate",
+			"recommended_freezing_temperature",
+			"freezing_rate",
+			"product_type_id",
+			"seller_id"})
 
 		for _, product := range expectedProductList {
 			rows = rows.AddRow(
@@ -91,9 +100,11 @@ func TestMariaDBProductRepository_GetAll(t *testing.T) {
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		mock.ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetAll)).WillReturnRows(rows)
+		mock.
+			ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetAll)).
+			WillReturnRows(rows)
 
-		result, err := productRepository.GetAll(ctx)
+		result, err := productRepository.GetAll(context.TODO())
 
 		assert.Nil(t, err)
 		assert.Equal(t, &expectedProductList, result)
@@ -106,15 +117,28 @@ func TestMariaDBProductRepository_GetAll(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		rows := sqlmock.NewRows([]string{"id", "product_code", "description", "width", "height", "length", "net_weight",
-			"expiration_rate", "recommended_freezing_temperature", "freezing_rate", "product_type_id", "seller_id"}).
+		rows := sqlmock.NewRows([]string{
+			"id",
+			"product_code",
+			"description",
+			"width",
+			"height",
+			"length",
+			"net_weight",
+			"expiration_rate",
+			"recommended_freezing_temperature",
+			"freezing_rate",
+			"product_type_id",
+			"seller_id"}).
 			AddRow("", "", "", "", "", "", "", "", "", "", "", "")
 
-		mock.ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetAll)).WillReturnRows(rows)
+		mock.
+			ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetAll)).
+			WillReturnRows(rows)
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		_, err = productRepository.GetAll(ctx)
+		_, err = productRepository.GetAll(context.TODO())
 		assert.Error(t, err)
 	})
 
@@ -127,17 +151,18 @@ func TestMariaDBProductRepository_GetAll(t *testing.T) {
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		mock.ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetAll)).WillReturnError(fmt.Errorf("query error"))
+		mock.
+			ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetAll)).
+			WillReturnError(fmt.Errorf("query error"))
 
-		result, err := productRepository.GetAll(ctx)
+		result, err := productRepository.GetAll(context.TODO())
+
 		assert.Error(t, err)
 		assert.Empty(t, result)
 	})
 }
 
 func TestMariaDBProductRepository_GetById(t *testing.T) {
-
-	ctx := context.Background()
 
 	t.Run("get_by_id_ok: should return product by id ", func(t *testing.T) {
 
@@ -146,8 +171,19 @@ func TestMariaDBProductRepository_GetById(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		row := sqlmock.NewRows([]string{"id", "product_code", "description", "width", "height", "length", "net_weight",
-			"expiration_rate", "recommended_freezing_temperature", "freezing_rate", "product_type_id", "seller_id"}).
+		row := sqlmock.NewRows([]string{
+			"id",
+			"product_code",
+			"description",
+			"width",
+			"height",
+			"length",
+			"net_weight",
+			"expiration_rate",
+			"recommended_freezing_temperature",
+			"freezing_rate",
+			"product_type_id",
+			"seller_id"}).
 			AddRow(
 				expectedProduct.Id,
 				expectedProduct.ProductCode,
@@ -162,11 +198,14 @@ func TestMariaDBProductRepository_GetById(t *testing.T) {
 				expectedProduct.ProductTypeId,
 				expectedProduct.SellerId)
 
-		mock.ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetById)).WillReturnRows(row)
+		mock.
+			ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetById)).
+			WithArgs(expectedProduct.Id).
+			WillReturnRows(row)
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		result, err := productRepository.GetById(ctx, expectedProduct.Id)
+		result, err := productRepository.GetById(context.TODO(), expectedProduct.Id)
 
 		assert.NoError(t, err)
 		assert.Equal(t, result.Id, int64(1))
@@ -179,15 +218,27 @@ func TestMariaDBProductRepository_GetById(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		row := sqlmock.NewRows([]string{"id", "product_code", "description", "width", "height", "length", "net_weight",
-			"expiration_rate", "recommended_freezing_temperature", "freezing_rate", "product_type_id", "seller_id"}).
+		row := sqlmock.NewRows([]string{
+			"id",
+			"product_code",
+			"description",
+			"width",
+			"height",
+			"length",
+			"net_weight",
+			"expiration_rate",
+			"recommended_freezing_temperature",
+			"freezing_rate",
+			"product_type_id",
+			"seller_id"}).
 			AddRow("", "", "", "", "", "", "", "", "", "", "", "")
 
-		mock.ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetById)).WillReturnRows(row)
+		mock.
+			ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetById)).WillReturnRows(row)
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		_, err = productRepository.GetById(ctx, 1)
+		_, err = productRepository.GetById(context.TODO(), 1)
 		assert.Error(t, err)
 	})
 
@@ -197,18 +248,18 @@ func TestMariaDBProductRepository_GetById(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetById)).WillReturnError(sql.ErrNoRows)
+		mock.
+			ExpectQuery(regexp.QuoteMeta(mariadb.SqlGetById)).
+			WillReturnError(sql.ErrNoRows)
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		_, err = productRepository.GetById(ctx, 1)
+		_, err = productRepository.GetById(context.TODO(), 1)
 		assert.Error(t, err)
 	})
 }
 
 func TestMariaDBProductRepository_Create(t *testing.T) {
-
-	ctx := context.Background()
 
 	t.Run("create_ok: should create product", func(t *testing.T) {
 
@@ -217,7 +268,8 @@ func TestMariaDBProductRepository_Create(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlCreate)).
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlCreate)).
 			WithArgs(
 				expectedProduct.ProductCode,
 				expectedProduct.Description,
@@ -234,31 +286,32 @@ func TestMariaDBProductRepository_Create(t *testing.T) {
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		result, err := productRepository.Create(ctx, &expectedProduct)
+		result, err := productRepository.Create(context.TODO(), &expectedProduct)
 
 		assert.NoError(t, err)
 		assert.Equal(t, result, &expectedProduct)
 	})
 
 	t.Run("create_fail_exec: should return error when query execution fails", func(t *testing.T) {
+
 		db, mock, err := sqlmock.New()
 
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlCreate)).
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlCreate)).
 			WithArgs(0, 0, 0, 0, 0, 0, 0, 0).
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
 		productRepository := mariadb.CreateProductRepository(db)
-		_, err = productRepository.Create(ctx, &expectedProduct)
+		_, err = productRepository.Create(context.TODO(), &expectedProduct)
 
 		assert.Error(t, err)
 	})
 }
 
 func TestSectionRepository_Update(t *testing.T) {
-	ctx := context.Background()
 
 	dummyUpdatedProduct := domain.Product{
 		Id:          1,
@@ -272,13 +325,14 @@ func TestSectionRepository_Update(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
 			WithArgs(expectedProduct.Id, dummyUpdatedProduct.Description).
 			WillReturnResult(sqlmock.NewResult(0, 0))
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		_, err = productRepository.UpdateDescription(ctx, &dummyUpdatedProduct)
+		_, err = productRepository.UpdateDescription(context.TODO(), &dummyUpdatedProduct)
 
 		assert.Error(t, err)
 	})
@@ -290,12 +344,14 @@ func TestSectionRepository_Update(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).WithArgs(expectedProduct.Id).
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
+			WithArgs(expectedProduct.Id).
 			WillReturnError(errors.New("any error"))
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		_, err = productRepository.UpdateDescription(ctx, &dummyUpdatedProduct)
+		_, err = productRepository.UpdateDescription(context.TODO(), &dummyUpdatedProduct)
 
 		assert.Error(t, err)
 	})
@@ -307,13 +363,14 @@ func TestSectionRepository_Update(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
 			WithArgs(dummyUpdatedProduct.Description, expectedProduct.Id).
 			WillReturnResult(sqlmock.NewResult(0, 0))
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		_, err = productRepository.UpdateDescription(ctx, &dummyUpdatedProduct)
+		_, err = productRepository.UpdateDescription(context.TODO(), &dummyUpdatedProduct)
 
 		assert.Error(t, err)
 	})
@@ -325,13 +382,14 @@ func TestSectionRepository_Update(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
 			WithArgs(dummyUpdatedProduct.Description, expectedProduct.Id).
 			WillReturnResult(sqlmock.NewResult(0, 1))
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		prod, err := productRepository.UpdateDescription(ctx, &dummyUpdatedProduct)
+		prod, err := productRepository.UpdateDescription(context.TODO(), &dummyUpdatedProduct)
 
 		assert.NoError(t, err)
 		assert.Equal(t, dummyUpdatedProduct, *prod)
@@ -341,7 +399,6 @@ func TestSectionRepository_Update(t *testing.T) {
 
 func TestSectionRepository_Delete(t *testing.T) {
 
-	ctx := context.Background()
 	id := int64(1)
 
 	t.Run("delete_ok: should delete product", func(t *testing.T) {
@@ -351,11 +408,14 @@ func TestSectionRepository_Delete(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlDelete)).WithArgs(id).WillReturnResult(sqlmock.NewResult(0, 1))
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlDelete)).
+			WithArgs(id).
+			WillReturnResult(sqlmock.NewResult(0, 1))
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		err = productRepository.Delete(ctx, id)
+		err = productRepository.Delete(context.TODO(), id)
 
 		assert.NoError(t, err)
 	})
@@ -367,11 +427,14 @@ func TestSectionRepository_Delete(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlDelete)).WithArgs(id).WillReturnResult(sqlmock.NewResult(0, 0))
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlDelete)).
+			WithArgs(id).
+			WillReturnResult(sqlmock.NewResult(0, 0))
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		err = productRepository.Delete(ctx, id)
+		err = productRepository.Delete(context.TODO(), id)
 
 		assert.Error(t, err)
 	})
@@ -383,11 +446,14 @@ func TestSectionRepository_Delete(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlDelete)).WithArgs(id).WillReturnResult(sqlmock.NewResult(0, 0))
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlDelete)).
+			WithArgs(id).
+			WillReturnResult(sqlmock.NewResult(0, 0))
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		err = productRepository.Delete(ctx, id)
+		err = productRepository.Delete(context.TODO(), id)
 
 		assert.Error(t, err)
 	})
@@ -399,13 +465,15 @@ func TestSectionRepository_Delete(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
-		mock.ExpectExec(regexp.QuoteMeta(mariadb.SqlDelete)).WithArgs(id).WillReturnError(errors.New("any error"))
+		mock.
+			ExpectExec(regexp.QuoteMeta(mariadb.SqlDelete)).
+			WithArgs(id).
+			WillReturnError(errors.New("any error"))
 
 		productRepository := mariadb.CreateProductRepository(db)
 
-		err = productRepository.Delete(ctx, id)
+		err = productRepository.Delete(context.TODO(), id)
 
 		assert.Error(t, err)
 	})
-
 }
