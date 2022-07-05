@@ -49,5 +49,8 @@ func (api *APIServer) Run(port int) {
 	//Buyer routes
 	routes.BuyerRoutes(apiV1.Group("/buyers"))
 
+	//Product batches routes
+	routes.ProductBatchRoutes(apiV1.Group("/productBatches"), db)
+
 	router.Run(fmt.Sprintf(":%d", port))
 }
