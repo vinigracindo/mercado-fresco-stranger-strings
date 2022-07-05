@@ -61,3 +61,15 @@ func (m mariadbCarry) GetById(ctx context.Context, id int64) (*domain.CarryModel
 	return &carry, nil
 
 }
+
+func (m mariadbCarry) CountLocality(ctx context.Context, locality_id int64) (int64, error) {
+	result := m.db.QueryRowContext(ctx, QueryCountLocality, locality_id)
+
+	var count int64
+
+	if err := result.Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

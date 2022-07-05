@@ -14,6 +14,7 @@ type CarryModel struct {
 type CarryRepository interface {
 	Create(ctx context.Context, carry *CarryModel) (*CarryModel, error)
 	GetById(ctx context.Context, id int64) (*CarryModel, error)
+	CountLocality(ctx context.Context, locality_id int64) (int64, error)
 	// GetAll(ctx context.Context) (*[]CarryModel, error)
 	// Delete(ctx context.Context, id int64) error
 	// Update(ctx context.Context, id int64, wh *CarryModel) (*CarryModel, error)

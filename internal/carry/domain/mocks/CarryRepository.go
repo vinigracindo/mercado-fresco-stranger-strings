@@ -14,6 +14,27 @@ type CarryRepository struct {
 	mock.Mock
 }
 
+// CountLocality provides a mock function with given fields: ctx, locality_id
+func (_m *CarryRepository) CountLocality(ctx context.Context, locality_id int64) (int64, error) {
+	ret := _m.Called(ctx, locality_id)
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func(context.Context, int64) int64); ok {
+		r0 = rf(ctx, locality_id)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, locality_id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Create provides a mock function with given fields: ctx, carry
 func (_m *CarryRepository) Create(ctx context.Context, carry *domain.CarryModel) (*domain.CarryModel, error) {
 	ret := _m.Called(ctx, carry)
