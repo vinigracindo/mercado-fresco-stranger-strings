@@ -21,8 +21,8 @@ type RequestProductPost struct {
 	ExpirationRate                 float64 `json:"expiration_rate" binding:"required"`
 	RecommendedFreezingTemperature float64 `json:"recommended_freezing_temperature" binding:"required"`
 	FreezingRate                   float64 `json:"freezing_rate" binding:"required"`
-	ProductTypeId                  int     `json:"product_type_id" binding:"required"`
-	SellerId                       int     `json:"seller_id" binding:"required"`
+	ProductTypeId                  int64   `json:"product_type_id" binding:"required"`
+	SellerId                       int64   `json:"seller_id" binding:"required"`
 }
 
 type RequestProductPatch struct {

@@ -13,8 +13,8 @@ type Product struct {
 	ExpirationRate                 float64 `json:"expiration_rate"`
 	RecommendedFreezingTemperature float64 `json:"recommended_freezing_temperature"`
 	FreezingRate                   float64 `json:"freezing_rate"`
-	ProductTypeId                  int     `json:"product_type_id"`
-	SellerId                       int     `json:"seller_id"`
+	ProductTypeId                  int64   `json:"product_type_id"`
+	SellerId                       int64   `json:"seller_id"`
 }
 
 type ProductRepository interface {
