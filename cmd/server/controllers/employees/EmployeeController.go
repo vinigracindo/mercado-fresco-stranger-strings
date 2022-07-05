@@ -152,6 +152,17 @@ func (controller EmployeeController) Delete() gin.HandlerFunc {
 	}
 }
 
+// ReportInboundOrders godoc
+// @Summary      Report inbound orders employee
+// @Description  Inbound orders quantity by employee
+// @Tags         Employees
+// @Accept       json
+// @Produce      json
+// @Param	id 	 query int false "Employee ID"
+// @Success      204
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /employees/reportInboundOrders [get]
 func (controller EmployeeController) ReportInboundOrders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Query("id")
