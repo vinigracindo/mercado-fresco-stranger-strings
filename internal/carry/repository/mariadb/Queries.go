@@ -3,11 +3,11 @@ package respository
 const (
 	QueryCreateCarry = `
     INSERT INTO
-    carrier (cid, company_name, address, telephone, locality_id)
+    carriers (cid, company_name, address, telephone, locality_id)
     VALUES (?, ?, ?, ?, ?)
     `
 
-	QueryGetCarry = "select id, cid, company_name, address, telephone, locality_id from carrier"
+	QueryGetCarry = "select id, cid, company_name, address, telephone, locality_id from carriers"
 
-	QueryCountLocality = "select count(*) as total_locality from carrier where locality_id = ?"
+	QueryCountLocality = "select count(*) as total_locality from carriers where locality_id = ?"
 )
