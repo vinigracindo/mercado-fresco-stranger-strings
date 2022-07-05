@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	context "context"
+
 	mock "github.com/stretchr/testify/mock"
 	domain "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
 )
@@ -12,13 +14,13 @@ type BuyerRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: cardNumberId, firstName, lastName
-func (_m *BuyerRepository) Create(cardNumberId string, firstName string, lastName string) (*domain.Buyer, error) {
-	ret := _m.Called(cardNumberId, firstName, lastName)
+// Create provides a mock function with given fields: ctx, cardNumberId, firstName, lastName
+func (_m *BuyerRepository) Create(ctx context.Context, cardNumberId string, firstName string, lastName string) (*domain.Buyer, error) {
+	ret := _m.Called(ctx, cardNumberId, firstName, lastName)
 
 	var r0 *domain.Buyer
-	if rf, ok := ret.Get(0).(func(string, string, string) *domain.Buyer); ok {
-		r0 = rf(cardNumberId, firstName, lastName)
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) *domain.Buyer); ok {
+		r0 = rf(ctx, cardNumberId, firstName, lastName)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Buyer)
@@ -26,8 +28,8 @@ func (_m *BuyerRepository) Create(cardNumberId string, firstName string, lastNam
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, string, string) error); ok {
-		r1 = rf(cardNumberId, firstName, lastName)
+	if rf, ok := ret.Get(1).(func(context.Context, string, string, string) error); ok {
+		r1 = rf(ctx, cardNumberId, firstName, lastName)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -35,27 +37,13 @@ func (_m *BuyerRepository) Create(cardNumberId string, firstName string, lastNam
 	return r0, r1
 }
 
-// CreateId provides a mock function with given fields:
-func (_m *BuyerRepository) CreateId() int64 {
-	ret := _m.Called()
-
-	var r0 int64
-	if rf, ok := ret.Get(0).(func() int64); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-
-	return r0
-}
-
-// Delete provides a mock function with given fields: id
-func (_m *BuyerRepository) Delete(id int64) error {
-	ret := _m.Called(id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *BuyerRepository) Delete(ctx context.Context, id int64) error {
+	ret := _m.Called(ctx, id)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -63,22 +51,22 @@ func (_m *BuyerRepository) Delete(id int64) error {
 	return r0
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *BuyerRepository) GetAll() ([]domain.Buyer, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx
+func (_m *BuyerRepository) GetAll(ctx context.Context) (*[]domain.Buyer, error) {
+	ret := _m.Called(ctx)
 
-	var r0 []domain.Buyer
-	if rf, ok := ret.Get(0).(func() []domain.Buyer); ok {
-		r0 = rf()
+	var r0 *[]domain.Buyer
+	if rf, ok := ret.Get(0).(func(context.Context) *[]domain.Buyer); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]domain.Buyer)
+			r0 = ret.Get(0).(*[]domain.Buyer)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -86,13 +74,13 @@ func (_m *BuyerRepository) GetAll() ([]domain.Buyer, error) {
 	return r0, r1
 }
 
-// GetId provides a mock function with given fields: id
-func (_m *BuyerRepository) GetId(id int64) (*domain.Buyer, error) {
-	ret := _m.Called(id)
+// GetId provides a mock function with given fields: ctx, id
+func (_m *BuyerRepository) GetId(ctx context.Context, id int64) (*domain.Buyer, error) {
+	ret := _m.Called(ctx, id)
 
 	var r0 *domain.Buyer
-	if rf, ok := ret.Get(0).(func(int64) *domain.Buyer); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) *domain.Buyer); ok {
+		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Buyer)
@@ -100,8 +88,8 @@ func (_m *BuyerRepository) GetId(id int64) (*domain.Buyer, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -109,13 +97,13 @@ func (_m *BuyerRepository) GetId(id int64) (*domain.Buyer, error) {
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: id, cardNumberId, lastName
-func (_m *BuyerRepository) Update(id int64, cardNumberId string, lastName string) (*domain.Buyer, error) {
-	ret := _m.Called(id, cardNumberId, lastName)
+// Update provides a mock function with given fields: ctx, id, cardNumberId, lastName
+func (_m *BuyerRepository) Update(ctx context.Context, id int64, cardNumberId string, lastName string) (*domain.Buyer, error) {
+	ret := _m.Called(ctx, id, cardNumberId, lastName)
 
 	var r0 *domain.Buyer
-	if rf, ok := ret.Get(0).(func(int64, string, string) *domain.Buyer); ok {
-		r0 = rf(id, cardNumberId, lastName)
+	if rf, ok := ret.Get(0).(func(context.Context, int64, string, string) *domain.Buyer); ok {
+		r0 = rf(ctx, id, cardNumberId, lastName)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Buyer)
@@ -123,8 +111,8 @@ func (_m *BuyerRepository) Update(id int64, cardNumberId string, lastName string
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, string, string) error); ok {
-		r1 = rf(id, cardNumberId, lastName)
+	if rf, ok := ret.Get(1).(func(context.Context, int64, string, string) error); ok {
+		r1 = rf(ctx, id, cardNumberId, lastName)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -36,7 +36,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/buyer.Buyer"
+                                "$ref": "#/definitions/domain.Buyer"
                             }
                         }
                     },
@@ -75,7 +75,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/buyer.Buyer"
+                            "$ref": "#/definitions/domain.Buyer"
                         }
                     },
                     "409": {
@@ -119,7 +119,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/buyer.Buyer"
+                            "$ref": "#/definitions/domain.Buyer"
                         }
                     },
                     "400": {
@@ -209,7 +209,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/buyer.Buyer"
+                            "$ref": "#/definitions/domain.Buyer"
                         }
                     },
                     "400": {
@@ -246,7 +246,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/employees.Employee"
+                                "$ref": "#/definitions/domain.Employee"
                             }
                         }
                     },
@@ -285,7 +285,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/employees.Employee"
+                            "$ref": "#/definitions/domain.Employee"
                         }
                     },
                     "409": {
@@ -326,7 +326,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/employees.Employee"
+                            "$ref": "#/definitions/domain.Employee"
                         }
                     },
                     "400": {
@@ -416,7 +416,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/employees.Employee"
+                            "$ref": "#/definitions/domain.Employee"
                         }
                     },
                     "400": {
@@ -453,7 +453,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/product.Product"
+                                "$ref": "#/definitions/domain.Product"
                             }
                         }
                     },
@@ -492,7 +492,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/product.Product"
+                            "$ref": "#/definitions/domain.Product"
                         }
                     },
                     "400": {
@@ -533,7 +533,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/product.Product"
+                            "$ref": "#/definitions/domain.Product"
                         }
                     },
                     "400": {
@@ -623,7 +623,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/product.Product"
+                            "$ref": "#/definitions/domain.Product"
                         }
                     },
                     "400": {
@@ -660,7 +660,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/section.Section"
+                                "$ref": "#/definitions/domain.SectionModel"
                             }
                         }
                     },
@@ -699,7 +699,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/section.Section"
+                            "$ref": "#/definitions/domain.SectionModel"
                         }
                     },
                     "409": {
@@ -743,7 +743,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/section.Section"
+                            "$ref": "#/definitions/domain.SectionModel"
                         }
                     },
                     "400": {
@@ -833,7 +833,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/section.Section"
+                            "$ref": "#/definitions/domain.SectionModel"
                         }
                     },
                     "400": {
@@ -870,7 +870,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/seller.Seller"
+                                "$ref": "#/definitions/domain.Seller"
                             }
                         }
                     },
@@ -909,7 +909,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/seller.Seller"
+                            "$ref": "#/definitions/domain.Seller"
                         }
                     },
                     "409": {
@@ -953,7 +953,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/seller.Seller"
+                            "$ref": "#/definitions/domain.Seller"
                         }
                     },
                     "404": {
@@ -1043,7 +1043,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/seller.Seller"
+                            "$ref": "#/definitions/domain.Seller"
                         }
                     },
                     "404": {
@@ -1279,23 +1279,6 @@
         }
     },
     "definitions": {
-        "buyer.Buyer": {
-            "type": "object",
-            "properties": {
-                "card_number_id": {
-                    "type": "integer"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "last_name": {
-                    "type": "string"
-                }
-            }
-        },
         "controllers.RequestWarehousePatch": {
             "type": "object",
             "properties": {
@@ -1342,7 +1325,7 @@
             ],
             "properties": {
                 "card_number_id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "last_name": {
                     "type": "string"
@@ -1358,7 +1341,7 @@
             ],
             "properties": {
                 "card_number_id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "first_name": {
                     "type": "string"
@@ -1559,7 +1542,24 @@
                 }
             }
         },
-        "employees.Employee": {
+        "domain.Buyer": {
+            "type": "object",
+            "properties": {
+                "card_number_id": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Employee": {
             "type": "object",
             "properties": {
                 "card_number_id": {
@@ -1579,18 +1579,7 @@
                 }
             }
         },
-        "httputil.HTTPError": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "product.Product": {
+        "domain.Product": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1631,7 +1620,7 @@
                 }
             }
         },
-        "section.Section": {
+        "domain.SectionModel": {
             "type": "object",
             "properties": {
                 "current_capacity": {
@@ -1663,7 +1652,7 @@
                 }
             }
         },
-        "seller.Seller": {
+        "domain.Seller": {
             "type": "object",
             "properties": {
                 "address": {
@@ -1679,6 +1668,17 @@
                     "type": "integer"
                 },
                 "telephone": {
+                    "type": "string"
+                }
+            }
+        },
+        "httputil.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
                     "type": "string"
                 }
             }

@@ -47,7 +47,7 @@ func (api *APIServer) Run(port int) {
 	routes.SellerRoutes(apiV1.Group("/sellers"))
 
 	//Buyer routes
-	routes.BuyerRoutes(apiV1.Group("/buyers"))
+	routes.BuyerRoutes(apiV1.Group("/buyers"), db)
 
 	// Carry routes
 	routes.CarryRoutes(apiV1.Group("/carries"), db)
