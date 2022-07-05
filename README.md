@@ -22,7 +22,12 @@ go mod tidy
 docker-compose up -d
 ```
 
-2. Run the project
+2. Run tests
+```shell
+go test ./...
+```
+
+3. Run the project
 ```shell
 go run main.go
 ```
