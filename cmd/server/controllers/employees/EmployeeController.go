@@ -155,17 +155,17 @@ func (controller EmployeeController) Delete() gin.HandlerFunc {
 func (controller EmployeeController) ReportInboundOrders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Query("id")
-		id := new(int64)
+		var id *int64
 
-		if idParam == "" {
-			id = nil
-		} else {
+		if idParam != "" {
 			idConv, err := strconv.ParseInt(idParam, 10, 64)
 			if err != nil {
 				httputil.NewError(c, http.StatusBadRequest, err)
 				return
 			}
 			id = &idConv
+		} else {
+			id = nil
 		}
 
 		result, err := controller.service.ReportInboundOrders(c.Request.Context(), id)
