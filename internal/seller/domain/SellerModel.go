@@ -23,6 +23,5 @@ type RepositorySeller interface {
 	GetById(ctx context.Context, id int64) (*Seller, error)
 	Create(ctx context.Context, seller *Seller) (*Seller, error)
 	Update(ctx context.Context, seller *Seller) (*Seller, error)
-	CreatID() int64
 	Delete(ctx context.Context, id int64) error
 }
