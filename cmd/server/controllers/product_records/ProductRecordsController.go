@@ -1,4 +1,4 @@
-package product_records
+package controllers
 
 import (
 	"errors"
@@ -44,10 +44,10 @@ func (c *ProductRecordsController) Create() gin.HandlerFunc {
 		if err := ctx.ShouldBindJSON(&productRecordsDTO); err != nil {
 			httputil.NewError(ctx, http.StatusUnprocessableEntity, errors.New("invalid input. Check the data entered"))
 			return
-
 		}
 
 		date, err := time.Parse("2006-01-02", productRecordsDTO.LastUpdateDate)
+
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return

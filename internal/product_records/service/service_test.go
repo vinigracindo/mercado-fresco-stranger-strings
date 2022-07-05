@@ -75,5 +75,4 @@ func TestProductService_Create(t *testing.T) {
 		assert.Equal(t, domain.ErrProductIdNotFound, err)
 		assert.Equal(t, nil, nil)
 	})
-
 }
