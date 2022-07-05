@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/config"
 
 	"github.com/gin-gonic/gin"
@@ -43,7 +44,7 @@ func (api *APIServer) Run(port int) {
 	routes.WarehouseRoutes(apiV1.Group("/warehouses"))
 
 	//Seller routes
-	routes.SellerRoutes(apiV1.Group("/sellers"))
+	routes.SellerRoutes(apiV1.Group("/sellers"), db)
 
 	//Buyer routes
 	routes.BuyerRoutes(apiV1.Group("/buyers"))
