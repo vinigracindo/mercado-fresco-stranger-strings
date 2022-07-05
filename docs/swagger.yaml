@@ -1,16 +1,5 @@
 basePath: /api/v1
 definitions:
-  buyer.Buyer:
-    properties:
-      card_number_id:
-        type: integer
-      first_name:
-        type: string
-      id:
-        type: integer
-      last_name:
-        type: string
-    type: object
   controllers.RequestWarehousePatch:
     properties:
       minimun_capacity:
@@ -40,7 +29,7 @@ definitions:
   controllers.requestBuyerPatch:
     properties:
       card_number_id:
-        type: integer
+        type: string
       last_name:
         type: string
     required:
@@ -50,7 +39,7 @@ definitions:
   controllers.requestBuyerPost:
     properties:
       card_number_id:
-        type: integer
+        type: string
       first_name:
         type: string
       last_name:
@@ -193,7 +182,18 @@ definitions:
     - company_name
     - telephone
     type: object
-  employees.Employee:
+  domain.Buyer:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+    type: object
+  domain.Employee:
     properties:
       card_number_id:
         type: string
@@ -206,14 +206,7 @@ definitions:
       warehouse_id:
         type: integer
     type: object
-  httputil.HTTPError:
-    properties:
-      code:
-        type: integer
-      message:
-        type: string
-    type: object
-  product.Product:
+  domain.Product:
     properties:
       description:
         type: string
@@ -240,7 +233,7 @@ definitions:
       width:
         type: number
     type: object
-  section.Section:
+  domain.SectionModel:
     properties:
       current_capacity:
         type: integer
@@ -261,7 +254,7 @@ definitions:
       warehouse_id:
         type: integer
     type: object
-  seller.Seller:
+  domain.Seller:
     properties:
       address:
         type: string
@@ -272,6 +265,13 @@ definitions:
       id:
         type: integer
       telephone:
+        type: string
+    type: object
+  httputil.HTTPError:
+    properties:
+      code:
+        type: integer
+      message:
         type: string
     type: object
   warehouse.WarehouseModel:
@@ -314,7 +314,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/buyer.Buyer'
+              $ref: '#/definitions/domain.Buyer'
             type: array
         "404":
           description: Not Found
@@ -340,7 +340,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/buyer.Buyer'
+            $ref: '#/definitions/domain.Buyer'
         "409":
           description: Conflict
           schema:
@@ -395,7 +395,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/buyer.Buyer'
+            $ref: '#/definitions/domain.Buyer'
         "400":
           description: Bad Request
           schema:
@@ -429,7 +429,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/buyer.Buyer'
+            $ref: '#/definitions/domain.Buyer'
         "400":
           description: Bad Request
           schema:
@@ -453,7 +453,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/employees.Employee'
+              $ref: '#/definitions/domain.Employee'
             type: array
         "404":
           description: Not Found
@@ -479,7 +479,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/employees.Employee'
+            $ref: '#/definitions/domain.Employee'
         "409":
           description: Conflict
           schema:
@@ -532,7 +532,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/employees.Employee'
+            $ref: '#/definitions/domain.Employee'
         "400":
           description: Bad Request
           schema:
@@ -566,7 +566,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/employees.Employee'
+            $ref: '#/definitions/domain.Employee'
         "400":
           description: Bad Request
           schema:
@@ -590,7 +590,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/product.Product'
+              $ref: '#/definitions/domain.Product'
             type: array
         "404":
           description: Not Found
@@ -616,7 +616,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/product.Product'
+            $ref: '#/definitions/domain.Product'
         "400":
           description: Bad Request
           schema:
@@ -669,7 +669,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/product.Product'
+            $ref: '#/definitions/domain.Product'
         "400":
           description: Bad Request
           schema:
@@ -703,7 +703,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/product.Product'
+            $ref: '#/definitions/domain.Product'
         "400":
           description: Bad Request
           schema:
@@ -727,7 +727,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/section.Section'
+              $ref: '#/definitions/domain.SectionModel'
             type: array
         "400":
           description: Bad Request
@@ -753,7 +753,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/section.Section'
+            $ref: '#/definitions/domain.SectionModel'
         "409":
           description: Conflict
           schema:
@@ -808,7 +808,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/section.Section'
+            $ref: '#/definitions/domain.SectionModel'
         "400":
           description: Bad Request
           schema:
@@ -842,7 +842,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/section.Section'
+            $ref: '#/definitions/domain.SectionModel'
         "400":
           description: Bad Request
           schema:
@@ -866,7 +866,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/seller.Seller'
+              $ref: '#/definitions/domain.Seller'
             type: array
         "400":
           description: Bad Request
@@ -892,7 +892,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/seller.Seller'
+            $ref: '#/definitions/domain.Seller'
         "409":
           description: Conflict
           schema:
@@ -947,7 +947,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/seller.Seller'
+            $ref: '#/definitions/domain.Seller'
         "404":
           description: Not Found
           schema:
@@ -981,7 +981,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/seller.Seller'
+            $ref: '#/definitions/domain.Seller'
         "404":
           description: Not Found
           schema:
