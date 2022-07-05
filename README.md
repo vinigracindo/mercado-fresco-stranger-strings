@@ -12,7 +12,7 @@ adicionar em sua listagem (oferta) esse tipo de produto.
 ## How to Download Dependencies
 
 ```shell
-go mod download
+go mod tidy
 ```
 
 ## ⚡️ Quick start
@@ -32,6 +32,9 @@ go run main.go
 | --------------------------------------------------------------------- | --------- | ---------- |
 | [go](https://go.dev/)                                                 | `v1.18`   | core       |
 | [gin-gonic/gin](https://github.com/gin-gonic/gin)                     | `v1.8.0`  | core       |
+| [go-sql-driver/mysql](https://github.com/go-sql-driver/mysql          | `v1.6.0`  | database   |
 | [joho/godotenv](https://github.com/joho/godotenv)                     | `v1.4.0`  | config     |
+| [DATA-DOG/go-sqlmock](https://github.com/DATA-DOG/go-sqlmock)         | `v1.5.0`  | test       |
+| [stretchr/testify](https://github.com/stretchr/testify)               | `v1.7.4`  | test       |
 | [swaggo/swag](https://github.com/swaggo/swag)                         | `v1.8.2`  | doc        |
 | [swaggo/gin-swagger](https://github.com/swaggo/gin-swagger)           | `v1.4.3`  | doc        |
