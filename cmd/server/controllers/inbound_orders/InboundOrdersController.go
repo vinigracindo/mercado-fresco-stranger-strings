@@ -19,7 +19,7 @@ func NewInboundOrdersController(service domain.InboundOrdersService) InboundOrde
 	return InboundOrdersController{service: service}
 }
 
-type requestInboundOrdersPost struct {
+type RequestInboundOrdersPost struct {
 	OrderDate      string `json:"order_date" binding:"required"`
 	OrderNumber    string `json:"order_number" binding:"required"`
 	EmployeeId     int64  `json:"employee_id" binding:"required"`
@@ -33,17 +33,17 @@ type requestInboundOrdersPost struct {
 // @Tags         InboundOrders
 // @Accept       json
 // @Produce      json
-// @Param Employee body requestEmployeePost true "Create inbound orders"
+// @Param InboundOrders body RequestInboundOrdersPost true "Create inbound orders"
 // @Success      201  {object}  domain.InboundOrder
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /inboundOrders [post]
 func (controller InboundOrdersController) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var request requestInboundOrdersPost
+		var request RequestInboundOrdersPost
 
 		if err := c.ShouldBindJSON(&request); err != nil {
-			httputil.NewError(c, http.StatusBadRequest, err)
+			httputil.NewError(c, http.StatusUnprocessableEntity, err)
 			return
 		}
 
