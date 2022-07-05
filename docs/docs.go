@@ -43,7 +43,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/buyer.Buyer"
+                                "$ref": "#/definitions/domain.Buyer"
                             }
                         }
                     },
@@ -82,7 +82,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/buyer.Buyer"
+                            "$ref": "#/definitions/domain.Buyer"
                         }
                     },
                     "409": {
@@ -126,7 +126,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/buyer.Buyer"
+                            "$ref": "#/definitions/domain.Buyer"
                         }
                     },
                     "400": {
@@ -216,7 +216,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/buyer.Buyer"
+                            "$ref": "#/definitions/domain.Buyer"
                         }
                     },
                     "400": {
@@ -253,7 +253,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/employees.Employee"
+                                "$ref": "#/definitions/domain.Employee"
                             }
                         }
                     },
@@ -292,7 +292,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/employees.Employee"
+                            "$ref": "#/definitions/domain.Employee"
                         }
                     },
                     "409": {
@@ -333,7 +333,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/employees.Employee"
+                            "$ref": "#/definitions/domain.Employee"
                         }
                     },
                     "400": {
@@ -423,7 +423,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/employees.Employee"
+                            "$ref": "#/definitions/domain.Employee"
                         }
                     },
                     "400": {
@@ -460,7 +460,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/product.Product"
+                                "$ref": "#/definitions/domain.Product"
                             }
                         }
                     },
@@ -499,7 +499,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/product.Product"
+                            "$ref": "#/definitions/domain.Product"
                         }
                     },
                     "400": {
@@ -540,7 +540,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/product.Product"
+                            "$ref": "#/definitions/domain.Product"
                         }
                     },
                     "400": {
@@ -630,7 +630,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/product.Product"
+                            "$ref": "#/definitions/domain.Product"
                         }
                     },
                     "400": {
@@ -667,7 +667,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/section.Section"
+                                "$ref": "#/definitions/domain.SectionModel"
                             }
                         }
                     },
@@ -706,7 +706,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/section.Section"
+                            "$ref": "#/definitions/domain.SectionModel"
                         }
                     },
                     "409": {
@@ -750,7 +750,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/section.Section"
+                            "$ref": "#/definitions/domain.SectionModel"
                         }
                     },
                     "400": {
@@ -840,7 +840,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/section.Section"
+                            "$ref": "#/definitions/domain.SectionModel"
                         }
                     },
                     "400": {
@@ -877,7 +877,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/seller.Seller"
+                                "$ref": "#/definitions/domain.Seller"
                             }
                         }
                     },
@@ -916,7 +916,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/seller.Seller"
+                            "$ref": "#/definitions/domain.Seller"
                         }
                     },
                     "409": {
@@ -960,7 +960,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/seller.Seller"
+                            "$ref": "#/definitions/domain.Seller"
                         }
                     },
                     "404": {
@@ -1050,7 +1050,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/seller.Seller"
+                            "$ref": "#/definitions/domain.Seller"
                         }
                     },
                     "404": {
@@ -1286,23 +1286,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "buyer.Buyer": {
-            "type": "object",
-            "properties": {
-                "card_number_id": {
-                    "type": "integer"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "last_name": {
-                    "type": "string"
-                }
-            }
-        },
         "controllers.RequestWarehousePatch": {
             "type": "object",
             "properties": {
@@ -1349,7 +1332,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "card_number_id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "last_name": {
                     "type": "string"
@@ -1365,7 +1348,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "card_number_id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "first_name": {
                     "type": "string"
@@ -1566,7 +1549,24 @@ const docTemplate = `{
                 }
             }
         },
-        "employees.Employee": {
+        "domain.Buyer": {
+            "type": "object",
+            "properties": {
+                "card_number_id": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Employee": {
             "type": "object",
             "properties": {
                 "card_number_id": {
@@ -1586,18 +1586,7 @@ const docTemplate = `{
                 }
             }
         },
-        "httputil.HTTPError": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "product.Product": {
+        "domain.Product": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1638,7 +1627,7 @@ const docTemplate = `{
                 }
             }
         },
-        "section.Section": {
+        "domain.SectionModel": {
             "type": "object",
             "properties": {
                 "current_capacity": {
@@ -1670,7 +1659,7 @@ const docTemplate = `{
                 }
             }
         },
-        "seller.Seller": {
+        "domain.Seller": {
             "type": "object",
             "properties": {
                 "address": {
@@ -1686,6 +1675,17 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "telephone": {
+                    "type": "string"
+                }
+            }
+        },
+        "httputil.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
                     "type": "string"
                 }
             }

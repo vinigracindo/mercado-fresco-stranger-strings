@@ -23,7 +23,7 @@ func NewEmployeeController(service domain.EmployeeService) EmployeeController {
 // @Tags         Employees
 // @Accept       json
 // @Produce      json
-// @Success      200  {array} employees.Employee
+// @Success      200  {array} domain.Employee
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /employees [get]
 func (controller EmployeeController) GetAll() gin.HandlerFunc {
@@ -43,7 +43,7 @@ func (controller EmployeeController) GetAll() gin.HandlerFunc {
 // @Description Get employee by ID
 // @Produce json
 // @Param id path int true "Employee ID"
-// @Success 200 {object} employees.Employee
+// @Success 200 {object} domain.Employee
 // @Failure 400  {object}  httputil.HTTPError
 // @Failure 404  {object}  httputil.HTTPError
 // @Router /employees/{id} [get]
@@ -70,7 +70,7 @@ func (controller EmployeeController) GetById() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param Employee body requestEmployeePost true "Create employee"
-// @Success      201  {object} employees.Employee
+// @Success      201  {object} domain.Employee
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /employees [post]
@@ -99,7 +99,7 @@ func (controller EmployeeController) Create() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Employee ID"
 // @Param Employee body requestEmployeePatch true "Update field"
-// @Success      200  {object} employees.Employee
+// @Success      200  {object} domain.Employee
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /employees/{id} [patch]
