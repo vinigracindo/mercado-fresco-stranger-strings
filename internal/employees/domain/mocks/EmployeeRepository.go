@@ -95,6 +95,29 @@ func (_m *EmployeeRepository) GetById(ctx context.Context, id int64) (*domain.Em
 	return r0, r1
 }
 
+// ReportInboundOrders provides a mock function with given fields: ctx, employeeID
+func (_m *EmployeeRepository) ReportInboundOrders(ctx context.Context, employeeID *int64) ([]domain.EmployeeInboundOrdersReport, error) {
+	ret := _m.Called(ctx, employeeID)
+
+	var r0 []domain.EmployeeInboundOrdersReport
+	if rf, ok := ret.Get(0).(func(context.Context, *int64) []domain.EmployeeInboundOrdersReport); ok {
+		r0 = rf(ctx, employeeID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]domain.EmployeeInboundOrdersReport)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *int64) error); ok {
+		r1 = rf(ctx, employeeID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Update provides a mock function with given fields: ctx, employeeID, updatedEmployee
 func (_m *EmployeeRepository) Update(ctx context.Context, employeeID int64, updatedEmployee domain.Employee) error {
 	ret := _m.Called(ctx, employeeID, updatedEmployee)

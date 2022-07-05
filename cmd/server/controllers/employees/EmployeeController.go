@@ -152,6 +152,31 @@ func (controller EmployeeController) Delete() gin.HandlerFunc {
 	}
 }
 
+func (controller EmployeeController) ReportInboundOrders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idParam := c.Query("id")
+		id := new(int64)
+
+		if idParam == "" {
+			id = nil
+		} else {
+			idConv, err := strconv.ParseInt(idParam, 10, 64)
+			if err != nil {
+				httputil.NewError(c, http.StatusBadRequest, err)
+				return
+			}
+			id = &idConv
+		}
+
+		result, err := controller.service.ReportInboundOrders(c.Request.Context(), id)
+		if err != nil {
+			httputil.NewError(c, http.StatusInternalServerError, err)
+			return
+		}
+		httputil.NewResponse(c, http.StatusOK, result)
+	}
+}
+
 type requestEmployeePost struct {
 	CardNumberId string `json:"card_number_id" binding:"required"`
 	FirstName    string `json:"first_name" binding:"required"`

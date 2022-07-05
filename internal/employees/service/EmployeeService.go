@@ -10,6 +10,12 @@ type service struct {
 	repo domain.EmployeeRepository
 }
 
+func NewEmployeeService(r domain.EmployeeRepository) domain.EmployeeService {
+	return &service{
+		repo: r,
+	}
+}
+
 func (s service) GetAll(ctx context.Context) ([]domain.Employee, error) {
 	employees, err := s.repo.GetAll(ctx)
 
@@ -65,8 +71,10 @@ func (s service) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func NewEmployeeService(r domain.EmployeeRepository) domain.EmployeeService {
-	return &service{
-		repo: r,
+func (s service) ReportInboundOrders(ctx context.Context, employeeID *int64) ([]domain.EmployeeInboundOrdersReport, error) {
+	result, err := s.repo.ReportInboundOrders(ctx, employeeID)
+	if err != nil {
+		return nil, err
 	}
+	return result, nil
 }
