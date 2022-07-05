@@ -17,6 +17,12 @@ go mod tidy
 
 ## ⚡️ Quick start
 
+1. Create a database
+```shell
+docker-compose up -d
+```
+
+2. Run the project
 ```shell
 go run main.go
 ```
