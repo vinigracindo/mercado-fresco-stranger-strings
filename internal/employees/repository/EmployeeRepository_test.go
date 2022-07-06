@@ -12,6 +12,23 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/repository"
 )
 
+func makeEmployee(id int64) domain.Employee {
+	return domain.Employee{
+		Id:           id,
+		CardNumberId: "123456",
+		FirstName:    "John",
+		LastName:     "Doe",
+		WarehouseId:  1,
+	}
+}
+
+func makeEmployeeInboundOrdersReport(id int64) domain.EmployeeInboundOrdersReport {
+	return domain.EmployeeInboundOrdersReport{
+		Employee: makeEmployee(id),
+		Count:    10,
+	}
+}
+
 func TestEmployeeRepository_GetAll(t *testing.T) {
 	ctx := context.Background()
 
@@ -284,5 +301,64 @@ func TestEmployeeRepository_Delete(t *testing.T) {
 		err = sectionRepository.Delete(context.Background(), int64(1))
 
 		assert.Error(t, err)
+	})
+}
+
+func TestEmployeeRepository_ReportInboundOrders(t *testing.T) {
+	employeeID := int64(1)
+
+	t.Run("should return inbound orders without employee id", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		expectedInboundOrders := []domain.EmployeeInboundOrdersReport{
+			makeEmployeeInboundOrdersReport(employeeID),
+			makeEmployeeInboundOrdersReport(employeeID + 1),
+			makeEmployeeInboundOrdersReport(employeeID + 2),
+		}
+
+		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
+
+		mock.
+			ExpectQuery(regexp.QuoteMeta(repository.SQLReportInboundOrders)).
+			WillReturnRows(
+				sqlmock.
+					NewRows([]string{"id", "card_number_id", "first_name", "last_name", "warehouse_id", "inbound_orders_count"}).
+					AddRow(1, "123456", "John", "Doe", int64(1), 10).
+					AddRow(2, "123456", "John", "Doe", int64(1), 10).
+					AddRow(3, "123456", "John", "Doe", int64(1), 10),
+			)
+
+		result, err := employeeRepository.ReportInboundOrders(context.TODO(), nil)
+
+		assert.NoError(t, err)
+		assert.Equal(t, expectedInboundOrders, result)
+	})
+
+	t.Run("should return inbound orders with employee id", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		expectedInboundOrders := []domain.EmployeeInboundOrdersReport{
+			makeEmployeeInboundOrdersReport(employeeID),
+		}
+
+		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
+
+		mock.
+			ExpectQuery(regexp.QuoteMeta(repository.SQLReportInboundOrdersWithID)).
+			WithArgs(employeeID).
+			WillReturnRows(
+				sqlmock.
+					NewRows([]string{"id", "card_number_id", "first_name", "last_name", "warehouse_id", "inbound_orders_count"}).
+					AddRow(1, "123456", "John", "Doe", int64(1), 10),
+			)
+
+		result, err := employeeRepository.ReportInboundOrders(context.TODO(), &employeeID)
+
+		assert.NoError(t, err)
+		assert.Equal(t, expectedInboundOrders, result)
 	})
 }
