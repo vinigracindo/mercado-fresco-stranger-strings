@@ -23,12 +23,12 @@ func NewEmployeeController(service domain.EmployeeService) EmployeeController {
 // @Tags         Employees
 // @Accept       json
 // @Produce      json
-// @Success      200  {array} employees.Employee
+// @Success      200  {array} domain.Employee
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /employees [get]
 func (controller EmployeeController) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		employees, err := controller.service.GetAll()
+		employees, err := controller.service.GetAll(c.Request.Context())
 		if err != nil {
 			httputil.NewError(c, http.StatusInternalServerError, err)
 			return
@@ -43,7 +43,7 @@ func (controller EmployeeController) GetAll() gin.HandlerFunc {
 // @Description Get employee by ID
 // @Produce json
 // @Param id path int true "Employee ID"
-// @Success 200 {object} employees.Employee
+// @Success 200 {object} domain.Employee
 // @Failure 400  {object}  httputil.HTTPError
 // @Failure 404  {object}  httputil.HTTPError
 // @Router /employees/{id} [get]
@@ -54,7 +54,7 @@ func (controller EmployeeController) GetById() gin.HandlerFunc {
 			httputil.NewError(c, http.StatusBadRequest, err)
 			return
 		}
-		employee, err := controller.service.GetById(id)
+		employee, err := controller.service.GetById(c.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(c, http.StatusNotFound, err)
 			return
@@ -70,7 +70,7 @@ func (controller EmployeeController) GetById() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param Employee body requestEmployeePost true "Create employee"
-// @Success      201  {object} employees.Employee
+// @Success      201  {object} domain.Employee
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /employees [post]
@@ -82,7 +82,7 @@ func (controller EmployeeController) Create() gin.HandlerFunc {
 			return
 		}
 
-		employee, err := controller.service.Create(req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
+		employee, err := controller.service.Create(c.Request.Context(), req.CardNumberId, req.FirstName, req.LastName, req.WarehouseId)
 		if err != nil {
 			httputil.NewError(c, http.StatusConflict, err)
 			return
@@ -99,7 +99,7 @@ func (controller EmployeeController) Create() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Employee ID"
 // @Param Employee body requestEmployeePatch true "Update field"
-// @Success      200  {object} employees.Employee
+// @Success      200  {object} domain.Employee
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /employees/{id} [patch]
@@ -116,7 +116,7 @@ func (controller EmployeeController) UpdateFullname() gin.HandlerFunc {
 			httputil.NewError(c, http.StatusBadRequest, err)
 			return
 		}
-		employee, err := controller.service.UpdateFullname(id, req.FirstName, req.LastName)
+		employee, err := controller.service.UpdateFullname(c.Request.Context(), id, req.FirstName, req.LastName)
 		if err != nil {
 			httputil.NewError(c, http.StatusNotFound, err)
 			return
@@ -143,7 +143,7 @@ func (controller EmployeeController) Delete() gin.HandlerFunc {
 			httputil.NewError(c, http.StatusBadRequest, err)
 			return
 		}
-		err = controller.service.Delete(id)
+		err = controller.service.Delete(c.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(c, http.StatusNotFound, err)
 			return

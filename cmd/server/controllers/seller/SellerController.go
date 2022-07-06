@@ -59,7 +59,7 @@ func (c SellerController) GetAll() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param id path int true "Seller ID"
-// @Success      200  {object} 	domain.Seller
+// @Success      200  {object} domain.Seller
 // @Failure      500  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /sellers/{id} [get]
@@ -122,7 +122,7 @@ func (c SellerController) Create() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Seller ID"
 // @Param Warehouse body requestSellerPatch true "Update seller"
-// @Success      200  {object}  domain.Seller
+// @Success      200  {object} domain.Seller
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError

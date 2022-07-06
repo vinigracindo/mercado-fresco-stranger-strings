@@ -1,6 +1,8 @@
 package main
 
-import "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server"
+import (
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server"
+)
 
 // @title   Swagger Mercado Fresco
 // @termsOfService https://developers.mercadolibre.com.ar/es_ar/terminos_y_condiciones

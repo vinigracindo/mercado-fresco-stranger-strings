@@ -2,21 +2,21 @@
 -- Wed Jul  6 10:01:09 2022
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
-
+​
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-
+​
 -- -----------------------------------------------------
 -- Schema mercadofresco
 -- -----------------------------------------------------
-
+​
 -- -----------------------------------------------------
 -- Schema mercadofresco
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `mercadofresco` DEFAULT CHARACTER SET utf8 ;
 USE `mercadofresco` ;
-
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`countries`
 -- -----------------------------------------------------
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`countries` (
   `country_name` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`provinces`
 -- -----------------------------------------------------
@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`provinces` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`localities`
 -- -----------------------------------------------------
@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`localities` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`sellers`
 -- -----------------------------------------------------
@@ -80,8 +80,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`sellers` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`product_types`
 -- -----------------------------------------------------
@@ -90,8 +90,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`product_types` (
   `description` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`products`
 -- -----------------------------------------------------
@@ -123,8 +123,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`products` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`warehouses`
 -- -----------------------------------------------------
@@ -145,8 +145,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`warehouses` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`sections`
 -- -----------------------------------------------------
@@ -175,8 +175,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`sections` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`product_batches`
 -- -----------------------------------------------------
@@ -206,8 +206,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`product_batches` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`product_records`
 -- -----------------------------------------------------
@@ -225,8 +225,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`product_records` (
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`buyers`
 -- -----------------------------------------------------
@@ -238,8 +238,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`buyers` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `card_number_id_UNIQUE` (`card_number_id` ASC) VISIBLE)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`carriers`
 -- -----------------------------------------------------
@@ -258,8 +258,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`carriers` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`order_status`
 -- -----------------------------------------------------
@@ -268,8 +268,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`order_status` (
   `description` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`purchase_orders`
 -- -----------------------------------------------------
@@ -315,8 +315,8 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`purchase_orders` (
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
+​
+​
 -- -----------------------------------------------------
 -- Table `mercadofresco`.`order_details`
 -- -----------------------------------------------------
@@ -341,103 +341,6 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`order_details` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mercadofresco`.`employees`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mercadofresco`.`employees` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `card_number_id` VARCHAR(255) NOT NULL,
-  `first_name` VARCHAR(255) NOT NULL,
-  `last_name` VARCHAR(255) NOT NULL,
-  `warehouse_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `warehouse_id_idx` (`warehouse_id` ASC) VISIBLE,
-  UNIQUE INDEX `card_number_id_UNIQUE` (`card_number_id` ASC) VISIBLE,
-  CONSTRAINT `fk_warehouse_employees`
-    FOREIGN KEY (`warehouse_id`)
-    REFERENCES `mercadofresco`.`warehouses` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mercadofresco`.`inbound_orders`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mercadofresco`.`inbound_orders` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `order_date` DATETIME(6) NOT NULL,
-  `order_number` VARCHAR(255) NOT NULL,
-  `employee_id` INT NOT NULL,
-  `product_batch_id` INT NOT NULL,
-  `warehouse_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `employee_id_idx` (`employee_id` ASC) VISIBLE,
-  INDEX `product_batch_id_idx` (`product_batch_id` ASC) VISIBLE,
-  INDEX `warehouse_id_idx` (`warehouse_id` ASC) VISIBLE,
-  CONSTRAINT `fk_employee_inbound_orders`
-    FOREIGN KEY (`employee_id`)
-    REFERENCES `mercadofresco`.`employees` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_product_batch_inbound_orders`
-    FOREIGN KEY (`product_batch_id`)
-    REFERENCES `mercadofresco`.`product_batches` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_warehouse_inbound_orders`
-    FOREIGN KEY (`warehouse_id`)
-    REFERENCES `mercadofresco`.`warehouses` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mercadofresco`.`roles`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mercadofresco`.`roles` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `description` VARCHAR(255) NOT NULL,
-  `rol_name` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mercadofresco`.`users`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mercadofresco`.`users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `passoword` VARCHAR(255) NOT NULL,
-  `username` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mercadofresco`.`user_rol`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mercadofresco`.`user_rol` (
-  `usuario_id` INT NOT NULL AUTO_INCREMENT,
-  `rol_id` INT NOT NULL,
-  INDEX `usuario_id_idx` (`usuario_id` ASC) VISIBLE,
-  INDEX `rol_id_idx` (`rol_id` ASC) VISIBLE,
-  CONSTRAINT `fk_usuario_user_rol`
-    FOREIGN KEY (`usuario_id`)
-    REFERENCES `mercadofresco`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_rol_user_rol`
-    FOREIGN KEY (`rol_id`)
-    REFERENCES `mercadofresco`.`roles` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+​
+​
+-- --------------------...
