@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	DomainBuyer "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
 	DomainPurchaseOrders "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/purchase_orders/domain"
@@ -19,7 +20,7 @@ func NewPurchaseOrdersService(repository DomainPurchaseOrders.PurchaseOrdersRepo
 	}
 }
 
-func (s service) Create(ctx context.Context, orderNumber, orderDate, trackingCode string, buyerId, productRecordId, orderStatusId int64) (*DomainPurchaseOrders.PurchaseOrders, error) {
+func (s service) Create(ctx context.Context, orderNumber string, orderDate time.Time, trackingCode string, buyerId, productRecordId, orderStatusId int64) (*DomainPurchaseOrders.PurchaseOrders, error) {
 
 	_, err := s.repositoryBuyer.GetId(ctx, buyerId)
 

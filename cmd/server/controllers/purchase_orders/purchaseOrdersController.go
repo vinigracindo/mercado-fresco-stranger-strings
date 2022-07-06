@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/purchase_orders/domain"
@@ -43,7 +44,21 @@ func (c *PurchaseOrdersController) Create() gin.HandlerFunc {
 			return
 		}
 
-		buyer, err := c.service.Create(ctx.Request.Context(), req.OrderNumber, req.OrderDate, req.TrackingCode, req.BuyerId, req.ProductRecordId, req.OrderStatusId)
+		date, err := time.Parse("2006-01-02", req.OrderDate)
+		if err != nil {
+			httputil.NewError(ctx, http.StatusBadRequest, err)
+			return
+		}
+
+		buyer, err := c.service.Create(
+			ctx.Request.Context(),
+			req.OrderNumber,
+			date,
+			req.TrackingCode,
+			req.BuyerId,
+			req.ProductRecordId,
+			req.OrderStatusId,
+		)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusConflict, err)
 			return

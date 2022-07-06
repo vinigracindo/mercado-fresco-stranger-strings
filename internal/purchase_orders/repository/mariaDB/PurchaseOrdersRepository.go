@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/purchase_orders/domain"
 )
@@ -15,7 +16,7 @@ func NewMariadbPurchaseOrdersRepository(db *sql.DB) domain.PurchaseOrdersReposit
 	return &mariadbPurchaseOrdersRepository{db: db}
 }
 
-func (repository *mariadbPurchaseOrdersRepository) Create(ctx context.Context, orderNumber, orderDate, trackingCode string, buyerId, productRecordId, orderStatusId int64) (*domain.PurchaseOrders, error) {
+func (repository *mariadbPurchaseOrdersRepository) Create(ctx context.Context, orderNumber string, orderDate time.Time, trackingCode string, buyerId, productRecordId, orderStatusId int64) (*domain.PurchaseOrders, error) {
 
 	purchaseOrders := domain.PurchaseOrders{
 		OrderNumber:     orderNumber,
