@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +16,7 @@ import (
 var expectedPurchaseOrders = domain.PurchaseOrders{
 	Id:              1,
 	OrderNumber:     "order#1",
-	OrderDate:       "2021-04-04",
+	OrderDate:       time.Now(),
 	TrackingCode:    "abscf123",
 	BuyerId:         1,
 	ProductRecordId: 1,
@@ -25,7 +26,7 @@ var expectedPurchaseOrders = domain.PurchaseOrders{
 var mockPurchaseOrders = &domain.PurchaseOrders{
 	Id:              1,
 	OrderNumber:     "order#1",
-	OrderDate:       "2021-04-04",
+	OrderDate:       time.Now(),
 	TrackingCode:    "abscf123",
 	BuyerId:         1,
 	ProductRecordId: 1,
