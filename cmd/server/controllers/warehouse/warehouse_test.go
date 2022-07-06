@@ -77,7 +77,7 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 		}
 
 		assert.Equal(t, http.StatusCreated, response.Code)
-		assert.JSONEq(t, CreateStringJSON(expect), response.Body.String())
+		assert.JSONEq(t, testutil.StringJSON(expect), response.Body.String())
 	})
 
 	t.Run("create_fail: return 409, because the is already an warehouse with that code", func(t *testing.T) {
@@ -142,7 +142,7 @@ func Test_Controller_Warehouse_GetAllWarehouse(t *testing.T) {
 		}
 
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, CreateStringJSON(expect), response.Body.String())
+		assert.JSONEq(t, testutil.StringJSON(expect), response.Body.String())
 	})
 
 	t.Run("find_all_error: when an error ocorrency in the server", func(t *testing.T) {
@@ -195,7 +195,7 @@ func Test_Controller_Warehouse_GetByID(t *testing.T) {
 		}
 
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, CreateStringJSON(expect), response.Body.String())
+		assert.JSONEq(t, testutil.StringJSON(expect), response.Body.String())
 	})
 
 	t.Run("find_by_id_non_id: if id does not exist return 422 code", func(t *testing.T) {
@@ -245,7 +245,7 @@ func Test_Controller_Warehouse_Update(t *testing.T) {
 		}
 
 		assert.Equal(t, http.StatusOK, response.Code)
-		assert.JSONEq(t, CreateStringJSON(expect), response.Body.String())
+		assert.JSONEq(t, testutil.StringJSON(expect), response.Body.String())
 	})
 
 	t.Run("update_non_existent: if does not find warehouses with the id, return 404 code", func(t *testing.T) {
@@ -354,9 +354,4 @@ func Test_Controller_Warehouse_Delete(t *testing.T) {
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
-}
-
-func CreateStringJSON(obj interface{}) string {
-	jsonObj, _ := json.Marshal(obj)
-	return string(jsonObj)
 }
