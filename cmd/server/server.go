@@ -35,7 +35,9 @@ func (api *APIServer) Run(port int) {
 	routes.EmployeeRoutes(apiV1.Group("/employees"), db)
 	routes.ProductRoutes(apiV1.Group("/products"), db)
 	routes.WarehouseRoutes(apiV1.Group("/warehouses"), db)
-	routes.SellerRoutes(apiV1.Group("/sellers"))
+
+	//Seller routes
+	routes.SellerRoutes(apiV1.Group("/sellers"), db)
 	routes.BuyerRoutes(apiV1.Group("/buyers"), db)
 	routes.CarryRoutes(apiV1.Group("/carries"), db)
 	routes.LocalityRoutes(apiV1.Group("/localities"), db)
