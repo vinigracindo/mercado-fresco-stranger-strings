@@ -9,7 +9,7 @@ import (
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
-type purchaseOrdersCreate struct {
+type PurchaseOrdersCreate struct {
 	OrderNumber     string `json:"order_number" binding:"required"`
 	OrderDate       string `json:"order_date" binding:"required"`
 	TrackingCode    string `json:"tracking_code" binding:"required"`
@@ -38,7 +38,7 @@ func NewPurchaseOrdersController(service domain.PurchaseOrdersService) PurchaseO
 // @Router /purchaseOrders [post]
 func (c *PurchaseOrdersController) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req purchaseOrdersCreate
+		var req PurchaseOrdersCreate
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			httputil.NewError(ctx, http.StatusUnprocessableEntity, err)
 			return
