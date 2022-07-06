@@ -184,7 +184,7 @@ func TestSellerRepository_GetById(t *testing.T) {
 		mock.
 			ExpectQuery(repository.SqlGetByIdSeller).
 			WithArgs(int64(9999)).
-			WillReturnError(fmt.Errorf("Querry error"))
+			WillReturnError(fmt.Errorf("querry error"))
 
 		result, err := sellerRepository.GetById(context.TODO(), int64(1))
 
