@@ -63,4 +63,45 @@ func TestService_Create(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, expectedPurchaseOrders, result)
 	})
+
+	t.Run("create_error: when create product records fails, should return error", func(t *testing.T) {
+
+		repo.On("Create",
+			context.TODO(),
+			expectedPurchaseOrders.OrderNumber,
+			expectedPurchaseOrders.OrderDate,
+			expectedPurchaseOrders.TrackingCode,
+			expectedPurchaseOrders.BuyerId,
+			expectedPurchaseOrders.ProductRecordId,
+			expectedPurchaseOrders.OrderStatusId,
+		).
+			Return(nil, buyerDomain.ErrIDNotFound).
+			Once()
+
+		buyerRepo.
+			On("GetId", ctx, int64(1)).
+			Return(nil, nil).
+			Once()
+
+		_, err := service.Create(ctx, "order#1", orderDateNow, "abscf123", 1, 1, 1)
+
+		assert.Equal(t, buyerDomain.ErrIDNotFound, err)
+		assert.Equal(t, nil, nil)
+
+	})
+
+	t.Run("create_error: when create product records fails, should return error", func(t *testing.T) {
+
+		buyerRepo.
+			On("GetId", ctx, int64(1)).
+			Return(nil, buyerDomain.ErrIDNotFound).
+			Once()
+
+		_, err := service.Create(ctx, "order#1", orderDateNow, "abscf123", 1, 1, 1)
+
+		assert.Equal(t, buyerDomain.ErrIDNotFound, err)
+		assert.Equal(t, nil, nil)
+
+	})
+
 }
