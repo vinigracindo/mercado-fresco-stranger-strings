@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
 )
@@ -30,10 +29,11 @@ func (m *mariaDBSellerRepository) GetAll(ctx context.Context) (*[]domain.Seller,
 		var seller domain.Seller
 
 		if err := rows.Scan(
-			seller.Id,
-			seller.Cid,
-			seller.Address,
-			seller.Telephone,
+			&seller.Id,
+			&seller.Cid,
+			&seller.CompanyName,
+			&seller.Address,
+			&seller.Telephone,
 		); err != nil {
 			return nil, err
 		}
@@ -45,13 +45,14 @@ func (m *mariaDBSellerRepository) GetAll(ctx context.Context) (*[]domain.Seller,
 }
 
 func (m *mariaDBSellerRepository) GetById(ctx context.Context, id int64) (*domain.Seller, error) {
-	row := m.db.QueryRowContext(ctx, SqlGetByIdSeller)
+	row := m.db.QueryRowContext(ctx, SqlGetByIdSeller, id)
 
 	var seller domain.Seller
 
 	err := row.Scan(
 		&seller.Id,
 		&seller.Cid,
+		&seller.CompanyName,
 		&seller.Address,
 		&seller.Telephone,
 	)
@@ -124,7 +125,7 @@ func (m *mariaDBSellerRepository) Delete(ctx context.Context, id int64) error {
 	affectedRows, _ := sellerResult.RowsAffected()
 
 	if affectedRows == 0 {
-		return fmt.Errorf("seller with id %d not found", id)
+		return domain.ErrIDNotFound
 	}
 
 	return nil
