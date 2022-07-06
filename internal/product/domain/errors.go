@@ -3,5 +3,5 @@ package domain
 import "errors"
 
 var (
-	ErrIDNotFound = errors.New("product id not found")
+	ErrProductIdNotFound = errors.New("product id not found")
 )

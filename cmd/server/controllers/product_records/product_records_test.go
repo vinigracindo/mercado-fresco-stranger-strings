@@ -3,7 +3,6 @@ package controllers_test
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/product_records"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product_records/domain"
@@ -53,8 +52,6 @@ func TestProductRecordsController_Create(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, response.Code)
 		assert.JSONEq(t, "{\"data\":{\"id\":0,\"last_update_date\":\"2022-04-04T00:00:00Z\",\"purchase_price\":10.5,\"sale_price\":15.2,\"product_id\":1}}",
 			response.Body.String())
-
-		fmt.Printf(response.Body.String())
 	})
 
 	t.Run("create_fail_invalid_json: when the JSON does not contain the required fields, should return code 422", func(t *testing.T) {
@@ -96,4 +93,5 @@ func TestProductRecordsController_Create(t *testing.T) {
 		assert.Equal(t, http.StatusConflict, response.Code)
 		assert.Equal(t, "{\"code\":409,\"message\":\"product id not found\"}", response.Body.String())
 	})
+
 }

@@ -56,7 +56,7 @@ func (s *service) UpdateDescription(ctx context.Context, id int64, description s
 
 	productUpdate, err := s.repository.UpdateDescription(ctx, productCurrent)
 	if err != nil {
-		return productUpdate, err
+		return nil, err
 	}
 
 	return productUpdate, nil
