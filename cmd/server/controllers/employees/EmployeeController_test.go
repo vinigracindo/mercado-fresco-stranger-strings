@@ -30,6 +30,13 @@ func makeEmployee() domain.Employee {
 	}
 }
 
+func makeEmployeeInboundOrdersReport() domain.EmployeeInboundOrdersReport {
+	return domain.EmployeeInboundOrdersReport{
+		Employee: makeEmployee(),
+		Count:    10,
+	}
+}
+
 func TestEmployeeController_Create(t *testing.T) {
 	expectedEmployee := makeEmployee()
 	mockService := mocks.NewEmployeeService(t)
@@ -244,4 +251,88 @@ func TestEmployeeController_Delete(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
+}
+
+func TestEmployeeController_ReportInboundOrders(t *testing.T) {
+	url := fmt.Sprintf("%s/%s", EndpointEmployee, "reportInboundOrders")
+	mockService := mocks.NewEmployeeService(t)
+	controller := controllers.NewEmployeeController(mockService)
+	router := testutil.SetUpRouter()
+	router.GET(url, controller.ReportInboundOrders())
+
+	t.Run("report_inbound_orders_ok: when the request is successful, should return code 200. The object must be returned.", func(t *testing.T) {
+		expectedResult := []domain.EmployeeInboundOrdersReport{
+			makeEmployeeInboundOrdersReport(),
+		}
+
+		// Para usar dentro do mock gerado pelo mockery
+		var employeeNilID *int64 = nil
+
+		// O mock gerado não aceita um nil como *int64. É necessário criar um ponteiro do tipo int64 e então atribuir como Nil.
+		mockService.
+			On("ReportInboundOrders", context.TODO(), employeeNilID).
+			Return(expectedResult, nil).
+			Once()
+
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, url, nil)
+
+		expectedBody := `
+		{"data":
+			[
+				{"id":1,"card_number_id":"123456","first_name":"John","last_name":"Doe","warehouse_id":1, "inbound_orders_count":10}
+			]
+		}`
+
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, expectedBody, response.Body.String())
+
+	})
+
+	t.Run("report_service_fail: when the service fails, should return code 500.", func(t *testing.T) {
+		// Para usar dentro do mock gerado pelo mockery
+		var employeeNilID *int64 = nil
+
+		mockService.
+			On("ReportInboundOrders", context.TODO(), employeeNilID).
+			Return(nil, fmt.Errorf("error")).
+			Once()
+
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, url, nil)
+
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
+
+	t.Run("invalid_query_params: when the query params are not valid, should return code 400.", func(t *testing.T) {
+		url := fmt.Sprintf("%s/%s?id=invalid_value", EndpointEmployee, "reportInboundOrders")
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, url, nil)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+
+	t.Run("report_inbound_orders_ok_with_id: when the request is successful, should return code 200. The object must be returned.", func(t *testing.T) {
+		url := fmt.Sprintf("%s/%s?id=%d", EndpointEmployee, "reportInboundOrders", 1)
+		expectedResult := []domain.EmployeeInboundOrdersReport{
+			makeEmployeeInboundOrdersReport(),
+		}
+
+		employeeID := int64(1)
+
+		mockService.
+			On("ReportInboundOrders", context.TODO(), &employeeID).
+			Return(expectedResult, nil).
+			Once()
+
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, url, nil)
+
+		expectedBody := `
+		{"data":
+			[
+				{"id":1,"card_number_id":"123456","first_name":"John","last_name":"Doe","warehouse_id":1, "inbound_orders_count":10}
+			]
+		}`
+
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, expectedBody, response.Body.String())
+	})
+
 }

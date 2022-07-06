@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/inbound_orders"
-	EmployeeRepository "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/repository"
+	EmployeeRepository "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/repository/mariadb"
 	InboundOrdersRepository "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/inboud_orders/repository"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/inboud_orders/service"
 )

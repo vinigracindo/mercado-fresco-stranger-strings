@@ -9,7 +9,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/domain"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/repository"
+	repository "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/employees/repository/mariadb"
 )
 
 func makeEmployee(id int64) domain.Employee {
