@@ -1,6 +1,7 @@
 package controllers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -40,10 +41,12 @@ var expectedSeller = domain.Seller{
 
 func TestSellerController_Create(t *testing.T) {
 	service := mocks.NewServiceSeller(t)
+	ctx := context.Background()
 
 	t.Run("create_ok: when data entry is successful, should return code 201.", func(t *testing.T) {
-		service.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).
-			Return(expectedSeller, nil).
+		service.
+			On("Create", ctx, &bodySeller).
+			Return(&expectedSeller, nil).
 			Once()
 
 		controller := controllers.NewSeller(service)
@@ -70,8 +73,9 @@ func TestSellerController_Create(t *testing.T) {
 	})
 
 	t.Run("create_conflict: when the cid already exists, should return code 409.", func(t *testing.T) {
-		service.On("Create", expectedSeller.Cid, expectedSeller.CompanyName, expectedSeller.Address, expectedSeller.Telephone).
-			Return(domain.Seller{}, fmt.Errorf("Seller with this cid alredy exists")).
+		service.
+			On("Create", ctx, &bodySeller).
+			Return(nil, fmt.Errorf("Seller with this cid alredy exists")).
 			Once()
 
 		controller := controllers.NewSeller(service)
@@ -88,6 +92,7 @@ func TestSellerController_Create(t *testing.T) {
 
 func TestSellerController_Get(t *testing.T) {
 	service := mocks.NewServiceSeller(t)
+	ctx := context.Background()
 	expectedListSeller := []domain.Seller{
 		{
 			Id:          1,
@@ -105,7 +110,7 @@ func TestSellerController_Get(t *testing.T) {
 		},
 	}
 	t.Run("find_all: when data entry is successful, should return code 200", func(t *testing.T) {
-		service.On("GetAll").Return(expectedListSeller, nil).Once()
+		service.On("GetAll", ctx).Return(&expectedListSeller, nil).Once()
 
 		controller := controllers.NewSeller(service)
 		r := testutil.SetUpRouter()
@@ -117,7 +122,10 @@ func TestSellerController_Get(t *testing.T) {
 	})
 
 	t.Run("find_by_id_non_exitent: when the seller does not exist, should return code 404.", func(t *testing.T) {
-		service.On("GetById", int64(9999)).Return(domain.Seller{}, fmt.Errorf("Seller not found")).Once()
+		service.
+			On("GetById", ctx, int64(9999)).
+			Return(nil, fmt.Errorf("Seller not found")).
+			Once()
 
 		controller := controllers.NewSeller(service)
 		r := testutil.SetUpRouter()
@@ -130,7 +138,10 @@ func TestSellerController_Get(t *testing.T) {
 	})
 
 	t.Run("find_by_id_exixtent: when the request is successful, should return code 200", func(t *testing.T) {
-		service.On("GetById", int64(1)).Return(expectedListSeller[0], nil).Once()
+		service.
+			On("GetById", ctx, int64(1)).
+			Return(&expectedListSeller[0], nil).
+			Once()
 
 		controller := controllers.NewSeller(service)
 		requestbodySeller, _ := json.Marshal(bodySeller)
@@ -145,14 +156,16 @@ func TestSellerController_Get(t *testing.T) {
 
 func Test_Controller_Update(t *testing.T) {
 	service := mocks.NewServiceSeller(t)
+	ctx := context.Background()
 	var bodySellerUpdate = domain.Seller{
 		Address:   "Salvador, BA",
 		Telephone: "71 88888888",
 	}
 
 	t.Run("update_ok: when the request is successful, should return code 200. The object must be returned.", func(t *testing.T) {
-		service.On("Update", int64(1), "Salvador, BA", "71 88888888").
-			Return(expectedSeller, nil).
+		service.
+			On("Update", ctx, int64(1), "Salvador, BA", "71 88888888").
+			Return(&expectedSeller, nil).
 			Once()
 
 		controller := controllers.NewSeller(service)
@@ -166,8 +179,9 @@ func Test_Controller_Update(t *testing.T) {
 	})
 
 	t.Run("update_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
-		service.On("Update", int64(9999), "Salvador, BA", "71 88888888").
-			Return(domain.Seller{}, fmt.Errorf("Seller not found")).
+		service.
+			On("Update", ctx, int64(9999), "Salvador, BA", "71 88888888").
+			Return(nil, fmt.Errorf("Seller not found")).
 			Once()
 
 		controller := controllers.NewSeller(service)
@@ -183,9 +197,10 @@ func Test_Controller_Update(t *testing.T) {
 
 func TestSellerController_Delete(t *testing.T) {
 	service := mocks.NewServiceSeller(t)
+	ctx := context.Background()
 
 	t.Run("delete_non_existent: when the seller does not exist, should return code 404.", func(t *testing.T) {
-		service.On("Delete", int64(9999)).
+		service.On("Delete", ctx, int64(9999)).
 			Return(fmt.Errorf("Seller not found")).
 			Once()
 
@@ -200,7 +215,7 @@ func TestSellerController_Delete(t *testing.T) {
 	})
 
 	t.Run("delete_ok: when the request is successful, should return code 204.", func(t *testing.T) {
-		service.On("Delete", int64(1)).
+		service.On("Delete", ctx, int64(1)).
 			Return(nil).
 			Once()
 
