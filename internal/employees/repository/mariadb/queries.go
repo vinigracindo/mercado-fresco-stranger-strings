@@ -27,12 +27,6 @@ var (
 	SELECT e.id, e.card_number_id, e.first_name, e.last_name, e.warehouse_id, COUNT(i.employee_id) as inbound_orders_count
 	FROM employees as e
 	INNER JOIN inbound_orders as i ON e.id = i.employee_id
-	GROUP BY e.id`
-
-	SQLReportInboundOrdersWithID = `
-	SELECT e.id, e.card_number_id, e.first_name, e.last_name, e.warehouse_id, COUNT(i.employee_id) as inbound_orders_count
-	FROM employees as e
-	INNER JOIN inbound_orders as i ON e.id = i.employee_id
-	WHERE e.id = ?
+	WHERE e.id = ifnull(?, e.id)
 	GROUP BY e.id`
 )

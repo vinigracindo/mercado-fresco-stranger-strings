@@ -15,13 +15,6 @@ func NewMariaDBEmployeeRepository(db *sql.DB) domain.EmployeeRepository {
 	return &mariaDBEmployeerepository{db: db}
 }
 
-func (repo *mariaDBEmployeerepository) ChoiceInboundReportQueryContext(ctx context.Context, employeeID *int64) (*sql.Rows, error) {
-	if employeeID == nil {
-		return repo.db.QueryContext(ctx, SQLReportInboundOrders)
-	}
-	return repo.db.QueryContext(ctx, SQLReportInboundOrdersWithID, employeeID)
-}
-
 func (repo *mariaDBEmployeerepository) GetAll(ctx context.Context) ([]domain.Employee, error) {
 	employees := []domain.Employee{}
 
@@ -113,7 +106,7 @@ func (repo mariaDBEmployeerepository) Delete(ctx context.Context, id int64) erro
 func (repo mariaDBEmployeerepository) ReportInboundOrders(ctx context.Context, employeeID *int64) ([]domain.EmployeeInboundOrdersReport, error) {
 	result := []domain.EmployeeInboundOrdersReport{}
 
-	rows, err := repo.ChoiceInboundReportQueryContext(ctx, employeeID)
+	rows, err := repo.db.QueryContext(ctx, SQLReportInboundOrders, employeeID)
 
 	if err != nil {
 		return result, err

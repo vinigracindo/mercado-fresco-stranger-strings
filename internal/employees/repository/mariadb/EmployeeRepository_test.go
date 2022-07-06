@@ -348,7 +348,7 @@ func TestEmployeeRepository_ReportInboundOrders(t *testing.T) {
 		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
 
 		mock.
-			ExpectQuery(regexp.QuoteMeta(repository.SQLReportInboundOrdersWithID)).
+			ExpectQuery(regexp.QuoteMeta(repository.SQLReportInboundOrders)).
 			WithArgs(employeeID).
 			WillReturnRows(
 				sqlmock.
