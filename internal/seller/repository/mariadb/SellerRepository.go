@@ -57,7 +57,7 @@ func (m *mariaDBSellerRepository) GetById(ctx context.Context, id int64) (*domai
 		&seller.Telephone,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, err
+		return nil, domain.ErrIDNotFound
 	}
 
 	if err != nil {
