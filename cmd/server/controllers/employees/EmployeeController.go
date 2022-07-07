@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -183,6 +184,12 @@ func (controller *EmployeeController) getReportInboundOrdersById(c *gin.Context,
 		return
 	}
 	result, err := controller.service.GetReportInboundOrdersById(c.Request.Context(), employeeId)
+
+	if errors.Is(err, domain.ErrEmployeeNotFound) {
+		httputil.NewError(c, http.StatusNotFound, err)
+		return
+	}
+
 	if err != nil {
 		httputil.NewError(c, http.StatusInternalServerError, err)
 		return

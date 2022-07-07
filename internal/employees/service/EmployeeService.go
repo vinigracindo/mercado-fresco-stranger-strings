@@ -81,6 +81,11 @@ func (s service) GetAllReportInboundOrders(ctx context.Context) ([]domain.Employ
 }
 
 func (s service) GetReportInboundOrdersById(ctx context.Context, employeeID int64) (domain.EmployeeInboundOrdersReport, error) {
+	_, err := s.repo.GetById(ctx, employeeID)
+	if err != nil {
+		return domain.EmployeeInboundOrdersReport{}, domain.ErrEmployeeNotFound
+	}
+
 	result, err := s.repo.GetReportInboundOrdersById(ctx, employeeID)
 
 	if err != nil {

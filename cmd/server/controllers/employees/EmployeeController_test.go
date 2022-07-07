@@ -337,4 +337,16 @@ func TestEmployeeController_ReportInboundOrders(t *testing.T) {
 		assert.JSONEq(t, expectedBody, response.Body.String())
 	})
 
+	t.Run("employee_not_found: when the employee does not exist, should return code 404.", func(t *testing.T) {
+		employeeID := int64(1)
+		url_with_id := fmt.Sprintf("%s/%s?id=%d", EndpointEmployee, "reportInboundOrders", employeeID)
+		mockService.
+			On("GetReportInboundOrdersById", context.TODO(), employeeID).
+			Return(domain.EmployeeInboundOrdersReport{}, domain.ErrEmployeeNotFound).
+			Once()
+
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, url_with_id, nil)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
 }
