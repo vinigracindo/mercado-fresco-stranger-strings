@@ -1,14 +1,16 @@
 package routes
 
 import (
+	"database/sql"
+
 	"github.com/gin-gonic/gin"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/seller"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/repository"
+	repository "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/repository/mariadb"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/services"
 )
 
-func SellerRoutes(routes *gin.RouterGroup) {
-	sellerRepository := repository.NewSellerRepository()
+func SellerRoutes(routes *gin.RouterGroup, db *sql.DB) {
+	sellerRepository := repository.NewMariaDBSellerRepository(db)
 	sellerService := services.NewSellerService(sellerRepository)
 	sellerController := controllers.NewSeller(sellerService)
 
