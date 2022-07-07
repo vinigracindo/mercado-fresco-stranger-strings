@@ -14,6 +14,27 @@ type ProductRecordsRepository struct {
 	mock.Mock
 }
 
+// CountByProductId provides a mock function with given fields: ctx, productId
+func (_m *ProductRecordsRepository) CountByProductId(ctx context.Context, productId int64) (int64, error) {
+	ret := _m.Called(ctx, productId)
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func(context.Context, int64) int64); ok {
+		r0 = rf(ctx, productId)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, productId)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Create provides a mock function with given fields: ctx, productRecords
 func (_m *ProductRecordsRepository) Create(ctx context.Context, productRecords *domain.ProductRecords) (*domain.ProductRecords, error) {
 	ret := _m.Called(ctx, productRecords)
