@@ -52,10 +52,8 @@ func makeProductBatch() domain.ProductBatch {
 }
 
 func TestProductBatch_Create(t *testing.T) {
-
 	expectedProductBatch := makeProductBatch()
 	requestProductBatch := makeProductBatchRequest()
-	// date, _ := time.Parse("2006-01-02", requestInbound.OrderDate)
 
 	mockService := mocks.NewProductBatchService(t)
 	controller := controllers.NewProductBatchController(mockService)
@@ -72,7 +70,6 @@ func TestProductBatch_Create(t *testing.T) {
 		response := testutil.ExecuteTestRequest(router, http.MethodPost, EndpointProductBatch, reqBody)
 
 		assert.Equal(t, http.StatusCreated, response.Code)
-		// assert.JSONEq(t, "{\"data\":{\"id\":1,\"section_number\":1,\"current_temperature\":1,\"minimum_temperature\":1,\"current_capacity\":1,\"minimum_capacity\":1,\"maximum_capacity\":1,\"warehouse_id\":1,\"product_type_id\":1}}", response.Body.String())
 	})
 
 	t.Run("invalid_json: when the request body is invalid, should return code 422. The error must be returned.", func(t *testing.T) {
