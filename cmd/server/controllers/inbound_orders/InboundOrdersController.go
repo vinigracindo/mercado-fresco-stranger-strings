@@ -34,7 +34,7 @@ type RequestInboundOrdersPost struct {
 // @Accept       json
 // @Produce      json
 // @Param InboundOrders body RequestInboundOrdersPost true "Create inbound orders"
-// @Success      201  {object}  domain.InboundOrder
+// @Success      201  {object}  domain.InboundOrders
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /inboundOrders [post]
