@@ -1,6 +1,7 @@
 package controllers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -28,6 +29,8 @@ var bodyBuyer = &domain.Buyer{
 	LastName:     "LastNameTest",
 }
 
+var ctx = context.Background()
+
 func TestBuyerController_Create(t *testing.T) {
 	service := mocks.NewBuyerService(t)
 
@@ -35,13 +38,14 @@ func TestBuyerController_Create(t *testing.T) {
 
 		service.
 			On("Create",
+				ctx,
 				expectBuyer.CardNumberId,
 				expectBuyer.FirstName,
 				expectBuyer.LastName).
 			Return(expectBuyer, nil).
 			Once()
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 		requestBody, _ := json.Marshal(bodyBuyer)
 
 		r := testutil.SetUpRouter()
@@ -55,7 +59,7 @@ func TestBuyerController_Create(t *testing.T) {
 	t.Run("create_fail: when the JSON does not contain the required fields, should return code 422", func(t *testing.T) {
 
 		service := mocks.NewBuyerService(t)
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 
 		r := testutil.SetUpRouter()
 		r.POST(EndpointBuyer, controller.Create())
@@ -68,13 +72,14 @@ func TestBuyerController_Create(t *testing.T) {
 
 		service.
 			On("Create",
+				ctx,
 				expectBuyer.CardNumberId,
 				expectBuyer.FirstName,
 				expectBuyer.LastName).
 			Return(nil, fmt.Errorf("buyer already registered %s", expectBuyer.CardNumberId)).
 			Once()
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 		requestBody, _ := json.Marshal(bodyBuyer)
 
 		r := testutil.SetUpRouter()
@@ -92,11 +97,11 @@ func TestBuyerController_GetAll(t *testing.T) {
 	t.Run("find_all: when data entry is successful, should return code 200.", func(t *testing.T) {
 
 		service.
-			On("GetAll").
-			Return([]domain.Buyer{*expectBuyer}, nil).
+			On("GetAll", ctx).
+			Return(&[]domain.Buyer{*expectBuyer}, nil).
 			Once()
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 		requestBody, _ := json.Marshal(bodyBuyer)
 
 		r := testutil.SetUpRouter()
@@ -111,11 +116,11 @@ func TestBuyerController_GetAll(t *testing.T) {
 	t.Run("find_all_fail: when GetAll fail, should return code 400.", func(t *testing.T) {
 
 		service.
-			On("GetAll").
-			Return([]domain.Buyer{}, fmt.Errorf("error")).
+			On("GetAll", ctx).
+			Return(&[]domain.Buyer{}, fmt.Errorf("error")).
 			Once()
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 		requestBody, _ := json.Marshal(bodyBuyer)
 
 		r := testutil.SetUpRouter()
@@ -133,11 +138,11 @@ func TestBuyerController_GetById(t *testing.T) {
 	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 
 		service.
-			On("GetId", int64(1)).
+			On("GetId", ctx, int64(1)).
 			Return(bodyBuyer, nil).
 			Once()
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 		requestBody, _ := json.Marshal(bodyBuyer)
 
 		r := testutil.SetUpRouter()
@@ -151,10 +156,10 @@ func TestBuyerController_GetById(t *testing.T) {
 	t.Run("find_by_id_inexistent: when the buyer does not exist, should return code 404", func(t *testing.T) {
 
 		service.
-			On("GetId", int64(1)).
+			On("GetId", ctx, int64(1)).
 			Return(nil, fmt.Errorf("buyer not found")).
 			Once()
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 
 		r := testutil.SetUpRouter()
 		r.GET(EndpointBuyer+"/:id", controller.GetId())
@@ -164,7 +169,7 @@ func TestBuyerController_GetById(t *testing.T) {
 	})
 
 	t.Run("find_by_id_parse_error: when buyer id is not parsed, should return code 400.", func(t *testing.T) {
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 
 		r := testutil.SetUpRouter()
 		r.GET(EndpointBuyer+"/:id", controller.GetId())
@@ -186,11 +191,11 @@ func TestBuyerController_Update(t *testing.T) {
 	t.Run("update_ok: when the request is successful, should return code 200", func(t *testing.T) {
 
 		service.
-			On("Update", int64(1), updateBody.CardNumberId, updateBody.LastName).
+			On("Update", ctx, int64(1), updateBody.CardNumberId, updateBody.LastName).
 			Return(updateBody, nil).
 			Once()
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 		requestBody, _ := json.Marshal(updateBody)
 
 		r := testutil.SetUpRouter()
@@ -203,11 +208,11 @@ func TestBuyerController_Update(t *testing.T) {
 
 	t.Run("update_non_existent: when the buyer does not exist, should return code 404.", func(t *testing.T) {
 		service.
-			On("Update", int64(1), updateBody.CardNumberId, updateBody.LastName).
+			On("Update", ctx, int64(1), updateBody.CardNumberId, updateBody.LastName).
 			Return(nil, fmt.Errorf("buyer with id %d not found", int64(1))).
 			Once()
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 		requestBody, _ := json.Marshal(updateBody)
 
 		r := testutil.SetUpRouter()
@@ -218,7 +223,7 @@ func TestBuyerController_Update(t *testing.T) {
 	})
 
 	t.Run("update_id_parse_error: when buyer id is not parsed, should return code 400.", func(t *testing.T) {
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 		r := testutil.SetUpRouter()
 		r.PATCH(EndpointBuyer+"/:id", controller.UpdateCardNumberLastName())
 		response := testutil.ExecuteTestRequest(r, http.MethodPatch, EndpointBuyer+"/idInvalido", []byte{})
@@ -227,7 +232,7 @@ func TestBuyerController_Update(t *testing.T) {
 	})
 
 	t.Run("update_body_invalid: when the request body is not valid json, should return code 400.", func(t *testing.T) {
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 
 		r := testutil.SetUpRouter()
 		r.PATCH(EndpointBuyer+"/:id", controller.UpdateCardNumberLastName())
@@ -242,11 +247,11 @@ func TestBuyerController_Delete(t *testing.T) {
 	t.Run("delete_non_existent: when the buyer does not exist, should return code 404", func(t *testing.T) {
 
 		service.
-			On("Delete", int64(1)).
+			On("Delete", ctx, int64(1)).
 			Return(fmt.Errorf("buyer with id not found")).
 			Once()
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 
 		r := testutil.SetUpRouter()
 
@@ -259,11 +264,11 @@ func TestBuyerController_Delete(t *testing.T) {
 	t.Run("delete_ok: when the request is successful, should return code 204.", func(t *testing.T) {
 
 		service.
-			On("Delete", int64(1)).
+			On("Delete", ctx, int64(1)).
 			Return(nil).
 			Once()
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 
 		r := testutil.SetUpRouter()
 		r.DELETE(EndpointBuyer+"/:id", controller.DeleteBuyer())
@@ -274,7 +279,7 @@ func TestBuyerController_Delete(t *testing.T) {
 
 	t.Run("delete_id_parse_error: when buyer id is not parsed, should return code 400", func(t *testing.T) {
 
-		controller := controllers.NewBuyer(service)
+		controller := controllers.NewBuyerController(service)
 		r := testutil.SetUpRouter()
 		r.DELETE(EndpointBuyer+"/:id", controller.DeleteBuyer())
 

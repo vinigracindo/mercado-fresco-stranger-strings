@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	context "context"
+
 	mock "github.com/stretchr/testify/mock"
 	domain "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
 )
@@ -26,20 +28,22 @@ func (_m *RepositorySeller) CreatID() int64 {
 	return r0
 }
 
-// Create provides a mock function with given fields: cid, companyName, address, telephone
-func (_m *RepositorySeller) Create(cid int64, companyName string, address string, telephone string) (domain.Seller, error) {
-	ret := _m.Called(cid, companyName, address, telephone)
+// Create provides a mock function with given fields: ctx, seller
+func (_m *RepositorySeller) Create(ctx context.Context, seller *domain.Seller) (*domain.Seller, error) {
+	ret := _m.Called(ctx, seller)
 
-	var r0 domain.Seller
-	if rf, ok := ret.Get(0).(func(int64, string, string, string) domain.Seller); ok {
-		r0 = rf(cid, companyName, address, telephone)
+	var r0 *domain.Seller
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.Seller) *domain.Seller); ok {
+		r0 = rf(ctx, seller)
 	} else {
-		r0 = ret.Get(0).(domain.Seller)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Seller)
+		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, string, string, string) error); ok {
-		r1 = rf(cid, companyName, address, telephone)
+	if rf, ok := ret.Get(1).(func(context.Context, *domain.Seller) error); ok {
+		r1 = rf(ctx, seller)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -47,13 +51,13 @@ func (_m *RepositorySeller) Create(cid int64, companyName string, address string
 	return r0, r1
 }
 
-// Delete provides a mock function with given fields: id
-func (_m *RepositorySeller) Delete(id int64) error {
-	ret := _m.Called(id)
+// Delete provides a mock function with given fields: ctx, id
+func (_m *RepositorySeller) Delete(ctx context.Context, id int64) error {
+	ret := _m.Called(ctx, id)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -61,22 +65,22 @@ func (_m *RepositorySeller) Delete(id int64) error {
 	return r0
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *RepositorySeller) GetAll() ([]domain.Seller, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx
+func (_m *RepositorySeller) GetAll(ctx context.Context) (*[]domain.Seller, error) {
+	ret := _m.Called(ctx)
 
-	var r0 []domain.Seller
-	if rf, ok := ret.Get(0).(func() []domain.Seller); ok {
-		r0 = rf()
+	var r0 *[]domain.Seller
+	if rf, ok := ret.Get(0).(func(context.Context) *[]domain.Seller); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]domain.Seller)
+			r0 = ret.Get(0).(*[]domain.Seller)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -84,20 +88,22 @@ func (_m *RepositorySeller) GetAll() ([]domain.Seller, error) {
 	return r0, r1
 }
 
-// GetById provides a mock function with given fields: id
-func (_m *RepositorySeller) GetById(id int64) (domain.Seller, error) {
-	ret := _m.Called(id)
+// GetById provides a mock function with given fields: ctx, id
+func (_m *RepositorySeller) GetById(ctx context.Context, id int64) (*domain.Seller, error) {
+	ret := _m.Called(ctx, id)
 
-	var r0 domain.Seller
-	if rf, ok := ret.Get(0).(func(int64) domain.Seller); ok {
-		r0 = rf(id)
+	var r0 *domain.Seller
+	if rf, ok := ret.Get(0).(func(context.Context, int64) *domain.Seller); ok {
+		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(domain.Seller)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Seller)
+		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -105,20 +111,22 @@ func (_m *RepositorySeller) GetById(id int64) (domain.Seller, error) {
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: id, address, telephone
-func (_m *RepositorySeller) Update(id int64, address string, telephone string) (domain.Seller, error) {
-	ret := _m.Called(id, address, telephone)
+// Update provides a mock function with given fields: ctx, seller
+func (_m *RepositorySeller) Update(ctx context.Context, seller *domain.Seller) (*domain.Seller, error) {
+	ret := _m.Called(ctx, seller)
 
-	var r0 domain.Seller
-	if rf, ok := ret.Get(0).(func(int64, string, string) domain.Seller); ok {
-		r0 = rf(id, address, telephone)
+	var r0 *domain.Seller
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.Seller) *domain.Seller); ok {
+		r0 = rf(ctx, seller)
 	} else {
-		r0 = ret.Get(0).(domain.Seller)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Seller)
+		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int64, string, string) error); ok {
-		r1 = rf(id, address, telephone)
+	if rf, ok := ret.Get(1).(func(context.Context, *domain.Seller) error); ok {
+		r1 = rf(ctx, seller)
 	} else {
 		r1 = ret.Error(1)
 	}

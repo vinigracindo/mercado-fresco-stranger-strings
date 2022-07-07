@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	buyer "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
 )
 
@@ -21,10 +21,10 @@ type requestBuyerPatch struct {
 }
 
 type BuyerController struct {
-	service buyer.BuyerService
+	service domain.BuyerService
 }
 
-func NewBuyer(service buyer.BuyerService) BuyerController {
+func NewBuyerController(service domain.BuyerService) BuyerController {
 	return BuyerController{service: service}
 }
 
@@ -35,7 +35,7 @@ func NewBuyer(service buyer.BuyerService) BuyerController {
 // @Accept       json
 // @Produce      json
 // @Param Buyer body requestBuyerPost true "Create buyer"
-// @Success      201  {object} buyer.Buyer
+// @Success      201  {object} domain.Buyer
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /buyers [post]
@@ -47,7 +47,7 @@ func (c *BuyerController) Create() gin.HandlerFunc {
 			return
 		}
 
-		buyer, err := c.service.Create(req.CardNumberId, req.FirstName, req.LastName)
+		buyer, err := c.service.Create(ctx.Request.Context(), req.CardNumberId, req.FirstName, req.LastName)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusConflict, err)
 			return
@@ -62,12 +62,12 @@ func (c *BuyerController) Create() gin.HandlerFunc {
 // @Tags         Buyers
 // @Accept       json
 // @Produce      json
-// @Success      200  {object} []buyer.Buyer
+// @Success      200  {object} []domain.Buyer
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /buyers [get]
 func (c *BuyerController) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		buyers, err := c.service.GetAll()
+		buyers, err := c.service.GetAll(ctx.Request.Context())
 
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
@@ -84,7 +84,7 @@ func (c *BuyerController) GetAll() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param id path int true "Buyer ID"
-// @Success      200  {object} buyer.Buyer
+// @Success      200  {object} domain.Buyer
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /buyers/{id} [get]
@@ -95,7 +95,7 @@ func (c *BuyerController) GetId() gin.HandlerFunc {
 			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
-		buyer, err := c.service.GetId(id)
+		buyer, err := c.service.GetId(ctx.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
@@ -112,7 +112,7 @@ func (c *BuyerController) GetId() gin.HandlerFunc {
 // @Produce      json
 // @Param id path int true "Buyers ID"
 // @Param Buyer body requestBuyerPatch true "Update field"
-// @Success      200  {object} buyer.Buyer
+// @Success      200  {object} domain.Buyer
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /buyers/{id} [patch]
@@ -130,7 +130,7 @@ func (c *BuyerController) UpdateCardNumberLastName() gin.HandlerFunc {
 			return
 		}
 
-		buyer, err := c.service.Update(id, req.CardNumberId, req.LastName)
+		buyer, err := c.service.Update(ctx.Request.Context(), id, req.CardNumberId, req.LastName)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
@@ -158,11 +158,11 @@ func (c *BuyerController) DeleteBuyer() gin.HandlerFunc {
 			return
 		}
 
-		err = c.service.Delete(int64(id))
+		err = c.service.Delete(ctx.Request.Context(), id)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusNotFound, err)
 			return
 		}
-		httputil.NewResponse(ctx, http.StatusNoContent, err)
+		httputil.NewResponse(ctx, http.StatusNoContent, "")
 	}
 }
