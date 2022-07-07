@@ -258,7 +258,7 @@ func TestEmployeeController_ReportInboundOrders(t *testing.T) {
 	mockService := mocks.NewEmployeeService(t)
 	controller := controllers.NewEmployeeController(mockService)
 	router := testutil.SetUpRouter()
-	router.GET(url, controller.ReportInboundOrders())
+	router.GET(url, controller.GetReportInboundOrders())
 
 	t.Run("report_inbound_orders_ok: when the request is successful, should return code 200. The object must be returned.", func(t *testing.T) {
 		expectedResult := []domain.EmployeeInboundOrdersReport{

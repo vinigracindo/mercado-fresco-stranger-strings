@@ -15,7 +15,7 @@ func EmployeeRoutes(routes *gin.RouterGroup, db *sql.DB) {
 	employeeController := controllers.NewEmployeeController(employeeService)
 
 	// Inbound Orders Report
-	routes.GET("/reportInboundOrders", employeeController.ReportInboundOrders())
+	routes.GET("/reportInboundOrders", employeeController.GetReportInboundOrders())
 
 	// Employee routes
 	routes.GET("/", employeeController.GetAll())

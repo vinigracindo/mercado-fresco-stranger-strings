@@ -163,29 +163,40 @@ func (controller EmployeeController) Delete() gin.HandlerFunc {
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Router /employees/reportInboundOrders [get]
-func (controller EmployeeController) ReportInboundOrders() gin.HandlerFunc {
+func (controller EmployeeController) GetReportInboundOrders() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		idParam := c.Query("id")
-		var id *int64
+		idParam, isPresent := c.GetQuery("id")
 
-		if idParam != "" {
-			idConv, err := strconv.ParseInt(idParam, 10, 64)
-			if err != nil {
-				httputil.NewError(c, http.StatusBadRequest, err)
-				return
-			}
-			id = &idConv
-		} else {
-			id = nil
-		}
-
-		result, err := controller.service.ReportInboundOrders(c.Request.Context(), id)
-		if err != nil {
-			httputil.NewError(c, http.StatusInternalServerError, err)
+		if isPresent {
+			controller.GetReportInboundOrdersById(c, idParam)
 			return
 		}
-		httputil.NewResponse(c, http.StatusOK, result)
+
+		controller.GetAllReportInboundOrders(c)
 	}
+}
+
+func (controller *EmployeeController) GetReportInboundOrdersById(c *gin.Context, idParam string) {
+	employeeId, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		httputil.NewError(c, http.StatusBadRequest, err)
+		return
+	}
+	result, err := controller.service.ReportInboundOrders(c.Request.Context(), &employeeId)
+	if err != nil {
+		httputil.NewError(c, http.StatusInternalServerError, err)
+		return
+	}
+	httputil.NewResponse(c, http.StatusOK, result)
+}
+
+func (controller *EmployeeController) GetAllReportInboundOrders(c *gin.Context) {
+	result, err := controller.service.ReportInboundOrders(c.Request.Context(), nil)
+	if err != nil {
+		httputil.NewError(c, http.StatusInternalServerError, err)
+		return
+	}
+	httputil.NewResponse(c, http.StatusOK, result)
 }
 
 type requestEmployeePost struct {
