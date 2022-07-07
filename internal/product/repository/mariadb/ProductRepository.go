@@ -148,3 +148,30 @@ func (m mariaDBProductRepository) Delete(ctx context.Context, id int64) error {
 
 	return nil
 }
+
+func (m mariaDBProductRepository) GetAllReportProductRecords(ctx context.Context) (*[]domain.ProductRecordsReport, error) {
+	var result []domain.ProductRecordsReport
+
+	rows, err := m.db.QueryContext(ctx, SqlGetAllReportProductRecords)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		res := domain.ProductRecordsReport{}
+
+		err := rows.Scan(
+			&res.Id,
+			&res.Description,
+			&res.CountProductRecords,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, res)
+	}
+
+	return &result, nil
+}

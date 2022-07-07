@@ -102,3 +102,14 @@ func (s *productService) GetReportProductRecords(ctx context.Context, id int64) 
 	fmt.Println(result)
 	return &report, nil
 }
+
+func (s *productService) GetAllReportProductRecords(ctx context.Context) (*[]domain.ProductRecordsReport, error) {
+
+	products, err := s.productRepository.GetAllReportProductRecords(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}

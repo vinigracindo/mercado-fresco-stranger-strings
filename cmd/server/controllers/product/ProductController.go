@@ -40,7 +40,7 @@ func CreateProductController(prodService domain.ProductService) *ProductControll
 
 // GetAll godoc
 // @Summary      List all products
-// @Description  get all products
+// @Description  Get all products
 // @Tags         Products
 // @Accept       json
 // @Produce      json
@@ -211,12 +211,22 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 	}
 }
 
+// GetReportProductRecords godoc
+// @Summary      List all report product records by id and list all report product records
+// @Description  List all reports product records
+// @Tags         Products
+// @Accept       json
+// @Produce      json
+// @Success      200  {array} domain.ProductRecordsReport
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /reportRecords [get]
 func (c *ProductController) GetReportProductRecords() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		idParam, isPresent := ctx.GetQuery("id")
 		if isPresent {
 			c.GetReportProductRecordsByProductId(ctx, idParam)
+			return
 		}
 		c.GetAllReportProductRecords(ctx)
 	}
@@ -239,27 +249,11 @@ func (c *ProductController) GetReportProductRecordsByProductId(ctx *gin.Context,
 }
 
 func (c *ProductController) GetAllReportProductRecords(ctx *gin.Context) {
-	//result, err := c.service.GetAllReportProductRecords(ctx.Request.Context())
+	result, err := c.service.GetAllReportProductRecords(ctx.Request.Context())
 
-	//  TODO TODO TODO
-	// criar a funcao  GetAllReportProductRecords  no  product service
-	// criar a funcao GetAllReportProductRecords no repositorio do product
-	//  na funcao do repo, depois do get, criar um slice de ProductRecordsReport e fazer um  for nas rows pra preencher o slice
-
-	/*
-		SELECT p.id, p.description, count(pr.id)
-		FROM products as p
-		LEFT JOIN product_records as pr on p.id = pr.product_id
-		GROUP BY p.id
-		;
-	*/
-
-	/*
-		if err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, err)
-			return
-		}
-		httputil.NewResponse(ctx, http.StatusOK, result)
-
-	*/
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	httputil.NewResponse(ctx, http.StatusOK, result)
 }

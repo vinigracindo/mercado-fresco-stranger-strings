@@ -3,6 +3,7 @@ package mariadb
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product_records/domain"
 )
 
@@ -48,9 +49,7 @@ func (m mariaDBProductRecordsRepository) CountByProductId(ctx context.Context, p
 	err := rows.Scan(&productRecordsCount)
 
 	if err != nil {
-		//TODO retpornar error
-		//log.Fatal(err)
-		return 0, nil
+		return 0, errors.New("sql: no rows in result set")
 	}
 
 	return productRecordsCount, nil

@@ -43,4 +43,11 @@ const (
     WHERE id=?
     `
 	SqlDelete = "DELETE FROM products WHERE id=?"
+
+	SqlGetAllReportProductRecords = `
+	SELECT p.id, p.description, count(pr.id)
+	FROM products as p
+	LEFT JOIN product_records as pr on p.id = pr.product_id
+	GROUP BY p.id
+	`
 )
