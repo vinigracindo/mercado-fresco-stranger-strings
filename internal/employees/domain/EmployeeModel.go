@@ -26,7 +26,8 @@ type EmployeeService interface {
 	Create(ctx context.Context, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
 	UpdateFullname(ctx context.Context, id int64, firstName string, lastName string) (*Employee, error)
 	Delete(ctx context.Context, id int64) error
-	ReportInboundOrders(ctx context.Context, employeeID *int64) ([]EmployeeInboundOrdersReport, error)
+	GetAllReportInboundOrders(ctx context.Context) ([]EmployeeInboundOrdersReport, error)
+	GetReportInboundOrdersById(ctx context.Context, employeeID int64) (EmployeeInboundOrdersReport, error)
 }
 
 type EmployeeRepository interface {
@@ -35,5 +36,6 @@ type EmployeeRepository interface {
 	Create(ctx context.Context, cardNumberId string, firstName string, lastName string, warehouseId int64) (Employee, error)
 	Update(ctx context.Context, employeeID int64, updatedEmployee Employee) error
 	Delete(ctx context.Context, id int64) error
-	ReportInboundOrders(ctx context.Context, employeeID *int64) ([]EmployeeInboundOrdersReport, error)
+	GetAllReportInboundOrders(ctx context.Context) ([]EmployeeInboundOrdersReport, error)
+	GetReportInboundOrdersById(ctx context.Context, employeeID int64) (EmployeeInboundOrdersReport, error)
 }
