@@ -15,6 +15,7 @@ type ProductRecords struct {
 
 type ProductRecordsRepository interface {
 	Create(ctx context.Context, productRecords *ProductRecords) (*ProductRecords, error)
+	CountByProductId(ctx context.Context, productId int64) (int64, error)
 }
 
 type ProductRecordsService interface {

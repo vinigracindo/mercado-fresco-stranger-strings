@@ -2,20 +2,25 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
+	productRecordsRepo "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product_records/domain"
 )
 
-type service struct {
-	repository domain.ProductRepository
+type productService struct {
+	productRepository        domain.ProductRepository
+	productRecordsRepository productRecordsRepo.ProductRecordsRepository
 }
 
-func CreateProductService(r domain.ProductRepository) domain.ProductService {
-	return &service{
-		repository: r}
+func CreateProductService(productRepository domain.ProductRepository, productRecordsRepository productRecordsRepo.ProductRecordsRepository) domain.ProductService {
+	return &productService{
+		productRepository:        productRepository,
+		productRecordsRepository: productRecordsRepository,
+	}
 }
 
-func (s *service) GetAll(ctx context.Context) (*[]domain.Product, error) {
-	products, err := s.repository.GetAll(ctx)
+func (s *productService) GetAll(ctx context.Context) (*[]domain.Product, error) {
+	products, err := s.productRepository.GetAll(ctx)
 
 	if err != nil {
 		return nil, err
@@ -24,8 +29,8 @@ func (s *service) GetAll(ctx context.Context) (*[]domain.Product, error) {
 	return products, nil
 }
 
-func (s *service) GetById(ctx context.Context, id int64) (*domain.Product, error) {
-	product, err := s.repository.GetById(ctx, id)
+func (s *productService) GetById(ctx context.Context, id int64) (*domain.Product, error) {
+	product, err := s.productRepository.GetById(ctx, id)
 
 	if err != nil {
 		return nil, err
@@ -34,9 +39,9 @@ func (s *service) GetById(ctx context.Context, id int64) (*domain.Product, error
 	return product, nil
 }
 
-func (s *service) Create(ctx context.Context, product *domain.Product) (*domain.Product, error) {
+func (s *productService) Create(ctx context.Context, product *domain.Product) (*domain.Product, error) {
 
-	newProduct, err := s.repository.Create(ctx, product)
+	newProduct, err := s.productRepository.Create(ctx, product)
 
 	if err != nil {
 		return nil, err
@@ -45,7 +50,7 @@ func (s *service) Create(ctx context.Context, product *domain.Product) (*domain.
 	return newProduct, nil
 }
 
-func (s *service) UpdateDescription(ctx context.Context, id int64, description string) (*domain.Product, error) {
+func (s *productService) UpdateDescription(ctx context.Context, id int64, description string) (*domain.Product, error) {
 
 	productCurrent, err := s.GetById(ctx, id)
 	if err != nil {
@@ -54,7 +59,7 @@ func (s *service) UpdateDescription(ctx context.Context, id int64, description s
 
 	productCurrent.Description = description
 
-	productUpdate, err := s.repository.UpdateDescription(ctx, productCurrent)
+	productUpdate, err := s.productRepository.UpdateDescription(ctx, productCurrent)
 	if err != nil {
 		return nil, err
 	}
@@ -62,13 +67,39 @@ func (s *service) UpdateDescription(ctx context.Context, id int64, description s
 	return productUpdate, nil
 }
 
-func (s *service) Delete(ctx context.Context, id int64) error {
+func (s *productService) Delete(ctx context.Context, id int64) error {
 
-	err := s.repository.Delete(ctx, id)
+	err := s.productRepository.Delete(ctx, id)
 
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (s *productService) GetReportProductRecords(ctx context.Context, id int64) (*[]domain.ProductRecordsReport, error) {
+	product, err := s.productRepository.GetById(ctx, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := s.productRecordsRepository.CountByProductId(ctx, product.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	report := make([]domain.ProductRecordsReport, 0)
+
+	produuctRecordsReport := domain.ProductRecordsReport{
+		Id:                  product.Id,
+		Description:         product.Description,
+		CountProductRecords: result,
+	}
+	report = append(report, produuctRecordsReport)
+
+	fmt.Println(result)
+	return &report, nil
+
 }

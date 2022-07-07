@@ -75,4 +75,27 @@ func TestProductService_Create(t *testing.T) {
 		assert.Equal(t, domain.ErrProductIdNotFound, err)
 		assert.Equal(t, nil, nil)
 	})
+
+	t.Run("create_date_error: when the date is incorrect product records creation fails, should return error", func(t *testing.T) {
+
+		mockRepositoryProduct.
+			On("GetById", context.TODO(), int64(1)).
+			Return(nil, nil).
+			Once()
+
+		date, err := time.Parse("2006-01-02", "2021-05-03")
+
+		expectedDateProductRecords := domain.ProductRecords{
+			Id:             1,
+			LastUpdateDate: date,
+			PurchasePrice:  10.5,
+			SalePrice:      15.2,
+			ProductId:      1,
+		}
+		_, err = service.Create(context.TODO(), &expectedDateProductRecords)
+
+		assert.Equal(t, domain.ErrInvalidDate, err)
+		assert.Equal(t, nil, nil)
+	})
+
 }

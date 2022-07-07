@@ -210,3 +210,24 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 		httputil.NewResponse(ctx, http.StatusNoContent, err)
 	}
 }
+
+func (c *ProductController) GetReportProductRecords() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		productId, err := strconv.ParseInt(ctx.Query("id"), 10, 64)
+
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+			return
+		}
+
+		result, err := c.service.GetReportProductRecords(ctx.Request.Context(), productId)
+
+		if err != nil {
+			httputil.NewError(ctx, http.StatusNotFound, err)
+			return
+		}
+
+		httputil.NewResponse(ctx, http.StatusOK, result)
+	}
+}

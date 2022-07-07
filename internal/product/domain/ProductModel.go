@@ -17,6 +17,12 @@ type Product struct {
 	SellerId                       int64   `json:"seller_id"`
 }
 
+type ProductRecordsReport struct {
+	Id                  int64  `json:"id"`
+	Description         string `json:"description"`
+	CountProductRecords int64  `json:"count_product_records"`
+}
+
 type ProductRepository interface {
 	GetAll(ctx context.Context) (*[]Product, error)
 	GetById(ctx context.Context, id int64) (*Product, error)
@@ -31,4 +37,5 @@ type ProductService interface {
 	Create(ctx context.Context, product *Product) (*Product, error)
 	UpdateDescription(ctx context.Context, id int64, description string) (*Product, error)
 	Delete(ctx context.Context, id int64) error
+	GetReportProductRecords(ctx context.Context, id int64) (*[]ProductRecordsReport, error)
 }

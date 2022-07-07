@@ -34,3 +34,24 @@ func (m mariaDBProductRecordsRepository) Create(ctx context.Context, productReco
 
 	return productRecords, nil
 }
+
+func (m mariaDBProductRecordsRepository) CountByProductId(ctx context.Context, productId int64) (int64, error) {
+
+	rows := m.db.QueryRowContext(
+		ctx,
+		SqlCountByProductId,
+		productId,
+	)
+
+	var productRecordsCount int64
+
+	err := rows.Scan(&productRecordsCount)
+
+	if err != nil {
+		//TODO retpornar error
+		//log.Fatal(err)
+		return 0, nil
+	}
+
+	return productRecordsCount, nil
+}

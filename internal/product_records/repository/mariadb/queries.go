@@ -11,4 +11,6 @@ const (
 	)
     VALUES (?, ?, ?, ?)
     `
+
+	SqlCountByProductId = `SELECT count(*) FROM product_records WHERE product_id=?`
 )
