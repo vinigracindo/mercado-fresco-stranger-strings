@@ -208,10 +208,9 @@ func TestEmployeeService_Delete(t *testing.T) {
 	})
 }
 
-func TestEmployeeService_ReportInboundOrders(t *testing.T) {
+func TestEmployeeService_GetAllReportInboundOrders(t *testing.T) {
 	repo := mocks.NewEmployeeRepository(t)
 	service := service.NewEmployeeService(repo)
-	employeeID := int64(1)
 
 	t.Run("report_ok: Return a list of employees with the total amount of inbound orders", func(t *testing.T) {
 		expectedInboundOrders := []domain.EmployeeInboundOrdersReport{
@@ -221,23 +220,53 @@ func TestEmployeeService_ReportInboundOrders(t *testing.T) {
 		}
 
 		repo.
-			On("ReportInboundOrders", context.TODO(), &employeeID).
+			On("GetAllReportInboundOrders", context.TODO()).
 			Return(expectedInboundOrders, nil).
 			Once()
 
-		result, err := service.ReportInboundOrders(context.TODO(), &employeeID)
+		result, err := service.GetAllReportInboundOrders(context.TODO())
 		assert.Nil(t, err)
 		assert.Equal(t, result, expectedInboundOrders)
 	})
 
-	t.Run("report_fail: Return an error when the service fails", func(t *testing.T) {
+	t.Run("report_error: Return an error when the service fails", func(t *testing.T) {
 		repo.
-			On("ReportInboundOrders", context.TODO(), &employeeID).
+			On("GetAllReportInboundOrders", context.TODO()).
 			Return(nil, fmt.Errorf("error")).
 			Once()
 
-		result, err := service.ReportInboundOrders(context.TODO(), &employeeID)
+		result, err := service.GetAllReportInboundOrders(context.TODO())
 		assert.NotNil(t, err)
 		assert.Nil(t, result)
 	})
+}
+
+func TestEmployeeService_GetReportInboundOrdersById(t *testing.T) {
+	repo := mocks.NewEmployeeRepository(t)
+	service := service.NewEmployeeService(repo)
+
+	t.Run("report_ok: Return a list of employees with the total amount of inbound orders", func(t *testing.T) {
+		expectedInboundOrders := makeEmployeeInboundOrdersReport()
+
+		repo.
+			On("GetReportInboundOrdersById", context.TODO(), int64(1)).
+			Return(expectedInboundOrders, nil).
+			Once()
+
+		result, err := service.GetReportInboundOrdersById(context.TODO(), int64(1))
+		assert.Nil(t, err)
+		assert.Equal(t, result, expectedInboundOrders)
+	})
+
+	t.Run("report_error: Return an error when the service fails", func(t *testing.T) {
+		repo.
+			On("GetReportInboundOrdersById", context.TODO(), int64(1)).
+			Return(domain.EmployeeInboundOrdersReport{}, fmt.Errorf("error")).
+			Once()
+
+		result, err := service.GetReportInboundOrdersById(context.TODO(), int64(1))
+		assert.NotNil(t, err)
+		assert.Empty(t, result)
+	})
+
 }

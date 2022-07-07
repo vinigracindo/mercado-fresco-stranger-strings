@@ -71,10 +71,20 @@ func (s service) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (s service) ReportInboundOrders(ctx context.Context, employeeID *int64) ([]domain.EmployeeInboundOrdersReport, error) {
-	result, err := s.repo.ReportInboundOrders(ctx, employeeID)
+func (s service) GetAllReportInboundOrders(ctx context.Context) ([]domain.EmployeeInboundOrdersReport, error) {
+	result, err := s.repo.GetAllReportInboundOrders(ctx)
+
 	if err != nil {
 		return nil, err
+	}
+	return result, nil
+}
+
+func (s service) GetReportInboundOrdersById(ctx context.Context, employeeID int64) (domain.EmployeeInboundOrdersReport, error) {
+	result, err := s.repo.GetReportInboundOrdersById(ctx, employeeID)
+
+	if err != nil {
+		return domain.EmployeeInboundOrdersReport{}, err
 	}
 	return result, nil
 }

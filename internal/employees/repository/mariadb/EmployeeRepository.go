@@ -103,10 +103,10 @@ func (repo mariaDBEmployeerepository) Delete(ctx context.Context, id int64) erro
 	return nil
 }
 
-func (repo mariaDBEmployeerepository) ReportInboundOrders(ctx context.Context, employeeID *int64) ([]domain.EmployeeInboundOrdersReport, error) {
+func (repo mariaDBEmployeerepository) GetAllReportInboundOrders(ctx context.Context) ([]domain.EmployeeInboundOrdersReport, error) {
 	result := []domain.EmployeeInboundOrdersReport{}
 
-	rows, err := repo.db.QueryContext(ctx, SQLReportInboundOrders, employeeID)
+	rows, err := repo.db.QueryContext(ctx, SQLReportInboundOrders, nil)
 
 	if err != nil {
 		return result, err
@@ -128,6 +128,27 @@ func (repo mariaDBEmployeerepository) ReportInboundOrders(ctx context.Context, e
 		}
 
 		result = append(result, res)
+	}
+
+	return result, nil
+}
+
+func (repo mariaDBEmployeerepository) GetReportInboundOrdersById(ctx context.Context, employeeID int64) (domain.EmployeeInboundOrdersReport, error) {
+	result := domain.EmployeeInboundOrdersReport{}
+
+	row := repo.db.QueryRowContext(ctx, SQLReportInboundOrders, employeeID)
+
+	err := row.Scan(
+		&result.Id,
+		&result.CardNumberId,
+		&result.FirstName,
+		&result.LastName,
+		&result.WarehouseId,
+		&result.Count,
+	)
+
+	if err != nil {
+		return result, err
 	}
 
 	return result, nil

@@ -304,10 +304,10 @@ func TestEmployeeRepository_Delete(t *testing.T) {
 	})
 }
 
-func TestEmployeeRepository_ReportInboundOrders(t *testing.T) {
+func TestEmployeeRepository_GetAllReportInboundOrders(t *testing.T) {
 	employeeID := int64(1)
 
-	t.Run("should return inbound orders without employee id", func(t *testing.T) {
+	t.Run("should return all employees with inbound orders count", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -330,20 +330,60 @@ func TestEmployeeRepository_ReportInboundOrders(t *testing.T) {
 					AddRow(3, "123456", "John", "Doe", int64(1), 10),
 			)
 
-		result, err := employeeRepository.ReportInboundOrders(context.TODO(), nil)
+		result, err := employeeRepository.GetAllReportInboundOrders(context.TODO())
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectedInboundOrders, result)
 	})
 
-	t.Run("should return inbound orders with employee id", func(t *testing.T) {
+	t.Run("should return error when query execution fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
 
-		expectedInboundOrders := []domain.EmployeeInboundOrdersReport{
-			makeEmployeeInboundOrdersReport(employeeID),
-		}
+		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
+
+		mock.
+			ExpectQuery(regexp.QuoteMeta(repository.SQLReportInboundOrders)).
+			WillReturnError(fmt.Errorf("query error"))
+
+		result, err := employeeRepository.GetAllReportInboundOrders(context.TODO())
+
+		assert.Error(t, err)
+		assert.Empty(t, result)
+	})
+
+	t.Run("should return error when scan fails", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
+
+		mock.
+			ExpectQuery(regexp.QuoteMeta(repository.SQLReportInboundOrders)).
+			WillReturnRows(
+				sqlmock.
+					NewRows([]string{"id", "card_number_id", "first_name", "last_name", "warehouse_id", "inbound_orders_count"}).
+					AddRow("invalid_id", "123456", "John", "Doe", int64(1), 10),
+			)
+
+		result, err := employeeRepository.GetAllReportInboundOrders(context.TODO())
+
+		assert.Error(t, err)
+		assert.Empty(t, result)
+	})
+}
+
+func TestEmployeeRepository_GetReportInboundOrdersById(t *testing.T) {
+	employeeID := int64(1)
+
+	t.Run("should return employee with inbound orders count", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		expectedInboundOrders := makeEmployeeInboundOrdersReport(employeeID)
 
 		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
 
@@ -356,9 +396,27 @@ func TestEmployeeRepository_ReportInboundOrders(t *testing.T) {
 					AddRow(1, "123456", "John", "Doe", int64(1), 10),
 			)
 
-		result, err := employeeRepository.ReportInboundOrders(context.TODO(), &employeeID)
+		result, err := employeeRepository.GetReportInboundOrdersById(context.TODO(), employeeID)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectedInboundOrders, result)
+	})
+
+	t.Run("should return employee not found error when employee not found", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
+
+		mock.
+			ExpectQuery(regexp.QuoteMeta(repository.SQLFindEmployeeByID)).
+			WithArgs(employeeID).
+			WillReturnRows(sqlmock.NewRows([]string{}))
+
+		result, err := employeeRepository.GetReportInboundOrdersById(context.TODO(), employeeID)
+
+		assert.Error(t, err)
+		assert.Empty(t, result)
 	})
 }

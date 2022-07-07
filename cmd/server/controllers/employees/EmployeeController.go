@@ -182,7 +182,7 @@ func (controller *EmployeeController) getReportInboundOrdersById(c *gin.Context,
 		httputil.NewError(c, http.StatusBadRequest, err)
 		return
 	}
-	result, err := controller.service.ReportInboundOrders(c.Request.Context(), &employeeId)
+	result, err := controller.service.GetReportInboundOrdersById(c.Request.Context(), employeeId)
 	if err != nil {
 		httputil.NewError(c, http.StatusInternalServerError, err)
 		return
@@ -191,7 +191,7 @@ func (controller *EmployeeController) getReportInboundOrdersById(c *gin.Context,
 }
 
 func (controller *EmployeeController) getAllReportInboundOrders(c *gin.Context) {
-	result, err := controller.service.ReportInboundOrders(c.Request.Context(), nil)
+	result, err := controller.service.GetAllReportInboundOrders(c.Request.Context())
 	if err != nil {
 		httputil.NewError(c, http.StatusInternalServerError, err)
 		return
