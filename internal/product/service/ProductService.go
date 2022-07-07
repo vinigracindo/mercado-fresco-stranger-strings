@@ -92,14 +92,13 @@ func (s *productService) GetReportProductRecords(ctx context.Context, id int64) 
 
 	report := make([]domain.ProductRecordsReport, 0)
 
-	produuctRecordsReport := domain.ProductRecordsReport{
+	productRecordsReport := domain.ProductRecordsReport{
 		Id:                  product.Id,
 		Description:         product.Description,
 		CountProductRecords: result,
 	}
-	report = append(report, produuctRecordsReport)
+	report = append(report, productRecordsReport)
 
 	fmt.Println(result)
 	return &report, nil
-
 }

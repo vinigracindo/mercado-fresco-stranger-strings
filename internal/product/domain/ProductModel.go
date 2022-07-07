@@ -20,7 +20,7 @@ type Product struct {
 type ProductRecordsReport struct {
 	Id                  int64  `json:"id"`
 	Description         string `json:"description"`
-	CountProductRecords int64  `json:"count_product_records"`
+	CountProductRecords int64  `json:"records_count"`
 }
 
 type ProductRepository interface {

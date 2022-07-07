@@ -214,20 +214,52 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 func (c *ProductController) GetReportProductRecords() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		productId, err := strconv.ParseInt(ctx.Query("id"), 10, 64)
-
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
-			return
+		idParam, isPresent := ctx.GetQuery("id")
+		if isPresent {
+			c.GetReportProductRecordsByProductId(ctx, idParam)
 		}
-
-		result, err := c.service.GetReportProductRecords(ctx.Request.Context(), productId)
-
-		if err != nil {
-			httputil.NewError(ctx, http.StatusNotFound, err)
-			return
-		}
-
-		httputil.NewResponse(ctx, http.StatusOK, result)
+		c.GetAllReportProductRecords(ctx)
 	}
+}
+
+func (c *ProductController) GetReportProductRecordsByProductId(ctx *gin.Context, idParam string) {
+	productId, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	result, err := c.service.GetReportProductRecords(ctx.Request.Context(), productId)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusNotFound, err)
+		return
+	}
+
+	httputil.NewResponse(ctx, http.StatusOK, result)
+}
+
+func (c *ProductController) GetAllReportProductRecords(ctx *gin.Context) {
+	//result, err := c.service.GetAllReportProductRecords(ctx.Request.Context())
+
+	//  TODO TODO TODO
+	// criar a funcao  GetAllReportProductRecords  no  product service
+	// criar a funcao GetAllReportProductRecords no repositorio do product
+	//  na funcao do repo, depois do get, criar um slice de ProductRecordsReport e fazer um  for nas rows pra preencher o slice
+
+	/*
+		SELECT p.id, p.description, count(pr.id)
+		FROM products as p
+		LEFT JOIN product_records as pr on p.id = pr.product_id
+		GROUP BY p.id
+		;
+	*/
+
+	/*
+		if err != nil {
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
+			return
+		}
+		httputil.NewResponse(ctx, http.StatusOK, result)
+
+	*/
 }
