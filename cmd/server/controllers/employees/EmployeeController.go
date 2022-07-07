@@ -168,15 +168,15 @@ func (controller EmployeeController) GetReportInboundOrders() gin.HandlerFunc {
 		idParam, isPresent := c.GetQuery("id")
 
 		if isPresent {
-			controller.GetReportInboundOrdersById(c, idParam)
+			controller.getReportInboundOrdersById(c, idParam)
 			return
 		}
 
-		controller.GetAllReportInboundOrders(c)
+		controller.getAllReportInboundOrders(c)
 	}
 }
 
-func (controller *EmployeeController) GetReportInboundOrdersById(c *gin.Context, idParam string) {
+func (controller *EmployeeController) getReportInboundOrdersById(c *gin.Context, idParam string) {
 	employeeId, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
 		httputil.NewError(c, http.StatusBadRequest, err)
@@ -190,7 +190,7 @@ func (controller *EmployeeController) GetReportInboundOrdersById(c *gin.Context,
 	httputil.NewResponse(c, http.StatusOK, result)
 }
 
-func (controller *EmployeeController) GetAllReportInboundOrders(c *gin.Context) {
+func (controller *EmployeeController) getAllReportInboundOrders(c *gin.Context) {
 	result, err := controller.service.ReportInboundOrders(c.Request.Context(), nil)
 	if err != nil {
 		httputil.NewError(c, http.StatusInternalServerError, err)
