@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
 	productRecordsRepo "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product_records/domain"
 )
@@ -74,7 +73,6 @@ func (s *productService) Delete(ctx context.Context, id int64) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -99,7 +97,6 @@ func (s *productService) GetReportProductRecordsById(ctx context.Context, id int
 	}
 	report = append(report, productRecordsReport)
 
-	fmt.Println(result)
 	return &report, nil
 }
 
