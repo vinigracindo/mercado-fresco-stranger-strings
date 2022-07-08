@@ -1,20 +1,20 @@
 package respository
 
 const (
-	GetAllWarehouses = "SELECT id, address, telephone, warehouse_code, minimun_capacity, minimun_temperature, locality_id FROM warehouse"
+	GetAllWarehouses = "SELECT id, address, telephone, warehouse_code, minimun_capacity, minimun_temperature, locality_id FROM warehouses"
 
-	GetWarehouseById = "SELECT id, address, telephone, warehouse_code, minimun_capacity, minimun_temperature, locality_id FROM warehouse WHERE id=?"
+	GetWarehouseById = "SELECT id, address, telephone, warehouse_code, minimun_capacity, minimun_temperature, locality_id FROM warehouses WHERE id=?"
 
 	CreateWarehouse = `
     INSERT INTO
-    warehouse (address, telephone, warehouse_code, minimun_capacity, minimun_temperature, locality_id)
+    warehouses (address, telephone, warehouse_code, minimun_capacity, minimun_temperature, locality_id)
     VALUES (?, ?, ?, ?, ?, ?)
     `
 
 	UpdateWarehouse = `
-    UPDATE warehouse
+    UPDATE warehouses
     SET minimun_capacity = ?, minimun_temperature  = ?
     WHERE id=?
     `
-	DeleteWarehouse = "DELETE FROM warehouse WHERE id=?"
+	DeleteWarehouse = "DELETE FROM warehouses WHERE id=?"
 )
