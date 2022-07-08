@@ -26,3 +26,22 @@ func (s service) ReportCarrie(ctx context.Context, locality_id int64) (*[]domain
 
 	return localtys, nil
 }
+
+func (s service) Create(ctx context.Context, locality *domain.LocalityModel) (*domain.LocalityModel, error) {
+	locality, err := s.repoLocality.Create(ctx, locality)
+	if err != nil {
+		return nil, err
+	}
+
+	return locality, nil
+}
+
+func (s service) ReportSeller(ctx context.Context, id int64) (*[]domain.ReportSeller, error) {
+	localtys, err := s.repoLocality.ReportSeller(ctx, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return localtys, nil
+}
