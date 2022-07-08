@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/purchase_orders/domain"
@@ -45,4 +46,22 @@ func (repository *mariadbPurchaseOrdersRepository) Create(ctx context.Context, o
 	purchaseOrders.Id = id
 
 	return &purchaseOrders, nil
+}
+
+func (repository *mariadbPurchaseOrdersRepository) ContByBuyerId(ctx context.Context, buyerId int64) (int64, error) {
+
+	row := repository.db.QueryRowContext(
+		ctx,
+		SQLContByBuyerId,
+		buyerId)
+
+	var purchaseOrdersCont int64
+
+	err := row.Scan(
+		&purchaseOrdersCont)
+	if err != nil {
+		return 0, errors.New("sql: no rows in result set")
+	}
+	return purchaseOrdersCont, nil
+
 }
