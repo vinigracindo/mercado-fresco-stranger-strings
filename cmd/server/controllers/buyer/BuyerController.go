@@ -24,8 +24,8 @@ type BuyerController struct {
 	service domain.BuyerService
 }
 
-func NewBuyerController(service domain.BuyerService) BuyerController {
-	return BuyerController{service: service}
+func NewBuyerController(buyerService domain.BuyerService) BuyerController {
+	return BuyerController{service: buyerService}
 }
 
 // Buyers godoc
@@ -165,4 +165,43 @@ func (c *BuyerController) DeleteBuyer() gin.HandlerFunc {
 		}
 		httputil.NewResponse(ctx, http.StatusNoContent, "")
 	}
+}
+
+func (c *BuyerController) GetPurchaseOrdersReports() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		idParam, isPresent := ctx.GetQuery("id")
+		if isPresent {
+			c.GetPurchaseOrdersReportsBuyerId(ctx, idParam)
+			return
+		}
+		c.GetAllPurchaseOrdersReports(ctx)
+
+	}
+}
+
+func (c *BuyerController) GetPurchaseOrdersReportsBuyerId(ctx *gin.Context, idParam string) {
+	productId, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	result, err := c.service.GetPurchaseOrdersReports(ctx.Request.Context(), productId)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusNotFound, err)
+		return
+	}
+
+	httputil.NewResponse(ctx, http.StatusOK, result)
+}
+
+func (c *BuyerController) GetAllPurchaseOrdersReports(ctx *gin.Context) {
+	result, err := c.service.GetAllPurchaseOrdersReports(ctx.Request.Context())
+
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	httputil.NewResponse(ctx, http.StatusOK, result)
 }
