@@ -225,21 +225,21 @@ func (c *ProductController) GetReportProductRecords() gin.HandlerFunc {
 
 		idParam, isPresent := ctx.GetQuery("id")
 		if isPresent {
-			c.GetReportProductRecordsByProductId(ctx, idParam)
+			c.getReportProductRecordsByProductId(ctx, idParam)
 			return
 		}
-		c.GetAllReportProductRecords(ctx)
+		c.getAllReportProductRecords(ctx)
 	}
 }
 
-func (c *ProductController) GetReportProductRecordsByProductId(ctx *gin.Context, idParam string) {
+func (c *ProductController) getReportProductRecordsByProductId(ctx *gin.Context, idParam string) {
 	productId, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 		return
 	}
 
-	result, err := c.service.GetReportProductRecords(ctx.Request.Context(), productId)
+	result, err := c.service.GetReportProductRecordsById(ctx.Request.Context(), productId)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusNotFound, err)
 		return
@@ -248,7 +248,7 @@ func (c *ProductController) GetReportProductRecordsByProductId(ctx *gin.Context,
 	httputil.NewResponse(ctx, http.StatusOK, result)
 }
 
-func (c *ProductController) GetAllReportProductRecords(ctx *gin.Context) {
+func (c *ProductController) getAllReportProductRecords(ctx *gin.Context) {
 	result, err := c.service.GetAllReportProductRecords(ctx.Request.Context())
 
 	if err != nil {

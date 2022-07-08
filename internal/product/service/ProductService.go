@@ -78,7 +78,7 @@ func (s *productService) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (s *productService) GetReportProductRecords(ctx context.Context, id int64) (*[]domain.ProductRecordsReport, error) {
+func (s *productService) GetReportProductRecordsById(ctx context.Context, id int64) (*[]domain.ProductRecordsReport, error) {
 	product, err := s.productRepository.GetById(ctx, id)
 
 	if err != nil {

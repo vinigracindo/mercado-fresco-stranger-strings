@@ -38,6 +38,6 @@ type ProductService interface {
 	Create(ctx context.Context, product *Product) (*Product, error)
 	UpdateDescription(ctx context.Context, id int64, description string) (*Product, error)
 	Delete(ctx context.Context, id int64) error
-	GetReportProductRecords(ctx context.Context, id int64) (*[]ProductRecordsReport, error)
+	GetReportProductRecordsById(ctx context.Context, id int64) (*[]ProductRecordsReport, error)
 	GetAllReportProductRecords(ctx context.Context) (*[]ProductRecordsReport, error)
 }
