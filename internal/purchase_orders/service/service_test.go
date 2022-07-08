@@ -64,7 +64,7 @@ func TestService_Create(t *testing.T) {
 		assert.Equal(t, expectedPurchaseOrders, result)
 	})
 
-	t.Run("create_error: when create product records fails, should return error", func(t *testing.T) {
+	t.Run("create_error: when create buyer records fails, should return error", func(t *testing.T) {
 
 		repo.On("Create",
 			context.TODO(),
@@ -90,7 +90,7 @@ func TestService_Create(t *testing.T) {
 
 	})
 
-	t.Run("create_error: when create product records fails, should return error", func(t *testing.T) {
+	t.Run("create_error: when create buyer records fails, should return error", func(t *testing.T) {
 
 		buyerRepo.
 			On("GetId", ctx, int64(1)).
@@ -102,6 +102,37 @@ func TestService_Create(t *testing.T) {
 		assert.Equal(t, buyerDomain.ErrIDNotFound, err)
 		assert.Equal(t, nil, nil)
 
+	})
+
+	t.Run("create_error: when the purchase order date is earlier than the current date should return an error", func(t *testing.T) {
+
+		buyerRepo.
+			On("GetId", ctx, int64(1)).
+			Return(nil, nil).
+			Once()
+
+		date := time.Date(2009, 11, 17, 20, 34, 58, 651387237, time.UTC)
+
+		purchaseOrdersIinvalidDate := domain.PurchaseOrders{
+			Id:              1,
+			OrderNumber:     "order#1",
+			OrderDate:       date,
+			TrackingCode:    "abscf123",
+			BuyerId:         1,
+			ProductRecordId: 1,
+			OrderStatusId:   1,
+		}
+
+		_, err := service.Create(ctx,
+			purchaseOrdersIinvalidDate.OrderNumber,
+			purchaseOrdersIinvalidDate.OrderDate,
+			purchaseOrdersIinvalidDate.TrackingCode,
+			purchaseOrdersIinvalidDate.BuyerId,
+			purchaseOrdersIinvalidDate.ProductRecordId,
+			purchaseOrdersIinvalidDate.OrderStatusId,
+		)
+		assert.Equal(t, domain.ErrInvalidDate, err)
+		assert.Equal(t, nil, nil)
 	})
 
 }
