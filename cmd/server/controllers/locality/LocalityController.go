@@ -21,23 +21,30 @@ func NewLocalityController(s domain.LocalityService) *Locality {
 
 func (l Locality) ReportCarrie() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if paramId, check := ctx.Params.Get("id"); check {
-			id, err := strconv.Atoi(paramId)
+		// if query_id, check := ctx.GetQuery("id"); check {
 
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, err)
-				return
-			}
+		query_id, exist := ctx.GetQuery("id")
 
-			wh, err := l.service.ReportCarrie(ctx.Request.Context(), int64(id))
-
-			if err != nil {
-				httputil.NewError(ctx, http.StatusNotFound, err)
-				return
-			}
-
-			httputil.NewResponse(ctx, http.StatusOK, wh)
-
+		if !exist {
+			query_id = "0"
 		}
+
+		id, err := strconv.Atoi(query_id)
+
+		if err != nil {
+			httputil.NewError(ctx, http.StatusBadRequest, err)
+			return
+		}
+
+		report_list, err := l.service.ReportCarrie(ctx.Request.Context(), int64(id))
+
+		if err != nil {
+			httputil.NewError(ctx, http.StatusNotFound, err)
+			return
+		}
+
+		httputil.NewResponse(ctx, http.StatusOK, report_list)
+
 	}
+	// }
 }

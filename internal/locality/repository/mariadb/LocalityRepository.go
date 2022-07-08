@@ -33,3 +33,34 @@ func (m repository) GetById(ctx context.Context, id int64) (*domain.LocalityMode
 
 	return &carry, nil
 }
+
+func (m repository) ReportCarrie(ctx context.Context, id int64) (*[]domain.ReportCarrie, error) {
+	result, err := m.db.QueryContext(ctx, QueryCarryReport, id, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer result.Close()
+
+	var listReport []domain.ReportCarrie
+
+	for result.Next() {
+		row := domain.ReportCarrie{}
+
+		err = result.Scan(
+			&row.LocalityId,
+			&row.LocalityName,
+			&row.CarriesCount,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		listReport = append(listReport, row)
+
+	}
+
+	return &listReport, nil
+}
