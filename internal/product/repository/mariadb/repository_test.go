@@ -59,12 +59,6 @@ var expectedProductList = []domain.Product{
 	},
 }
 
-var expectedReportProductRecords = domain.ProductRecordsReport{
-	Id:                  1,
-	Description:         "Yogurt",
-	CountProductRecords: 5,
-}
-
 var expectedReportProductRecordsList = []domain.ProductRecordsReport{
 	{
 		Id:                  1,
@@ -494,8 +488,7 @@ func TestSectionRepository_Delete(t *testing.T) {
 
 func TestMariaDBProductRepository_GetAllReportProductRecords(t *testing.T) {
 
-	//TODO REFAZER FRASE
-	t.Run(" should return all products with records", func(t *testing.T) {
+	t.Run("get_all_report: should return all products with records", func(t *testing.T) {
 
 		db, mock, err := sqlmock.New()
 		productRepository := mariadb.CreateProductRepository(db)
@@ -526,8 +519,7 @@ func TestMariaDBProductRepository_GetAllReportProductRecords(t *testing.T) {
 		assert.Equal(t, &expectedReportProductRecordsList, result)
 	})
 
-	//TODO REFAZER FRASE
-	t.Run("should return error when query execution fails", func(t *testing.T) {
+	t.Run("get_all_report_fail: should return error when query execution fails", func(t *testing.T) {
 
 		db, mock, err := sqlmock.New()
 		productRepository := mariadb.CreateProductRepository(db)
