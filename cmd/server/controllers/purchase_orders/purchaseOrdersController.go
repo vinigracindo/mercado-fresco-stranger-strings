@@ -21,8 +21,8 @@ type PurchaseOrdersController struct {
 	service domain.PurchaseOrdersService
 }
 
-func NewPurchaseOrdersController(service domain.PurchaseOrdersService) PurchaseOrdersController {
-	return PurchaseOrdersController{service: service}
+func NewPurchaseOrdersController(prodService domain.PurchaseOrdersService) PurchaseOrdersController {
+	return PurchaseOrdersController{service: prodService}
 }
 
 // PurchaseOrders godoc
@@ -50,7 +50,7 @@ func (c *PurchaseOrdersController) Create() gin.HandlerFunc {
 			return
 		}
 
-		buyer, err := c.service.Create(
+		newPurchaseOrders, err := c.service.Create(
 			ctx.Request.Context(),
 			req.OrderNumber,
 			date,
@@ -63,6 +63,6 @@ func (c *PurchaseOrdersController) Create() gin.HandlerFunc {
 			httputil.NewError(ctx, http.StatusConflict, err)
 			return
 		}
-		httputil.NewResponse(ctx, http.StatusCreated, buyer)
+		httputil.NewResponse(ctx, http.StatusCreated, newPurchaseOrders)
 	}
 }
