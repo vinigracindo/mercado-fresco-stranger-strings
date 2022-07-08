@@ -17,6 +17,7 @@ type PurchaseOrders struct {
 
 type PurchaseOrdersRepository interface {
 	Create(ctx context.Context, OrderNumber string, OrderDate time.Time, TrackingCode string, BuyerId, ProductRecordId, OrderStatusId int64) (*PurchaseOrders, error)
+	ContByBuyerId(ctx context.Context, buyerId int64) (int64, error)
 }
 
 type PurchaseOrdersService interface {
