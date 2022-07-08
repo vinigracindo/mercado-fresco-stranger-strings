@@ -207,14 +207,14 @@ func (controller ControllerSection) GetReportProductsBySection() gin.HandlerFunc
 		idParam, isPresent := c.GetQuery("id")
 
 		if isPresent {
-			controller.GetReportProductsBySectionWithId(c, idParam)
+			controller.getReportProductsBySectionWithId(c, idParam)
 			return
 		}
-		controller.GetAllReportProductRecords(c)
+		controller.getAllReportProductRecords(c)
 	}
 }
 
-func (controller ControllerSection) GetReportProductsBySectionWithId(ctx *gin.Context, idParam string) {
+func (controller ControllerSection) getReportProductsBySectionWithId(ctx *gin.Context, idParam string) {
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
@@ -230,7 +230,7 @@ func (controller ControllerSection) GetReportProductsBySectionWithId(ctx *gin.Co
 	httputil.NewResponse(ctx, http.StatusOK, result)
 }
 
-func (controller ControllerSection) GetAllReportProductRecords(ctx *gin.Context) {
+func (controller ControllerSection) getAllReportProductRecords(ctx *gin.Context) {
 	result, err := controller.service.GetAllProductCountBySection(ctx.Request.Context())
 
 	if err != nil {

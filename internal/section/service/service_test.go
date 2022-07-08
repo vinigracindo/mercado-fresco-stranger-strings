@@ -35,6 +35,12 @@ var expectedUpdatedSection = domain.SectionModel{
 	ProductTypeId:      int64(1),
 }
 
+var expectedRecordGetAll = domain.ReportProductsModel{
+	Id:            int64(1),
+	SectionNumber: int64(1),
+	ProductsCount: int64(200),
+}
+
 var ctx = context.Background()
 
 func TestSectionService_Create(t *testing.T) {
@@ -244,4 +250,88 @@ func TestSectionService_Update(t *testing.T) {
 		assert.Nil(t, result)
 	})
 
+}
+
+func TestSectionService_GetAllProductCountBySection(t *testing.T) {
+	t.Run("get_all_product_count_by_section: when exists sections, should return a list", func(t *testing.T) {
+		mockRepository := mocks.NewSectionRepository(t)
+		mockRepository.
+			On("GetAllProductCountBySection", ctx).
+			Return(&[]domain.ReportProductsModel{expectedRecordGetAll}, nil).
+			Once()
+
+		service := service.NewServiceSection(mockRepository)
+		result, err := service.GetAllProductCountBySection(ctx)
+
+		assert.Nil(t, err)
+		assert.Equal(t, &[]domain.ReportProductsModel{expectedRecordGetAll}, result)
+	})
+
+	t.Run("get_all_product_count_by_section: should return any error", func(t *testing.T) {
+		mockRepository := mocks.NewSectionRepository(t)
+		mockRepository.
+			On("GetAllProductCountBySection", ctx).
+			Return(nil, fmt.Errorf("any error")).
+			Once()
+
+		service := service.NewServiceSection(mockRepository)
+		_, err := service.GetAllProductCountBySection(ctx)
+
+		assert.NotNil(t, err)
+	})
+}
+
+func TestSectionService_GetByIdProductCountBySection(t *testing.T) {
+	mockRepository := mocks.NewSectionRepository(t)
+	id := int64(3)
+
+	t.Run("get_by_id_product_count_by_section: when element searched for by id exists, should return a record", func(t *testing.T) {
+		mockRepository.
+			On("GetById", ctx, id).
+			Return(expectedSection, nil).
+			Once()
+
+		mockRepository.
+			On("GetByIdProductCountBySection", ctx, id).
+			Return(&expectedRecordGetAll, nil).
+			Once()
+
+		service := service.NewServiceSection(mockRepository)
+		result, err := service.GetByIdProductCountBySection(ctx, id)
+
+		assert.Nil(t, err)
+		assert.Equal(t, &expectedRecordGetAll, result)
+	})
+
+	t.Run("get_by_id_product_count_by_section: when the section searched for by id does not exist, should return an error", func(t *testing.T) {
+		errorNotFound := fmt.Errorf("section %d not found", id)
+
+		mockRepository.
+			On("GetById", ctx, id).
+			Return(domain.SectionModel{}, errorNotFound).
+			Once()
+
+		service := service.NewServiceSection(mockRepository)
+		_, err := service.GetByIdProductCountBySection(ctx, id)
+
+		assert.Equal(t, errorNotFound, err)
+		assert.Equal(t, nil, nil)
+	})
+
+	t.Run("get_by_id_product_count_by_section: should return any error", func(t *testing.T) {
+		mockRepository.
+			On("GetById", ctx, id).
+			Return(expectedSection, nil).
+			Once()
+
+		mockRepository.
+			On("GetByIdProductCountBySection", ctx, id).
+			Return(nil, fmt.Errorf("any error")).
+			Once()
+
+		service := service.NewServiceSection(mockRepository)
+		_, err := service.GetByIdProductCountBySection(ctx, id)
+
+		assert.NotNil(t, err)
+	})
 }
