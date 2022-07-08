@@ -13,6 +13,20 @@ import (
 	repository "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/section/repository/mariadb"
 )
 
+var mockSection = domain.SectionModel{
+	Id:                 1,
+	SectionNumber:      1,
+	CurrentTemperature: 1,
+	MinimumTemperature: 1,
+	CurrentCapacity:    1,
+	MinimumCapacity:    1,
+	MaximumCapacity:    1,
+	WarehouseId:        1,
+	ProductTypeId:      1,
+}
+
+var id = int64(1)
+
 func TestSectionRepository_GetAll(t *testing.T) {
 
 	mockSections := []domain.SectionModel{
@@ -221,18 +235,6 @@ func TestSectionRepository_GetById(t *testing.T) {
 }
 
 func TestSectionRepository_Create(t *testing.T) {
-	mockSection := domain.SectionModel{
-		Id:                 1,
-		SectionNumber:      1,
-		CurrentTemperature: 1,
-		MinimumTemperature: 1,
-		CurrentCapacity:    1,
-		MinimumCapacity:    1,
-		MaximumCapacity:    1,
-		WarehouseId:        1,
-		ProductTypeId:      1,
-	}
-
 	t.Run("create_ok: should create section", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
@@ -294,8 +296,6 @@ func TestSectionRepository_Create(t *testing.T) {
 }
 
 func TestSectionRepository_Delete(t *testing.T) {
-	id := int64(1)
-
 	t.Run("delete_ok: should delete section", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
@@ -347,20 +347,7 @@ func TestSectionRepository_Delete(t *testing.T) {
 }
 
 func TestSectionRepository_Update(t *testing.T) {
-	id := int64(1)
 	newCurrentCapacity := int64(1)
-
-	mockSection := domain.SectionModel{
-		Id:                 1,
-		SectionNumber:      1,
-		CurrentTemperature: 1,
-		MinimumTemperature: 1,
-		CurrentCapacity:    1,
-		MinimumCapacity:    1,
-		MaximumCapacity:    1,
-		WarehouseId:        1,
-		ProductTypeId:      1,
-	}
 
 	t.Run("update_not_found: should return error when section not found", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
@@ -408,5 +395,152 @@ func TestSectionRepository_Update(t *testing.T) {
 		_, err = sectionRepository.UpdateCurrentCapacity(context.Background(), &mockSection)
 
 		assert.NoError(t, err)
+	})
+}
+
+func TestSectionRepository_GetAllProductCountBySection(t *testing.T) {
+
+	var expectedRecordProductBySection = []domain.ReportProductsModel{
+		{
+			Id:            int64(1),
+			SectionNumber: int64(1),
+			ProductsCount: int64(200),
+		},
+		{
+			Id:            int64(2),
+			SectionNumber: int64(2),
+			ProductsCount: int64(400),
+		},
+	}
+
+	rows := sqlmock.NewRows([]string{
+		"id",
+		"sectionNumber",
+		"productsCount",
+	}).AddRow(
+		expectedRecordProductBySection[0].Id,
+		expectedRecordProductBySection[0].SectionNumber,
+		expectedRecordProductBySection[0].ProductsCount,
+	).AddRow(
+		expectedRecordProductBySection[1].Id,
+		expectedRecordProductBySection[1].SectionNumber,
+		expectedRecordProductBySection[1].ProductsCount,
+	)
+
+	t.Run("get_all_product_count_by_section: should return all", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLCountProductsBySection)).WillReturnRows(rows)
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		result, err := sectionRepository.GetAllProductCountBySection(context.Background())
+
+		assert.NoError(t, err)
+		assert.Equal(t, &expectedRecordProductBySection, result)
+		assert.Equal(t, &expectedRecordProductBySection, result)
+	})
+
+	t.Run("get_all_product_count_by_section_scan_error: should return error when scan fail", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		rows := sqlmock.NewRows([]string{
+			"id",
+			"sectionNumber",
+			"productsCount",
+		}).AddRow("", "", "")
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLCountProductsBySection)).WillReturnRows(rows)
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		_, err = sectionRepository.GetAllProductCountBySection(context.Background())
+
+		assert.Error(t, err)
+	})
+
+	t.Run("get_all_product_count_by_section_query_error: should return error when query fails", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLCountProductsBySection)).WillReturnError(sql.ErrNoRows)
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		_, err = sectionRepository.GetAllProductCountBySection(context.Background())
+
+		assert.Error(t, err)
+	})
+}
+
+func TestSectionRepository_GetByIdProductCountBySection(t *testing.T) {
+	var expectedRecordProductBySection = domain.ReportProductsModel{
+
+		Id:            int64(1),
+		SectionNumber: int64(1),
+		ProductsCount: int64(200),
+	}
+
+	row := sqlmock.NewRows([]string{
+		"id",
+		"sectionNumber",
+		"productsCount",
+	}).AddRow(
+		expectedRecordProductBySection.Id,
+		expectedRecordProductBySection.SectionNumber,
+		expectedRecordProductBySection.ProductsCount,
+	)
+
+	t.Run("get_by_id_product_count_by_section_ok: should return section by id", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLCountProductsBySectionWithSectionId)).WillReturnRows(row)
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		result, err := sectionRepository.GetByIdProductCountBySection(context.Background(), mockSection.Id)
+		assert.NoError(t, err)
+
+		assert.Equal(t, &expectedRecordProductBySection, result)
+	})
+
+	t.Run("get_by_id_product_count_by_section_ok: should return error when scan fail", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		row := sqlmock.NewRows([]string{
+			"id",
+			"sectionNumber",
+			"productsCount",
+		}).AddRow("", "", "")
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLCountProductsBySectionWithSectionId)).WillReturnRows(row)
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		_, err = sectionRepository.GetByIdProductCountBySection(context.Background(), id)
+		assert.Error(t, err)
+	})
+
+	t.Run("get_by_id_product_count_by_section_ok: should return error when section not found", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLCountProductsBySectionWithSectionId)).WillReturnError(sql.ErrNoRows)
+
+		sectionRepository := repository.NewMariadbSectionRepository(db)
+
+		_, err = sectionRepository.GetByIdProductCountBySection(context.Background(), id)
+		assert.Error(t, err)
+
 	})
 }

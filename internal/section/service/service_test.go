@@ -35,13 +35,18 @@ var expectedUpdatedSection = domain.SectionModel{
 	ProductTypeId:      int64(1),
 }
 
-var expectedRecordGetAll = domain.ReportProductsModel{
+var expectedRecordProductBySection = domain.ReportProductsModel{
 	Id:            int64(1),
 	SectionNumber: int64(1),
 	ProductsCount: int64(200),
 }
 
-var ctx = context.Background()
+var (
+	ctx           = context.Background()
+	id            = int64(1)
+	errorNotFound = fmt.Errorf("section %d not found", id)
+	anyError      = fmt.Errorf("any error")
+)
 
 func TestSectionService_Create(t *testing.T) {
 	mockRepository := mocks.NewSectionRepository(t)
@@ -114,7 +119,7 @@ func TestSectionService_GetAll(t *testing.T) {
 		mockRepository := mocks.NewSectionRepository(t)
 		mockRepository.
 			On("GetAll", ctx).
-			Return([]domain.SectionModel{}, fmt.Errorf("any error")).
+			Return([]domain.SectionModel{}, anyError).
 			Once()
 
 		service := service.NewServiceSection(mockRepository)
@@ -143,9 +148,6 @@ func TestSectionService_GetById(t *testing.T) {
 	})
 
 	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
-		id := int64(3)
-		errorNotFound := fmt.Errorf("section %d not found", id)
-
 		mockRepository.
 			On("GetById", ctx, id).
 			Return(domain.SectionModel{}, errorNotFound).
@@ -175,8 +177,6 @@ func TestSectionService_Delete(t *testing.T) {
 	})
 
 	t.Run("delete_non_existent: when the section does not exist, should return an error", func(t *testing.T) {
-		id := int64(3)
-		errorNotFound := fmt.Errorf("section %d not found", id)
 		mockRepository.
 			On("Delete", ctx, id).
 			Return(errorNotFound).
@@ -214,8 +214,6 @@ func TestSectionService_Update(t *testing.T) {
 	})
 
 	t.Run("update_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
-		id := int64(3)
-		errorNotFound := fmt.Errorf("section not found")
 		mockRepository := mocks.NewSectionRepository(t)
 
 		mockRepository.
@@ -231,7 +229,6 @@ func TestSectionService_Update(t *testing.T) {
 
 	t.Run("update_existent: when the data update is successful, should return the updated session", func(t *testing.T) {
 		mockRepository := mocks.NewSectionRepository(t)
-		anyError := fmt.Errorf("any error")
 
 		mockRepository.
 			On("GetById", context.TODO(), int64(1)).
@@ -257,21 +254,21 @@ func TestSectionService_GetAllProductCountBySection(t *testing.T) {
 		mockRepository := mocks.NewSectionRepository(t)
 		mockRepository.
 			On("GetAllProductCountBySection", ctx).
-			Return(&[]domain.ReportProductsModel{expectedRecordGetAll}, nil).
+			Return(&[]domain.ReportProductsModel{expectedRecordProductBySection}, nil).
 			Once()
 
 		service := service.NewServiceSection(mockRepository)
 		result, err := service.GetAllProductCountBySection(ctx)
 
 		assert.Nil(t, err)
-		assert.Equal(t, &[]domain.ReportProductsModel{expectedRecordGetAll}, result)
+		assert.Equal(t, &[]domain.ReportProductsModel{expectedRecordProductBySection}, result)
 	})
 
 	t.Run("get_all_product_count_by_section: should return any error", func(t *testing.T) {
 		mockRepository := mocks.NewSectionRepository(t)
 		mockRepository.
 			On("GetAllProductCountBySection", ctx).
-			Return(nil, fmt.Errorf("any error")).
+			Return(nil, anyError).
 			Once()
 
 		service := service.NewServiceSection(mockRepository)
@@ -283,7 +280,7 @@ func TestSectionService_GetAllProductCountBySection(t *testing.T) {
 
 func TestSectionService_GetByIdProductCountBySection(t *testing.T) {
 	mockRepository := mocks.NewSectionRepository(t)
-	id := int64(3)
+	id := int64(1)
 
 	t.Run("get_by_id_product_count_by_section: when element searched for by id exists, should return a record", func(t *testing.T) {
 		mockRepository.
@@ -293,19 +290,17 @@ func TestSectionService_GetByIdProductCountBySection(t *testing.T) {
 
 		mockRepository.
 			On("GetByIdProductCountBySection", ctx, id).
-			Return(&expectedRecordGetAll, nil).
+			Return(&expectedRecordProductBySection, nil).
 			Once()
 
 		service := service.NewServiceSection(mockRepository)
 		result, err := service.GetByIdProductCountBySection(ctx, id)
 
 		assert.Nil(t, err)
-		assert.Equal(t, &expectedRecordGetAll, result)
+		assert.Equal(t, &expectedRecordProductBySection, result)
 	})
 
 	t.Run("get_by_id_product_count_by_section: when the section searched for by id does not exist, should return an error", func(t *testing.T) {
-		errorNotFound := fmt.Errorf("section %d not found", id)
-
 		mockRepository.
 			On("GetById", ctx, id).
 			Return(domain.SectionModel{}, errorNotFound).
@@ -326,7 +321,7 @@ func TestSectionService_GetByIdProductCountBySection(t *testing.T) {
 
 		mockRepository.
 			On("GetByIdProductCountBySection", ctx, id).
-			Return(nil, fmt.Errorf("any error")).
+			Return(nil, anyError).
 			Once()
 
 		service := service.NewServiceSection(mockRepository)
