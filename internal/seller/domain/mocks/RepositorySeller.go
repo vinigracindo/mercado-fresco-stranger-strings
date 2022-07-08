@@ -14,20 +14,6 @@ type RepositorySeller struct {
 	mock.Mock
 }
 
-// CreatID provides a mock function with given fields:
-func (_m *RepositorySeller) CreatID() int64 {
-	ret := _m.Called()
-
-	var r0 int64
-	if rf, ok := ret.Get(0).(func() int64); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-
-	return r0
-}
-
 // Create provides a mock function with given fields: ctx, seller
 func (_m *RepositorySeller) Create(ctx context.Context, seller *domain.Seller) (*domain.Seller, error) {
 	ret := _m.Called(ctx, seller)

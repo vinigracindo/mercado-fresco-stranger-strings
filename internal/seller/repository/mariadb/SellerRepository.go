@@ -34,6 +34,7 @@ func (m *mariaDBSellerRepository) GetAll(ctx context.Context) (*[]domain.Seller,
 			&seller.CompanyName,
 			&seller.Address,
 			&seller.Telephone,
+			&seller.LocalityId,
 		); err != nil {
 			return nil, err
 		}
@@ -55,6 +56,7 @@ func (m *mariaDBSellerRepository) GetById(ctx context.Context, id int64) (*domai
 		&seller.CompanyName,
 		&seller.Address,
 		&seller.Telephone,
+		&seller.LocalityId,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, domain.ErrIDNotFound
@@ -75,6 +77,7 @@ func (m *mariaDBSellerRepository) Create(ctx context.Context, seller *domain.Sel
 		&seller.CompanyName,
 		&seller.Address,
 		&seller.Telephone,
+		&seller.LocalityId,
 	)
 
 	if err != nil {

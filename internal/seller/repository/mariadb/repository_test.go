@@ -19,6 +19,7 @@ var expectedSeller = domain.Seller{
 	CompanyName: "Mercado Livre",
 	Address:     "Osasco, SP",
 	Telephone:   "11 99999999",
+	LocalityId:  1,
 }
 
 var expectedListSeller = []domain.Seller{
@@ -28,6 +29,7 @@ var expectedListSeller = []domain.Seller{
 		CompanyName: "Mercado Livre",
 		Address:     "Osasco, SP",
 		Telephone:   "11 99999999",
+		LocalityId:  1,
 	},
 	{
 		Id:          2,
@@ -35,6 +37,7 @@ var expectedListSeller = []domain.Seller{
 		CompanyName: "Mercado Pago",
 		Address:     "Salvador, BA",
 		Telephone:   "71 88888888",
+		LocalityId:  2,
 	},
 }
 
@@ -50,6 +53,7 @@ func TestSellerRepository_GetAll(t *testing.T) {
 			"company_name",
 			"adress",
 			"telephone",
+			"locality_id",
 		})
 
 		for _, seller := range expectedListSeller {
@@ -59,6 +63,7 @@ func TestSellerRepository_GetAll(t *testing.T) {
 				&seller.CompanyName,
 				&seller.Address,
 				&seller.Telephone,
+				&seller.LocalityId,
 			)
 		}
 
@@ -102,7 +107,8 @@ func TestSellerRepository_GetAll(t *testing.T) {
 			"company_name",
 			"adress",
 			"telephone",
-		}).AddRow(nil, nil, nil, nil, nil)
+			"locality_id",
+		}).AddRow(nil, nil, nil, nil, nil, nil)
 
 		sellerRepository := repository.NewMariaDBSellerRepository(db)
 		mock.
@@ -128,12 +134,14 @@ func TestSellerRepository_GetById(t *testing.T) {
 			"company_name",
 			"adress",
 			"telephone",
+			"locality_id",
 		}).AddRow(
 			&expectedSeller.Id,
 			&expectedSeller.Cid,
 			&expectedSeller.CompanyName,
 			&expectedSeller.Address,
 			&expectedSeller.Telephone,
+			&expectedSeller.LocalityId,
 		)
 
 		sellerRepository := repository.NewMariaDBSellerRepository(db)
@@ -160,7 +168,8 @@ func TestSellerRepository_GetById(t *testing.T) {
 			"company_name",
 			"adress",
 			"telephone",
-		}).AddRow(nil, nil, nil, nil, nil)
+			"locality_id",
+		}).AddRow(nil, nil, nil, nil, nil, nil)
 
 		sellerRepository := repository.NewMariaDBSellerRepository(db)
 
@@ -207,7 +216,8 @@ func TestSellerRepository_Create(t *testing.T) {
 				&expectedSeller.Cid,
 				&expectedSeller.CompanyName,
 				&expectedSeller.Address,
-				&expectedSeller.Telephone).
+				&expectedSeller.Telephone,
+				&expectedSeller.LocalityId).
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
 		sellerRepository := repository.NewMariaDBSellerRepository(db)
@@ -225,7 +235,7 @@ func TestSellerRepository_Create(t *testing.T) {
 
 		mock.
 			ExpectExec(regexp.QuoteMeta(repository.SqlCreateSeller)).
-			WithArgs(0, 0, 0, 0).
+			WithArgs(0, 0, 0, 0, 0).
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
 		sellerRepository := repository.NewMariaDBSellerRepository(db)

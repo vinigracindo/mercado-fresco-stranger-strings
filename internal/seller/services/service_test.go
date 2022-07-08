@@ -17,6 +17,7 @@ var expectedSeller = domain.Seller{
 	CompanyName: "Mercado Livre",
 	Address:     "Osasco, SP",
 	Telephone:   "11 99999999",
+	LocalityId:  1,
 }
 
 func Test_Service_Creat(t *testing.T) {

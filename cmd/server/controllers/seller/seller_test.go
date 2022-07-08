@@ -22,6 +22,7 @@ var bodySeller = domain.Seller{
 	CompanyName: "Mercado Livre",
 	Address:     "Osasco, SP",
 	Telephone:   "11 99999999",
+	LocalityId:  1,
 }
 
 var bodySellerFail = domain.Seller{
@@ -29,6 +30,7 @@ var bodySellerFail = domain.Seller{
 	CompanyName: "",
 	Address:     "",
 	Telephone:   "",
+	LocalityId:  0,
 }
 
 var expectedSeller = domain.Seller{
@@ -37,6 +39,7 @@ var expectedSeller = domain.Seller{
 	CompanyName: "Mercado Livre",
 	Address:     "Osasco, SP",
 	Telephone:   "11 99999999",
+	LocalityId:  1,
 }
 
 func TestSellerController_Create(t *testing.T) {
