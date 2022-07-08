@@ -12,6 +12,12 @@ const (
         order_status_id
     )
     VALUES (?, ?, ?, ?, ?, ?)
-    
-    `
+`
+
+	SQLContByBuyerId = `
+	SELECT count(pr.id) as records_count
+	FROM buyers as p
+	LEFT JOIN purchase_orders as pr on p.id = pr.buyer_id
+    WHERE p.id = ?
+	`
 )
