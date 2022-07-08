@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"testing"
@@ -33,7 +34,7 @@ var mockPurchaseOrders = &domain.PurchaseOrders{
 	OrderStatusId:   1,
 }
 
-func TestBuyerRepository_Create(t *testing.T) {
+func TestPurchaseOrderRepository_Create(t *testing.T) {
 	t.Run("create_ok: should create purchase orders", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
@@ -93,4 +94,43 @@ func TestBuyerRepository_Create(t *testing.T) {
 
 	})
 
+}
+
+func TestPurchaseOrderRepository_ContByBuyerId(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		var mockPurchaseOrdersCont int64
+
+		row := sqlmock.NewRows([]string{"conts"}).AddRow(mockPurchaseOrdersCont)
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLContByBuyerId)).
+			WithArgs(1).
+			WillReturnRows(row)
+
+		purchaseOrdersRepository := repository.NewMariadbPurchaseOrdersRepository(db)
+
+		result, err := purchaseOrdersRepository.ContByBuyerId(context.TODO(), 1)
+
+		assert.NoError(t, err)
+		assert.Equal(t, mockPurchaseOrdersCont, result)
+	})
+
+	t.Run("error - not found", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLContByBuyerId)).
+			WithArgs(1).
+			WillReturnError(errors.New("sql: no rows in result set"))
+
+		purchaseOrdersRepository := repository.NewMariadbPurchaseOrdersRepository(db)
+
+		_, err = purchaseOrdersRepository.ContByBuyerId(context.TODO(), 1)
+
+		assert.Error(t, err)
+	})
 }
