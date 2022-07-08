@@ -16,6 +16,27 @@ type PurchaseOrdersRepository struct {
 	mock.Mock
 }
 
+// ContByBuyerId provides a mock function with given fields: ctx, buyerId
+func (_m *PurchaseOrdersRepository) ContByBuyerId(ctx context.Context, buyerId int64) (int64, error) {
+	ret := _m.Called(ctx, buyerId)
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func(context.Context, int64) int64); ok {
+		r0 = rf(ctx, buyerId)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, buyerId)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Create provides a mock function with given fields: ctx, OrderNumber, OrderDate, TrackingCode, BuyerId, ProductRecordId, OrderStatusId
 func (_m *PurchaseOrdersRepository) Create(ctx context.Context, OrderNumber string, OrderDate time.Time, TrackingCode string, BuyerId int64, ProductRecordId int64, OrderStatusId int64) (*domain.PurchaseOrders, error) {
 	ret := _m.Called(ctx, OrderNumber, OrderDate, TrackingCode, BuyerId, ProductRecordId, OrderStatusId)
