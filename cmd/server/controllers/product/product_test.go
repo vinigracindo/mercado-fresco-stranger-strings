@@ -16,6 +16,8 @@ import (
 
 const EndpointProduct = "/api/v1/products"
 
+const EndpointProductRecords = "/api/v1/products/reportRecords"
+
 var expectedProduct = domain.Product{
 	Id:                             1,
 	ProductCode:                    "PROD02",
@@ -111,7 +113,7 @@ func TestProductController_GetAll(t *testing.T) {
 	router := testutil.SetUpRouter()
 	router.GET(EndpointProduct, controller.GetAll())
 
-	t.Run("find_all_internal_server_error: when the request is not successful, should return code 500 ", func(t *testing.T) {
+	t.Run("get_all_internal_server_error: when the request is not successful, should return code 500 ", func(t *testing.T) {
 
 		expectedError := errors.New("the request sent to the server is invalid or corrupted")
 
@@ -126,7 +128,7 @@ func TestProductController_GetAll(t *testing.T) {
 		assert.Equal(t, "{\"code\":500,\"message\":\"the request sent to the server is invalid or corrupted\"}", response.Body.String())
 	})
 
-	t.Run("find_all: when data entry is successful, should return code 200", func(t *testing.T) {
+	t.Run("get_all_ok: when data entry is successful, should return code 200", func(t *testing.T) {
 
 		mockService.
 			On("GetAll", context.TODO()).
@@ -152,7 +154,7 @@ func TestProductController_GetById(t *testing.T) {
 	router := testutil.SetUpRouter()
 	router.GET(EndpointProduct+"/:id", controller.GetById())
 
-	t.Run("find_by_id_parse_error: when product id is not parsed, should return code 400", func(t *testing.T) {
+	t.Run("get_by_id_parse_error: when product id is not parsed, should return code 400", func(t *testing.T) {
 
 		response := testutil.ExecuteTestRequest(router, http.MethodGet, EndpointProduct+"/abc", []byte{})
 
@@ -160,7 +162,7 @@ func TestProductController_GetById(t *testing.T) {
 		assert.Equal(t, "{\"code\":400,\"message\":\"strconv.ParseInt: parsing \\\"abc\\\": invalid syntax\"}", response.Body.String())
 	})
 
-	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
+	t.Run("get_by_id_non_existent: when the product does not exist, should return code 404", func(t *testing.T) {
 
 		expectedError := errors.New("the product id was not found")
 
@@ -175,7 +177,7 @@ func TestProductController_GetById(t *testing.T) {
 		assert.Equal(t, "{\"code\":404,\"message\":\"the product id was not found\"}", response.Body.String())
 	})
 
-	t.Run("find_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
+	t.Run("get_by_id_existent: when the request is successful, should return code 200", func(t *testing.T) {
 
 		mockService.
 			On("GetById", context.TODO(), int64(1)).
@@ -336,4 +338,105 @@ func TestProductController_Delete(t *testing.T) {
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
+}
+
+func TestProductController_GetReportProductRecords(t *testing.T) {
+
+	mockService := mocks.NewProductService(t)
+	controller := controllers.CreateProductController(mockService)
+
+	router := testutil.SetUpRouter()
+	router.GET(EndpointProductRecords, controller.GetReportProductRecords())
+
+	product := domain.Product{
+		Id:          1,
+		Description: "Yogurt",
+	}
+
+	expectedResult := domain.ProductRecordsReport{
+		Id:                  1,
+		Description:         "Yogurt",
+		CountProductRecords: 5,
+	}
+
+	expectedBodyRecord := domain.ProductRecordsReport{
+		Id:                  1,
+		Description:         "Yogurt",
+		CountProductRecords: 5,
+	}
+
+	t.Run("report_get_by_id_product_records_ok: when the request is successful, should return code 200", func(t *testing.T) {
+
+		expectedResult := []domain.ProductRecordsReport{expectedResult}
+		bodyList := []domain.ProductRecordsReport{expectedBodyRecord}
+		requestBody, _ := json.Marshal(bodyList)
+
+		mockService.
+			On("GetReportProductRecordsById", context.TODO(), product.Id).
+			Return(&expectedResult, nil).
+			Once()
+
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, EndpointProductRecords+"?id=1", requestBody)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, "{\"data\":[{\"id\":1,\"description\":\"Yogurt\",\"records_count\":5}]}", response.Body.String())
+	})
+
+	t.Run("get_by_id_non_existent: when the product does not exist, should return code 404", func(t *testing.T) {
+
+		mockService.
+			On("GetReportProductRecordsById", context.TODO(), product.Id).
+			Return(nil, domain.ErrProductIdNotFound).
+			Once()
+
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, EndpointProductRecords+"?id=1", []byte{})
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+		assert.Equal(t, "{\"code\":404,\"message\":\"product id not found\"}", response.Body.String())
+	})
+
+	t.Run("invalid_query_params: when the query params are not valid, should return code 400.", func(t *testing.T) {
+
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, EndpointProductRecords+"?id=abc", []byte{})
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "{\"error\":\"invalid id\"}", response.Body.String())
+	})
+
+	t.Run("report_get_all_product_records_ok: when the request is successful, should return code 200", func(t *testing.T) {
+
+		expectedResult := &[]domain.ProductRecordsReport{expectedResult, expectedResult}
+		bodyList := []domain.ProductRecordsReport{expectedBodyRecord, expectedBodyRecord}
+		requestBody, _ := json.Marshal(bodyList)
+
+		mockService.
+			On("GetAllReportProductRecords", context.TODO()).
+			Return(expectedResult, nil).
+			Once()
+
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, EndpointProductRecords, requestBody)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.JSONEq(t, "{\"data\":[{\"id\":1,\"description\":\"Yogurt\",\"records_count\":5}, "+
+			"{\"id\":1,\"description\":\"Yogurt\",\"records_count\":5}]}", response.Body.String())
+	})
+
+	t.Run("get_all_internal_server_error: when the request is not successful, should return code 500 ", func(t *testing.T) {
+
+		bodyList := []domain.ProductRecordsReport{expectedBodyRecord, expectedBodyRecord}
+		requestBody, _ := json.Marshal(bodyList)
+
+		expectedError := errors.New("the request sent to the server is invalid or corrupted")
+
+		mockService.
+			On("GetAllReportProductRecords", context.TODO()).
+			Return(nil, expectedError).
+			Once()
+
+		response := testutil.ExecuteTestRequest(router, http.MethodGet, EndpointProductRecords, requestBody)
+
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+		assert.Equal(t, "{\"code\":500,\"message\":\"the request sent to the server is invalid or corrupted\"}", response.Body.String())
+	})
+
 }
