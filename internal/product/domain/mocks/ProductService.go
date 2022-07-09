@@ -120,7 +120,7 @@ func (_m *ProductService) GetById(ctx context.Context, id int64) (*domain.Produc
 	return r0, r1
 }
 
-// GetReportProductRecords provides a mock function with given fields: ctx, id
+// GetReportProductRecordsById provides a mock function with given fields: ctx, id
 func (_m *ProductService) GetReportProductRecordsById(ctx context.Context, id int64) (*[]domain.ProductRecordsReport, error) {
 	ret := _m.Called(ctx, id)
 

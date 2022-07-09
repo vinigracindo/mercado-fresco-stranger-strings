@@ -243,7 +243,6 @@ func TestProductService_GetReportProductRecordsById(t *testing.T) {
 			CountProductRecords: 5,
 		},
 	}
-
 	product := domain.Product{
 		Id:          1,
 		Description: "Yogurt",
@@ -264,6 +263,36 @@ func TestProductService_GetReportProductRecordsById(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, resultProductRecords, &expectedReportProductRecordsList)
+	})
+
+	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
+
+		mockProductRepository.
+			On("GetById", context.TODO(), product.Id).
+			Return(nil, fmt.Errorf("the product id was not found")).
+			Once()
+
+		resultProductRecords, err := productService.GetReportProductRecordsById(context.TODO(), product.Id)
+
+		assert.Nil(t, resultProductRecords)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("get_by_id_report_error: return an error when the service fails", func(t *testing.T) {
+
+		mockProductRepository.
+			On("GetById", context.TODO(), product.Id).
+			Return(&product, nil).
+			Once()
+
+		mockRepositoryProductRecords.On("CountByProductId", context.TODO(), product.Id).
+			Return(int64(-1), fmt.Errorf("error")).
+			Once()
+
+		resultProductRecords, err := productService.GetReportProductRecordsById(context.TODO(), product.Id)
+
+		assert.NotNil(t, err)
+		assert.Empty(t, &resultProductRecords)
 	})
 
 }
