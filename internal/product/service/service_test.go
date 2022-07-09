@@ -109,7 +109,7 @@ func TestProductService_GetById(t *testing.T) {
 
 	productService := service.CreateProductService(mockProductRepository, mockRepositoryProductRecords)
 
-	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
+	t.Run("get_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
 		mockProductRepository.
 			On("GetById", context.TODO(), int64(1)).
@@ -122,7 +122,7 @@ func TestProductService_GetById(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
-	t.Run("find_by_id_existent: when element searched for by id exists, should return a product", func(t *testing.T) {
+	t.Run("get_by_id_existent: when element searched for by id exists, should return a product", func(t *testing.T) {
 
 		mockProductRepository.
 			On("GetById", context.TODO(), int64(1)).
@@ -265,7 +265,7 @@ func TestProductService_GetReportProductRecordsById(t *testing.T) {
 		assert.Equal(t, resultProductRecords, &expectedReportProductRecordsList)
 	})
 
-	t.Run("find_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
+	t.Run("get_by_id_non_existent: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
 
 		mockProductRepository.
 			On("GetById", context.TODO(), product.Id).
