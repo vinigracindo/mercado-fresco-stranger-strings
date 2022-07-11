@@ -1,6 +1,8 @@
 package httputil
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type response struct {
 	Data any `json:"data"`

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -150,6 +151,59 @@ func (controller EmployeeController) Delete() gin.HandlerFunc {
 		}
 		httputil.NewResponse(c, http.StatusNoContent, "Employee deleted")
 	}
+}
+
+// ReportInboundOrders godoc
+// @Summary      Report inbound orders employee
+// @Description  Inbound orders quantity by employee
+// @Tags         Employees
+// @Accept       json
+// @Produce      json
+// @Param	id 	 query int false "Employee ID"
+// @Success      204
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /employees/reportInboundOrders [get]
+func (controller EmployeeController) GetReportInboundOrders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idParam, isPresent := c.GetQuery("id")
+
+		if isPresent {
+			controller.getReportInboundOrdersById(c, idParam)
+			return
+		}
+
+		controller.getAllReportInboundOrders(c)
+	}
+}
+
+func (controller *EmployeeController) getReportInboundOrdersById(c *gin.Context, idParam string) {
+	employeeId, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		httputil.NewError(c, http.StatusBadRequest, err)
+		return
+	}
+	result, err := controller.service.GetReportInboundOrdersById(c.Request.Context(), employeeId)
+
+	if errors.Is(err, domain.ErrEmployeeNotFound) {
+		httputil.NewError(c, http.StatusNotFound, err)
+		return
+	}
+
+	if err != nil {
+		httputil.NewError(c, http.StatusInternalServerError, err)
+		return
+	}
+	httputil.NewResponse(c, http.StatusOK, result)
+}
+
+func (controller *EmployeeController) getAllReportInboundOrders(c *gin.Context) {
+	result, err := controller.service.GetAllReportInboundOrders(c.Request.Context())
+	if err != nil {
+		httputil.NewError(c, http.StatusInternalServerError, err)
+		return
+	}
+	httputil.NewResponse(c, http.StatusOK, result)
 }
 
 type requestEmployeePost struct {

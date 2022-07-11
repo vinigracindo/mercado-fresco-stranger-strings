@@ -72,6 +72,29 @@ func (_m *SectionRepository) GetAll(ctx context.Context) ([]domain.SectionModel,
 	return r0, r1
 }
 
+// GetAllProductCountBySection provides a mock function with given fields: ctx
+func (_m *SectionRepository) GetAllProductCountBySection(ctx context.Context) (*[]domain.ReportProductsModel, error) {
+	ret := _m.Called(ctx)
+
+	var r0 *[]domain.ReportProductsModel
+	if rf, ok := ret.Get(0).(func(context.Context) *[]domain.ReportProductsModel); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]domain.ReportProductsModel)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetById provides a mock function with given fields: ctx, id
 func (_m *SectionRepository) GetById(ctx context.Context, id int64) (domain.SectionModel, error) {
 	ret := _m.Called(ctx, id)
@@ -81,6 +104,29 @@ func (_m *SectionRepository) GetById(ctx context.Context, id int64) (domain.Sect
 		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Get(0).(domain.SectionModel)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByIdProductCountBySection provides a mock function with given fields: ctx, id
+func (_m *SectionRepository) GetByIdProductCountBySection(ctx context.Context, id int64) (*domain.ReportProductsModel, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 *domain.ReportProductsModel
+	if rf, ok := ret.Get(0).(func(context.Context, int64) *domain.ReportProductsModel); ok {
+		r0 = rf(ctx, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.ReportProductsModel)
+		}
 	}
 
 	var r1 error

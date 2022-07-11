@@ -21,6 +21,13 @@ func makeEmployee() domain.Employee {
 	}
 }
 
+func makeEmployeeInboundOrdersReport() domain.EmployeeInboundOrdersReport {
+	return domain.EmployeeInboundOrdersReport{
+		Employee: makeEmployee(),
+		Count:    10,
+	}
+}
+
 func TestEmployeeService_Create(t *testing.T) {
 	expectedEmployee := makeEmployee()
 
@@ -152,8 +159,28 @@ func TestEmployeeService_UpdateFullname(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-}
+	t.Run("update_invalid_data: when the data update is not successful, should return an error", func(t *testing.T) {
+		idWillBeUpdated := int64(1)
 
+		repo.
+			On("GetById", context.TODO(), int64(1)).
+			Return(&employee, nil).Once()
+
+		updatedEmployee := employee
+		updatedEmployee.SetFullname("Jane", "Doe")
+
+		repo.
+			On("Update", context.TODO(), idWillBeUpdated, updatedEmployee).
+			Return(fmt.Errorf("error")).Once()
+
+		emp, err := service.UpdateFullname(context.TODO(), idWillBeUpdated, "Jane", "Doe")
+
+		assert.Nil(t, emp)
+		assert.Error(t, err)
+
+	})
+
+}
 func TestEmployeeService_Delete(t *testing.T) {
 	repo := mocks.NewEmployeeRepository(t)
 	service := service.NewEmployeeService(repo)
@@ -179,4 +206,91 @@ func TestEmployeeService_Delete(t *testing.T) {
 
 		assert.Nil(t, err)
 	})
+}
+
+func TestEmployeeService_GetAllReportInboundOrders(t *testing.T) {
+	repo := mocks.NewEmployeeRepository(t)
+	service := service.NewEmployeeService(repo)
+
+	t.Run("report_ok: Return a list of employees with the total amount of inbound orders", func(t *testing.T) {
+		expectedInboundOrders := []domain.EmployeeInboundOrdersReport{
+			makeEmployeeInboundOrdersReport(),
+			makeEmployeeInboundOrdersReport(),
+			makeEmployeeInboundOrdersReport(),
+		}
+
+		repo.
+			On("GetAllReportInboundOrders", context.TODO()).
+			Return(expectedInboundOrders, nil).
+			Once()
+
+		result, err := service.GetAllReportInboundOrders(context.TODO())
+		assert.Nil(t, err)
+		assert.Equal(t, result, expectedInboundOrders)
+	})
+
+	t.Run("report_error: Return an error when the service fails", func(t *testing.T) {
+		repo.
+			On("GetAllReportInboundOrders", context.TODO()).
+			Return(nil, fmt.Errorf("error")).
+			Once()
+
+		result, err := service.GetAllReportInboundOrders(context.TODO())
+		assert.NotNil(t, err)
+		assert.Nil(t, result)
+	})
+}
+
+func TestEmployeeService_GetReportInboundOrdersById(t *testing.T) {
+	repo := mocks.NewEmployeeRepository(t)
+	service := service.NewEmployeeService(repo)
+
+	t.Run("report_ok: Return a list of employees with the total amount of inbound orders", func(t *testing.T) {
+		expectedInboundOrders := makeEmployeeInboundOrdersReport()
+		employee := makeEmployee()
+
+		repo.
+			On("GetById", mock.Anything, int64(1)).
+			Return(&employee, nil).
+			Once()
+
+		repo.
+			On("GetReportInboundOrdersById", context.TODO(), int64(1)).
+			Return(expectedInboundOrders, nil).
+			Once()
+
+		result, err := service.GetReportInboundOrdersById(context.TODO(), int64(1))
+		assert.Nil(t, err)
+		assert.Equal(t, result, expectedInboundOrders)
+	})
+
+	t.Run("report_error: Return an error when the service fails", func(t *testing.T) {
+		employee := makeEmployee()
+
+		repo.
+			On("GetById", mock.Anything, int64(1)).
+			Return(&employee, nil).
+			Once()
+
+		repo.
+			On("GetReportInboundOrdersById", context.TODO(), int64(1)).
+			Return(domain.EmployeeInboundOrdersReport{}, fmt.Errorf("error")).
+			Once()
+
+		result, err := service.GetReportInboundOrdersById(context.TODO(), int64(1))
+		assert.NotNil(t, err)
+		assert.Empty(t, result)
+	})
+
+	t.Run("employee_does_not_exist: return an error when the employee does not exist", func(t *testing.T) {
+		repo.
+			On("GetById", mock.Anything, int64(1)).
+			Return(nil, fmt.Errorf("error")).
+			Once()
+
+		result, err := service.GetReportInboundOrdersById(context.TODO(), int64(1))
+		assert.NotNil(t, err)
+		assert.Empty(t, result)
+	})
+
 }

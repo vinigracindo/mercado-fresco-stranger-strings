@@ -191,3 +191,53 @@ func (c *ControllerSection) GetAll() gin.HandlerFunc {
 		httputil.NewResponse(ctx, http.StatusOK, section)
 	}
 }
+
+// Sections godoc
+// @Summary      Report products
+// @Description  report products count by section
+// @Tags         Sections
+// @Accept       json
+// @Produce      json
+// @Param	id 	 query int false "Section ID"
+// @Success      200  {object} []domain.ReportProductsModel
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
+// @Router /sections/reportProducts [get]
+func (controller ControllerSection) GetReportProductsBySection() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idParam, isPresent := c.GetQuery("id")
+
+		if isPresent {
+			controller.getReportProductsBySectionWithId(c, idParam)
+			return
+		}
+		controller.getAllReportProductRecords(c)
+	}
+}
+
+func (controller ControllerSection) getReportProductsBySectionWithId(ctx *gin.Context, idParam string) {
+	id, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	result, err := controller.service.GetByIdProductCountBySection(ctx.Request.Context(), id)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusNotFound, err)
+		return
+	}
+
+	httputil.NewResponse(ctx, http.StatusOK, result)
+}
+
+func (controller ControllerSection) getAllReportProductRecords(ctx *gin.Context) {
+	result, err := controller.service.GetAllProductCountBySection(ctx.Request.Context())
+
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	httputil.NewResponse(ctx, http.StatusOK, result)
+}

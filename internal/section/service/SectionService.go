@@ -81,3 +81,26 @@ func (s *service) GetAll(ctx context.Context) ([]domain.SectionModel, error) {
 	}
 	return listSection, nil
 }
+
+func (s *service) GetAllProductCountBySection(ctx context.Context) (*[]domain.ReportProductsModel, error) {
+	productsCount, err := s.repository.GetAllProductCountBySection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return productsCount, nil
+}
+
+func (s *service) GetByIdProductCountBySection(ctx context.Context, id int64) (*domain.ReportProductsModel, error) {
+	_, err := s.repository.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := s.repository.GetByIdProductCountBySection(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}

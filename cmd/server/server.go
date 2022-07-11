@@ -31,23 +31,16 @@ func (api *APIServer) Run(port int) {
 
 	apiV1 := router.Group("api/v1")
 
-	//Section routes
 	routes.SectionRoutes(apiV1.Group("/sections"), db)
-
-	// Employee routes
 	routes.EmployeeRoutes(apiV1.Group("/employees"), db)
-
-	// Product routes
+	routes.InboundOrdersRoutes(apiV1.Group("/inboundOrders"), db)
 	routes.ProductRoutes(apiV1.Group("/products"), db)
-
-	//Warehouse routes
 	routes.WarehouseRoutes(apiV1.Group("/warehouses"), db)
-
-	//Seller routes
-	routes.SellerRoutes(apiV1.Group("/sellers"))
-
-	//Buyer routes
+	routes.SellerRoutes(apiV1.Group("/sellers"), db)
 	routes.BuyerRoutes(apiV1.Group("/buyers"), db)
+	routes.CarryRoutes(apiV1.Group("/carries"), db)
+	routes.LocalityRoutes(apiV1.Group("/localities"), db)
+	routes.ProductBatchRoutes(apiV1.Group("/productBatches"), db)
 
 	//PurchaseOrders routes
 	routes.PurchaseOrdersRoutes(apiV1.Group("/purchaseOrders"), db)
