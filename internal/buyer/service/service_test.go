@@ -32,6 +32,34 @@ var expectedBuyerList = &[]domain.Buyer{
 	},
 }
 
+var expectedPurchaseOrders = []domain.PurchaseOrdersReport{
+	{
+		Id:                 1,
+		CardNumberId:       "402323",
+		FirstName:          "FirstNameTest",
+		LastName:           "LastNameTest",
+		CountBuyersRecords: 1,
+	},
+}
+
+var expectedPurchaseOrdersList = &[]domain.PurchaseOrdersReport{
+	{
+		Id:                 3,
+		CardNumberId:       "40232212",
+		FirstName:          "FirstNameTest",
+		LastName:           "LastNameTest",
+		CountBuyersRecords: 2,
+	},
+
+	{
+		Id:                 4,
+		CardNumberId:       "40232213",
+		FirstName:          "FirstNameTest",
+		LastName:           "LastNameTest",
+		CountBuyersRecords: 3,
+	},
+}
+
 var ctx = context.Background()
 
 func TestService_Create(t *testing.T) {
@@ -230,5 +258,94 @@ func TestService_Delete(t *testing.T) {
 		err := service.Delete(ctx, int64(1))
 
 		assert.Nil(t, err)
+	})
+}
+
+func TestService_GetPurchaseOrdersReportsById(t *testing.T) {
+	purchaseOrdersRepo := mockPurchaseOrder.NewPurchaseOrdersRepository(t)
+	buyerRepo := buyerRepositoryMock.NewBuyerRepository(t)
+
+	service := service.NewBuyerService(buyerRepo, purchaseOrdersRepo)
+
+	t.Run("GetById_ok: should returns a report with the number of purchase orders sent to the buyer", func(t *testing.T) {
+
+		buyerRepo.
+			On("GetId", context.TODO(), expectedBuyer.Id).
+			Return(expectedBuyer, nil).
+			Once()
+
+		purchaseOrdersRepo.
+			On("ContByBuyerId", ctx, expectedBuyer.Id).
+			Return(int64(1), nil).
+			Once()
+
+		result, err := service.GetPurchaseOrdersReports(context.TODO(), expectedBuyer.Id)
+
+		assert.Nil(t, err)
+		assert.Equal(t, result, &expectedPurchaseOrders)
+	})
+
+	t.Run("GetById_err: return an error when the service fails", func(t *testing.T) {
+		buyerRepo.
+			On("GetId", ctx, expectedBuyer.Id).
+			Return(expectedBuyer, nil).
+			Once()
+
+		purchaseOrdersRepo.
+			On("ContByBuyerId", ctx, expectedBuyer.Id).
+			Return(int64(-1), fmt.Errorf("error")).
+			Once()
+
+		result, err := service.GetPurchaseOrdersReports(context.TODO(), expectedBuyer.Id)
+
+		assert.NotNil(t, err)
+		assert.Empty(t, result)
+	})
+
+	t.Run("GetById_err: when the element searched for by id does not exist, should return an error", func(t *testing.T) {
+
+		errorNotFound := fmt.Errorf("the buyer id was not found")
+
+		buyerRepo.
+			On("GetId", context.TODO(), expectedBuyer.Id).
+			Return(nil, errorNotFound).
+			Once()
+
+		result, err := service.GetPurchaseOrdersReports(context.TODO(), int64(1))
+
+		assert.Nil(t, result)
+		assert.NotNil(t, err)
+	})
+}
+
+func TestPurchaseOrderService_GetAllPurchaseOrdersReports(t *testing.T) {
+	purchaseOrdersRepo := mockPurchaseOrder.NewPurchaseOrdersRepository(t)
+	buyerRepo := buyerRepositoryMock.NewBuyerRepository(t)
+
+	service := service.NewBuyerService(buyerRepo, purchaseOrdersRepo)
+
+	t.Run("getAll_ok: ", func(t *testing.T) {
+
+		buyerRepo.
+			On("GetAllPurchaseOrdersReports", ctx).
+			Return(expectedPurchaseOrdersList, nil).
+			Once()
+
+		result, _ := service.GetAllPurchaseOrdersReports(ctx)
+
+		assert.Equal(t, expectedPurchaseOrdersList, result)
+
+	})
+
+	t.Run("GetAll_err: should return any error", func(t *testing.T) {
+
+		buyerRepo.
+			On("GetAllPurchaseOrdersReports", context.TODO()).
+			Return(nil, fmt.Errorf("error")).
+			Once()
+
+		_, err := service.GetAllPurchaseOrdersReports(context.TODO())
+
+		assert.NotNil(t, err)
 	})
 }
