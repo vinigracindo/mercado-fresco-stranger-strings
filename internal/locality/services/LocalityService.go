@@ -35,13 +35,3 @@ func (s service) Create(ctx context.Context, locality *domain.LocalityModel) (*d
 
 	return locality, nil
 }
-
-func (s service) ReportSeller(ctx context.Context, id int64) (*[]domain.ReportSeller, error) {
-	localtys, err := s.repoLocality.ReportSeller(ctx, id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return localtys, nil
-}

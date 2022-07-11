@@ -21,4 +21,11 @@ const (
     where c.locality_id = case when ? = 0 then locality_id else ? end
     group by c.locality_id 
     `
+
+	QuerryCreateLocality = `
+    INSERT INTO localities (locality_name, province_name, country_name, province_id)
+    VALUES (?, ?, ?, ?)`
+
+	QueryCountByLocalityId = `
+    SELECT COUNT(*) FROM sellers WHERE product_id = ?`
 )

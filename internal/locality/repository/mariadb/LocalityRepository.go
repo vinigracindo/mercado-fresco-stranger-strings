@@ -64,3 +64,42 @@ func (m repository) ReportCarrie(ctx context.Context, id int64) (*[]domain.Repor
 
 	return &listReport, nil
 }
+
+func (m repository) Create(ctx context.Context, locality *domain.LocalityModel) (*domain.LocalityModel, error) {
+	localityResult, err := m.db.ExecContext(
+		ctx,
+		QuerryCreateLocality,
+		&locality.LocalityName,
+		&locality.ProvinceName,
+		&locality.CountryName,
+		&locality.ProvinceId,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, _ := localityResult.LastInsertId()
+
+	locality.Id = lastId
+
+	return locality, nil
+}
+
+func (m repository) CountByLocalityId(ctx context.Context, localityId int64) (int64, error) {
+	rows := m.db.QueryRowContext(
+		ctx,
+		QueryCountByLocalityId,
+		localityId,
+	)
+
+	var countSellersInLocalityId int64
+
+	err := rows.Scan(&countSellersInLocalityId)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return countSellersInLocalityId, nil
+}
