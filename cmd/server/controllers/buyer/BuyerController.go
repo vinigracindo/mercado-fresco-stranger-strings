@@ -167,6 +167,17 @@ func (c *BuyerController) DeleteBuyer() gin.HandlerFunc {
 	}
 }
 
+// GetPurchaseOrdersReports godoc
+// @Summary      List all report product records by id and list all report buyer records
+// @Description  List all reports buyer records
+// @Tags         Buyers
+// @Accept       json
+// @Produce      json
+// @Param	id 	 query int false "Buyer ID"
+// @Success      204
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /buyers/purchaseOrders [get]
 func (c *BuyerController) GetPurchaseOrdersReports() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
