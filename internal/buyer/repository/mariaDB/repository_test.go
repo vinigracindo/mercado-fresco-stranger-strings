@@ -360,7 +360,7 @@ func TestBuyerRepository_Delete(t *testing.T) {
 }
 
 func TestBuyerRepository_GetAllPurchaseOrdersReports(t *testing.T) {
-	t.Run("get_all_report_ok: should return all buyers orders", func(t *testing.T) {
+	t.Run("getAllReport_ok: should return all buyers orders", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		buyerRepository := repository.NewmariadbBuyerRepository(db)
 
@@ -393,7 +393,7 @@ func TestBuyerRepository_GetAllPurchaseOrdersReports(t *testing.T) {
 
 	})
 
-	t.Run("get_all_report_err: should return error when scan fails", func(t *testing.T) {
+	t.Run("getAllReport_err: should return error when scan fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		buyerRepository := repository.NewmariadbBuyerRepository(db)
 
@@ -418,7 +418,7 @@ func TestBuyerRepository_GetAllPurchaseOrdersReports(t *testing.T) {
 
 	})
 
-	t.Run("get_all_report_err: should return error when query fails", func(t *testing.T) {
+	t.Run("getAllReport_err: should return error when query fails", func(t *testing.T) {
 
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
