@@ -27,8 +27,8 @@ func (s service) ReportCarrie(ctx context.Context, locality_id int64) (*[]domain
 	return localtys, nil
 }
 
-func (s service) Create(ctx context.Context, locality *domain.LocalityModel) (*domain.LocalityModel, error) {
-	locality, err := s.repoLocality.Create(ctx, locality)
+func (s service) CreateLocality(ctx context.Context, locality *domain.LocalityModel) (*domain.LocalityModel, error) {
+	locality, err := s.repoLocality.CreateLocality(ctx, locality)
 	if err != nil {
 		return nil, err
 	}

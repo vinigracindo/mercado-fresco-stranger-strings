@@ -18,12 +18,12 @@ type ReportCarrie struct {
 
 type LocalityService interface {
 	ReportCarrie(ctx context.Context, locality_id int64) (*[]ReportCarrie, error)
-	Create(ctx context.Context, locality *LocalityModel) (*LocalityModel, error)
+	CreateLocality(ctx context.Context, locality *LocalityModel) (*LocalityModel, error)
 }
 
 type LocalityRepository interface {
 	GetById(ctx context.Context, id int64) (*LocalityModel, error)
 	ReportCarrie(ctx context.Context, id int64) (*[]ReportCarrie, error)
-	Create(ctx context.Context, locality *LocalityModel) (*LocalityModel, error)
+	CreateLocality(ctx context.Context, locality *LocalityModel) (*LocalityModel, error)
 	CountByLocalityId(ctx context.Context, LocalityId int64) (int64, error)
 }
