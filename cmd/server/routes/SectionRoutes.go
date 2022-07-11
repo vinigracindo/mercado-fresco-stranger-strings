@@ -14,6 +14,9 @@ func SectionRoutes(routes *gin.RouterGroup, db *sql.DB) {
 	sectionService := service.NewServiceSection(sectionRepository)
 	sectionController := controllers.NewSection(sectionService)
 
+	//report product by section route
+	routes.GET("/reportProducts", sectionController.GetReportProductsBySection())
+
 	routes.DELETE("/:id", sectionController.Delete())
 	routes.PATCH("/:id", sectionController.UpdateCurrentCapacity())
 	routes.POST("/", sectionController.Create())

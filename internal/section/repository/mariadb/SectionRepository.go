@@ -137,3 +137,50 @@ func (m *mariaDbSectionRepository) GetAll(ctx context.Context) ([]domain.Section
 	}
 	return sections, nil
 }
+
+func (m *mariaDbSectionRepository) GetByIdProductCountBySection(ctx context.Context, id int64) (*domain.ReportProductsModel, error) {
+	row := m.db.QueryRowContext(ctx, SQLCountProductsBySectionWithSectionId, id)
+
+	var reportProducts domain.ReportProductsModel
+
+	err := row.Scan(
+		&reportProducts.Id,
+		&reportProducts.SectionNumber,
+		&reportProducts.ProductsCount,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, errors.New("section not found")
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &reportProducts, nil
+}
+
+func (m *mariaDbSectionRepository) GetAllProductCountBySection(ctx context.Context) (*[]domain.ReportProductsModel, error) {
+	reportProducts := []domain.ReportProductsModel{}
+
+	rows, err := m.db.QueryContext(ctx, SQLCountProductsBySection)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var reportProduct domain.ReportProductsModel
+
+		err := rows.Scan(
+			&reportProduct.Id,
+			&reportProduct.SectionNumber,
+			&reportProduct.ProductsCount,
+		)
+		if err != nil {
+			return nil, err
+		}
+		reportProducts = append(reportProducts, reportProduct)
+	}
+	return &reportProducts, nil
+}

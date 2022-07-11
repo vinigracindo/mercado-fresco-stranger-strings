@@ -14,6 +14,12 @@ type SectionModel struct {
 	ProductTypeId      int64   `json:"product_type_id"`
 }
 
+type ReportProductsModel struct {
+	Id            int64 `json:"section_id"`
+	SectionNumber int64 `json:"section_number"`
+	ProductsCount int64 `json:"products_count"`
+}
+
 type SectionRepository interface {
 	Delete(ctx context.Context, id int64) error
 	UpdateCurrentCapacity(ctx context.Context, section *SectionModel) (*SectionModel, error)
@@ -29,6 +35,8 @@ type SectionRepository interface {
 		maximumCapacity int64,
 		warehouseId int64,
 		productTypeId int64) (SectionModel, error)
+	GetAllProductCountBySection(ctx context.Context) (*[]ReportProductsModel, error)
+	GetByIdProductCountBySection(ctx context.Context, id int64) (*ReportProductsModel, error)
 }
 
 type SectionService interface {
@@ -46,4 +54,6 @@ type SectionService interface {
 		productTypeId int64) (SectionModel, error)
 	GetById(ctx context.Context, id int64) (SectionModel, error)
 	GetAll(ctx context.Context) ([]SectionModel, error)
+	GetAllProductCountBySection(ctx context.Context) (*[]ReportProductsModel, error)
+	GetByIdProductCountBySection(ctx context.Context, id int64) (*ReportProductsModel, error)
 }
