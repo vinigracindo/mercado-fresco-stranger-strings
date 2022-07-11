@@ -102,3 +102,54 @@ func (repo mariaDBEmployeerepository) Delete(ctx context.Context, id int64) erro
 
 	return nil
 }
+
+func (repo mariaDBEmployeerepository) GetAllReportInboundOrders(ctx context.Context) ([]domain.EmployeeInboundOrdersReport, error) {
+	result := []domain.EmployeeInboundOrdersReport{}
+
+	rows, err := repo.db.QueryContext(ctx, SQLReportInboundOrders, nil)
+
+	if err != nil {
+		return result, err
+	}
+
+	for rows.Next() {
+		res := domain.EmployeeInboundOrdersReport{}
+
+		err := rows.Scan(
+			&res.Id,
+			&res.CardNumberId,
+			&res.FirstName,
+			&res.LastName,
+			&res.WarehouseId,
+			&res.Count,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, res)
+	}
+
+	return result, nil
+}
+
+func (repo mariaDBEmployeerepository) GetReportInboundOrdersById(ctx context.Context, employeeID int64) (domain.EmployeeInboundOrdersReport, error) {
+	result := domain.EmployeeInboundOrdersReport{}
+
+	row := repo.db.QueryRowContext(ctx, SQLReportInboundOrders, employeeID)
+
+	err := row.Scan(
+		&result.Id,
+		&result.CardNumberId,
+		&result.FirstName,
+		&result.LastName,
+		&result.WarehouseId,
+		&result.Count,
+	)
+
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
