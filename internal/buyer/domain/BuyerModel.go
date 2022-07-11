@@ -14,7 +14,7 @@ type PurchaseOrdersReport struct {
 	CardNumberId       string `json:"card_number_id"`
 	FirstName          string `json:"first_name"`
 	LastName           string `json:"last_name"`
-	CountBuyersRecords int64  `json:"records_count"`
+	CountBuyersRecords int64  `json:"purchase_orders_count"`
 }
 
 type BuyerRepository interface {
