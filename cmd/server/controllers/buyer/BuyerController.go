@@ -174,9 +174,10 @@ func (c *BuyerController) DeleteBuyer() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param	id 	 query int false "Buyer ID"
-// @Success      204
+// @Success      200  {object} []domain.PurchaseOrdersReport
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
 // @Router /buyers/purchaseOrders [get]
 func (c *BuyerController) GetPurchaseOrdersReports() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
