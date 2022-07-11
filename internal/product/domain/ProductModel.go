@@ -13,8 +13,14 @@ type Product struct {
 	ExpirationRate                 float64 `json:"expiration_rate"`
 	RecommendedFreezingTemperature float64 `json:"recommended_freezing_temperature"`
 	FreezingRate                   float64 `json:"freezing_rate"`
-	ProductTypeId                  int     `json:"product_type_id"`
-	SellerId                       int     `json:"seller_id"`
+	ProductTypeId                  int64   `json:"product_type_id"`
+	SellerId                       int64   `json:"seller_id"`
+}
+
+type ProductRecordsReport struct {
+	Id                  int64  `json:"id"`
+	Description         string `json:"description"`
+	CountProductRecords int64  `json:"records_count"`
 }
 
 type ProductRepository interface {
@@ -23,6 +29,7 @@ type ProductRepository interface {
 	Create(ctx context.Context, product *Product) (*Product, error)
 	UpdateDescription(ctx context.Context, product *Product) (*Product, error)
 	Delete(ctx context.Context, id int64) error
+	GetAllReportProductRecords(ctx context.Context) (*[]ProductRecordsReport, error)
 }
 
 type ProductService interface {
@@ -31,4 +38,6 @@ type ProductService interface {
 	Create(ctx context.Context, product *Product) (*Product, error)
 	UpdateDescription(ctx context.Context, id int64, description string) (*Product, error)
 	Delete(ctx context.Context, id int64) error
+	GetReportProductRecordsById(ctx context.Context, id int64) (*[]ProductRecordsReport, error)
+	GetAllReportProductRecords(ctx context.Context) (*[]ProductRecordsReport, error)
 }

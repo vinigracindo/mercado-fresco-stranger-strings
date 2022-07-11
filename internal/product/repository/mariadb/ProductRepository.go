@@ -72,7 +72,7 @@ func (m mariaDBProductRepository) GetById(ctx context.Context, id int64) (*domai
 		&product.SellerId)
 
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrIDNotFound
+		return nil, domain.ErrProductIdNotFound
 	}
 
 	if err != nil {
@@ -127,7 +127,7 @@ func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, product
 	affectedRows, _ := productResult.RowsAffected()
 
 	if affectedRows == 0 {
-		return nil, domain.ErrIDNotFound
+		return nil, domain.ErrProductIdNotFound
 	}
 
 	return product, nil
@@ -143,8 +143,35 @@ func (m mariaDBProductRepository) Delete(ctx context.Context, id int64) error {
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {
-		return domain.ErrIDNotFound
+		return domain.ErrProductIdNotFound
 	}
 
 	return nil
+}
+
+func (m mariaDBProductRepository) GetAllReportProductRecords(ctx context.Context) (*[]domain.ProductRecordsReport, error) {
+	var result []domain.ProductRecordsReport
+
+	rows, err := m.db.QueryContext(ctx, SqlGetAllReportProductRecords)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		res := domain.ProductRecordsReport{}
+
+		err := rows.Scan(
+			&res.Id,
+			&res.Description,
+			&res.CountProductRecords,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, res)
+	}
+
+	return &result, nil
 }

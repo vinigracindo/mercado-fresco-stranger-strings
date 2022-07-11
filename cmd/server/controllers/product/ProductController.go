@@ -21,8 +21,8 @@ type RequestProductPost struct {
 	ExpirationRate                 float64 `json:"expiration_rate" binding:"required"`
 	RecommendedFreezingTemperature float64 `json:"recommended_freezing_temperature" binding:"required"`
 	FreezingRate                   float64 `json:"freezing_rate" binding:"required"`
-	ProductTypeId                  int     `json:"product_type_id" binding:"required"`
-	SellerId                       int     `json:"seller_id" binding:"required"`
+	ProductTypeId                  int64   `json:"product_type_id" binding:"required"`
+	SellerId                       int64   `json:"seller_id" binding:"required"`
 }
 
 type RequestProductPatch struct {
@@ -40,7 +40,7 @@ func CreateProductController(prodService domain.ProductService) *ProductControll
 
 // GetAll godoc
 // @Summary      List all products
-// @Description  get all products
+// @Description  Get all products
 // @Tags         Products
 // @Accept       json
 // @Produce      json
@@ -209,4 +209,52 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 
 		httputil.NewResponse(ctx, http.StatusNoContent, err)
 	}
+}
+
+// GetReportProductRecords godoc
+// @Summary      List all report product records by id and list all report product records
+// @Description  List all reports product records
+// @Tags         Products
+// @Accept       json
+// @Produce      json
+// @Success      200  {array} domain.ProductRecordsReport
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure 	 400  {object}  httputil.HTTPError
+// @Router /reportRecords [get]
+func (c *ProductController) GetReportProductRecords() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		idParam, isPresent := ctx.GetQuery("id")
+		if isPresent {
+			c.getReportProductRecordsByProductId(ctx, idParam)
+			return
+		}
+		c.getAllReportProductRecords(ctx)
+	}
+}
+
+func (c *ProductController) getReportProductRecordsByProductId(ctx *gin.Context, idParam string) {
+	productId, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	result, err := c.service.GetReportProductRecordsById(ctx.Request.Context(), productId)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusNotFound, err)
+		return
+	}
+
+	httputil.NewResponse(ctx, http.StatusOK, result)
+}
+
+func (c *ProductController) getAllReportProductRecords(ctx *gin.Context) {
+	result, err := c.service.GetAllReportProductRecords(ctx.Request.Context())
+
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	httputil.NewResponse(ctx, http.StatusOK, result)
 }
