@@ -27,7 +27,7 @@ func TestInboundOrdersRepository_Create(t *testing.T) {
 		WarehouseId:    1,
 	}
 
-	t.Run("should create inbound order", func(t *testing.T) {
+	t.Run("create_ok: should create inbound order", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -52,7 +52,7 @@ func TestInboundOrdersRepository_Create(t *testing.T) {
 		assert.Equal(t, expectedInboundOrders, result)
 	})
 
-	t.Run("should return error when query fails", func(t *testing.T) {
+	t.Run("create_fail_exec: should return error when query fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()

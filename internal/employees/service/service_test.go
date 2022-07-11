@@ -282,7 +282,7 @@ func TestEmployeeService_GetReportInboundOrdersById(t *testing.T) {
 		assert.Empty(t, result)
 	})
 
-	t.Run("error_when_employee_does_not_exist", func(t *testing.T) {
+	t.Run("employee_does_not_exist: return an error when the employee does not exist", func(t *testing.T) {
 		repo.
 			On("GetById", mock.Anything, int64(1)).
 			Return(nil, fmt.Errorf("error")).

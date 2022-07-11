@@ -49,7 +49,7 @@ func TestEmployeeRepository_GetAll(t *testing.T) {
 		},
 	}
 
-	t.Run("should return all employees", func(t *testing.T) {
+	t.Run("get_all_ok: should return all employees", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -69,7 +69,7 @@ func TestEmployeeRepository_GetAll(t *testing.T) {
 		assert.Equal(t, expectedEmployees, result)
 	})
 
-	t.Run("should return error when query fails", func(t *testing.T) {
+	t.Run("get_all_query_fails: should return error when query fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -83,7 +83,7 @@ func TestEmployeeRepository_GetAll(t *testing.T) {
 		assert.Empty(t, result)
 	})
 
-	t.Run("should return error when scan fails", func(t *testing.T) {
+	t.Run("get_all_scan_fails: should return error when scan fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -112,7 +112,7 @@ func TestEmployeeRepository_GetById(t *testing.T) {
 		WarehouseId:  1,
 	}
 
-	t.Run("should return employee by id", func(t *testing.T) {
+	t.Run("get_by_id_ok: should return employee by id", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -132,7 +132,7 @@ func TestEmployeeRepository_GetById(t *testing.T) {
 		assert.Equal(t, expectedEmployee, *result)
 	})
 
-	t.Run("should return error when query fails", func(t *testing.T) {
+	t.Run("get_by_id_query_fails: should return error when query fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -160,7 +160,7 @@ func TestEmployeeRepository_Create(t *testing.T) {
 		WarehouseId:  1,
 	}
 
-	t.Run("should create employee", func(t *testing.T) {
+	t.Run("create_ok: should create employee", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -181,7 +181,7 @@ func TestEmployeeRepository_Create(t *testing.T) {
 		assert.Equal(t, expectedEmployee, result)
 	})
 
-	t.Run("should return error when query execution fails", func(t *testing.T) {
+	t.Run("create_query_fails: should return error when query execution fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -211,7 +211,7 @@ func TestEmployeeRepository_Update(t *testing.T) {
 		WarehouseId:  int64(1),
 	}
 
-	t.Run("should update employee full name", func(t *testing.T) {
+	t.Run("update_ok: should update employee full name", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -232,7 +232,7 @@ func TestEmployeeRepository_Update(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("should return error when query execution fails", func(t *testing.T) {
+	t.Run("update_query_fails: should return error when query execution fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -254,7 +254,7 @@ func TestEmployeeRepository_Update(t *testing.T) {
 }
 
 func TestEmployeeRepository_Delete(t *testing.T) {
-	t.Run("should delete employee", func(t *testing.T) {
+	t.Run("delete_ok: should delete employee", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -271,7 +271,7 @@ func TestEmployeeRepository_Delete(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("should return error when query execution fails", func(t *testing.T) {
+	t.Run("delete_query_fails: should return error when query execution fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -287,7 +287,7 @@ func TestEmployeeRepository_Delete(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("delete_not_found: ", func(t *testing.T) {
+	t.Run("delete_employee_not_found: should return a error when employee not found. ", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -307,7 +307,7 @@ func TestEmployeeRepository_Delete(t *testing.T) {
 func TestEmployeeRepository_GetAllReportInboundOrders(t *testing.T) {
 	employeeID := int64(1)
 
-	t.Run("should return all employees with inbound orders count", func(t *testing.T) {
+	t.Run("get_all_report_inbound_errors: should return all employees with inbound orders count", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -336,7 +336,7 @@ func TestEmployeeRepository_GetAllReportInboundOrders(t *testing.T) {
 		assert.Equal(t, expectedInboundOrders, result)
 	})
 
-	t.Run("should return error when query execution fails", func(t *testing.T) {
+	t.Run("get_all_report_inbound_errors_query_fails: should return error when query execution fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -353,7 +353,7 @@ func TestEmployeeRepository_GetAllReportInboundOrders(t *testing.T) {
 		assert.Empty(t, result)
 	})
 
-	t.Run("should return error when scan fails", func(t *testing.T) {
+	t.Run("get_all_report_inbound_errors_scan_fails: should return error when scan fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -378,7 +378,7 @@ func TestEmployeeRepository_GetAllReportInboundOrders(t *testing.T) {
 func TestEmployeeRepository_GetReportInboundOrdersById(t *testing.T) {
 	employeeID := int64(1)
 
-	t.Run("should return employee with inbound orders count", func(t *testing.T) {
+	t.Run("get_by_id_report_inbound: should return employee with inbound orders count", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
@@ -402,7 +402,7 @@ func TestEmployeeRepository_GetReportInboundOrdersById(t *testing.T) {
 		assert.Equal(t, expectedInboundOrders, result)
 	})
 
-	t.Run("should return employee not found error when employee not found", func(t *testing.T) {
+	t.Run("get_by_id_report_inbound_errors: should return employee not found error when employee not found", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
