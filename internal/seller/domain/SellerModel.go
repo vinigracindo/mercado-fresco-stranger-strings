@@ -27,4 +27,5 @@ type RepositorySeller interface {
 	Create(ctx context.Context, seller *Seller) (*Seller, error)
 	Update(ctx context.Context, seller *Seller) (*Seller, error)
 	Delete(ctx context.Context, id int64) error
+	CountByLocalityId(ctx context.Context, localityId int64) (int64, error)
 }
