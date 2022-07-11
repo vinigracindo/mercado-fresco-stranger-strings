@@ -45,6 +45,8 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 
 	service := mocks.NewCarryService(t)
 
+	requestBody, _ := json.Marshal(body)
+
 	t.Run("create_ok: if carry was successfully created", func(t *testing.T) {
 
 		service.On("Create",
@@ -53,8 +55,6 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 		).Return(expect, nil).Once()
 
 		controller := controllers.NewCarryController(service)
-
-		requestBody, _ := json.Marshal(body)
 
 		r := testutil.SetUpRouter()
 
@@ -78,8 +78,6 @@ func Test_Controller_Warehouse_CreateWarehouse(t *testing.T) {
 		).Return(nil, fmt.Errorf("error: already a warehouse with the code: %d", mockCarry.Cid)).Once()
 
 		controller := controllers.NewCarryController(service)
-
-		requestBody, _ := json.Marshal(body)
 
 		r := testutil.SetUpRouter()
 
