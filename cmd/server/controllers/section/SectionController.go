@@ -198,9 +198,11 @@ func (c *ControllerSection) GetAll() gin.HandlerFunc {
 // @Tags         Sections
 // @Accept       json
 // @Produce      json
+// @Param	id 	 query int false "Section ID"
 // @Success      200  {object} []domain.ReportProductsModel
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
 // @Router /sections/reportProducts [get]
 func (controller ControllerSection) GetReportProductsBySection() gin.HandlerFunc {
 	return func(c *gin.Context) {
