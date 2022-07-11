@@ -50,6 +50,12 @@ var expectedSection = domain.SectionModel{
 	ProductTypeId:      1,
 }
 
+var expectedRecordProductBySection = domain.ReportProductsModel{
+	Id:            int64(1),
+	SectionNumber: int64(1),
+	ProductsCount: int64(200),
+}
+
 var ctx = context.Background()
 
 func TestSectionController_Create(t *testing.T) {
@@ -335,5 +341,70 @@ func TestSectionController_Delete(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 		assert.JSONEq(t, "{\"code\":400,\"message\":\"strconv.ParseInt: parsing \\\"idInvalid\\\": invalid syntax\"}", response.Body.String())
 	})
+}
 
+func TestSectionController_GetReportProductsBySection(t *testing.T) {
+	EndpointReportProducts := EndpointSection + "/reportProducts"
+	mockService := mocks.NewSectionService(t)
+	controller := controllers.NewSection(mockService)
+
+	r := testutil.SetUpRouter()
+	r.GET(EndpointReportProducts, controller.GetReportProductsBySection())
+
+	t.Run("get_all_report_product_records: when data entry is successful, should return code 200", func(t *testing.T) {
+		mockService.
+			On("GetAllProductCountBySection", ctx).
+			Return(&[]domain.ReportProductsModel{expectedRecordProductBySection}, nil).
+			Once()
+
+		requestBody, _ := json.Marshal(expectedRecordProductBySection)
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointReportProducts, requestBody)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+	t.Run("get_all_report_product_records: when GetAll fail, should return code 500", func(t *testing.T) {
+		mockService.
+			On("GetAllProductCountBySection", ctx).
+			Return(nil, fmt.Errorf("any error")).
+			Once()
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointReportProducts, nil)
+
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+		assert.JSONEq(t, "{\"code\":500,\"message\":\"any error\"}", response.Body.String())
+	})
+
+	t.Run("get_by_product_count_by_section: when data entry is successful, should return code 200", func(t *testing.T) {
+		mockService.
+			On("GetByIdProductCountBySection", ctx, int64(1)).
+			Return(&expectedRecordProductBySection, nil).
+			Once()
+
+		requestBody, _ := json.Marshal(expectedRecordProductBySection)
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointReportProducts+"?id=1", requestBody)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+	t.Run("get_by_product_count_by_section: when the section does not exist, should return code 404", func(t *testing.T) {
+		mockService.
+			On("GetByIdProductCountBySection", ctx, int64(1)).
+			Return(nil, fmt.Errorf("section not found")).
+			Once()
+
+		requestBody, _ := json.Marshal(expectedRecordProductBySection)
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointReportProducts+"?id=1", requestBody)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+
+	t.Run("get_by_product_count_by_section_invalid_query_params: when the query params are not valid, should return code 400.", func(t *testing.T) {
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointReportProducts+"?id=abc", []byte{})
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "{\"error\":\"invalid id\"}", response.Body.String())
+	})
 }
