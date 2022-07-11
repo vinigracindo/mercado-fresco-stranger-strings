@@ -48,6 +48,23 @@ var updateBuyer = &domain.Buyer{
 	LastName:     "LastNameTest 2",
 }
 
+var expectedPurchaseOrders = []domain.PurchaseOrdersReport{
+	{
+		Id:                 3,
+		CardNumberId:       "40232212",
+		FirstName:          "FirstNameTest",
+		LastName:           "LastNameTest",
+		CountBuyersRecords: 2,
+	},
+	{
+		Id:                 4,
+		CardNumberId:       "40232218",
+		FirstName:          "FirstNameTest",
+		LastName:           "LastNameTest",
+		CountBuyersRecords: 3,
+	},
+}
+
 func TestBuyerRepository_GetAll(t *testing.T) {
 
 	rows := sqlmock.NewRows([]string{
@@ -340,5 +357,82 @@ func TestBuyerRepository_Delete(t *testing.T) {
 		assert.Error(t, err)
 
 	})
+}
 
+func TestBuyerRepository_GetAllPurchaseOrdersReports(t *testing.T) {
+	t.Run("getAllReport_ok: should return all buyers orders", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		assert.NoError(t, err)
+		defer db.Close()
+
+		rows := sqlmock.NewRows([]string{
+			"id",
+			"cardNumberId",
+			"firstName",
+			"lastName",
+			"countBuyersRecords",
+		})
+		for _, purchaseOrderList := range expectedPurchaseOrders {
+			rows = rows.AddRow(
+				purchaseOrderList.Id,
+				purchaseOrderList.CardNumberId,
+				purchaseOrderList.FirstName,
+				purchaseOrderList.LastName,
+				purchaseOrderList.CountBuyersRecords,
+			)
+		}
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetAllPurchaseOrdersReports)).
+			WillReturnRows(rows)
+
+		result, err := buyerRepository.GetAllPurchaseOrdersReports(context.TODO())
+
+		assert.NoError(t, err)
+		assert.Equal(t, &expectedPurchaseOrders, result)
+
+	})
+
+	t.Run("getAllReport_err: should return error when scan fails", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetAllPurchaseOrdersReports)).
+			WillReturnRows(
+				sqlmock.
+					NewRows([]string{
+						"id",
+						"cardNumberId",
+						"firstName",
+						"lastName",
+						"countBuyersRecords",
+					}).AddRow(
+					"", "", "", "", "",
+				))
+
+		_, err = buyerRepository.GetAllPurchaseOrdersReports(context.TODO())
+		assert.Error(t, err)
+
+	})
+
+	t.Run("getAllReport_err: should return error when query fails", func(t *testing.T) {
+
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		errMsg := fmt.Errorf("error: invalid query")
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.SQLGetAllPurchaseOrdersReports)).
+			WillReturnError(errMsg)
+
+		buyerRepository := repository.NewmariadbBuyerRepository(db)
+
+		_, err = buyerRepository.GetAllPurchaseOrdersReports(context.TODO())
+
+		assert.Error(t, err)
+	})
 }

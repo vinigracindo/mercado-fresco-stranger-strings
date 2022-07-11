@@ -15,6 +15,7 @@ import (
 )
 
 var EndpointBuyer = "/api/v1/buyers"
+var EndPointPurchaserOrders = "/api/buyers/purchaseOrders"
 
 var expectBuyer = &domain.Buyer{
 	Id:           0,
@@ -287,4 +288,95 @@ func TestBuyerController_Delete(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
+}
+
+func TestBuyerController_GetPurchaseOrdersReports(t *testing.T) {
+	service := mocks.NewBuyerService(t)
+	controller := controllers.NewBuyerController(service)
+	r := testutil.SetUpRouter()
+	r.GET(EndPointPurchaserOrders, controller.GetPurchaseOrdersReports())
+
+	expectResult := domain.PurchaseOrdersReport{
+		Id:                 1,
+		CardNumberId:       "40232212",
+		FirstName:          "FirstNameTest",
+		LastName:           "LastNameTest",
+		CountBuyersRecords: 2,
+	}
+
+	expectBodyRecord := domain.PurchaseOrdersReport{
+		Id:                 1,
+		CardNumberId:       "40232212",
+		FirstName:          "FirstNameTest",
+		LastName:           "LastNameTest",
+		CountBuyersRecords: 2,
+	}
+
+	var buyerId = &domain.Buyer{
+		Id:           1,
+		CardNumberId: "402323",
+		FirstName:    "FirstNameTest",
+		LastName:     "LastNameTest",
+	}
+
+	t.Run("GetId: Get purchase order reports", func(t *testing.T) {
+
+		expectResult := []domain.PurchaseOrdersReport{expectResult}
+		bodyList := []domain.PurchaseOrdersReport{expectBodyRecord}
+		requestBody, _ := json.Marshal(bodyList)
+
+		service.On("GetPurchaseOrdersReports", context.TODO(), buyerId.Id).
+			Return(&expectResult, nil).
+			Once()
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndPointPurchaserOrders+"?id=1", requestBody)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+
+	})
+
+	t.Run("GetId_err: purchase order reports by id", func(t *testing.T) {
+
+		service.On("GetPurchaseOrdersReports", context.TODO(), buyerId.Id).
+			Return(nil, domain.ErrIDNotFound).
+			Once()
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndPointPurchaserOrders+"?id=1", []byte{})
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+
+	t.Run("invalidQuery: when the query params are not valid, should return code 400.", func(t *testing.T) {
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndPointPurchaserOrders+"?id=asd", []byte{})
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+
+	})
+
+	t.Run("GetAll: when the request is successful, should return code 200", func(t *testing.T) {
+
+		service.On("GetAllPurchaseOrdersReports", context.TODO()).
+			Return(&[]domain.PurchaseOrdersReport{expectResult}, nil).
+			Once()
+
+		requestBody, _ := json.Marshal(expectBodyRecord)
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndPointPurchaserOrders, requestBody)
+		assert.Equal(t, http.StatusOK, response.Code)
+
+	})
+
+	t.Run("GetAll_err: when GetAll fail, should return code 500.", func(t *testing.T) {
+
+		service.
+			On("GetAllPurchaseOrdersReports", ctx).
+			Return(&[]domain.PurchaseOrdersReport{}, fmt.Errorf("error")).
+			Once()
+
+		requestBody, _ := json.Marshal(expectBodyRecord)
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndPointPurchaserOrders, requestBody)
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
+
 }

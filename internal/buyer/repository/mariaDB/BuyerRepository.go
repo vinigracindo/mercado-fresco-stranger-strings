@@ -130,3 +130,32 @@ func (repo *mariadbBuyerRepository) Delete(ctx context.Context, id int64) error 
 	}
 	return nil
 }
+
+func (repo *mariadbBuyerRepository) GetAllPurchaseOrdersReports(ctx context.Context) (*[]domain.PurchaseOrdersReport, error) {
+	var result []domain.PurchaseOrdersReport
+
+	rows, err := repo.db.QueryContext(ctx, SQLGetAllPurchaseOrdersReports)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		res := domain.PurchaseOrdersReport{}
+
+		err := rows.Scan(
+			&res.Id,
+			&res.CardNumberId,
+			&res.FirstName,
+			&res.LastName,
+			&res.CountBuyersRecords,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, res)
+	}
+
+	return &result, nil
+}

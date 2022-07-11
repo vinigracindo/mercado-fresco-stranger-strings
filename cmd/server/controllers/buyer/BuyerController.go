@@ -24,8 +24,8 @@ type BuyerController struct {
 	service domain.BuyerService
 }
 
-func NewBuyerController(service domain.BuyerService) BuyerController {
-	return BuyerController{service: service}
+func NewBuyerController(buyerService domain.BuyerService) BuyerController {
+	return BuyerController{service: buyerService}
 }
 
 // Buyers godoc
@@ -165,4 +165,55 @@ func (c *BuyerController) DeleteBuyer() gin.HandlerFunc {
 		}
 		httputil.NewResponse(ctx, http.StatusNoContent, "")
 	}
+}
+
+// GetPurchaseOrdersReports godoc
+// @Summary      List all report product records by id and list all report buyer records
+// @Description  List all reports buyer records
+// @Tags         Buyers
+// @Accept       json
+// @Produce      json
+// @Param	id 	 query int false "Buyer ID"
+// @Success      200  {object} []domain.PurchaseOrdersReport
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
+// @Router /buyers/purchaseOrders [get]
+func (c *BuyerController) GetPurchaseOrdersReports() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		idParam, isPresent := ctx.GetQuery("id")
+		if isPresent {
+			c.GetPurchaseOrdersReportsBuyerId(ctx, idParam)
+			return
+		}
+		c.GetAllPurchaseOrdersReports(ctx)
+
+	}
+}
+
+func (c *BuyerController) GetPurchaseOrdersReportsBuyerId(ctx *gin.Context, idParam string) {
+	buyerId, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	result, err := c.service.GetPurchaseOrdersReports(ctx.Request.Context(), buyerId)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusNotFound, err)
+		return
+	}
+
+	httputil.NewResponse(ctx, http.StatusOK, result)
+}
+
+func (c *BuyerController) GetAllPurchaseOrdersReports(ctx *gin.Context) {
+	result, err := c.service.GetAllPurchaseOrdersReports(ctx.Request.Context())
+
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	httputil.NewResponse(ctx, http.StatusOK, result)
 }

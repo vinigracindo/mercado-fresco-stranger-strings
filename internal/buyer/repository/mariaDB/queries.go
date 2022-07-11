@@ -27,4 +27,11 @@ const (
     `
 
 	SQLDeleteBuyer = "DELETE FROM buyers WHERE id=?"
+
+	SQLGetAllPurchaseOrdersReports = `
+	SELECT p.id, p.card_number_id, p.first_name, p.last_name, count(pr.id) as records_count
+	FROM buyers as p
+	LEFT JOIN purchase_orders as pr on p.id = pr.buyer_id
+	GROUP BY p.id, p.card_number_id, p.first_name, p.last_name
+	`
 )
