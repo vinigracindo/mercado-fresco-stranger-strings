@@ -440,7 +440,6 @@ func TestSectionRepository_GetAllProductCountBySection(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, &expectedRecordProductBySection, result)
-		assert.Equal(t, &expectedRecordProductBySection, result)
 	})
 
 	t.Run("get_all_product_count_by_section_scan_error: should return error when scan fail", func(t *testing.T) {

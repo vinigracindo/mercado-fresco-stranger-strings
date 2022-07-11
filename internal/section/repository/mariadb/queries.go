@@ -12,7 +12,7 @@ const (
         maximum_capacity,
         warehouse_id,
         product_type_id 
-    FROM section
+    FROM sections
     `
 
 	SQLGetByIdSection = `
