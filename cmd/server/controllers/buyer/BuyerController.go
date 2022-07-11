@@ -181,13 +181,13 @@ func (c *BuyerController) GetPurchaseOrdersReports() gin.HandlerFunc {
 }
 
 func (c *BuyerController) GetPurchaseOrdersReportsBuyerId(ctx *gin.Context, idParam string) {
-	productId, err := strconv.ParseInt(idParam, 10, 64)
+	buyerId, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 		return
 	}
 
-	result, err := c.service.GetPurchaseOrdersReports(ctx.Request.Context(), productId)
+	result, err := c.service.GetPurchaseOrdersReports(ctx.Request.Context(), buyerId)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusNotFound, err)
 		return

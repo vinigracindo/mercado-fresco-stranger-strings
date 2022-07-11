@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/buyer/domain"
 	purchaseOrdersRepo "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/purchase_orders/domain"
@@ -86,7 +85,6 @@ func (s buyerService) GetPurchaseOrdersReports(ctx context.Context, id int64) (*
 	}
 	report = append(report, purchaseOrdersReport)
 
-	fmt.Println(0)
 	return &report, nil
 }
 
