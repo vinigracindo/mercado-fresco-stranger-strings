@@ -22,4 +22,7 @@ const (
 	SqlDeleteSeller = `
 	DELETE FROM sellers
 	WHERE id = ?`
+
+	QueryCountByLocalityId = `
+    SELECT COUNT(*) FROM sellers WHERE product_id = ?`
 )

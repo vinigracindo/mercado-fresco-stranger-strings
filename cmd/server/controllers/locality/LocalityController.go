@@ -81,3 +81,41 @@ func (c Locality) CreateLocality() gin.HandlerFunc {
 		httputil.NewResponse(ctx, http.StatusCreated, newLocality)
 	}
 }
+
+func (c Locality) GetReportLocalities() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		idParam, isPresent := ctx.GetQuery("id")
+		if isPresent {
+			c.getReportLocalitiesById(ctx, idParam)
+			return
+		}
+		c.getAllReportLocalities(ctx)
+	}
+}
+
+func (c Locality) getReportLocalitiesById(ctx *gin.Context, idParam string) {
+	localitytID, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	result, err := c.service.GetByIdReportSeller(ctx.Request.Context(), localitytID)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusNotFound, err)
+		return
+	}
+
+	httputil.NewResponse(ctx, http.StatusOK, result)
+}
+
+func (c Locality) getAllReportLocalities(ctx *gin.Context) {
+	result, err := c.service.GetAllReportSeller(ctx.Request.Context())
+
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	httputil.NewResponse(ctx, http.StatusOK, result)
+}

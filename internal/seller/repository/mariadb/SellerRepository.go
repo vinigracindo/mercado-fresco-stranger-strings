@@ -133,3 +133,21 @@ func (m *mariaDBSellerRepository) Delete(ctx context.Context, id int64) error {
 
 	return nil
 }
+
+func (m *mariaDBSellerRepository) CountByLocalityId(ctx context.Context, localityId int64) (int64, error) {
+	rows := m.db.QueryRowContext(
+		ctx,
+		QueryCountByLocalityId,
+		localityId,
+	)
+
+	var countSellersInLocalityId int64
+
+	err := rows.Scan(&countSellersInLocalityId)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return countSellersInLocalityId, nil
+}

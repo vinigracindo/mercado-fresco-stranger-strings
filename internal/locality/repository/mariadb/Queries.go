@@ -26,6 +26,10 @@ const (
     INSERT INTO localities (locality_name, province_name, country_name, province_id)
     VALUES (?, ?, ?, ?)`
 
-	QueryCountByLocalityId = `
-    SELECT COUNT(*) FROM sellers WHERE product_id = ?`
+	QueryGetAllLocality = `
+    SELECT l.id, l.locality_name, count(s.id) as sellers_count
+	FROM localities as l
+	LEFT JOIN sellers as s on l.id = s.locality_id
+	GROUP BY l.id
+	`
 )

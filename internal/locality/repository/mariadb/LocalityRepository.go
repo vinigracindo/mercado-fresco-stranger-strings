@@ -86,20 +86,29 @@ func (m repository) CreateLocality(ctx context.Context, locality *domain.Localit
 	return locality, nil
 }
 
-func (m repository) CountByLocalityId(ctx context.Context, localityId int64) (int64, error) {
-	rows := m.db.QueryRowContext(
-		ctx,
-		QueryCountByLocalityId,
-		localityId,
-	)
-
-	var countSellersInLocalityId int64
-
-	err := rows.Scan(&countSellersInLocalityId)
+func (m repository) GetAllReportSeller(ctx context.Context) (*[]domain.ReportSeller, error) {
+	rows, err := m.db.QueryContext(ctx, QueryGetAllLocality)
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return countSellersInLocalityId, nil
+	var result []domain.ReportSeller
+
+	for rows.Next() {
+		report := domain.ReportSeller{}
+
+		err := rows.Scan(
+			&report.LocalityId,
+			&report.LocalityName,
+			&report.SellerCount)
+
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, report)
+	}
+
+	return &result, nil
 }
