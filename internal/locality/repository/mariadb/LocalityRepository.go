@@ -20,18 +20,19 @@ func NewMariadbLocalityRepository(db *sql.DB) domain.LocalityRepository {
 func (m repository) GetById(ctx context.Context, id int64) (*domain.LocalityModel, error) {
 	result := m.db.QueryRowContext(ctx, QueryGetById, id)
 
-	var carry domain.LocalityModel
+	var locality domain.LocalityModel
 
 	if err := result.Scan(
-		&carry.Id,
-		&carry.CountryName,
-		&carry.ProvinceName,
-		&carry.LocalityName,
+		&locality.Id,
+		&locality.LocalityName,
+		&locality.ProvinceName,
+		&locality.CountryName,
+		&locality.ProvinceId,
 	); err != nil {
 		return nil, err
 	}
 
-	return &carry, nil
+	return &locality, nil
 }
 
 func (m repository) ReportCarrie(ctx context.Context, id int64) (*[]domain.ReportCarrie, error) {
