@@ -48,6 +48,14 @@ var expectedBodyReportSeller = []domain.ReportSeller{
 	},
 }
 
+var expectedReportCarrie = []domain.ReportCarrie{
+	{
+		LocalityId:   1,
+		LocalityName: "Salvador",
+		CarriesCount: 1,
+	},
+}
+
 func Test_CreateLocalityController(t *testing.T) {
 	service := mocks.NewLocalityService(t)
 	ctx := context.Background()
@@ -150,6 +158,17 @@ func Test_GetReportLocalitiesController(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
+	t.Run("get_all_report_error: when the service returns an error, should return code 500.", func(t *testing.T) {
+		service.
+			On("GetAllReportSeller", ctx).
+			Return(nil, errors.New("error")).
+			Once()
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointLocality, []byte{})
+
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
+
 	t.Run("get_all_internal_server_error: should return code 500", func(t *testing.T) {
 		requestBody, _ := json.Marshal(expectedBodyReportSeller)
 
@@ -162,5 +181,55 @@ func Test_GetReportLocalitiesController(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, response.Code)
 
+	})
+}
+
+func Test_ReportCarrie(t *testing.T) {
+	service := mocks.NewLocalityService(t)
+	ctx := context.Background()
+
+	t.Run("report_carrie_all_ok: should return code 200", func(t *testing.T) {
+		service.
+			On("ReportCarrie", ctx, int64(0)).
+			Return(&expectedReportCarrie, nil).
+			Once()
+
+		controller := controllers.NewLocalityController(service)
+		requestbodyLocality, _ := json.Marshal(expectedReportCarrie)
+
+		r := testutil.SetUpRouter()
+
+		r.POST(EndpointLocality+"/reportCarrie", controller.ReportCarrie())
+
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointLocality+"/reportCarrie", requestbodyLocality)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+	t.Run("report_carrie_invalid_id_parser: when the id is not a number, should return code 400", func(t *testing.T) {
+		controller := controllers.NewLocalityController(nil)
+
+		r := testutil.SetUpRouter()
+		r.POST(EndpointLocality+"/reportCarrie", controller.ReportCarrie())
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointLocality+"/reportCarrie?id=invalid", []byte{})
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+
+	t.Run("report_carrie_id_not_found: when the id is not found, should return code 404", func(t *testing.T) {
+		service.
+			On("ReportCarrie", ctx, int64(0)).
+			Return(nil, errors.New("carrie not found")).
+			Once()
+
+		controller := controllers.NewLocalityController(service)
+		requestbodyLocality, _ := json.Marshal(expectedReportCarrie)
+
+		r := testutil.SetUpRouter()
+		r.POST(EndpointLocality+"/reportCarrie", controller.ReportCarrie())
+
+		response := testutil.ExecuteTestRequest(r, http.MethodPost, EndpointLocality+"/reportCarrie?id=0", requestbodyLocality)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
 }

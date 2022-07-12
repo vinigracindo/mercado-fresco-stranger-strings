@@ -155,6 +155,48 @@ func TestSellerController_Get(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
+
+	t.Run("find_get_by_id_err: when the request is unsuccessful, should return code 400", func(t *testing.T) {
+		service.
+			On("GetById", ctx, int64(1)).
+			Return(nil, fmt.Errorf("Error")).
+			Once()
+
+		controller := controllers.NewSeller(service)
+		requestbodySeller, _ := json.Marshal(bodySeller)
+		r := testutil.SetUpRouter()
+		r.GET(EndpointSeller+"/:id", controller.GetById())
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointSeller+"/1", requestbodySeller)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+
+	t.Run("find_get_by_id_invalid_parser: when the request is unsuccessful, should return code 400", func(t *testing.T) {
+		controller := controllers.NewSeller(service)
+		requestbodySeller, _ := json.Marshal(bodySeller)
+		r := testutil.SetUpRouter()
+		r.GET(EndpointSeller+"/:id", controller.GetById())
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointSeller+"/invalid_id", requestbodySeller)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+
+	t.Run("find_all_err: when internal error occurs, should return code 500.", func(t *testing.T) {
+		service.
+			On("GetAll", ctx).
+			Return(nil, fmt.Errorf("Internal error")).
+			Once()
+
+		controller := controllers.NewSeller(service)
+		r := testutil.SetUpRouter()
+		r.GET(EndpointSeller, controller.GetAll())
+
+		response := testutil.ExecuteTestRequest(r, http.MethodGet, EndpointSeller, []byte{})
+
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
 }
 
 func Test_Controller_Update(t *testing.T) {
@@ -181,7 +223,7 @@ func Test_Controller_Update(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 	})
 
-	t.Run("update_non_existent: when the employee does not exist, should return code 404.", func(t *testing.T) {
+	t.Run("update_non_existent: when the seller does not exist, should return code 404.", func(t *testing.T) {
 		service.
 			On("Update", ctx, int64(9999), "Salvador, BA", "71 88888888").
 			Return(nil, fmt.Errorf("Seller not found")).
@@ -196,6 +238,27 @@ func Test_Controller_Update(t *testing.T) {
 
 		assert.Equal(t, http.StatusNotFound, response.Code)
 	})
+
+	t.Run("invalid_id: when sller id is not parsed, should return code 400.", func(t *testing.T) {
+		router := testutil.SetUpRouter()
+		controller := controllers.NewSeller(service)
+		router.PATCH(EndpointSeller+"/:id", controller.Update())
+		url := fmt.Sprintf("%s/%s", EndpointSeller, "invalid_id")
+		response := testutil.ExecuteTestRequest(router, http.MethodPatch, url, nil)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+
+	t.Run("invalid json: when the request body is not valid json, should return code 400.", func(t *testing.T) {
+		router := testutil.SetUpRouter()
+		controller := controllers.NewSeller(service)
+		router.PATCH(EndpointSeller+"/:id", controller.Update())
+		url := fmt.Sprintf("%s/%s", EndpointSeller, "1")
+		response := testutil.ExecuteTestRequest(router, http.MethodPatch, url, []byte(`{invalid json}`))
+
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+
 }
 
 func TestSellerController_Delete(t *testing.T) {
@@ -230,5 +293,17 @@ func TestSellerController_Delete(t *testing.T) {
 
 		assert.Equal(t, http.StatusNoContent, response.Code)
 
+	})
+
+	t.Run("invalid_id: when section id is not parsed, should return code 400.", func(t *testing.T) {
+
+		controller := controllers.NewSeller(service)
+		r := testutil.SetUpRouter()
+		r.DELETE(EndpointSeller+"/:id", controller.Delete())
+
+		url := fmt.Sprintf("%s/%s", EndpointSeller, "invalid_id")
+		response := testutil.ExecuteTestRequest(r, http.MethodDelete, url, nil)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 }

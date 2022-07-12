@@ -193,7 +193,7 @@ func TestSellerRepository_GetById(t *testing.T) {
 		mock.
 			ExpectQuery(repository.SqlGetByIdSeller).
 			WithArgs(int64(9999)).
-			WillReturnError(fmt.Errorf("querry error"))
+			WillReturnError(fmt.Errorf("query error"))
 
 		result, err := sellerRepository.GetById(context.TODO(), int64(1))
 
@@ -378,6 +378,43 @@ func TestSellerRepository_Delete(t *testing.T) {
 		sellerRepository := repository.NewMariaDBSellerRepository(db)
 
 		err = sellerRepository.Delete(context.TODO(), int64(1))
+
+		assert.Error(t, err)
+	})
+}
+
+func TestSellerRepository_CountByLocalityId(t *testing.T) {
+	t.Run("count_ok: should return count of sellers", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.
+			ExpectQuery(regexp.QuoteMeta(repository.QueryCountByLocalityId)).
+			WithArgs(int64(1)).
+			WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+
+		sellerRepository := repository.NewMariaDBSellerRepository(db)
+
+		count, err := sellerRepository.CountByLocalityId(context.TODO(), int64(1))
+
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), count)
+	})
+
+	t.Run("count_not_found: should return error when seller is not found", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.
+			ExpectQuery(regexp.QuoteMeta(repository.QueryCountByLocalityId)).
+			WithArgs(int64(1)).
+			WillReturnRows(sqlmock.NewRows([]string{"count"}))
+
+		sellerRepository := repository.NewMariaDBSellerRepository(db)
+
+		_, err = sellerRepository.CountByLocalityId(context.TODO(), int64(1))
 
 		assert.Error(t, err)
 	})
