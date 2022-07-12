@@ -5,17 +5,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	controllers "github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/controllers/locality"
-	repositoryCarry "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/carry/repository/mariadb"
 	repositoryLocality "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/locality/repository/mariadb"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/locality/services"
+	repository "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/repository/mariadb"
 )
 
 func LocalityRoutes(routes *gin.RouterGroup, db *sql.DB) {
 	localityRepository := repositoryLocality.NewMariadbLocalityRepository(db)
-	carryRepository := repositoryCarry.NewMariadbCarryRepository(db)
-	localityService := services.NewLocalityService(localityRepository, carryRepository)
+	sellerRepository := repository.NewMariaDBSellerRepository(db)
+	localityService := services.NewLocalityService(localityRepository, sellerRepository)
 	localityController := controllers.NewLocalityController(localityService)
 
-	routes.GET("/reportCarrie/:id", localityController.ReportCarrie())
-
+	routes.POST("/", localityController.CreateLocality())
+	routes.GET("/reportCarrie", localityController.ReportCarrie())
+	routes.GET("/reportSellers", localityController.GetReportLocalities())
 }

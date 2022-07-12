@@ -1,6 +1,8 @@
 package domain
 
-import "context"
+import (
+	"context"
+)
 
 type Seller struct {
 	Id          int64  `json:"id"`
@@ -8,6 +10,7 @@ type Seller struct {
 	CompanyName string `json:"company_name"`
 	Address     string `json:"address"`
 	Telephone   string `json:"telephone"`
+	LocalityId  int64  `json:"locality_id"`
 }
 
 type ServiceSeller interface {
@@ -24,4 +27,5 @@ type RepositorySeller interface {
 	Create(ctx context.Context, seller *Seller) (*Seller, error)
 	Update(ctx context.Context, seller *Seller) (*Seller, error)
 	Delete(ctx context.Context, id int64) error
+	CountByLocalityId(ctx context.Context, localityId int64) (int64, error)
 }

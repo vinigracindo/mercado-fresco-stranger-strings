@@ -15,6 +15,7 @@ type requestSellerPost struct {
 	CompanyName string `json:"company_name" binding:"required"`
 	Address     string `json:"address" binding:"required"`
 	Telephone   string `json:"telephone" binding:"required"`
+	LocalityId  int64  `json:"locality_id" binding:"required"`
 }
 
 type requestSellerPatch struct {
@@ -103,6 +104,7 @@ func (c SellerController) Create() gin.HandlerFunc {
 			CompanyName: req.CompanyName,
 			Address:     req.Address,
 			Telephone:   req.Telephone,
+			LocalityId:  req.LocalityId,
 		}
 
 		newSeller, err := c.service.Create(ctx.Request.Context(), &seller)

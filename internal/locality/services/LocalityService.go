@@ -2,43 +2,77 @@ package services
 
 import (
 	"context"
+	"errors"
 
-	carry "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/carry/domain"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/locality/domain"
 	locality "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/locality/domain"
+	seller "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
 )
 
 type service struct {
-	repoCarry    carry.CarryRepository
 	repoLocality locality.LocalityRepository
+	repoSeller   seller.RepositorySeller
 }
 
-func NewLocalityService(repoLocality locality.LocalityRepository, repoCarry carry.CarryRepository) locality.LocalityService {
+func NewLocalityService(repoLocality locality.LocalityRepository, repoSeller seller.RepositorySeller) locality.LocalityService {
 	return &service{
-		repoCarry:    repoCarry,
 		repoLocality: repoLocality,
+		repoSeller:   repoSeller,
 	}
 }
 
-func (s service) ReportCarrie(ctx context.Context, locality_id int64) (any, error) {
-	total_locality_cary, err := s.repoCarry.CountLocality(ctx, locality_id)
+func (s service) ReportCarrie(ctx context.Context, locality_id int64) (*[]domain.ReportCarrie, error) {
+	localities, err := s.repoLocality.ReportCarrie(ctx, locality_id)
 
 	if err != nil {
 		return nil, err
 	}
 
-	localty, err := s.repoLocality.GetById(ctx, locality_id)
+	return localities, nil
+}
+
+func (s service) CreateLocality(ctx context.Context, locality *domain.LocalityModel) (*domain.LocalityModel, error) {
+	locality, err := s.repoLocality.CreateLocality(ctx, locality)
+	if err != nil {
+		return nil, err
+	}
+
+	return locality, nil
+}
+
+func (s service) GetByIdReportSeller(ctx context.Context, locality_id int64) (*[]domain.ReportSeller, error) {
+	locality, err := s.repoLocality.GetById(ctx, locality_id)
+
+	if err != nil {
+		return nil, errors.New("locality not found")
+	}
+
+	countSeller, err := s.repoSeller.CountByLocalityId(ctx, locality_id)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &struct {
-		LocalityId   int64  `json:"locality_id"`
-		LocalityName string `json:"locality_name"`
-		CarriesCount int64  `json:"carries_count"`
-	}{
-		LocalityId:   localty.Id,
-		LocalityName: localty.LocalityName,
-		CarriesCount: total_locality_cary,
-	}, nil
+	var result []domain.ReportSeller
+
+	reportSeller := domain.ReportSeller{
+		LocalityId:   locality_id,
+		LocalityName: locality.LocalityName,
+		SellerCount:  countSeller,
+	}
+
+	result = append(result, reportSeller)
+
+	return &result, nil
+
+}
+
+func (s service) GetAllReportSeller(ctx context.Context) (*[]domain.ReportSeller, error) {
+	localities, err := s.repoLocality.GetAllReportSeller(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return localities, nil
 }
