@@ -72,15 +72,11 @@ func (m repository) GetOrCreateCountry(ctx context.Context, countryName string) 
 	var id int64
 
 	if err := result.Scan(&id); err != nil {
-		if err == sql.ErrNoRows {
-			result = m.db.QueryRowContext(ctx, QueryCreateCountry, countryName)
+		result, _ := m.db.ExecContext(ctx, QueryCreateCountry, countryName)
 
-			if err := result.Scan(&id); err != nil {
-				return 0, err
-			}
-		} else {
-			return 0, err
-		}
+		lastId, _ := result.LastInsertId()
+
+		return lastId, nil
 	}
 
 	return id, nil
@@ -92,15 +88,11 @@ func (m repository) GetOrCreateProvince(ctx context.Context, countryId int64, pr
 	var id int64
 
 	if err := result.Scan(&id); err != nil {
-		if err == sql.ErrNoRows {
-			result = m.db.QueryRowContext(ctx, QueryCreateProvince, provinceName, countryId)
+		result, _ := m.db.ExecContext(ctx, QueryCreateProvince, provinceName, countryId)
 
-			if err := result.Scan(&id); err != nil {
-				return 0, err
-			}
-		} else {
-			return 0, err
-		}
+		lastId, _ := result.LastInsertId()
+
+		return lastId, nil
 	}
 
 	return id, nil
