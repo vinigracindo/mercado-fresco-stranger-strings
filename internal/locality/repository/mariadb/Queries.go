@@ -22,9 +22,30 @@ const (
     group by c.locality_id 
     `
 
-	QuerryCreateLocality = `
+	QueryCreateLocality2 = `
     INSERT INTO localities (locality_name, province_name, country_name, province_id)
     VALUES (?, ?, ?, ?)`
+
+	QueryCreateLocality = `
+    INSERT INTO localities (id, locality_name, province_id)
+    VALUES (?, ?, ?)`
+
+	QueryCreateProvince = `
+    INSERT INTO provinces (id, province_name, country_id)
+    VALUES (?, ?, ?)`
+
+	QueryGetProvinceByName = `
+    select id
+    from provinces
+    where province_name = ?
+    `
+
+	QueryCreateCountry = `
+    INSERT INTO countries (id, country_name)
+    VALUES (?, ?)`
+
+	QueryGetCountryByName = `
+    select id from countries where country_name = ?`
 
 	QueryGetAllLocality = `
     SELECT l.id, l.locality_name, count(s.id) as sellers_count

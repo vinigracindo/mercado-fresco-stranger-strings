@@ -65,14 +65,55 @@ func (m repository) ReportCarrie(ctx context.Context, id int64) (*[]domain.Repor
 	return &listReport, nil
 }
 
+func getOrCreateCountry(ctx context.Context, db *sql.DB, countryName string) (int64, error) {
+	result := db.QueryRowContext(ctx, QueryGetCountryByName, countryName)
+
+	var id int64
+
+	if err := result.Scan(&id); err != nil {
+		if err == sql.ErrNoRows {
+			result = db.QueryRowContext(ctx, QueryCreateCountry, countryName)
+
+			if err := result.Scan(&id); err != nil {
+				return 0, err
+			}
+		} else {
+			return 0, err
+		}
+	}
+
+	return id, nil
+}
+
+func getOrCreateProvince(ctx context.Context, db *sql.DB, countryId int64, provinceName string) (int64, error) {
+	result := db.QueryRowContext(ctx, QueryGetProvinceByName, countryId, provinceName)
+
+	var id int64
+
+	if err := result.Scan(&id); err != nil {
+		if err == sql.ErrNoRows {
+			result = db.QueryRowContext(ctx, QueryCreateProvince, countryId, provinceName)
+
+			if err := result.Scan(&id); err != nil {
+				return 0, err
+			}
+		} else {
+			return 0, err
+		}
+	}
+
+	return id, nil
+}
+
 func (m repository) CreateLocality(ctx context.Context, locality *domain.LocalityModel) (*domain.LocalityModel, error) {
+	country_id, _ := getOrCreateCountry(ctx, m.db, locality.CountryName)
+	province_id, _ := getOrCreateProvince(ctx, m.db, country_id, locality.ProvinceName)
+
 	localityResult, err := m.db.ExecContext(
 		ctx,
-		QuerryCreateLocality,
+		QueryCreateLocality,
 		&locality.LocalityName,
-		&locality.ProvinceName,
-		&locality.CountryName,
-		&locality.ProvinceId,
+		&province_id,
 	)
 
 	if err != nil {
