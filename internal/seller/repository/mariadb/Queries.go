@@ -24,5 +24,5 @@ const (
 	WHERE id = ?`
 
 	QueryCountByLocalityId = `
-    SELECT COUNT(*) FROM sellers WHERE product_id = ?`
+    SELECT COUNT(*) FROM sellers WHERE locality_id = ?`
 )

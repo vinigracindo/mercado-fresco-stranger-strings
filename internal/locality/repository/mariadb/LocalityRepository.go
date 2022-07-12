@@ -24,10 +24,9 @@ func (m repository) GetById(ctx context.Context, id int64) (*domain.LocalityMode
 
 	if err := result.Scan(
 		&locality.Id,
-		&locality.LocalityName,
-		&locality.ProvinceName,
 		&locality.CountryName,
-		&locality.ProvinceId,
+		&locality.ProvinceName,
+		&locality.LocalityName,
 	); err != nil {
 		return nil, err
 	}
