@@ -27,12 +27,12 @@ const (
     VALUES (?, ?, ?, ?)`
 
 	QueryCreateLocality = `
-    INSERT INTO localities (id, locality_name, province_id)
-    VALUES (?, ?, ?)`
+    INSERT INTO localities (locality_name, province_id)
+    VALUES (?, ?)`
 
 	QueryCreateProvince = `
-    INSERT INTO provinces (id, province_name, country_id)
-    VALUES (?, ?, ?)`
+    INSERT INTO provinces (province_name, country_id)
+    VALUES (?, ?)`
 
 	QueryGetProvinceByName = `
     select id
@@ -41,8 +41,8 @@ const (
     `
 
 	QueryCreateCountry = `
-    INSERT INTO countries (id, country_name)
-    VALUES (?, ?)`
+    INSERT INTO countries (country_name)
+    VALUES (?)`
 
 	QueryGetCountryByName = `
     select id from countries where country_name = ?`

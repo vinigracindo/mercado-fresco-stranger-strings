@@ -13,7 +13,7 @@ type RequestLocalityPost struct {
 	LocalityName string `json:"locality_name" binding:"required"`
 	ProvinceName string `json:"province_name" binding:"required"`
 	CountryName  string `json:"country_name" binding:"required"`
-	ProvinceId   int64  `json:"province_id" binding:"required"`
+	ProvinceId   int64  `json:"province_id"`
 }
 
 type Locality struct {

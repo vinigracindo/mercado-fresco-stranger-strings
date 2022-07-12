@@ -86,13 +86,13 @@ func getOrCreateCountry(ctx context.Context, db *sql.DB, countryName string) (in
 }
 
 func getOrCreateProvince(ctx context.Context, db *sql.DB, countryId int64, provinceName string) (int64, error) {
-	result := db.QueryRowContext(ctx, QueryGetProvinceByName, countryId, provinceName)
+	result := db.QueryRowContext(ctx, QueryGetProvinceByName, provinceName)
 
 	var id int64
 
 	if err := result.Scan(&id); err != nil {
 		if err == sql.ErrNoRows {
-			result = db.QueryRowContext(ctx, QueryCreateProvince, countryId, provinceName)
+			result = db.QueryRowContext(ctx, QueryCreateProvince, provinceName, countryId)
 
 			if err := result.Scan(&id); err != nil {
 				return 0, err

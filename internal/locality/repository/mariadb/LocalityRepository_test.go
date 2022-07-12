@@ -168,7 +168,7 @@ func Test_CreateLocalityRepository(t *testing.T) {
 		defer db.Close()
 
 		mock.
-			ExpectExec(regexp.QuoteMeta(repository.QuerryCreateLocality)).
+			ExpectExec(regexp.QuoteMeta(repository.QueryCreateLocality)).
 			WithArgs(
 				&expectedLocality.LocalityName,
 				&expectedLocality.ProvinceName,
@@ -190,7 +190,7 @@ func Test_CreateLocalityRepository(t *testing.T) {
 		defer db.Close()
 
 		mock.
-			ExpectExec(regexp.QuoteMeta(repository.QuerryCreateLocality)).
+			ExpectExec(regexp.QuoteMeta(repository.QueryCreateLocality)).
 			WithArgs(0, 0, 0, 0, 0).
 			WillReturnResult(sqlmock.NewResult(0, 0))
 
