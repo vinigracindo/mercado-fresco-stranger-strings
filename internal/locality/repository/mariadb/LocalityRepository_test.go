@@ -33,6 +33,11 @@ var expectedCarries = []domain.ReportCarrie{
 		LocalityName: "Salvador",
 		CarriesCount: 1,
 	},
+	{
+		LocalityId:   2,
+		LocalityName: "Belo Horizonte",
+		CarriesCount: 10000,
+	},
 }
 
 func Test_GetByIdRepository(t *testing.T) {
@@ -299,4 +304,75 @@ func Test_CreateLocalityRepository(t *testing.T) {
 		assert.Equal(t, result, &expectedLocality)
 	})
 
+}
+
+func Test_report_carry(t *testing.T) {
+	t.Run("success_get_report", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		rows := sqlmock.NewRows([]string{
+			"locality_id",
+			"locality_name",
+			"total_locality",
+		}).AddRow(
+			expectedCarries[0].LocalityId,
+			expectedCarries[0].LocalityName,
+			expectedCarries[0].CarriesCount,
+		).AddRow(
+			expectedCarries[1].LocalityId,
+			expectedCarries[1].LocalityName,
+			expectedCarries[1].CarriesCount)
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.QueryCarryReport)).WillReturnRows(rows)
+
+		localityRepository := repository.NewMariadbLocalityRepository(db)
+
+		result, err := localityRepository.ReportCarrie(context.TODO(), 0)
+
+		assert.NoError(t, err)
+		assert.Equal(t, result, &expectedCarries)
+	})
+
+	t.Run("error_exec_query", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.QueryCarryReport)).WithArgs("a").WillReturnError(fmt.Errorf("error: invalid id"))
+
+		localityRepository := repository.NewMariadbLocalityRepository(db)
+
+		result, err := localityRepository.ReportCarrie(context.TODO(), 0)
+
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("error_when_scan_query_result", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		assert.NoError(t, err)
+		defer db.Close()
+
+		rows := sqlmock.NewRows([]string{
+			"locality_id",
+			"locality_name",
+		}).AddRow(
+			expectedCarries[0].LocalityId,
+			expectedCarries[0].LocalityName,
+		).AddRow(
+			expectedCarries[1].LocalityId,
+			expectedCarries[1].LocalityName,
+		)
+
+		mock.ExpectQuery(regexp.QuoteMeta(repository.QueryCarryReport)).WillReturnRows(rows)
+
+		localityRepository := repository.NewMariadbLocalityRepository(db)
+
+		result, err := localityRepository.ReportCarrie(context.TODO(), 1)
+
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
 }
