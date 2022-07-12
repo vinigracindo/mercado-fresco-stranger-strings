@@ -68,7 +68,7 @@ func (c SellerController) GetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, err)
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 		seller, err := c.service.GetById(ctx.Request.Context(), id)
@@ -134,7 +134,7 @@ func (c SellerController) Update() gin.HandlerFunc {
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, err)
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
@@ -173,7 +173,7 @@ func (c SellerController) Delete() gin.HandlerFunc {
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 
 		if err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, err)
+			httputil.NewError(ctx, http.StatusBadRequest, err)
 			return
 		}
 
