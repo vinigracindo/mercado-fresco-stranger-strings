@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/http/ping"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/routes"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
 )
@@ -29,25 +30,22 @@ func (api *APIServer) Run(port int) {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	apiV1 := router.Group("api/v1")
+	// Health check
+	pingController := ping.NewController()
+	router.GET("/ping", pingController.HandlePing)
 
+	apiV1 := router.Group("api/v1")
 	routes.SectionRoutes(apiV1.Group("/sections"), db)
 	routes.EmployeeRoutes(apiV1.Group("/employees"), db)
 	routes.InboundOrdersRoutes(apiV1.Group("/inboundOrders"), db)
 	routes.ProductRoutes(apiV1.Group("/products"), db)
-
-	// Product routes
 	routes.ProductRecordsRoutes(apiV1.Group("/productRecords"), db)
-
-	//Warehouse routes
 	routes.WarehouseRoutes(apiV1.Group("/warehouses"), db)
 	routes.SellerRoutes(apiV1.Group("/sellers"), db)
 	routes.BuyerRoutes(apiV1.Group("/buyers"), db)
 	routes.CarryRoutes(apiV1.Group("/carries"), db)
 	routes.LocalityRoutes(apiV1.Group("/localities"), db)
 	routes.ProductBatchRoutes(apiV1.Group("/productBatches"), db)
-
-	//PurchaseOrders routes
 	routes.PurchaseOrdersRoutes(apiV1.Group("/purchaseOrders"), db)
 
 	router.Run(fmt.Sprintf(":%d", port))
