@@ -83,6 +83,48 @@ func (_m *LocalityRepository) GetById(ctx context.Context, id int64) (*domain.Lo
 	return r0, r1
 }
 
+// GetOrCreateCountry provides a mock function with given fields: ctx, countryName
+func (_m *LocalityRepository) GetOrCreateCountry(ctx context.Context, countryName string) (int64, error) {
+	ret := _m.Called(ctx, countryName)
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func(context.Context, string) int64); ok {
+		r0 = rf(ctx, countryName)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, countryName)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetOrCreateProvince provides a mock function with given fields: ctx, countryId, provinceName
+func (_m *LocalityRepository) GetOrCreateProvince(ctx context.Context, countryId int64, provinceName string) (int64, error) {
+	ret := _m.Called(ctx, countryId, provinceName)
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func(context.Context, int64, string) int64); ok {
+		r0 = rf(ctx, countryId, provinceName)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64, string) error); ok {
+		r1 = rf(ctx, countryId, provinceName)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // ReportCarrie provides a mock function with given fields: ctx, id
 func (_m *LocalityRepository) ReportCarrie(ctx context.Context, id int64) (*[]domain.ReportCarrie, error) {
 	ret := _m.Called(ctx, id)

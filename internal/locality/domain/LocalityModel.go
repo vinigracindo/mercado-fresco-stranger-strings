@@ -34,4 +34,6 @@ type LocalityRepository interface {
 	GetAllReportSeller(ctx context.Context) (*[]ReportSeller, error)
 	ReportCarrie(ctx context.Context, id int64) (*[]ReportCarrie, error)
 	CreateLocality(ctx context.Context, locality *LocalityModel) (*LocalityModel, error)
+	GetOrCreateProvince(ctx context.Context, countryId int64, provinceName string) (int64, error)
+	GetOrCreateCountry(ctx context.Context, countryName string) (int64, error)
 }
