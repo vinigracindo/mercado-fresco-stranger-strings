@@ -203,22 +203,4 @@ func Test_CreateLocalityRepository(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, result, &expectedLocality)
 	})
-
-	/*t.Run("create_query_error: Should return error when query execution fails", func(t *testing.T) {
-		db, mock, err := sqlmock.New()
-		assert.NoError(t, err)
-		defer db.Close()
-
-		mock.
-			ExpectExec(regexp.QuoteMeta(repository.QueryCreateLocality)).
-			WithArgs(0, 0, 0, 0, 0).
-			WillReturnResult(sqlmock.NewResult(0, 0))
-
-		localityRepository := repository.NewMariadbLocalityRepository(db)
-
-		_, err = localityRepository.CreateLocality(context.TODO(), &expectedLocality)
-
-		assert.Error(t, err)
-
-	})*/
 }
