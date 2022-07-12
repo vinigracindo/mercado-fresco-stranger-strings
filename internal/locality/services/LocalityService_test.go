@@ -29,6 +29,14 @@ var expectedReportSeller = []domain.ReportSeller{
 	},
 }
 
+var expectedReportCarrie = []domain.ReportCarrie{
+	{
+		LocalityId:   1,
+		LocalityName: "Salvador",
+		CarriesCount: 1,
+	},
+}
+
 func Test_CreateLocalityService(t *testing.T) {
 	repoLocality := mocks.NewLocalityRepository(t)
 	repoSeller := mocksSeller.NewRepositorySeller(t)
@@ -142,5 +150,53 @@ func Test_GetAllReportSeller(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, result, &expectedReportSeller)
+	})
+
+	t.Run("GetAll_error: should return an error", func(t *testing.T) {
+		repoLocality.
+			On("GetAllReportSeller", ctx).
+			Return(nil, errors.New("error")).
+			Once()
+
+		service := services.NewLocalityService(repoLocality, repoSeller)
+
+		result, err := service.GetAllReportSeller(ctx)
+
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+}
+
+func Test_ReportCarrie(t *testing.T) {
+	repoLocality := mocks.NewLocalityRepository(t)
+	repoSeller := mocksSeller.NewRepositorySeller(t)
+	ctx := context.TODO()
+
+	t.Run("ReportCarrie_ok: should return reportSeller list", func(t *testing.T) {
+		repoLocality.
+			On("ReportCarrie", ctx, int64(1)).
+			Return(&expectedReportCarrie, nil).
+			Once()
+
+		service := services.NewLocalityService(repoLocality, repoSeller)
+
+		result, err := service.ReportCarrie(ctx, int64(1))
+
+		assert.NoError(t, err)
+		assert.Equal(t, result, &expectedReportCarrie)
+	})
+
+	t.Run("ReportCarrie_error: should return an error", func(t *testing.T) {
+		repoLocality.
+			On("ReportCarrie", ctx, int64(1)).
+			Return(nil, errors.New("error")).
+			Once()
+
+		service := services.NewLocalityService(repoLocality, repoSeller)
+
+		result, err := service.ReportCarrie(ctx, int64(1))
+
+		assert.Error(t, err)
+		assert.Nil(t, result)
 	})
 }
