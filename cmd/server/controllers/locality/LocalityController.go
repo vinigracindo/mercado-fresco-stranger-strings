@@ -28,7 +28,6 @@ func NewLocalityController(s domain.LocalityService) *Locality {
 
 func (l Locality) ReportCarrie() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// if query_id, check := ctx.GetQuery("id"); check {
 
 		query_id, exist := ctx.GetQuery("id")
 
@@ -53,7 +52,6 @@ func (l Locality) ReportCarrie() gin.HandlerFunc {
 		httputil.NewResponse(ctx, http.StatusOK, report_list)
 
 	}
-	// }
 }
 
 func (c Locality) CreateLocality() gin.HandlerFunc {
