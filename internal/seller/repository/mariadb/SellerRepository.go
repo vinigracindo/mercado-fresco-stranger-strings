@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/seller/domain"
 )
@@ -58,12 +57,9 @@ func (m *mariaDBSellerRepository) GetById(ctx context.Context, id int64) (*domai
 		&seller.Telephone,
 		&seller.LocalityId,
 	)
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrIDNotFound
-	}
 
 	if err != nil {
-		return nil, err
+		return nil, domain.ErrIDNotFound
 	}
 
 	return &seller, nil
@@ -104,14 +100,10 @@ func (m *mariaDBSellerRepository) Update(ctx context.Context, seller *domain.Sel
 		return nil, err
 	}
 
-	affectedRows, err := sellerResult.RowsAffected()
+	affectedRows, _ := sellerResult.RowsAffected()
 
 	if affectedRows == 0 {
 		return nil, domain.ErrIDNotFound
-	}
-
-	if err != nil {
-		return nil, err
 	}
 
 	return seller, nil
