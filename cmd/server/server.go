@@ -39,11 +39,9 @@ func (api *APIServer) Run(port int) {
 	//Seller routes
 	routes.SellerRoutes(apiV1.Group("/sellers"), db)
 
-	//Locality routes
-	routes.LocalityRoutes(apiV1.Group("/localities"), db)
-
 	routes.BuyerRoutes(apiV1.Group("/buyers"), db)
 	routes.CarryRoutes(apiV1.Group("/carries"), db)
+	//Locality routes
 	routes.LocalityRoutes(apiV1.Group("/localities"), db)
 
 	router.Run(fmt.Sprintf(":%d", port))
