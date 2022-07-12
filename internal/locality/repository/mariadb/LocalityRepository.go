@@ -107,19 +107,20 @@ func (m repository) GetOrCreateProvince(ctx context.Context, countryId int64, pr
 }
 
 func (m repository) CreateLocality(ctx context.Context, locality *domain.LocalityModel) (*domain.LocalityModel, error) {
-	transaction, _ := m.db.BeginTx(ctx, nil)
-	stmt, _ := transaction.Prepare(QueryCreateLocality)
+	//transaction, _ := m.db.BeginTx(ctx, nil)
+	//stmt, _ := transaction.Prepare(QueryCreateLocality)
 
 	country_id, _ := m.GetOrCreateCountry(ctx, locality.CountryName)
 	province_id, _ := m.GetOrCreateProvince(ctx, country_id, locality.ProvinceName)
 
-	localityResult, err := stmt.ExecContext(
+	localityResult, err := m.db.ExecContext(
 		ctx,
-		&locality.LocalityName,
-		&province_id)
+		QueryCreateLocality,
+		locality.LocalityName,
+		province_id)
 
 	if err != nil {
-		transaction.Rollback()
+		//transaction.Rollback()
 		log.Print(err)
 	}
 
@@ -127,7 +128,7 @@ func (m repository) CreateLocality(ctx context.Context, locality *domain.Localit
 
 	locality.Id = lastId
 
-	transaction.Commit()
+	//transaction.Commit()
 
 	return locality, nil
 }

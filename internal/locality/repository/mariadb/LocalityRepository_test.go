@@ -162,33 +162,43 @@ func Test_GetAllReportSellerRepository(t *testing.T) {
 }
 
 func Test_CreateLocalityRepository(t *testing.T) {
-	t.Run("creat_ok: Should creat a seller", func(t *testing.T) {
+	t.Run("creat_ok: Should creat a locality", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
 		defer db.Close()
-		mock.
-			ExpectExec(regexp.QuoteMeta(repository.QueryCreateCountry)).
-			WithArgs(&expectedLocality.CountryName).
-			WillReturnResult(sqlmock.NewResult(1, 1))
+
+		row_country := sqlmock.NewRows([]string{
+			"id",
+		}).AddRow(expectedLocality.Id)
 
 		mock.
-			ExpectExec(regexp.QuoteMeta(repository.QueryCreateProvince)).
-			WithArgs(&expectedLocality.ProvinceName, int64(1)).
-			WillReturnResult(sqlmock.NewResult(1, 1))
+			ExpectQuery(regexp.QuoteMeta(repository.QueryGetCountryByName)).
+			WithArgs(&expectedLocality.CountryName).
+			WillReturnRows(row_country)
+
+		row_province := sqlmock.NewRows([]string{
+			"id",
+		}).AddRow(expectedLocality.Id)
+
+		mock.
+			ExpectQuery(regexp.QuoteMeta(repository.QueryGetProvinceByName)).
+			WithArgs(&expectedLocality.ProvinceName).
+			WillReturnRows(row_province)
 
 		mock.
 			ExpectExec(regexp.QuoteMeta(repository.QueryCreateLocality)).
 			WithArgs(
-				&expectedLocality.LocalityName,
-				&expectedLocality.ProvinceId).
+				expectedLocality.LocalityName,
+				expectedLocality.Id,
+			).
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
 		localityRepository := repository.NewMariadbLocalityRepository(db)
 
-		_, err = localityRepository.CreateLocality(context.TODO(), &expectedLocality)
+		result, err := localityRepository.CreateLocality(context.TODO(), &expectedLocality)
 
 		assert.NoError(t, err)
-		//assert.Equal(t, result, &expectedLocality)
+		assert.Equal(t, result, &expectedLocality)
 	})
 
 	/*t.Run("create_query_error: Should return error when query execution fails", func(t *testing.T) {
