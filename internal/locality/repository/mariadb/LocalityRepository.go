@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/locality/domain"
 )
@@ -106,10 +107,23 @@ func getOrCreateProvince(ctx context.Context, db *sql.DB, countryId int64, provi
 }
 
 func (m repository) CreateLocality(ctx context.Context, locality *domain.LocalityModel) (*domain.LocalityModel, error) {
+	transaction, _ := m.db.BeginTx(ctx, nil)
+	stmt, _ := transaction.Prepare(QueryCreateLocality)
+
 	country_id, _ := getOrCreateCountry(ctx, m.db, locality.CountryName)
 	province_id, _ := getOrCreateProvince(ctx, m.db, country_id, locality.ProvinceName)
 
-	localityResult, err := m.db.ExecContext(
+	localityResult, err := stmt.ExecContext(
+		ctx,
+		&locality.LocalityName,
+		&province_id)
+
+	if err != nil {
+		transaction.Rollback()
+		log.Print(err)
+	}
+
+	/*localityResult, err := m.db.ExecContext(
 		ctx,
 		QueryCreateLocality,
 		&locality.LocalityName,
@@ -118,11 +132,13 @@ func (m repository) CreateLocality(ctx context.Context, locality *domain.Localit
 
 	if err != nil {
 		return nil, err
-	}
+		}*/
 
 	lastId, _ := localityResult.LastInsertId()
 
 	locality.Id = lastId
+
+	transaction.Commit()
 
 	return locality, nil
 }
