@@ -79,6 +79,24 @@ func Test_Service_GetAll(t *testing.T) {
 
 	})
 
+	t.Run("find_all_error: when there is an error, should return an error", func(t *testing.T) {
+		repo := mocks.NewRepositorySeller(t)
+		ctx := context.Background()
+
+		repo.
+			On("GetAll", ctx).
+			Return(nil, fmt.Errorf("Error")).
+			Once()
+
+		service := services.NewSellerService(repo)
+
+		sellers, err := service.GetAll(ctx)
+
+		assert.Nil(t, sellers)
+		assert.NotNil(t, err)
+
+	})
+
 }
 
 func Test_Service_GetById(t *testing.T) {
@@ -146,6 +164,26 @@ func Test_Service_Update(t *testing.T) {
 		service := services.NewSellerService(repo)
 
 		result, err := service.Update(ctx, int64(3), "Salvador, BA", "11 98989898")
+
+		assert.Nil(t, result)
+		assert.NotNil(t, err)
+
+	})
+
+	t.Run("update_error: when there is an error, should return an error", func(t *testing.T) {
+		repo.
+			On("GetById", ctx, int64(1)).
+			Return(&expectedSeller, nil).
+			Once()
+
+		repo.
+			On("Update", ctx, &expectedSeller).
+			Return(nil, fmt.Errorf("Error")).
+			Once()
+
+		service := services.NewSellerService(repo)
+
+		result, err := service.Update(ctx, int64(1), "Salvador, BA", "11 98989898")
 
 		assert.Nil(t, result)
 		assert.NotNil(t, err)
