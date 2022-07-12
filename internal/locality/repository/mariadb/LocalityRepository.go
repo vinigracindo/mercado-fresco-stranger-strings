@@ -123,17 +123,6 @@ func (m repository) CreateLocality(ctx context.Context, locality *domain.Localit
 		log.Print(err)
 	}
 
-	/*localityResult, err := m.db.ExecContext(
-		ctx,
-		QueryCreateLocality,
-		&locality.LocalityName,
-		&province_id,
-	)
-
-	if err != nil {
-		return nil, err
-		}*/
-
 	lastId, _ := localityResult.LastInsertId()
 
 	locality.Id = lastId
