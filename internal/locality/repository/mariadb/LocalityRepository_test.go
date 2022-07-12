@@ -45,7 +45,6 @@ func Test_GetByIdRepository(t *testing.T) {
 			&expectedLocality.LocalityName,
 			&expectedLocality.ProvinceName,
 			&expectedLocality.CountryName,
-			&expectedLocality.ProvinceId,
 		)
 
 		localityRepository := repository.NewMariadbLocalityRepository(db)
@@ -167,9 +166,13 @@ func Test_CreateLocalityRepository(t *testing.T) {
 		assert.NoError(t, err)
 		defer db.Close()
 
+		mock.ExpectBegin()
+
 		row_country := sqlmock.NewRows([]string{
 			"id",
 		}).AddRow(expectedLocality.Id)
+
+		mock.ExpectPrepare(regexp.QuoteMeta(repository.QueryCreateLocality))
 
 		mock.
 			ExpectQuery(regexp.QuoteMeta(repository.QueryGetCountryByName)).
@@ -188,10 +191,12 @@ func Test_CreateLocalityRepository(t *testing.T) {
 		mock.
 			ExpectExec(regexp.QuoteMeta(repository.QueryCreateLocality)).
 			WithArgs(
-				expectedLocality.LocalityName,
-				expectedLocality.Id,
+				&expectedLocality.LocalityName,
+				&expectedLocality.Id,
 			).
 			WillReturnResult(sqlmock.NewResult(1, 1))
+
+		mock.ExpectCommit()
 
 		localityRepository := repository.NewMariadbLocalityRepository(db)
 
