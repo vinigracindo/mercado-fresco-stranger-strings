@@ -17,7 +17,6 @@ var expectedLocality = domain.LocalityModel{
 	LocalityName: "Salvador",
 	ProvinceName: "Bahia",
 	CountryName:  "Brasil",
-	ProvinceId:   1,
 }
 
 var expectedReportSeller = []domain.ReportSeller{
@@ -36,15 +35,14 @@ func Test_GetByIdRepository(t *testing.T) {
 
 		row := sqlmock.NewRows([]string{
 			"id",
-			"locality_name",
-			"province_name",
 			"country_name",
-			"province_id",
+			"province_name",
+			"locality_name",
 		}).AddRow(
 			&expectedLocality.Id,
-			&expectedLocality.LocalityName,
-			&expectedLocality.ProvinceName,
 			&expectedLocality.CountryName,
+			&expectedLocality.ProvinceName,
+			&expectedLocality.LocalityName,
 		)
 
 		localityRepository := repository.NewMariadbLocalityRepository(db)
