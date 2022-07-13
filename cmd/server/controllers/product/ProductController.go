@@ -98,7 +98,7 @@ func (c *ProductController) GetById() gin.HandlerFunc {
 // @Tags         Products
 // @Accept       json
 // @Produce      json
-// @Param Product body requestProductPost true "Create product"
+// @Param Product body RequestProductPost true "Create product"
 // @Success      201  {object} domain.Product
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
@@ -145,7 +145,7 @@ func (c *ProductController) Create() gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param id path int true "Product ID"
-// @Param Product body requestProductPatch true "Update field"
+// @Param Product body RequestProductPatch true "Update field"
 // @Success      200  {object} domain.Product
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
@@ -217,6 +217,7 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 // @Tags         Products
 // @Accept       json
 // @Produce      json
+// @Param	id 	 query int false "Product ID"
 // @Success      200  {array} domain.ProductRecordsReport
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure 	 400  {object}  httputil.HTTPError

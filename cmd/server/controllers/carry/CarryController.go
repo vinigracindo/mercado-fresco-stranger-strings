@@ -29,7 +29,7 @@ func NewCarryController(s domain.CarryService) *Carry {
 // Carry godoc
 // @Summary      Create carry
 // @Description  create carry
-// @Tags         carry
+// @Tags         Carries
 // @Accept       json
 // @Produce      json
 // @Param carry body RequestCarryPost true "Create carry"

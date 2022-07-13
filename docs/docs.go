@@ -100,6 +100,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/buyers/purchaseOrders": {
+            "get": {
+                "description": "List all reports buyer records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyers"
+                ],
+                "summary": "List all report product records by id and list all report buyer records",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Buyer ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.PurchaseOrdersReport"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/buyers/{id}": {
             "get": {
                 "description": "get buyer by id",
@@ -234,6 +286,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/carries": {
+            "post": {
+                "description": "create carry",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carries"
+                ],
+                "summary": "Create carry",
+                "parameters": [
+                    {
+                        "description": "Create carry",
+                        "name": "carry",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.RequestCarryPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.CarryModel"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/employees": {
             "get": {
                 "description": "get all employees",
@@ -257,8 +355,8 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/httputil.HTTPError"
                         }
@@ -303,6 +401,46 @@ const docTemplate = `{
                     },
                     "422": {
                         "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/employees/reportInboundOrders": {
+            "get": {
+                "description": "Inbound orders quantity by employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "Report inbound orders employee",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Employee ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/httputil.HTTPError"
                         }
@@ -441,9 +579,305 @@ const docTemplate = `{
                 }
             }
         },
+        "/inboundOrders": {
+            "post": {
+                "description": "create inbound order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InboundOrders"
+                ],
+                "summary": "Create InboundOrder",
+                "parameters": [
+                    {
+                        "description": "Create inbound orders",
+                        "name": "InboundOrders",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.RequestInboundOrdersPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.InboundOrders"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/localities": {
+            "post": {
+                "description": "create localite",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Create locality",
+                "parameters": [
+                    {
+                        "description": "Create locality",
+                        "name": "Locality",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/locality.RequestLocalityPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.LocalityModel"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/localities/reportCarries": {
+            "get": {
+                "description": "Report carries",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Report carries",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "locality ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/localities/reportSellers": {
+            "get": {
+                "description": "Report localities by seller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Report localities by seller",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Seller ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "description": "Returns a successful pong answer to all HTTP requests",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "misc"
+                ],
+                "summary": "Healthcheck endpoint",
+                "responses": {
+                    "200": {
+                        "description": "pong",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/productBatches": {
+            "post": {
+                "description": "create product batch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product batches"
+                ],
+                "summary": "Create product batch",
+                "parameters": [
+                    {
+                        "description": "Create product batch",
+                        "name": "ProductBatch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.RequestProductBatchPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ProductBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/productRecords": {
+            "post": {
+                "description": "create product records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductRecords"
+                ],
+                "summary": "Create ProductRecords",
+                "parameters": [
+                    {
+                        "description": "Create product records",
+                        "name": "ProductRecords",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.RequestProductRecordsPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ProductRecords"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/products": {
             "get": {
-                "description": "get all products",
+                "description": "Get all products",
                 "consumes": [
                     "application/json"
                 ],
@@ -491,7 +925,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.requestProductPost"
+                            "$ref": "#/definitions/controllers.RequestProductPost"
                         }
                     }
                 ],
@@ -622,7 +1056,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.requestProductPatch"
+                            "$ref": "#/definitions/controllers.RequestProductPatch"
                         }
                     }
                 ],
@@ -631,6 +1065,98 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/domain.Product"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/purchaseOrders": {
+            "post": {
+                "description": "create purchaseOrders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrders"
+                ],
+                "summary": "Create purchaseOrders",
+                "parameters": [
+                    {
+                        "description": "Create purchaseOrders",
+                        "name": "purchaseOrders",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.PurchaseOrdersCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.PurchaseOrders"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportRecords": {
+            "get": {
+                "description": "List all reports product records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "List all report product records by id and list all report product records",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.ProductRecordsReport"
+                            }
                         }
                     },
                     "400": {
@@ -717,6 +1243,58 @@ const docTemplate = `{
                     },
                     "422": {
                         "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sections/reportProducts": {
+            "get": {
+                "description": "report products count by section",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Report products",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Section ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.ReportProductsModel"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/httputil.HTTPError"
                         }
@@ -1093,7 +1671,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/warehouse.WarehouseModel"
+                                "$ref": "#/definitions/domain.WarehouseModel"
                             }
                         }
                     },
@@ -1132,7 +1710,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/warehouse.WarehouseModel"
+                            "$ref": "#/definitions/domain.WarehouseModel"
                         }
                     },
                     "409": {
@@ -1176,7 +1754,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/warehouse.WarehouseModel"
+                            "$ref": "#/definitions/domain.WarehouseModel"
                         }
                     },
                     "400": {
@@ -1266,7 +1844,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/warehouse.WarehouseModel"
+                            "$ref": "#/definitions/domain.WarehouseModel"
                         }
                     },
                     "409": {
@@ -1286,8 +1864,229 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.PurchaseOrdersCreate": {
+            "type": "object",
+            "required": [
+                "buyer_id",
+                "order_date",
+                "order_number",
+                "order_status_id",
+                "product_record_id",
+                "tracking_code"
+            ],
+            "properties": {
+                "buyer_id": {
+                    "type": "integer"
+                },
+                "order_date": {
+                    "type": "string"
+                },
+                "order_number": {
+                    "type": "string"
+                },
+                "order_status_id": {
+                    "type": "integer"
+                },
+                "product_record_id": {
+                    "type": "integer"
+                },
+                "tracking_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.RequestCarryPost": {
+            "type": "object",
+            "required": [
+                "address",
+                "cid",
+                "company_name",
+                "locality_id",
+                "telephone"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cid": {
+                    "type": "integer"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "locality_id": {
+                    "type": "integer"
+                },
+                "telephone": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.RequestInboundOrdersPost": {
+            "type": "object",
+            "required": [
+                "employee_id",
+                "order_date",
+                "order_number",
+                "product_batch_id",
+                "warehouse_id"
+            ],
+            "properties": {
+                "employee_id": {
+                    "type": "integer"
+                },
+                "order_date": {
+                    "type": "string"
+                },
+                "order_number": {
+                    "type": "string"
+                },
+                "product_batch_id": {
+                    "type": "integer"
+                },
+                "warehouse_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.RequestProductBatchPost": {
+            "type": "object",
+            "required": [
+                "batch_number",
+                "current_quantity",
+                "current_temperature",
+                "due_date",
+                "initial_quantity",
+                "manufacturing_date",
+                "manufacturing_hour",
+                "minumum_temperature",
+                "product_id",
+                "section_id"
+            ],
+            "properties": {
+                "batch_number": {
+                    "type": "integer"
+                },
+                "current_quantity": {
+                    "type": "integer"
+                },
+                "current_temperature": {
+                    "type": "number"
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "initial_quantity": {
+                    "type": "integer"
+                },
+                "manufacturing_date": {
+                    "type": "string"
+                },
+                "manufacturing_hour": {
+                    "type": "integer"
+                },
+                "minumum_temperature": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "section_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.RequestProductPatch": {
+            "type": "object",
+            "required": [
+                "description"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.RequestProductPost": {
+            "type": "object",
+            "required": [
+                "description",
+                "expiration_rate",
+                "freezing_rate",
+                "height",
+                "length",
+                "net_weight",
+                "product_code",
+                "product_type_id",
+                "recommended_freezing_temperature",
+                "seller_id",
+                "width"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "expiration_rate": {
+                    "type": "number"
+                },
+                "freezing_rate": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "length": {
+                    "type": "number"
+                },
+                "net_weight": {
+                    "type": "number"
+                },
+                "product_code": {
+                    "type": "string"
+                },
+                "product_type_id": {
+                    "type": "integer"
+                },
+                "recommended_freezing_temperature": {
+                    "type": "number"
+                },
+                "seller_id": {
+                    "type": "integer"
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
+        "controllers.RequestProductRecordsPost": {
+            "type": "object",
+            "required": [
+                "last_update_date",
+                "product_id",
+                "purchase_price",
+                "sale_price"
+            ],
+            "properties": {
+                "last_update_date": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "purchase_price": {
+                    "type": "number"
+                },
+                "sale_price": {
+                    "type": "number"
+                }
+            }
+        },
         "controllers.RequestWarehousePatch": {
             "type": "object",
+            "required": [
+                "minimun_capacity",
+                "minimun_temperature"
+            ],
             "properties": {
                 "minimun_capacity": {
                     "type": "integer"
@@ -1301,6 +2100,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "address",
+                "locality_id",
                 "minimun_capacity",
                 "minimun_temperature",
                 "telephone",
@@ -1309,6 +2109,9 @@ const docTemplate = `{
             "properties": {
                 "address": {
                     "type": "string"
+                },
+                "locality_id": {
+                    "type": "integer"
                 },
                 "minimun_capacity": {
                     "type": "integer"
@@ -1396,68 +2199,6 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.requestProductPatch": {
-            "type": "object",
-            "required": [
-                "description"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                }
-            }
-        },
-        "controllers.requestProductPost": {
-            "type": "object",
-            "required": [
-                "description",
-                "expiration_rate",
-                "freezing_rate",
-                "height",
-                "length",
-                "net_weight",
-                "product_code",
-                "product_type_id",
-                "recommended_freezing_temperature",
-                "seller_id",
-                "width"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "expiration_rate": {
-                    "type": "number"
-                },
-                "freezing_rate": {
-                    "type": "integer"
-                },
-                "height": {
-                    "type": "number"
-                },
-                "length": {
-                    "type": "number"
-                },
-                "net_weight": {
-                    "type": "number"
-                },
-                "product_code": {
-                    "type": "string"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "recommended_freezing_temperature": {
-                    "type": "number"
-                },
-                "seller_id": {
-                    "type": "integer"
-                },
-                "width": {
-                    "type": "number"
-                }
-            }
-        },
         "controllers.requestSectionPatch": {
             "type": "object",
             "required": [
@@ -1486,7 +2227,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "current_temperature": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "maximum_capacity": {
                     "type": "integer"
@@ -1495,7 +2236,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "minimum_temperature": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "product_type_id": {
                     "type": "integer"
@@ -1529,6 +2270,7 @@ const docTemplate = `{
                 "address",
                 "cid",
                 "company_name",
+                "locality_id",
                 "telephone"
             ],
             "properties": {
@@ -1542,6 +2284,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "locality_id": {
                     "type": "integer"
                 },
                 "telephone": {
@@ -1566,6 +2311,36 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.CarryModel": {
+            "type": "object",
+            "required": [
+                "address",
+                "cid",
+                "company_name",
+                "locality_id",
+                "telephone"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cid": {
+                    "type": "integer"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "locality_id": {
+                    "type": "integer"
+                },
+                "telephone": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Employee": {
             "type": "object",
             "properties": {
@@ -1586,6 +2361,49 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.InboundOrders": {
+            "type": "object",
+            "properties": {
+                "employee_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "order_date": {
+                    "type": "string"
+                },
+                "order_number": {
+                    "type": "string"
+                },
+                "product_batch_id": {
+                    "type": "integer"
+                },
+                "warehouse_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.LocalityModel": {
+            "type": "object",
+            "properties": {
+                "country_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "locality_name": {
+                    "type": "string"
+                },
+                "province_id": {
+                    "type": "integer"
+                },
+                "province_name": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Product": {
             "type": "object",
             "properties": {
@@ -1596,7 +2414,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "freezing_rate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "height": {
                     "type": "number"
@@ -1627,6 +2445,138 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ProductBatch": {
+            "type": "object",
+            "properties": {
+                "batch_number": {
+                    "type": "integer"
+                },
+                "current_quantity": {
+                    "type": "integer"
+                },
+                "current_temperature": {
+                    "type": "number"
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "initial_quantity": {
+                    "type": "integer"
+                },
+                "manufacturing_date": {
+                    "type": "string"
+                },
+                "manufacturing_hour": {
+                    "type": "integer"
+                },
+                "minumum_temperature": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "section_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ProductRecords": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "last_update_date": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "purchase_price": {
+                    "type": "number"
+                },
+                "sale_price": {
+                    "type": "number"
+                }
+            }
+        },
+        "domain.ProductRecordsReport": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "records_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.PurchaseOrders": {
+            "type": "object",
+            "properties": {
+                "buyer_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "order_date": {
+                    "type": "string"
+                },
+                "order_number": {
+                    "type": "string"
+                },
+                "order_status_id": {
+                    "type": "integer"
+                },
+                "product_record_id": {
+                    "type": "integer"
+                },
+                "tracking_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.PurchaseOrdersReport": {
+            "type": "object",
+            "properties": {
+                "card_number_id": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "purchase_orders_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ReportProductsModel": {
+            "type": "object",
+            "properties": {
+                "products_count": {
+                    "type": "integer"
+                },
+                "section_id": {
+                    "type": "integer"
+                },
+                "section_number": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.SectionModel": {
             "type": "object",
             "properties": {
@@ -1634,7 +2584,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "current_temperature": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "id": {
                     "type": "integer"
@@ -1646,7 +2596,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "minimum_temperature": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "product_type_id": {
                     "type": "integer"
@@ -1674,29 +2624,24 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "locality_id": {
+                    "type": "integer"
+                },
                 "telephone": {
                     "type": "string"
                 }
             }
         },
-        "httputil.HTTPError": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "warehouse.WarehouseModel": {
+        "domain.WarehouseModel": {
             "type": "object",
             "properties": {
                 "address": {
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "locality_id": {
                     "type": "integer"
                 },
                 "minimun_capacity": {
@@ -1712,6 +2657,39 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "httputil.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "locality.RequestLocalityPost": {
+            "type": "object",
+            "required": [
+                "country_name",
+                "locality_name",
+                "province_name"
+            ],
+            "properties": {
+                "country_name": {
+                    "type": "string"
+                },
+                "locality_name": {
+                    "type": "string"
+                },
+                "province_id": {
+                    "type": "integer"
+                },
+                "province_name": {
+                    "type": "string"
+                }
+            }
         }
     }
 }`
@@ -1719,7 +2697,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Swagger Mercado Fresco",

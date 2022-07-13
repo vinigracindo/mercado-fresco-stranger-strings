@@ -26,6 +26,17 @@ func NewLocalityController(s domain.LocalityService) *Locality {
 	}
 }
 
+// ReportCarrie godoc
+// @Summary      Report carries
+// @Description  Report carries
+// @Tags         Localities
+// @Accept       json
+// @Produce      json
+// @Param	id 	 query int false "locality ID"
+// @Success      200
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /localities/reportCarries [get]
 func (l Locality) ReportCarrie() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
@@ -54,6 +65,17 @@ func (l Locality) ReportCarrie() gin.HandlerFunc {
 	}
 }
 
+// Store godoc
+// @Summary      Create locality
+// @Description  create localite
+// @Tags         Localities
+// @Accept       json
+// @Produce      json
+// @Param Locality body RequestLocalityPost true "Create locality"
+// @Success      201  {object} domain.LocalityModel
+// @Failure      409  {object}  httputil.HTTPError
+// @Failure      422  {object}  httputil.HTTPError
+// @Router /localities [post]
 func (c Locality) CreateLocality() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req RequestLocalityPost
@@ -80,6 +102,17 @@ func (c Locality) CreateLocality() gin.HandlerFunc {
 	}
 }
 
+// GetReportLocalities godoc
+// @Summary      Report localities by seller
+// @Description  Report localities by seller
+// @Tags         Localities
+// @Accept       json
+// @Produce      json
+// @Param	id 	 query int false "Seller ID"
+// @Success      204
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router /localities/reportSellers [get]
 func (c Locality) GetReportLocalities() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		idParam, isPresent := ctx.GetQuery("id")

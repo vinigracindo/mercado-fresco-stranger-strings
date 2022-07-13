@@ -31,8 +31,8 @@ func NewPurchaseOrdersController(prodService domain.PurchaseOrdersService) Purch
 // @Tags         PurchaseOrders
 // @Accept       json
 // @Produce      json
-// @Param purchaseOrders body requestpurchaseOrdersPost true "Create purchaseOrders"
-// @Success      201  {object} domain.purchaseOrders
+// @Param purchaseOrders body PurchaseOrdersCreate true "Create purchaseOrders"
+// @Success      201  {object} domain.PurchaseOrders
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
 // @Router /purchaseOrders [post]
