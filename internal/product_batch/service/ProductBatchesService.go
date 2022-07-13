@@ -23,12 +23,12 @@ func NewProductBatchService(r domain.ProductBatchRepository, rp product.ProductR
 }
 
 func (s *service) Create(ctx context.Context, productBatch *domain.ProductBatch) (*domain.ProductBatch, error) {
-	_, err := s.repositoryProduct.GetById(ctx, productBatch.Id)
+	_, err := s.repositoryProduct.GetById(ctx, productBatch.ProductId)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = s.repositorySection.GetById(ctx, productBatch.Id)
+	_, err = s.repositorySection.GetById(ctx, productBatch.SectionId)
 	if err != nil {
 		return nil, err
 	}

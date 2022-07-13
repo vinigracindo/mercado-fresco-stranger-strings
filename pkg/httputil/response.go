@@ -8,7 +8,7 @@ type response struct {
 	Data any `json:"data"`
 }
 
-func NewResponse(ctx *gin.Context, status int, data any) {
+func NewResponse(ctx *gin.Context, status int, data interface{}) {
 	res := response{
 		Data: data,
 	}

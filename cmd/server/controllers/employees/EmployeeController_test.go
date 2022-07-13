@@ -180,7 +180,7 @@ func TestEmployeeController_Update(t *testing.T) {
 		reqBody, _ := json.Marshal(expectedEmployee)
 		response := testutil.ExecuteTestRequest(router, http.MethodPatch, url, reqBody)
 
-		expectedOutput := map[string]any{
+		expectedOutput := map[string]interface{}{
 			"data": expectedEmployee,
 		}
 
