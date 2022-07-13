@@ -1,16 +1,175 @@
 basePath: /api/v1
 definitions:
+  controllers.PurchaseOrdersCreate:
+    properties:
+      buyer_id:
+        type: integer
+      order_date:
+        type: string
+      order_number:
+        type: string
+      order_status_id:
+        type: integer
+      product_record_id:
+        type: integer
+      tracking_code:
+        type: string
+    required:
+    - buyer_id
+    - order_date
+    - order_number
+    - order_status_id
+    - product_record_id
+    - tracking_code
+    type: object
+  controllers.RequestCarryPost:
+    properties:
+      address:
+        type: string
+      cid:
+        type: integer
+      company_name:
+        type: string
+      locality_id:
+        type: integer
+      telephone:
+        type: string
+    required:
+    - address
+    - cid
+    - company_name
+    - locality_id
+    - telephone
+    type: object
+  controllers.RequestInboundOrdersPost:
+    properties:
+      employee_id:
+        type: integer
+      order_date:
+        type: string
+      order_number:
+        type: string
+      product_batch_id:
+        type: integer
+      warehouse_id:
+        type: integer
+    required:
+    - employee_id
+    - order_date
+    - order_number
+    - product_batch_id
+    - warehouse_id
+    type: object
+  controllers.RequestProductBatchPost:
+    properties:
+      batch_number:
+        type: integer
+      current_quantity:
+        type: integer
+      current_temperature:
+        type: number
+      due_date:
+        type: string
+      initial_quantity:
+        type: integer
+      manufacturing_date:
+        type: string
+      manufacturing_hour:
+        type: integer
+      minumum_temperature:
+        type: number
+      product_id:
+        type: integer
+      section_id:
+        type: integer
+    required:
+    - batch_number
+    - current_quantity
+    - current_temperature
+    - due_date
+    - initial_quantity
+    - manufacturing_date
+    - manufacturing_hour
+    - minumum_temperature
+    - product_id
+    - section_id
+    type: object
+  controllers.RequestProductPatch:
+    properties:
+      description:
+        type: string
+    required:
+    - description
+    type: object
+  controllers.RequestProductPost:
+    properties:
+      description:
+        type: string
+      expiration_rate:
+        type: number
+      freezing_rate:
+        type: number
+      height:
+        type: number
+      length:
+        type: number
+      net_weight:
+        type: number
+      product_code:
+        type: string
+      product_type_id:
+        type: integer
+      recommended_freezing_temperature:
+        type: number
+      seller_id:
+        type: integer
+      width:
+        type: number
+    required:
+    - description
+    - expiration_rate
+    - freezing_rate
+    - height
+    - length
+    - net_weight
+    - product_code
+    - product_type_id
+    - recommended_freezing_temperature
+    - seller_id
+    - width
+    type: object
+  controllers.RequestProductRecordsPost:
+    properties:
+      last_update_date:
+        type: string
+      product_id:
+        type: integer
+      purchase_price:
+        type: number
+      sale_price:
+        type: number
+    required:
+    - last_update_date
+    - product_id
+    - purchase_price
+    - sale_price
+    type: object
   controllers.RequestWarehousePatch:
     properties:
       minimun_capacity:
         type: integer
       minimun_temperature:
         type: number
+    required:
+    - minimun_capacity
+    - minimun_temperature
     type: object
   controllers.RequestWarehousePost:
     properties:
       address:
         type: string
+      locality_id:
+        type: integer
       minimun_capacity:
         type: integer
       minimun_temperature:
@@ -21,6 +180,7 @@ definitions:
         type: string
     required:
     - address
+    - locality_id
     - minimun_capacity
     - minimun_temperature
     - telephone
@@ -75,50 +235,6 @@ definitions:
     - last_name
     - warehouse_id
     type: object
-  controllers.requestProductPatch:
-    properties:
-      description:
-        type: string
-    required:
-    - description
-    type: object
-  controllers.requestProductPost:
-    properties:
-      description:
-        type: string
-      expiration_rate:
-        type: number
-      freezing_rate:
-        type: integer
-      height:
-        type: number
-      length:
-        type: number
-      net_weight:
-        type: number
-      product_code:
-        type: string
-      product_type_id:
-        type: integer
-      recommended_freezing_temperature:
-        type: number
-      seller_id:
-        type: integer
-      width:
-        type: number
-    required:
-    - description
-    - expiration_rate
-    - freezing_rate
-    - height
-    - length
-    - net_weight
-    - product_code
-    - product_type_id
-    - recommended_freezing_temperature
-    - seller_id
-    - width
-    type: object
   controllers.requestSectionPatch:
     properties:
       current_capacity:
@@ -131,13 +247,13 @@ definitions:
       current_capacity:
         type: integer
       current_temperature:
-        type: integer
+        type: number
       maximum_capacity:
         type: integer
       minimum_capacity:
         type: integer
       minimum_temperature:
-        type: integer
+        type: number
       product_type_id:
         type: integer
       section_number:
@@ -174,12 +290,15 @@ definitions:
         type: string
       id:
         type: integer
+      locality_id:
+        type: integer
       telephone:
         type: string
     required:
     - address
     - cid
     - company_name
+    - locality_id
     - telephone
     type: object
   domain.Buyer:
@@ -192,6 +311,27 @@ definitions:
         type: integer
       last_name:
         type: string
+    type: object
+  domain.CarryModel:
+    properties:
+      address:
+        type: string
+      cid:
+        type: integer
+      company_name:
+        type: string
+      id:
+        type: integer
+      locality_id:
+        type: integer
+      telephone:
+        type: string
+    required:
+    - address
+    - cid
+    - company_name
+    - locality_id
+    - telephone
     type: object
   domain.Employee:
     properties:
@@ -206,6 +346,34 @@ definitions:
       warehouse_id:
         type: integer
     type: object
+  domain.InboundOrders:
+    properties:
+      employee_id:
+        type: integer
+      id:
+        type: integer
+      order_date:
+        type: string
+      order_number:
+        type: string
+      product_batch_id:
+        type: integer
+      warehouse_id:
+        type: integer
+    type: object
+  domain.LocalityModel:
+    properties:
+      country_name:
+        type: string
+      id:
+        type: integer
+      locality_name:
+        type: string
+      province_id:
+        type: integer
+      province_name:
+        type: string
+    type: object
   domain.Product:
     properties:
       description:
@@ -213,7 +381,7 @@ definitions:
       expiration_rate:
         type: number
       freezing_rate:
-        type: integer
+        type: number
       height:
         type: number
       id:
@@ -233,12 +401,98 @@ definitions:
       width:
         type: number
     type: object
+  domain.ProductBatch:
+    properties:
+      batch_number:
+        type: integer
+      current_quantity:
+        type: integer
+      current_temperature:
+        type: number
+      due_date:
+        type: string
+      id:
+        type: integer
+      initial_quantity:
+        type: integer
+      manufacturing_date:
+        type: string
+      manufacturing_hour:
+        type: integer
+      minumum_temperature:
+        type: number
+      product_id:
+        type: integer
+      section_id:
+        type: integer
+    type: object
+  domain.ProductRecords:
+    properties:
+      id:
+        type: integer
+      last_update_date:
+        type: string
+      product_id:
+        type: integer
+      purchase_price:
+        type: number
+      sale_price:
+        type: number
+    type: object
+  domain.ProductRecordsReport:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      records_count:
+        type: integer
+    type: object
+  domain.PurchaseOrders:
+    properties:
+      buyer_id:
+        type: integer
+      id:
+        type: integer
+      order_date:
+        type: string
+      order_number:
+        type: string
+      order_status_id:
+        type: integer
+      product_record_id:
+        type: integer
+      tracking_code:
+        type: string
+    type: object
+  domain.PurchaseOrdersReport:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      purchase_orders_count:
+        type: integer
+    type: object
+  domain.ReportProductsModel:
+    properties:
+      products_count:
+        type: integer
+      section_id:
+        type: integer
+      section_number:
+        type: integer
+    type: object
   domain.SectionModel:
     properties:
       current_capacity:
         type: integer
       current_temperature:
-        type: integer
+        type: number
       id:
         type: integer
       maximum_capacity:
@@ -246,7 +500,7 @@ definitions:
       minimum_capacity:
         type: integer
       minimum_temperature:
-        type: integer
+        type: number
       product_type_id:
         type: integer
       section_number:
@@ -264,21 +518,18 @@ definitions:
         type: string
       id:
         type: integer
+      locality_id:
+        type: integer
       telephone:
         type: string
     type: object
-  httputil.HTTPError:
-    properties:
-      code:
-        type: integer
-      message:
-        type: string
-    type: object
-  warehouse.WarehouseModel:
+  domain.WarehouseModel:
     properties:
       address:
         type: string
       id:
+        type: integer
+      locality_id:
         type: integer
       minimun_capacity:
         type: integer
@@ -289,7 +540,28 @@ definitions:
       warehouse_code:
         type: string
     type: object
-host: localhost:8080
+  httputil.HTTPError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  locality.RequestLocalityPost:
+    properties:
+      country_name:
+        type: string
+      locality_name:
+        type: string
+      province_id:
+        type: integer
+      province_name:
+        type: string
+    required:
+    - country_name
+    - locality_name
+    - province_name
+    type: object
 info:
   contact:
     name: API Support
@@ -441,6 +713,70 @@ paths:
       summary: Update UpdateCardNumberLastName
       tags:
       - Buyers
+  /buyers/purchaseOrders:
+    get:
+      consumes:
+      - application/json
+      description: List all reports buyer records
+      parameters:
+      - description: Buyer ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.PurchaseOrdersReport'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List all report product records by id and list all report buyer records
+      tags:
+      - Buyers
+  /carries:
+    post:
+      consumes:
+      - application/json
+      description: create carry
+      parameters:
+      - description: Create carry
+        in: body
+        name: carry
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RequestCarryPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.CarryModel'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create carry
+      tags:
+      - Carries
   /employees:
     get:
       consumes:
@@ -455,8 +791,8 @@ paths:
             items:
               $ref: '#/definitions/domain.Employee'
             type: array
-        "404":
-          description: Not Found
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.HTTPError'
       summary: List all employees
@@ -578,11 +914,230 @@ paths:
       summary: Update employee fullname
       tags:
       - Employees
+  /employees/reportInboundOrders:
+    get:
+      consumes:
+      - application/json
+      description: Inbound orders quantity by employee
+      parameters:
+      - description: Employee ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Report inbound orders employee
+      tags:
+      - Employees
+  /inboundOrders:
+    post:
+      consumes:
+      - application/json
+      description: create inbound order
+      parameters:
+      - description: Create inbound orders
+        in: body
+        name: InboundOrders
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RequestInboundOrdersPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.InboundOrders'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create InboundOrder
+      tags:
+      - InboundOrders
+  /localities:
+    post:
+      consumes:
+      - application/json
+      description: create localite
+      parameters:
+      - description: Create locality
+        in: body
+        name: Locality
+        required: true
+        schema:
+          $ref: '#/definitions/locality.RequestLocalityPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.LocalityModel'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create locality
+      tags:
+      - Localities
+  /localities/reportCarries:
+    get:
+      consumes:
+      - application/json
+      description: Report carries
+      parameters:
+      - description: locality ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Report carries
+      tags:
+      - Localities
+  /localities/reportSellers:
+    get:
+      consumes:
+      - application/json
+      description: Report localities by seller
+      parameters:
+      - description: Seller ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Report localities by seller
+      tags:
+      - Localities
+  /ping:
+    get:
+      description: Returns a successful pong answer to all HTTP requests
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Healthcheck endpoint
+      tags:
+      - misc
+  /productBatches:
+    post:
+      consumes:
+      - application/json
+      description: create product batch
+      parameters:
+      - description: Create product batch
+        in: body
+        name: ProductBatch
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RequestProductBatchPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.ProductBatch'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create product batch
+      tags:
+      - Product batches
+  /productRecords:
+    post:
+      consumes:
+      - application/json
+      description: create product records
+      parameters:
+      - description: Create product records
+        in: body
+        name: ProductRecords
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RequestProductRecordsPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.ProductRecords'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create ProductRecords
+      tags:
+      - ProductRecords
   /products:
     get:
       consumes:
       - application/json
-      description: get all products
+      description: Get all products
       produces:
       - application/json
       responses:
@@ -609,7 +1164,7 @@ paths:
         name: Product
         required: true
         schema:
-          $ref: '#/definitions/controllers.requestProductPost'
+          $ref: '#/definitions/controllers.RequestProductPost'
       produces:
       - application/json
       responses:
@@ -696,7 +1251,7 @@ paths:
         name: Product
         required: true
         schema:
-          $ref: '#/definitions/controllers.requestProductPatch'
+          $ref: '#/definitions/controllers.RequestProductPatch'
       produces:
       - application/json
       responses:
@@ -713,6 +1268,66 @@ paths:
           schema:
             $ref: '#/definitions/httputil.HTTPError'
       summary: Update product fullname
+      tags:
+      - Products
+  /purchaseOrders:
+    post:
+      consumes:
+      - application/json
+      description: create purchaseOrders
+      parameters:
+      - description: Create purchaseOrders
+        in: body
+        name: purchaseOrders
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.PurchaseOrdersCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.PurchaseOrders'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create purchaseOrders
+      tags:
+      - PurchaseOrders
+  /reportRecords:
+    get:
+      consumes:
+      - application/json
+      description: List all reports product records
+      parameters:
+      - description: Product ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.ProductRecordsReport'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List all report product records by id and list all report product records
       tags:
       - Products
   /sections:
@@ -852,6 +1467,40 @@ paths:
           schema:
             $ref: '#/definitions/httputil.HTTPError'
       summary: Update currentCapacity
+      tags:
+      - Sections
+  /sections/reportProducts:
+    get:
+      consumes:
+      - application/json
+      description: report products count by section
+      parameters:
+      - description: Section ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.ReportProductsModel'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Report products
       tags:
       - Sections
   /sellers:
@@ -1009,7 +1658,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/warehouse.WarehouseModel'
+              $ref: '#/definitions/domain.WarehouseModel'
             type: array
         "404":
           description: Not Found
@@ -1035,7 +1684,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/warehouse.WarehouseModel'
+            $ref: '#/definitions/domain.WarehouseModel'
         "409":
           description: Conflict
           schema:
@@ -1090,7 +1739,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/warehouse.WarehouseModel'
+            $ref: '#/definitions/domain.WarehouseModel'
         "400":
           description: Bad Request
           schema:
@@ -1124,7 +1773,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/warehouse.WarehouseModel'
+            $ref: '#/definitions/domain.WarehouseModel'
         "409":
           description: Conflict
           schema:

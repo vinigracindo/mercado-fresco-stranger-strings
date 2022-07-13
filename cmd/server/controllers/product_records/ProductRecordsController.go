@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product_records/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/pkg/httputil"
-	"net/http"
-	"time"
 )
 
 type RequestProductRecordsPost struct {
@@ -31,7 +32,7 @@ func CreateProductRecordsController(prodService domain.ProductRecordsService) *P
 // @Tags         ProductRecords
 // @Accept       json
 // @Produce      json
-// @Param ProductRecords body productRecordsDTO true "Create product records"
+// @Param ProductRecords body RequestProductRecordsPost true "Create product records"
 // @Success      201  {object}  domain.ProductRecords
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError

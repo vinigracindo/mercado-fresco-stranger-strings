@@ -37,6 +37,7 @@ type RequestInboundOrdersPost struct {
 // @Success      201  {object}  domain.InboundOrders
 // @Failure      409  {object}  httputil.HTTPError
 // @Failure      422  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
 // @Router /inboundOrders [post]
 func (controller InboundOrdersController) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {

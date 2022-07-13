@@ -25,7 +25,7 @@ func NewEmployeeController(service domain.EmployeeService) EmployeeController {
 // @Accept       json
 // @Produce      json
 // @Success      200  {array} domain.Employee
-// @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
 // @Router /employees [get]
 func (controller EmployeeController) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
