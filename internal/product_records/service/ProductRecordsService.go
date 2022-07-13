@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
+	"time"
+
 	product "github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product_records/domain"
-	"time"
 )
 
 type productRecordsService struct {

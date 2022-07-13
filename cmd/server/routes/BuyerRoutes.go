@@ -17,7 +17,7 @@ func BuyerRoutes(routes *gin.RouterGroup, db *sql.DB) {
 	buyerService := service.NewBuyerService(buyerRepository, purchaseOrdersRepository)
 	buyerController := controllers.NewBuyerController(buyerService)
 
-	routes.GET("/purchaseOrders", buyerController.GetPurchaseOrdersReports())
+	routes.GET("/reportPurchaseOrders", buyerController.GetPurchaseOrdersReports())
 
 	routes.GET("/", buyerController.GetAll())
 	routes.GET("/:id", buyerController.GetId())

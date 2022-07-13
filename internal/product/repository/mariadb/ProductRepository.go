@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
 )
 
@@ -113,7 +114,7 @@ func (m mariaDBProductRepository) Create(ctx context.Context, product *domain.Pr
 
 func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, product *domain.Product) (*domain.Product, error) {
 
-	productResult, err := m.db.ExecContext(
+	_, err := m.db.ExecContext(
 		ctx,
 		SqlUpdateDescription,
 		&product.Description,
@@ -122,12 +123,6 @@ func (m mariaDBProductRepository) UpdateDescription(ctx context.Context, product
 
 	if err != nil {
 		return nil, err
-	}
-
-	affectedRows, _ := productResult.RowsAffected()
-
-	if affectedRows == 0 {
-		return nil, domain.ErrProductIdNotFound
 	}
 
 	return product, nil

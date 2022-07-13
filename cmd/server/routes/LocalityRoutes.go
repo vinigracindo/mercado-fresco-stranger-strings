@@ -17,6 +17,6 @@ func LocalityRoutes(routes *gin.RouterGroup, db *sql.DB) {
 	localityController := controllers.NewLocalityController(localityService)
 
 	routes.POST("/", localityController.CreateLocality())
-	routes.GET("/reportCarrie", localityController.ReportCarrie())
+	routes.GET("/reportCarries", localityController.ReportCarrie())
 	routes.GET("/reportSellers", localityController.GetReportLocalities())
 }

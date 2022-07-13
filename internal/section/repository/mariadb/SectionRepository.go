@@ -31,14 +31,9 @@ func (m *mariaDbSectionRepository) Delete(ctx context.Context, id int64) error {
 }
 
 func (m *mariaDbSectionRepository) UpdateCurrentCapacity(ctx context.Context, section *domain.SectionModel) (*domain.SectionModel, error) {
-	result, err := m.db.ExecContext(ctx, SQLUpdateCurrentCapacitySection, &section.CurrentCapacity, &section.Id)
+	_, err := m.db.ExecContext(ctx, SQLUpdateCurrentCapacitySection, &section.CurrentCapacity, &section.Id)
 	if err != nil {
 		return nil, err
-	}
-
-	rowsAffected, _ := result.RowsAffected()
-	if rowsAffected == 0 {
-		return nil, errors.New("section not found")
 	}
 
 	return section, nil

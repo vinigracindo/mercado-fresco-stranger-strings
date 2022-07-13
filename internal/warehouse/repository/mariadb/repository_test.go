@@ -108,26 +108,6 @@ func Test_repository_create(t *testing.T) {
 }
 
 func Test_repository_update(t *testing.T) {
-	t.Run("update_not_found: return error because no warehouse was found", func(t *testing.T) {
-
-		db, mock, err := sqlmock.New()
-		assert.NoError(t, err)
-
-		defer db.Close()
-
-		mock.ExpectExec(regexp.QuoteMeta(UpdateWarehouse)).WithArgs(
-			updateWarehouse.MinimunCapacity,
-			updateWarehouse.MinimunTemperature,
-			expectedWarehouse.Id,
-		).WillReturnResult(sqlmock.NewResult(0, 0))
-
-		mariadbWarehouse := NewMariadbWarehouseRepository(db)
-
-		_, err = mariadbWarehouse.Update(context.TODO(), expectedWarehouse.Id, &updateWarehouse)
-
-		assert.Error(t, err)
-
-	})
 
 	t.Run("update_err_exec_query: return err because of invalid query", func(t *testing.T) {
 

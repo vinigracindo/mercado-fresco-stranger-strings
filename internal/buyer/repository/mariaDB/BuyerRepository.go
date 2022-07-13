@@ -93,7 +93,7 @@ func (repo *mariadbBuyerRepository) GetId(ctx context.Context, id int64) (*domai
 
 func (repo *mariadbBuyerRepository) Update(ctx context.Context, id int64, cardNumberId, lastName string) (*domain.Buyer, error) {
 
-	result, err := repo.db.ExecContext(
+	_, err := repo.db.ExecContext(
 		ctx,
 		SQLUpdateBuyer,
 		cardNumberId,
@@ -105,11 +105,6 @@ func (repo *mariadbBuyerRepository) Update(ctx context.Context, id int64, cardNu
 		return nil, err
 	}
 
-	rowsAffected, _ := result.RowsAffected()
-
-	if rowsAffected == 0 {
-		return nil, domain.ErrBuyerNotFound
-	}
 	return &domain.Buyer{
 		Id:           id,
 		CardNumberId: cardNumberId,

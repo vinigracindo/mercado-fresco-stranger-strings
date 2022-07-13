@@ -271,47 +271,6 @@ func TestSellerRepository_Update(t *testing.T) {
 		assert.Equal(t, &expectedSeller, result)
 	})
 
-	t.Run("update_not_ok: return error when rows not affected", func(t *testing.T) {
-		db, mock, err := sqlmock.New()
-		assert.NoError(t, err)
-		defer db.Close()
-
-		mock.
-			ExpectExec(regexp.QuoteMeta(repository.SqlUpdateSeller)).
-			WithArgs(
-				&expectedSeller.Address,
-				&expectedSeller.Telephone,
-				&expectedSeller.Id).
-			WillReturnResult(sqlmock.NewResult(0, 0))
-
-		sellerRepository := repository.NewMariaDBSellerRepository(db)
-
-		_, err = sellerRepository.Update(context.TODO(), &expectedSeller)
-
-		assert.Error(t, err)
-
-	})
-
-	t.Run("update_not_found: should return error when seller not found", func(t *testing.T) {
-		db, mock, err := sqlmock.New()
-		assert.NoError(t, err)
-		defer db.Close()
-
-		mock.
-			ExpectExec(regexp.QuoteMeta(repository.SqlUpdateSeller)).
-			WithArgs(
-				&expectedSeller.Id,
-				&expectedSeller.Address,
-				&expectedSeller.Telephone).
-			WillReturnResult(sqlmock.NewResult(0, 0))
-
-		sellerRepository := repository.NewMariaDBSellerRepository(db)
-
-		_, err = sellerRepository.Update(context.TODO(), &expectedSeller)
-
-		assert.Error(t, err)
-	})
-
 	t.Run("update_query_fails: Should return error when query execution fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)

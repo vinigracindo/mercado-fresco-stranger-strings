@@ -349,22 +349,6 @@ func TestSectionRepository_Delete(t *testing.T) {
 func TestSectionRepository_Update(t *testing.T) {
 	newCurrentCapacity := int64(1)
 
-	t.Run("update_not_found: should return error when section not found", func(t *testing.T) {
-		db, mock, err := sqlmock.New()
-		assert.NoError(t, err)
-		defer db.Close()
-
-		mock.ExpectExec(regexp.QuoteMeta(repository.SQLUpdateCurrentCapacitySection)).
-			WithArgs(id, newCurrentCapacity).
-			WillReturnResult(sqlmock.NewResult(0, 0))
-
-		sectionRepository := repository.NewMariadbSectionRepository(db)
-
-		_, err = sectionRepository.UpdateCurrentCapacity(context.Background(), &mockSection)
-
-		assert.Error(t, err)
-	})
-
 	t.Run("update_query_error: should return error when query execution fails ", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)
