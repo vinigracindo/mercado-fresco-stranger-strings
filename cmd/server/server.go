@@ -10,7 +10,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/http/ping"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/cmd/server/routes"
-	"github.com/vinigracindo/mercado-fresco-stranger-strings/docs"
 )
 
 type APIServer struct{}
@@ -27,7 +26,6 @@ func (api *APIServer) Run(port int) {
 	router := gin.Default()
 
 	// Swagger
-	docs.SwaggerInfo.BasePath = "/api/v1"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// Health check
