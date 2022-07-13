@@ -71,7 +71,7 @@ func (repo *mariaDBEmployeerepository) Create(ctx context.Context, cardNumberId 
 }
 
 func (repo mariaDBEmployeerepository) Update(ctx context.Context, employeeID int64, updatedEmployee domain.Employee) error {
-	res, err := repo.db.ExecContext(
+	_, err := repo.db.ExecContext(
 		ctx,
 		SQLUpdateEmployeeFullname,
 		updatedEmployee.FirstName, updatedEmployee.LastName, employeeID,
@@ -79,11 +79,6 @@ func (repo mariaDBEmployeerepository) Update(ctx context.Context, employeeID int
 
 	if err != nil {
 		return err
-	}
-
-	rowsAffected, _ := res.RowsAffected()
-	if rowsAffected == 0 {
-		return domain.ErrEmployeeNotFound
 	}
 
 	return nil

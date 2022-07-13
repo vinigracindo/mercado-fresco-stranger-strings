@@ -88,7 +88,7 @@ func (m *mariaDBSellerRepository) Create(ctx context.Context, seller *domain.Sel
 }
 
 func (m *mariaDBSellerRepository) Update(ctx context.Context, seller *domain.Seller) (*domain.Seller, error) {
-	sellerResult, err := m.db.ExecContext(
+	_, err := m.db.ExecContext(
 		ctx,
 		SqlUpdateSeller,
 		&seller.Address,
@@ -98,12 +98,6 @@ func (m *mariaDBSellerRepository) Update(ctx context.Context, seller *domain.Sel
 
 	if err != nil {
 		return nil, err
-	}
-
-	affectedRows, _ := sellerResult.RowsAffected()
-
-	if affectedRows == 0 {
-		return nil, domain.ErrIDNotFound
 	}
 
 	return seller, nil

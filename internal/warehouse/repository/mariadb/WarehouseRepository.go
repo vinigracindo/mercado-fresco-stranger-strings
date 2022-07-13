@@ -119,7 +119,7 @@ func (r *mariadbWarehouse) Delete(ctx context.Context, id int64) error {
 }
 
 func (r *mariadbWarehouse) Update(ctx context.Context, id int64, wh *warehouse.WarehouseModel) (warehouse.WarehouseModel, error) {
-	result, err := r.db.ExecContext(
+	_, err := r.db.ExecContext(
 		ctx,
 		UpdateWarehouse,
 		wh.MinimunCapacity,
@@ -129,12 +129,6 @@ func (r *mariadbWarehouse) Update(ctx context.Context, id int64, wh *warehouse.W
 
 	if err != nil {
 		return warehouse.WarehouseModel{}, err
-	}
-
-	roweffect, _ := result.RowsAffected()
-
-	if roweffect == 0 {
-		return warehouse.WarehouseModel{}, fmt.Errorf("no warehouse was found with id %d", id)
 	}
 
 	return warehouse.WarehouseModel{

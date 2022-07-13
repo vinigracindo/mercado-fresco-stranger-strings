@@ -274,25 +274,6 @@ func TestBuyerRepository_Update(t *testing.T) {
 		fmt.Println(updateBuyer)
 	})
 
-	t.Run("update_error: should return error when buyer not found", func(t *testing.T) {
-		db, mock, err := sqlmock.New()
-		assert.NoError(t, err)
-		defer db.Close()
-
-		mock.ExpectExec(regexp.QuoteMeta(repository.SQLUpdateBuyer)).
-			WithArgs(updateBuyer.CardNumberId, updateBuyer.LastName, updateBuyer.Id).
-			WillReturnResult(sqlmock.NewResult(0, 0))
-
-		buyerRepository := repository.NewmariadbBuyerRepository(db)
-
-		result, err := buyerRepository.Update(context.Background(), updateBuyer.Id,
-			updateBuyer.CardNumberId,
-			updateBuyer.LastName)
-
-		assert.Error(t, err, result)
-
-	})
-
 	t.Run("update_error: should return error when query execution fails", func(t *testing.T) {
 		db, mock, err := sqlmock.New()
 		assert.NoError(t, err)

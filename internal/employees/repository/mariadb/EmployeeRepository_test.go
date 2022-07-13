@@ -251,27 +251,6 @@ func TestEmployeeRepository_Update(t *testing.T) {
 
 		assert.Error(t, err)
 	})
-
-	t.Run("update_employee_not_found: should return error when employee not found", func(t *testing.T) {
-		db, mock, err := sqlmock.New()
-		assert.NoError(t, err)
-		defer db.Close()
-
-		employeeRepository := repository.NewMariaDBEmployeeRepository(db)
-
-		mock.
-			ExpectExec(regexp.QuoteMeta(repository.SQLUpdateEmployeeFullname)).
-			WithArgs("John", "Doe", 1).
-			WillReturnResult(sqlmock.NewResult(0, 0))
-
-		err = employeeRepository.Update(
-			context.TODO(),
-			int64(1),
-			expectedEmployee,
-		)
-
-		assert.Error(t, err)
-	})
 }
 
 func TestEmployeeRepository_Delete(t *testing.T) {

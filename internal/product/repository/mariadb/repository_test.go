@@ -5,12 +5,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"regexp"
+	"testing"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/domain"
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/internal/product/repository/mariadb"
-	"regexp"
-	"testing"
 )
 
 var expectedProduct = domain.Product{
@@ -330,25 +331,6 @@ func TestSectionRepository_Update(t *testing.T) {
 		Description: "Strawberry yogurt",
 	}
 
-	t.Run("update_not_found: should return error when product not found", func(t *testing.T) {
-
-		db, mock, err := sqlmock.New()
-
-		assert.NoError(t, err)
-		defer db.Close()
-
-		mock.
-			ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
-			WithArgs(expectedProduct.Id, dummyUpdatedProduct.Description).
-			WillReturnResult(sqlmock.NewResult(0, 0))
-
-		productRepository := mariadb.CreateProductRepository(db)
-
-		_, err = productRepository.UpdateDescription(context.TODO(), &dummyUpdatedProduct)
-
-		assert.Error(t, err)
-	})
-
 	t.Run("update_fail: should return error when query execution fails", func(t *testing.T) {
 
 		db, mock, err := sqlmock.New()
@@ -360,25 +342,6 @@ func TestSectionRepository_Update(t *testing.T) {
 			ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
 			WithArgs(expectedProduct.Id).
 			WillReturnError(errors.New("any error"))
-
-		productRepository := mariadb.CreateProductRepository(db)
-
-		_, err = productRepository.UpdateDescription(context.TODO(), &dummyUpdatedProduct)
-
-		assert.Error(t, err)
-	})
-
-	t.Run("update_not_ok: return error when rows not affected", func(t *testing.T) {
-
-		db, mock, err := sqlmock.New()
-
-		assert.NoError(t, err)
-		defer db.Close()
-
-		mock.
-			ExpectExec(regexp.QuoteMeta(mariadb.SqlUpdateDescription)).
-			WithArgs(dummyUpdatedProduct.Description, expectedProduct.Id).
-			WillReturnResult(sqlmock.NewResult(0, 0))
 
 		productRepository := mariadb.CreateProductRepository(db)
 
