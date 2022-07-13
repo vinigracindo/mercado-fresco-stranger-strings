@@ -5,7 +5,7 @@ import (
 )
 
 type response struct {
-	Data any `json:"data"`
+	Data interface{} `json:"data"`
 }
 
 func NewResponse(ctx *gin.Context, status int, data interface{}) {
