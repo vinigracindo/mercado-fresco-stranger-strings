@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/vinigracindo/mercado-fresco-stranger-strings/config"
+	docs "github.com/vinigracindo/mercado-fresco-stranger-strings/docs/specs"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -26,6 +27,7 @@ func (api *APIServer) Run(port int) {
 	router := gin.Default()
 
 	// Swagger
+	docs.SwaggerInfo.BasePath = "/api/v1"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// Health check
