@@ -1056,36 +1056,6 @@ paths:
       summary: Report localities by seller
       tags:
       - Localities
-  /producs/reportRecords:
-    get:
-      consumes:
-      - application/json
-      description: List all reports product records
-      parameters:
-      - description: Product ID
-        in: query
-        name: id
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/domain.ProductRecordsReport'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-      summary: List all report product records by id and list all report product records
-      tags:
-      - Products
   /productBatches:
     post:
       consumes:
@@ -1281,6 +1251,36 @@ paths:
           schema:
             $ref: '#/definitions/httputil.HTTPError'
       summary: Update product fullname
+      tags:
+      - Products
+  /products/reportRecords:
+    get:
+      consumes:
+      - application/json
+      description: List all reports product records
+      parameters:
+      - description: Product ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.ProductRecordsReport'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: List all report product records by id and list all report product records
       tags:
       - Products
   /purchaseOrders:

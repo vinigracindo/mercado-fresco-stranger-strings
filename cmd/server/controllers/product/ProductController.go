@@ -221,7 +221,7 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 // @Success      200  {array} domain.ProductRecordsReport
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure 	 400  {object}  httputil.HTTPError
-// @Router /producs/reportRecords [get]
+// @Router /products/reportRecords [get]
 func (c *ProductController) GetReportProductRecords() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
