@@ -178,7 +178,7 @@ func (c *BuyerController) DeleteBuyer() gin.HandlerFunc {
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
-// @Router /buyers/purchaseOrders [get]
+// @Router /buyers/reportPurchaseOrders [get]
 func (c *BuyerController) GetPurchaseOrdersReports() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 

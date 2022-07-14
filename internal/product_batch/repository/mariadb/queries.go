@@ -13,8 +13,8 @@ const (
         manufacturing_hour,
         minumum_temperature,
 		product_id,
-		section_id,
+		section_id
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
 )
