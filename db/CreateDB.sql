@@ -438,6 +438,22 @@ CREATE TABLE IF NOT EXISTS `mercadofresco`.`user_rol` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `logs`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mercadofresco`.`logs` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `method` VARCHAR(255) NOT NULL,
+    `label` VARCHAR(255) NOT NULL,
+    `level` VARCHAR(255) NOT NULL,
+    `message` VARCHAR(255) NOT NULL,
+    `status` INT NOT NULL,
+    `insert_date` DATETIME(6) NOT NULL,
+    PRIMARY KEY (`id`))
+    ENGINE = InnoDB;
+
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
