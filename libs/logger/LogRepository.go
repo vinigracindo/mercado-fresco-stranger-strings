@@ -49,12 +49,3 @@ func (l loggerRepoImpl) Error(ctx context.Context, method, label, message string
 func (l loggerRepoImpl) Info(ctx context.Context, method, label, message string, status int) {
 	l.createLog(ctx, "INFO", method, label, message, status)
 }
-
-/*
-	method,
-	label,
-	level,
-	message,
-	status,
-	insert_date
-*/
