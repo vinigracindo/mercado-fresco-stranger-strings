@@ -3,7 +3,7 @@ package repository
 const (
 	SQLCreate = `
     INSERT INTO
-    sections (
+    product_batches (
         batch_number,
         current_quantity,
         current_temperature,
