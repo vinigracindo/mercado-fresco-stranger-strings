@@ -92,7 +92,7 @@
                 }
             }
         },
-        "/buyers/purchaseOrders": {
+        "/buyers/reportPurchaseOrders": {
             "get": {
                 "description": "List all reports buyer records",
                 "consumes": [
@@ -749,6 +749,52 @@
                 }
             }
         },
+        "/producs/reportRecords": {
+            "get": {
+                "description": "List all reports product records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "List all report product records by id and list all report product records",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.ProductRecordsReport"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/productBatches": {
             "post": {
                 "description": "create product batch",
@@ -1087,52 +1133,6 @@
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/reportRecords": {
-            "get": {
-                "description": "List all reports product records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "summary": "List all report product records by id and list all report product records",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Product ID",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.ProductRecordsReport"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/httputil.HTTPError"
                         }
@@ -1925,7 +1925,7 @@
                 "initial_quantity",
                 "manufacturing_date",
                 "manufacturing_hour",
-                "minumum_temperature",
+                "minimum_temperature",
                 "product_id",
                 "section_id"
             ],
@@ -1951,7 +1951,7 @@
                 "manufacturing_hour": {
                     "type": "integer"
                 },
-                "minumum_temperature": {
+                "minimum_temperature": {
                     "type": "number"
                 },
                 "product_id": {
