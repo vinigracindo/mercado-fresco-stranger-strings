@@ -14,7 +14,7 @@
         },
         "version": "1.0"
     },
-    "basePath": "/api/v1",
+    "basePath": "/",
     "paths": {
         "/buyers": {
             "get": {
@@ -742,32 +742,6 @@
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/ping": {
-            "get": {
-                "description": "Returns a successful pong answer to all HTTP requests",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "misc"
-                ],
-                "summary": "Healthcheck endpoint",
-                "responses": {
-                    "200": {
-                        "description": "pong",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/httputil.HTTPError"
                         }

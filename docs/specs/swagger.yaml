@@ -1,4 +1,4 @@
-basePath: /api/v1
+basePath: /
 definitions:
   controllers.PurchaseOrdersCreate:
     properties:
@@ -1056,23 +1056,6 @@ paths:
       summary: Report localities by seller
       tags:
       - Localities
-  /ping:
-    get:
-      description: Returns a successful pong answer to all HTTP requests
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: pong
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-      summary: Healthcheck endpoint
-      tags:
-      - misc
   /productBatches:
     post:
       consumes:

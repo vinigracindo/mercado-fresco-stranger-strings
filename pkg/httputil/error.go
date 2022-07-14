@@ -1,6 +1,9 @@
 package httputil
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/vinigracindo/mercado-fresco-stranger-strings/libs/logger"
+)
 
 func NewError(ctx *gin.Context, status int, err error) {
 	er := HTTPError{
@@ -8,9 +11,20 @@ func NewError(ctx *gin.Context, status int, err error) {
 		Message: err.Error(),
 	}
 	ctx.JSON(status, er)
+
+	logger.Logger.Error(ctx, ctx.Request.Method, ctx.Request.RequestURI, err.Error(), ctx.Writer.Status())
 }
 
 type HTTPError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
+
+/*
+	method,
+	label,
+	level,
+	message,
+	status,
+	insert_date
+*/

@@ -16,7 +16,7 @@ import (
 // @version         1.0
 // @description     This is a sample server celler server.
 
-// @BasePath  /api/v1
+// @BasePath  /
 
 func main() {
 	port := 8080
