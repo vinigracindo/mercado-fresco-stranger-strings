@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"errors"
 	"net/http"
 	"time"
 
@@ -18,7 +17,7 @@ type RequestProductBatchPost struct {
 	InitialQuantity    int64   `json:"initial_quantity" binding:"required"`
 	ManufacturingDate  string  `json:"manufacturing_date" binding:"required"`
 	ManufacturingHour  int64   `json:"manufacturing_hour" binding:"required"`
-	MinumumTemperature float64 `json:"minumum_temperature" binding:"required"`
+	MinumumTemperature float64 `json:"minimum_temperature" binding:"required"`
 	ProductId          int64   `json:"product_id" binding:"required"`
 	SectionId          int64   `json:"section_id" binding:"required"`
 }
@@ -49,7 +48,7 @@ func (c *ProductBatchController) Create() gin.HandlerFunc {
 		var request RequestProductBatchPost
 
 		if err := ctx.ShouldBindJSON(&request); err != nil {
-			httputil.NewError(ctx, http.StatusUnprocessableEntity, errors.New("invalid input. Check the data entered"))
+			httputil.NewError(ctx, http.StatusUnprocessableEntity, err)
 			return
 		}
 
