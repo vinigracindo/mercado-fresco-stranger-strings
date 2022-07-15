@@ -37,14 +37,12 @@ cp .env-example .env
 docker-compose up -d
 ```
 
-5. Suba nosso script de banco de dados (db/CreateDB.sql) - Obs.: Não sobre automático no docker composer.
-
-6. Rode os testes
+5. Rode os testes
 ```shell
 go test ./...
 ```
 
-7. Rode o projeto
+6. Rode o projeto
 ```shell
 go run main.go
 ```
