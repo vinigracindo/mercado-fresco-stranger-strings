@@ -17,17 +17,34 @@ go mod tidy
 
 ## ⚡️ Quick start
 
-1. Create a database
+1. Clone o projeto
+```shell
+git clone https://github.com/vinigracindo/mercado-fresco-stranger-strings.git
+```
+
+1. Entre na pasta do projeto
+```shell
+cd mercado-fresco-stranger-strings
+```
+
+2. Crie um .env com as variáveis de ambiente do projeto e as edite
+```shell
+cp .env-example .env
+```
+
+3. Crie o database (root/root default username e password - adicionar ao arquivo .env)
 ```shell
 docker-compose up -d
 ```
 
-2. Run tests
+4. Suba nosso script de banco de dados (db/CreateDB.sql) - Obs.: Não sobre automático no docker composer.
+
+5. Rode os testes
 ```shell
 go test ./...
 ```
 
-3. Run the project
+6. Rode o projeto
 ```shell
 go run main.go
 ```
